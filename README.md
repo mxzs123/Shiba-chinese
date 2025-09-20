@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Commerce（Shiba Edition）
 
-## Getting Started
+本项目基于 Next.js App Router，提供电商前端所需的商品浏览、搜索、购物车、营销页等模块。默认通过 `lib/api` 与第三方后端交互；当未配置远端接口时，系统会回退到 `lib/api/mock-data.ts` 中的模拟数据，便于本地开发与组件调试。
 
-First, run the development server:
+## 主要特性
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **现代前端栈**：React Server Components、Server Actions、`useOptimistic` 等能力开箱即用。
+- **可替换数据层**：`lib/api` 封装商品、集合、页面与购物车操作，可按需接入内部 API。
+- **Tailwind v4 + Geist 字体**：统一视觉风格，快速迭代 UI。
+- **响应式体验**：内置首页网格、轮播、搜索筛选与移动端导航。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 开始使用
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. 安装依赖：
+   ```bash
+   npm install
+   ```
+2. 复制 `.env.example` 为 `.env.local` 并填写：
+   - `COMMERCE_API_URL`：内部商品服务地址（未配置时使用模拟数据）。
+   - `COMMERCE_CHECKOUT_URL`：下单跳转地址。
+   - `REVALIDATION_SECRET`：用于触发 `/api/revalidate` 的安全令牌。
+3. 启动开发服务器：
+   ```bash
+   npm run dev
+   ```
+4. 打开 [http://localhost:3000](http://localhost:3000) 查看页面。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 数据对接
 
-## Learn More
+- 所有数据访问方法位于 `lib/api/index.ts`，类型定义见 `lib/api/types.ts`。
+- 若需要改用真实后端，可在这些函数中调用内部网关或 GraphQL，并移除 `mock-data` 中的演示内容。
+- 购物车实现基于服务端 Cookie 存储，方便与现有会话体系对接，可在 `addToCart`、`updateCart` 等方法内替换为实际 API。
 
-To learn more about Next.js, take a look at the following resources:
+## 常用脚本
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `npm run dev`：启动 Turbopack 开发模式。
+- `npm run build`：构建生产包。
+- `npm run start`：预览生产构建。
+- `npm run prettier` / `npm run prettier:check`：格式化与校验代码风格。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 目录速览
 
-## Deploy on Vercel
+- `app/`：页面、路由与 Server Component。
+- `components/`：复用 UI 组件与业务模块。
+- `lib/api/`：第三方后端对接与模拟数据。
+- `docs/`：额外的设计与流程文档。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+欢迎根据自身后端协议扩展 `lib/api`，也可继续使用模拟数据完成独立的前端演示。
