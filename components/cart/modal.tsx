@@ -9,8 +9,9 @@ import { DEFAULT_OPTION } from "lib/constants";
 import { createUrl } from "lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { useFormStatus } from "react-dom";
+import { useCartStore } from "hooks/use-cart-store";
 import { createCartAndSetCookie, redirectToCheckout } from "./actions";
 import { useCart } from "./cart-context";
 import { DeleteItemButton } from "./delete-item-button";
@@ -23,10 +24,11 @@ type MerchandiseSearchParams = {
 
 export default function CartModal() {
   const { cart, updateCartItem } = useCart();
-  const [isOpen, setIsOpen] = useState(false);
-  const quantityRef = useRef(cart?.totalQuantity);
-  const openCart = () => setIsOpen(true);
-  const closeCart = () => setIsOpen(false);
+  const isOpen = useCartStore((state) => state.isOpen);
+  const openCart = useCartStore((state) => state.open);
+  const closeCart = useCartStore((state) => state.close);
+  const lastQuantity = useCartStore((state) => state.lastQuantity);
+  const setLastQuantity = useCartStore((state) => state.setLastQuantity);
 
   useEffect(() => {
     if (!cart) {
@@ -34,18 +36,21 @@ export default function CartModal() {
     }
   }, [cart]);
 
+  const totalQuantity = cart?.totalQuantity ?? 0;
+
   useEffect(() => {
-    if (
-      cart?.totalQuantity &&
-      cart?.totalQuantity !== quantityRef.current &&
-      cart?.totalQuantity > 0
-    ) {
+    if (totalQuantity > 0 && totalQuantity !== lastQuantity) {
       if (!isOpen) {
-        setIsOpen(true);
+        openCart();
       }
-      quantityRef.current = cart?.totalQuantity;
+      setLastQuantity(totalQuantity);
+      return;
     }
-  }, [isOpen, cart?.totalQuantity, quantityRef]);
+
+    if (totalQuantity === 0 && lastQuantity !== 0) {
+      setLastQuantity(0);
+    }
+  }, [totalQuantity, lastQuantity, isOpen, openCart, setLastQuantity]);
 
   return (
     <>
