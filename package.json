@@ -4,6 +4,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "lint": "next lint",
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "test": "prettier --check --ignore-unknown ."
@@ -29,6 +30,9 @@
     "@types/node": "22.13.10",
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
+    "eslint": "9.19.0",
+    "eslint-config-next": "15.1.6",
+    "eslint-config-prettier": "9.1.0",
     "postcss": "^8.5.3",
     "prettier": "3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",

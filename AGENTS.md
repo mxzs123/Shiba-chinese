@@ -18,11 +18,11 @@
 
 ## 构建、测试与开发命令
 
-本项目使用 npm 脚本统一工具链：`npm run dev` 启动 Turbopack 开发服务器（默认 http://localhost:3000），热更新依赖 RSC 与 Server Actions；`npm run build` 生成生产构建，需在提交与发版前运行，捕获类型或打包错误；`npm run start` 以生产模式预览构建结果，适合联调阶段的终端验收，并可复现实际缓存策略；`npm run prettier:check` / `npm run prettier` 负责格式校验与自动修复，确保提交记录保持整洁一致。
+本项目使用 npm 脚本统一工具链：`npm run dev` 启动 Turbopack 开发服务器（默认 http://localhost:3000），热更新依赖 RSC 与 Server Actions；`npm run build` 生成生产构建，需在提交与发版前运行，捕获类型或打包错误；`npm run start` 以生产模式预览构建结果，适合联调阶段的终端验收，并可复现实际缓存策略；`npm run lint` 调用 Next.js 提供的 ESLint 集成；`npm run prettier:check` / `npm run prettier` 负责格式校验与自动修复，确保提交记录保持整洁一致。
 
 ## 代码风格与命名规范
 
-全部使用 TypeScript 函数组件，两空格缩进。导入顺序推荐：第三方包 → `lib/` → 相对路径，命名导出优先。组件文件、导出保持 PascalCase，hooks 用 camelCase，常量使用 SCREAMING_SNAKE_CASE。Tailwind v4 原子类建议按布局 → 间距 → 视觉顺序书写，复用场景可抽提成子组件或工具函数；涉及复杂交互时，为关键容器添加注释说明设计意图。暂未配置 ESLint，如需接入可沿用 Vercel 官方 `eslint-config-next`。
+全部使用 TypeScript 函数组件，两空格缩进。导入顺序推荐：第三方包 → `lib/` → 相对路径，命名导出优先。组件文件、导出保持 PascalCase，hooks 用 camelCase，常量使用 SCREAMING_SNAKE_CASE。Tailwind v4 原子类建议按布局 → 间距 → 视觉顺序书写，复用场景可抽提成子组件或工具函数；涉及复杂交互时，为关键容器添加注释说明设计意图。已启用 ESLint（`next/core-web-vitals` + `prettier`），提交前务必运行 `npm run lint` 与 `npm run prettier:check`。
 
 ## 测试指引
 
