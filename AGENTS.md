@@ -118,12 +118,20 @@ export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
 
   // 忽略静态资源与常见文件
-  const IGNORE = [/^\/_next\//, /^\/favicon\.ico$/, /^\/robots\.txt$/, /^\/sitemap\.xml$/];
+  const IGNORE = [
+    /^\/_next\//,
+    /^\/favicon\.ico$/,
+    /^\/robots\.txt$/,
+    /^\/sitemap\.xml$/,
+  ];
   if (IGNORE.some((re) => re.test(url.pathname))) return NextResponse.next();
 
   // 允许 query/cookie 覆盖，便于本地调试
   const qp = url.searchParams.get("device") as "d" | "m" | null;
-  const cookieOverride = req.cookies.get("device")?.value as "d" | "m" | undefined;
+  const cookieOverride = req.cookies.get("device")?.value as
+    | "d"
+    | "m"
+    | undefined;
 
   const ua = userAgent(req);
   const isMobile = ua.device.type === "mobile" || ua.device.type === "tablet";
@@ -146,7 +154,8 @@ export function middleware(req: NextRequest) {
 
 // 限定匹配范围，避免作用于静态资源
 export const config = {
-  matcher: "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
+  matcher:
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
 };
 ```
 
