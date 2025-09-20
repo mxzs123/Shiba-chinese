@@ -4,6 +4,18 @@
 
 本仓库基于 Next.js App Router。页面与路由集中在 `app/`，其中 `/product`、`/search`、`/[page]` 等目录映射核心业务流；`app/api/revalidate` 提供后端通知后的增量刷新入口。UI 组件位于 `components/`，按功能域拆分到 `cart/`、`layout/`、`product/` 等子目录，方便逐层替换，公共布局相关的图片与 SVG 可集中在 `components/icons/` 便于复用。数据访问封装在 `lib/api/`：`index.ts` 负责第三方后端交互或模拟数据拼装，`mock-data.ts` 保存演示商品、集合与页面内容，`types.ts` 统一接口契约，同时导出辅助查找函数。字体资源放在 `fonts/`，公共文档记录在 `docs/`，若需放置静态宣传图可新建 `public/assets/` 并在组件中引用。
 
+## shadcn/ui 集成
+
+已通过 `npx shadcn@latest init` 初始化 UI 模板，配置文件位于 `components.json`，主题为 `new-york` 且基础色选择 `neutral`。Tailwind v4 已自动注入 `@theme inline` 变量以及 `@custom-variant dark`，新增依赖包括 `class-variance-authority`、`lucide-react`、`tailwind-merge` 与 `tw-animate-css`。如需新增组件，使用 `npx shadcn@latest add <component>`，CLI 会同步生成到 `components/ui/` 并复用 `@/lib/utils` 内的 `cn` 方法；如需调整主题变量，可直接在 `app/globals.css` 中修改。
+
+## 动画、图标与状态管理
+
+图标体系统一使用 `lucide-react`，新增图标时优先通过 `components/icons/` 封装再分发，保持语义化命名。交互动效采用 Framer Motion，请以驱动组件或 hooks 的方式集中声明动画变体，便于横向复用与调优。全局及局部状态管理基于 Zustand，可在 `hooks/` 下维护 store 定义，并结合 selector 减少无关重渲染，持久化需求可搭配 `zustand/middleware`。
+
+## 字体策略
+
+默认字体切换为 Inter，并在 `app/layout.tsx` 暴露 `--font-inter` 变量；`app/globals.css` 内的 `--font-sans` 将 Inter 与系统中文字体（`PingFang SC`、`Microsoft YaHei`、`Noto Sans SC` 等）组合，确保中英混排一致性。新增组件请避免手动覆盖 `font-family`，如需定制请基于 `--font-sans` 或 `--font-inter` 扩展。
+
 ## 构建、测试与开发命令
 
 本项目使用 npm 脚本统一工具链：`npm run dev` 启动 Turbopack 开发服务器（默认 http://localhost:3000），热更新依赖 RSC 与 Server Actions；`npm run build` 生成生产构建，需在提交与发版前运行，捕获类型或打包错误；`npm run start` 以生产模式预览构建结果，适合联调阶段的终端验收，并可复现实际缓存策略；`npm run prettier:check` / `npm run prettier` 负责格式校验与自动修复，确保提交记录保持整洁一致。
