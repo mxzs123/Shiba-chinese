@@ -606,14 +606,8 @@ export async function getMenu(handle: string): Promise<Menu[]> {
   return menus[handle] || [];
 }
 
-export async function getPage(handle: string): Promise<Page> {
-  const page = pages.find((entry) => entry.handle === handle);
-
-  if (!page) {
-    throw new Error(`Page with handle ${handle} not found`);
-  }
-
-  return page;
+export async function getPage(handle: string): Promise<Page | undefined> {
+  return pages.find((entry) => entry.handle === handle);
 }
 
 export async function getPages(): Promise<Page[]> {

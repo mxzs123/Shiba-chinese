@@ -36,7 +36,7 @@
 
 ## 数据与后端协作
 
-默认逻辑通过 `lib/api/index.ts` 读取本地模拟数据并写入服务端 Cookie 维护轻量购物车，Cookie 名称为 `commerce-cart`，可无缝映射到会话或 Redis。接入真实服务时，在对应函数内调用后端 API 并移除或替换 `mock-data.ts`，确保返回值仍满足 `types.ts` 定义；需要分页或排序时，可在函数签名内扩展参数并同步更新前端筛选项。若后端提供 Webhook，可对 `/api/revalidate` 增补通知逻辑，并使用 `REVALIDATION_SECRET` 进行校验，必要时针对产品与集合分别触发 `revalidateTag`。
+默认逻辑通过 `lib/api/index.ts` 读取本地模拟数据并写入服务端 Cookie 维护轻量购物车，Cookie 名称为 `cartId`，可无缝映射到会话或 Redis。接入真实服务时，在对应函数内调用后端 API 并移除或替换 `mock-data.ts`，确保返回值仍满足 `types.ts` 定义；需要分页或排序时，可在函数签名内扩展参数并同步更新前端筛选项。若后端提供 Webhook，可对 `/api/revalidate` 增补通知逻辑，并使用 `REVALIDATION_SECRET` 进行校验，必要时针对产品与集合分别触发 `revalidateTag`。
 
 ## 使用 MOCK 数据
 
