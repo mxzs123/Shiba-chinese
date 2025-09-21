@@ -2,6 +2,7 @@ import { TAGS } from "lib/constants";
 import {
   checkoutUrl as checkoutFallback,
   collections,
+  coupons,
   defaultCurrency,
   findCollectionByHandle,
   findProductByHandle,
@@ -10,12 +11,15 @@ import {
   listVisibleCollections,
   menus,
   orders,
+  paymentMethods,
   pages,
   products,
-  coupons,
+  shippingMethods,
   users,
 } from "./mock-data";
 import type {
+  Address,
+  AddressInput,
   AppliedCoupon,
   Cart,
   CartItem,
@@ -24,10 +28,13 @@ import type {
   Menu,
   Order,
   Page,
+  PaymentMethod,
   PointAccount,
   Product,
   ProductVariant,
+  ShippingMethod,
   User,
+  Money,
 } from "./types";
 import { cookies, headers } from "next/headers";
 import { revalidateTag } from "next/cache";
@@ -44,6 +51,95 @@ type GlobalCartStore = typeof globalThis & {
 const globalCartStore = globalThis as GlobalCartStore;
 
 const CHECKOUT_URL = process.env.COMMERCE_CHECKOUT_URL || checkoutFallback;
+
+function cloneMoney(money: Money): Money {
+  return { ...money };
+}
+
+function formatAddressLines(address: Address) {
+  const lines = [
+    [address.province, address.city, address.district, address.address1]
+      .filter(Boolean)
+      .join(" "),
+    address.address2,
+    [address.city, address.country].filter(Boolean).join(" "),
+    address.postalCode
+      ? `${address.postalCode}${address.countryCode ? ` ${address.countryCode}` : ""}`
+      : undefined,
+  ].filter((value): value is string =>
+    Boolean(value && value.trim().length > 0),
+  );
+
+  return lines.length ? lines : undefined;
+}
+
+function cloneAddress(address: Address): Address {
+  return {
+    ...address,
+    formatted: address.formatted
+      ? [...address.formatted]
+      : formatAddressLines(address),
+  };
+}
+
+function clonePointAccount(account: PointAccount): PointAccount {
+  return {
+    ...account,
+    transactions: account.transactions.map((entry) => ({ ...entry })),
+  };
+}
+
+function cloneUserRecord(user: User): User {
+  return {
+    ...user,
+    defaultAddress: user.defaultAddress
+      ? cloneAddress(user.defaultAddress)
+      : undefined,
+    addresses: user.addresses.map(cloneAddress),
+    loyalty: user.loyalty ? clonePointAccount(user.loyalty) : undefined,
+  };
+}
+
+function findUserRecord(userId: string) {
+  return users.find((user) => user.id === userId);
+}
+
+function createAddressRecord(input: AddressInput): Address {
+  const address: Address = {
+    id: input.id || `addr-${crypto.randomUUID()}`,
+    firstName: (input.firstName || "").trim(),
+    lastName: (input.lastName || "").trim(),
+    phone: input.phone?.trim() || undefined,
+    company: input.company?.trim() || undefined,
+    country: input.country?.trim() || "中国",
+    countryCode: input.countryCode?.trim().toUpperCase() || "CN",
+    province: input.province?.trim() || undefined,
+    city: (input.city || "").trim(),
+    district: input.district?.trim() || undefined,
+    postalCode: input.postalCode?.trim() || undefined,
+    address1: (input.address1 || "").trim(),
+    address2: input.address2?.trim() || undefined,
+    isDefault: Boolean(input.isDefault),
+  };
+
+  const formatted = formatAddressLines(address);
+  if (formatted) {
+    address.formatted = formatted;
+  }
+
+  return address;
+}
+
+function cloneShippingMethod(method: ShippingMethod): ShippingMethod {
+  return {
+    ...method,
+    price: cloneMoney(method.price),
+  };
+}
+
+function clonePaymentMethod(method: PaymentMethod): PaymentMethod {
+  return { ...method };
+}
 
 function formatAmount(value: number): string {
   return value.toFixed(2);
@@ -142,6 +238,83 @@ function calculateCartTotals(
     totalAmount: formatAmount(totalValue),
     currencyCode,
   };
+}
+
+export async function getShippingMethods(): Promise<ShippingMethod[]> {
+  return shippingMethods.map(cloneShippingMethod);
+}
+
+export async function getPaymentMethods(): Promise<PaymentMethod[]> {
+  return paymentMethods.map(clonePaymentMethod);
+}
+
+export async function getCustomerAddresses(userId: string): Promise<Address[]> {
+  const user = findUserRecord(userId);
+
+  if (!user) {
+    return [];
+  }
+
+  return user.addresses.map(cloneAddress);
+}
+
+export async function addCustomerAddress(
+  userId: string,
+  payload: AddressInput,
+): Promise<Address> {
+  const user = findUserRecord(userId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const address = createAddressRecord(payload);
+
+  user.addresses.push(address);
+
+  if (address.isDefault) {
+    user.addresses = user.addresses.map((entry) => ({
+      ...entry,
+      isDefault: entry.id === address.id,
+      formatted: entry.formatted || formatAddressLines(entry),
+    }));
+    user.defaultAddress = user.addresses.find(
+      (entry) => entry.id === address.id,
+    );
+  } else if (!user.defaultAddress) {
+    user.defaultAddress = address;
+    address.isDefault = true;
+  }
+
+  return cloneAddress(address);
+}
+
+export async function setDefaultCustomerAddress(
+  userId: string,
+  addressId: string,
+): Promise<Address | undefined> {
+  const user = findUserRecord(userId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const target = user.addresses.find((entry) => entry.id === addressId);
+
+  if (!target) {
+    throw new Error("Address not found");
+  }
+
+  user.addresses = user.addresses.map((entry) => ({
+    ...entry,
+    isDefault: entry.id === addressId,
+    formatted: entry.formatted || formatAddressLines(entry),
+  }));
+
+  const defaultAddress = user.addresses.find((entry) => entry.id === addressId);
+  user.defaultAddress = defaultAddress;
+
+  return defaultAddress ? cloneAddress(defaultAddress) : undefined;
 }
 
 function createEmptyCart(): Cart {
@@ -521,11 +694,13 @@ export async function getCouponByCode(
 }
 
 export async function getCurrentUser(): Promise<User | undefined> {
-  return users[0];
+  const user = users[0];
+  return user ? cloneUserRecord(user) : undefined;
 }
 
 export async function getUserById(id: string): Promise<User | undefined> {
-  return users.find((user) => user.id === id);
+  const user = users.find((entry) => entry.id === id);
+  return user ? cloneUserRecord(user) : undefined;
 }
 
 export async function getUserOrders(userId: string): Promise<Order[]> {
@@ -541,7 +716,9 @@ export async function getOrderById(
 export async function getLoyaltyAccount(
   userId: string,
 ): Promise<PointAccount | undefined> {
-  return loyaltyAccounts.find((account) => account.userId === userId);
+  const account = loyaltyAccounts.find((entry) => entry.userId === userId);
+
+  return account ? clonePointAccount(account) : undefined;
 }
 
 export async function getCollection(

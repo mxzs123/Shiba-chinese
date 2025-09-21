@@ -1,0 +1,44 @@
+import type { Metadata } from "next";
+
+import { CheckoutClient } from "@/app/_shared";
+import {
+  getAvailableCoupons,
+  getCart,
+  getCurrentUser,
+  getPaymentMethods,
+  getShippingMethods,
+} from "lib/api";
+
+export const metadata: Metadata = {
+  title: "结算",
+  description: "确认收货信息与支付方式，完成订单提交。",
+};
+
+export default async function CheckoutPage() {
+  const [cart, customer, shippingMethods, paymentMethods, availableCoupons] =
+    await Promise.all([
+      getCart(),
+      getCurrentUser(),
+      getShippingMethods(),
+      getPaymentMethods(),
+      getAvailableCoupons(),
+    ]);
+
+  return (
+    <div className="mx-auto w-full max-w-6xl px-4 py-10 lg:px-0">
+      <header className="mb-8">
+        <h1 className="text-3xl font-semibold text-neutral-900">确认订单</h1>
+        <p className="mt-2 text-sm text-neutral-500">
+          核对收货信息、配送方式与支付方式后提交订单。
+        </p>
+      </header>
+      <CheckoutClient
+        cart={cart}
+        customer={customer}
+        shippingMethods={shippingMethods}
+        paymentMethods={paymentMethods}
+        availableCoupons={availableCoupons}
+      />
+    </div>
+  );
+}

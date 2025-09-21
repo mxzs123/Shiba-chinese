@@ -7,3 +7,4 @@ export { ProductCard } from "./ProductCard";
 export { DesktopSearchView } from "./search/DesktopSearchView";
 export { Rating } from "./Rating";
 export { SkuSelector } from "./SkuSelector";
+export { CheckoutClient } from "./checkout/CheckoutClient";

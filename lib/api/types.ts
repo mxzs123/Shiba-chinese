@@ -95,6 +95,43 @@ export type Address = {
   formatted?: string[];
 };
 
+export type AddressInput = {
+  id?: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  company?: string;
+  country: string;
+  countryCode: string;
+  province?: string;
+  city: string;
+  district?: string;
+  postalCode?: string;
+  address1: string;
+  address2?: string;
+  isDefault?: boolean;
+};
+
+export type ShippingMethod = {
+  id: string;
+  name: string;
+  carrier: string;
+  description?: string;
+  price: Money;
+  estimatedDelivery?: string;
+};
+
+export type PaymentMethodType = "qr_code" | "external" | "cash_on_delivery";
+
+export type PaymentMethod = {
+  id: string;
+  name: string;
+  description?: string;
+  type: PaymentMethodType;
+  disabled?: boolean;
+  instructions?: string;
+};
+
 export type PointTransactionType = "earn" | "redeem" | "adjust";
 
 export type PointTransaction = {

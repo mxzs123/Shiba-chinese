@@ -6,8 +6,10 @@ import type {
   Menu,
   Order,
   Page,
+  PaymentMethod,
   PointAccount,
   Product,
+  ShippingMethod,
   User,
 } from "./types";
 
@@ -49,6 +51,43 @@ const demoAddress: Address = {
   isDefault: true,
   formatted: ["上海市黄浦区中山东一路 12 号", "1001 室", "上海", "中国 200001"],
 };
+
+const desktopShippingMethods: ShippingMethod[] = [
+  {
+    id: "ship-sf-same-day",
+    name: "当日速配",
+    carrier: "顺丰速运",
+    description: "16:00 前支付最快当日送达，限核心城区",
+    price: { amount: "25.00", currencyCode: CURRENCY },
+    estimatedDelivery: "当日送达",
+  },
+  {
+    id: "ship-sf-standard",
+    name: "次日达",
+    carrier: "顺丰速运",
+    description: "默认线路，支持查看实时物流进度",
+    price: { amount: "12.00", currencyCode: CURRENCY },
+    estimatedDelivery: "预计 1-2 个工作日送达",
+  },
+  {
+    id: "ship-local-pickup",
+    name: "门店自提",
+    carrier: "芝园门店",
+    description: "下单后 2 小时可到店自提，凭提货码核销",
+    price: { amount: "0.00", currencyCode: CURRENCY },
+    estimatedDelivery: "2 小时后可提",
+  },
+];
+
+const desktopPaymentMethods: PaymentMethod[] = [
+  {
+    id: "pay-qr-shiba",
+    name: "自研扫码支付",
+    description: "支持微信 / 支付宝扫码，下单后展示二维码",
+    type: "qr_code",
+    instructions: "扫码完成支付后，由后端回调确认订单状态。",
+  },
+];
 
 const welcomeCoupon: Coupon = {
   id: "coupon-welcome",
@@ -110,6 +149,8 @@ export const users: User[] = [
 ];
 
 export const loyaltyAccounts: PointAccount[] = [loyaltyAccount];
+export const shippingMethods = desktopShippingMethods;
+export const paymentMethods = desktopPaymentMethods;
 
 export const products: ProductRecord[] = [
   {
