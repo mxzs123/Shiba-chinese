@@ -7,9 +7,10 @@ import { Suspense } from "react";
 import { ProductCard, Price } from "app/_shared";
 import { CartProvider } from "components/cart/cart-context";
 import { ProductProvider } from "components/product/product-context";
-import { Gallery } from "components/product/gallery";
+import { HeroGallery } from "components/product/hero-gallery";
 import { ProductDetailTabs } from "components/product/product-detail-tabs";
 import { AddToCartForm } from "@/app/_shared/pages/product/AddToCartForm";
+import { ReassuranceNotice } from "@/app/_shared/pages/product/ReassuranceNotice";
 import { getCart, getProduct, getProductRecommendations } from "lib/api";
 import type { Image, Product, ProductVariant } from "lib/api/types";
 import { Building2, Globe2, ShieldCheck, Stethoscope } from "lucide-react";
@@ -173,9 +174,12 @@ function getUsageGuidelines(product: Product): GuidelineSection[] {
   return [...sections, ...extraSections];
 }
 
-function GalleryFallback() {
+function ProductHeroGalleryFallback() {
   return (
-    <div className="relative aspect-square w-full overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-100" />
+    <>
+      <div className="relative aspect-square w-full overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-100 lg:col-start-1 lg:row-start-1" />
+      <div className="mt-5 hidden h-20 rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/80 lg:col-span-2 lg:row-start-2 lg:block lg:mt-6" />
+    </>
   );
 }
 
@@ -240,13 +244,11 @@ function ProductHero({
 
   return (
     <section className="rounded-3xl border border-neutral-200 bg-white p-6 sm:p-8 lg:p-12">
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-        <div className="space-y-6">
-          <Suspense fallback={<GalleryFallback />}>
-            <Gallery images={images} />
-          </Suspense>
-        </div>
-        <div className="flex flex-col gap-8">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:auto-rows-min">
+        <Suspense fallback={<ProductHeroGalleryFallback />}>
+          <HeroGallery images={images} />
+        </Suspense>
+        <div className="flex flex-col gap-8 lg:col-start-2 lg:row-start-1 lg:h-full">
           <div className="space-y-4">
             <AvailabilityBadge available={product.availableForSale} />
             <div className="space-y-3">
@@ -265,25 +267,8 @@ function ProductHero({
               currencyClassName="text-lg font-medium text-neutral-500"
             />
             <AddToCartForm product={product} />
-            <div className="grid grid-cols-1 gap-3 text-sm text-neutral-600 sm:grid-cols-2">
-              <div className="space-y-1 rounded-xl border border-neutral-200 bg-white p-4">
-                <p className="text-sm font-semibold text-neutral-900">
-                  药剂师在线答疑
-                </p>
-                <p className="text-xs leading-5 text-neutral-500">
-                  有疑问随时点击客服咨询按钮，连接日本注册药剂师，获取用药建议。
-                </p>
-              </div>
-              <div className="space-y-1 rounded-xl border border-neutral-200 bg-white p-4">
-                <p className="text-sm font-semibold text-neutral-900">
-                  正品保障承诺
-                </p>
-                <p className="text-xs leading-5 text-neutral-500">
-                  100% 确保日本原装正品，出库即附官方溯源码与批次证明。
-                </p>
-              </div>
-            </div>
           </div>
+          <ReassuranceNotice className="lg:mt-auto" />
         </div>
       </div>
     </section>
