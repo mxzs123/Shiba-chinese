@@ -1,13 +1,9 @@
 import clsx from "clsx";
 import Image from "next/image";
+
 import Label from "../label";
 
-export function GridTileImage({
-  isInteractive = true,
-  active,
-  label,
-  ...props
-}: {
+type GridTileImageProps = {
   isInteractive?: boolean;
   active?: boolean;
   label?: {
@@ -16,29 +12,39 @@ export function GridTileImage({
     currencyCode: string;
     position?: "bottom" | "center";
   };
-} & React.ComponentProps<typeof Image>) {
-  const { alt, src, ...imageProps } = props;
+  className?: string;
+} & React.ComponentProps<typeof Image>;
+
+export function GridTileImage({
+  isInteractive = true,
+  active = false,
+  label,
+  className,
+  alt,
+  src,
+  ...imageProps
+}: GridTileImageProps) {
   const resolvedAlt = alt ?? label?.title ?? "";
+  const wrapperClassName = clsx(
+    "group relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl border bg-white transition-colors",
+    isInteractive && "hover:border-neutral-300",
+    active
+      ? "border-teal-500 bg-teal-50/60 shadow-[0_0_0_1px_rgba(12,104,96,0.12)]"
+      : "border-neutral-200",
+    className,
+  );
 
   return (
-    <div
-      className={clsx(
-        "group flex h-full w-full items-center justify-center overflow-hidden rounded-lg border bg-white hover:border-blue-600",
-        {
-          relative: label,
-          "border-2 border-blue-600": active,
-          "border-neutral-200": !active,
-        },
-      )}
-    >
+    <div className={wrapperClassName}>
       {src ? (
         <Image
-          className={clsx("relative h-full w-full object-contain", {
-            "transition duration-300 ease-in-out group-hover:scale-105":
-              isInteractive,
-          })}
-          src={src}
           alt={resolvedAlt}
+          src={src}
+          className={clsx(
+            "relative h-full w-full object-contain",
+            isInteractive &&
+              "transition-transform duration-300 ease-out group-hover:scale-[1.03]",
+          )}
           {...imageProps}
         />
       ) : null}
@@ -53,3 +59,5 @@ export function GridTileImage({
     </div>
   );
 }
+
+export default GridTileImage;
