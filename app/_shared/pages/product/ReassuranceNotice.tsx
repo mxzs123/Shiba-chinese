@@ -25,11 +25,8 @@ export function ReassuranceNotice({ className }: ReassuranceNoticeProps) {
         className,
       )}
     >
-      <header className="space-y-1">
+      <header>
         <p className="text-sm font-semibold text-neutral-900">安心服务提示</p>
-        <p className="text-xs text-neutral-500">
-          下单前后如需进一步确认，可随时联系芝园药师团队。
-        </p>
       </header>
       <div className="grid grid-cols-1 gap-3 text-sm text-neutral-600 sm:grid-cols-2">
         {assurances.map((item) => (
