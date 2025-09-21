@@ -67,3 +67,5 @@ export function AddToCartForm({ product }: { product: Product }) {
     </AddToCartButton>
   );
 }
+
+export default AddToCartForm;

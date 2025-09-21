@@ -1,0 +1,23 @@
+import { Carousel } from "components/carousel";
+import { ThreeItemGrid } from "components/grid/three-items";
+import Footer from "components/layout/footer";
+
+export const metadata = {
+  description:
+    "High-performance ecommerce store built with Next.js and a pluggable commerce backend.",
+  openGraph: {
+    type: "website",
+  },
+};
+
+export function HomePage() {
+  return (
+    <>
+      <ThreeItemGrid />
+      <Carousel />
+      <Footer />
+    </>
+  );
+}
+
+export default HomePage;
