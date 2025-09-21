@@ -1,9 +1,9 @@
 "use client";
 
-import { Loader2, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
-import { cn } from "lib/utils";
+import { PrimaryButton } from "./PrimaryButton";
 
 export type AddToCartButtonProps = {
   onAdd?: () => Promise<void> | void;
@@ -36,21 +36,16 @@ export function AddToCartButton({
   };
 
   return (
-    <button
+    <PrimaryButton
       type="button"
       onClick={handleClick}
-      disabled={disabled || loading}
-      className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-500 disabled:cursor-not-allowed disabled:bg-neutral-300",
-        className,
-      )}
+      disabled={disabled}
+      className={className}
+      loading={loading}
+      loadingText={loadingText}
+      leadingIcon={<ShoppingCart className="h-4 w-4" aria-hidden />}
     >
-      {loading ? (
-        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-      ) : (
-        <ShoppingCart className="h-4 w-4" aria-hidden />
-      )}
-      <span>{loading ? loadingText : (children ?? "加入购物车")}</span>
-    </button>
+      {children ?? "加入购物车"}
+    </PrimaryButton>
   );
 }

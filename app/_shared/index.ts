@@ -1,4 +1,5 @@
 export { AddToCartButton } from "./AddToCartButton";
+export { PrimaryButton } from "./PrimaryButton";
 export { CartBadge } from "./CartBadge";
 export { CartSheet } from "./CartSheet";
 export { Price } from "./Price";

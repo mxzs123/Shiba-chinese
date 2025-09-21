@@ -5,12 +5,13 @@ import Link from "next/link";
 import { useEffect, useMemo } from "react";
 import { useFormStatus } from "react-dom";
 
+import { PrimaryButton } from "app/_shared";
 import { DeleteItemButton } from "components/cart/delete-item-button";
 import { EditItemQuantityButton } from "components/cart/edit-item-quantity-button";
-import LoadingDots from "components/loading-dots";
 import Price from "components/price";
 import { DEFAULT_OPTION } from "lib/constants";
 import { createUrl } from "lib/utils";
+import { CreditCard } from "lucide-react";
 
 import {
   createCartAndSetCookie,
@@ -22,13 +23,15 @@ function CheckoutButton() {
   const { pending } = useFormStatus();
 
   return (
-    <button
+    <PrimaryButton
       type="submit"
-      disabled={pending}
-      className="block w-full rounded-full bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+      className="w-full justify-center"
+      loading={pending}
+      loadingText="跳转中..."
+      leadingIcon={<CreditCard className="h-4 w-4" aria-hidden />}
     >
-      {pending ? <LoadingDots className="bg-white" /> : "去结算"}
-    </button>
+      去结算
+    </PrimaryButton>
   );
 }
 
@@ -164,28 +167,6 @@ export function CartContent() {
               <Price
                 amount={cart.cost.subtotalAmount.amount}
                 currencyCode={cart.cost.subtotalAmount.currencyCode}
-                className="text-right text-sm text-neutral-900"
-              />
-            </dd>
-          </div>
-          {cart.cost.discountAmount ? (
-            <div className="flex items-center justify-between text-emerald-600">
-              <dt>优惠折扣</dt>
-              <dd>
-                <Price
-                  amount={cart.cost.discountAmount.amount}
-                  currencyCode={cart.cost.discountAmount.currencyCode}
-                  className="text-right text-sm text-emerald-600"
-                />
-              </dd>
-            </div>
-          ) : null}
-          <div className="flex items-center justify-between">
-            <dt>预计税费</dt>
-            <dd>
-              <Price
-                amount={cart.cost.totalTaxAmount.amount}
-                currencyCode={cart.cost.totalTaxAmount.currencyCode}
                 className="text-right text-sm text-neutral-900"
               />
             </dd>

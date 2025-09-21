@@ -13,9 +13,9 @@
 | 前景       | `--foreground`                           | `text-foreground`                        | `oklch(0.145 0 0)`                     | 主文本颜色，满足 8:1 对比        |
 | 卡片       | `--card` / `--card-foreground`           | `bg-card` / `text-card-foreground`       | `oklch(1 0 0)` / `oklch(0.145 0 0)`    | 信息容器与正文组合               |
 | Popover    | `--popover` / `--popover-foreground`     | `bg-popover`                             | 同卡片                                 | 用于浮层与 Tooltip               |
-| 主要按钮   | `--primary` / `--primary-foreground`     | `bg-primary` / `text-primary-foreground` | `#019d68` / `#ffffff`                  | 签名式主色，SR ratio 4.5+        |
+| 主要按钮   | `--primary` / `--primary-foreground`     | `bg-primary` / `text-primary-foreground` | `#049e6b` / `#ffffff`                  | 签名式主色，SR ratio 4.5+        |
 | 次要按钮   | `--secondary` / `--secondary-foreground` | `bg-secondary`                           | `oklch(0.97 0 0)` / `oklch(0.205 0 0)` | 低强调操作，保持 3:1             |
-| 提示色     | `--accent` / `--accent-foreground`       | `bg-accent`                              | `#019d68` / `#ffffff`                  | 点状提醒，与主色一致减轻认知负担 |
+| 提示色     | `--accent` / `--accent-foreground`       | `bg-accent`                              | `#049e6b` / `#ffffff`                  | 点状提醒，与主色一致减轻认知负担 |
 | 错误       | `--destructive` / `--foreground`         | `bg-destructive`                         | `oklch(0.577 0.245 27.325)`            | 致命错误，必须达 4.5:1           |
 | 边框       | `--border`                               | `border-border`                          | `oklch(0.922 0 0)`                     | 规则清晰但不过度强调             |
 | 输入框     | `--input`                                | `border-input`                           | `oklch(0.922 0 0)`                     | 输入控件描边                     |
@@ -101,7 +101,7 @@
 ## 图标与动效
 
 - 图标统一封装在 `components/icons/`；默认尺寸 20px，与文字对齐时设置 `className="size-5"`。
-- 颜色继承文字，禁用状态降低透明度至 40%。
+- 默认图标颜色使用品牌主色 `#049e6b`（可通过 `text-primary` 或 `text-[var(--primary)]` 引用）；禁用状态降低透明度至 40%。
 - 动效以 Framer Motion 实现：
   - 入场使用 `transition={{ type: "spring", damping: 20, stiffness: 180 }}` 或简化 `ease-out`。
   - 退场使用 `ease-in`，时间 ≤ 180ms。
