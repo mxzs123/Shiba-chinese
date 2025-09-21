@@ -74,54 +74,26 @@ export function Gallery({
       </div>
 
       {hasMultiple ? (
-        <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            formAction={changeImage(previousIndex)}
-            aria-label="上一张商品图"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 transition hover:border-teal-200 hover:text-teal-600"
-          >
-            <ArrowLeftIcon className="h-4 w-4" />
-          </button>
-          <ul className="flex flex-1 items-center gap-3 overflow-x-auto">
-            {images.map((image, index) => {
-              const isActive = index === imageIndex;
-
-              return (
-                <li key={image.src} className="shrink-0">
-                  <button
-                    type="submit"
-                    formAction={changeImage(index)}
-                    aria-label={`查看第 ${index + 1} 张商品图`}
-                    className="relative block h-20 w-20 overflow-hidden rounded-2xl border border-neutral-200 bg-white"
-                  >
-                    <GridTileImage
-                      alt={image.altText}
-                      src={image.src}
-                      width={80}
-                      height={80}
-                      active={isActive}
-                    />
-                    {isActive ? (
-                      <span
-                        aria-hidden
-                        className="absolute inset-0 rounded-2xl ring-2 ring-inset ring-teal-500"
-                      />
-                    ) : null}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-          <button
-            type="submit"
-            formAction={changeImage(nextIndex)}
-            aria-label="下一张商品图"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 transition hover:border-teal-200 hover:text-teal-600"
-          >
-            <ArrowRightIcon className="h-4 w-4" />
-          </button>
-        </div>
+        <ul className="flex items-center gap-3 overflow-x-auto">
+          {images.map((image, index) => (
+            <li key={image.src} className="shrink-0">
+              <button
+                type="submit"
+                formAction={changeImage(index)}
+                aria-label={`查看第 ${index + 1} 张商品图`}
+                className="block h-20 w-20 overflow-hidden rounded-2xl border border-neutral-200 bg-white"
+              >
+                <GridTileImage
+                  alt={image.altText}
+                  src={image.src}
+                  width={80}
+                  height={80}
+                  active={index === imageIndex}
+                />
+              </button>
+            </li>
+          ))}
+        </ul>
       ) : null}
     </form>
   );
