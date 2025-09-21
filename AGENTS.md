@@ -2,11 +2,11 @@
 
 ## 项目结构与模块组织
 
-本仓库基于 Next.js App Router。页面与路由集中在 `app/`，其中 `/product`、`/search`、`/[page]` 等目录映射核心业务流；`app/api/revalidate` 提供后端通知后的增量刷新入口。UI 组件位于 `components/`，按功能域拆分到 `cart/`、`layout/`、`product/` 等子目录，方便逐层替换，公共布局相关的图片与 SVG 可集中在 `components/icons/` 便于复用。数据访问封装在 `lib/api/`：`index.ts` 负责第三方后端交互或模拟数据拼装，`mock-data.ts` 保存演示商品、集合与页面内容，`types.ts` 统一接口契约，同时导出辅助查找函数。字体资源放在 `fonts/`，公共文档记录在 `docs/`，若需放置静态宣传图可新建 `public/assets/` 并在组件中引用。
+本仓库基于 Next.js App Router。页面与路由集中在 `app/`，其中 `/product`、`/search`、`/[page]` 等目录映射核心业务流；`app/api/revalidate` 提供后端通知后的增量刷新入口。UI 组件位于 `components/`，按功能域拆分到 `cart/`、`layout/`、`product/` 等子目录，方便逐层替换，公共布局相关的图片与 SVG 可集中在 `components/icons/` 便于复用。数据访问封装在 `lib/api/`：`index.ts` 负责第三方后端交互或模拟数据拼装，`mock-data.ts` 保存演示商品、集合与页面内容，`types.ts` 统一接口契约，同时导出辅助查找函数。字体资源放在 `fonts/`，公共文档记录在 `docs/`。
 
 ## shadcn/ui 集成
 
-已通过 `npx shadcn@latest init` 初始化 UI 模板，配置文件位于 `components.json`，主题为 `new-york` 且基础色选择 `neutral`。Tailwind v4 已自动注入 `@theme inline` 变量以及 `@custom-variant dark`，新增依赖包括 `class-variance-authority`、`lucide-react`、`tailwind-merge` 与 `tw-animate-css`。如需新增组件，使用 `npx shadcn@latest add <component>`，CLI 会同步生成到 `components/ui/` 并复用 `@/lib/utils` 内的 `cn` 方法；如需调整主题变量，可直接在 `app/globals.css` 中修改。
+新增组件：`npx shadcn@latest add <component>`（生成到 `components/ui/` 并复用 `@/lib/utils` 的 `cn`）。主题变量入口：`app/globals.css`。
 
 ## 动画、图标与状态管理
 
@@ -16,21 +16,19 @@
 
 默认字体切换为 Inter，并在 `app/layout.tsx` 暴露 `--font-inter` 变量；`app/globals.css` 内的 `--font-sans` 将 Inter 与系统中文字体（`PingFang SC`、`Microsoft YaHei`、`Noto Sans SC` 等）组合，确保中英混排一致性。新增组件请避免手动覆盖 `font-family`，如需定制请基于 `--font-sans` 或 `--font-inter` 扩展。
 
-## 构建、测试与开发命令
-
-本项目使用 npm 脚本统一工具链：`npm run dev` 启动 Turbopack 开发服务器（默认 http://localhost:3000），热更新依赖 RSC 与 Server Actions；`npm run build` 生成生产构建，需在提交与发版前运行，捕获类型或打包错误；`npm run start` 以生产模式预览构建结果，适合联调阶段的终端验收，并可复现实际缓存策略；`npm run lint` 调用 Next.js 提供的 ESLint 集成；`npm run prettier:check` / `npm run prettier` 负责格式校验与自动修复，确保提交记录保持整洁一致。
-
 ## 代码风格与命名规范
 
 全部使用 TypeScript 函数组件，两空格缩进。导入顺序推荐：第三方包 → `lib/` → 相对路径，命名导出优先。组件文件、导出保持 PascalCase，hooks 用 camelCase，常量使用 SCREAMING_SNAKE_CASE。Tailwind v4 原子类建议按布局 → 间距 → 视觉顺序书写，复用场景可抽提成子组件或工具函数；涉及复杂交互时，为关键容器添加注释说明设计意图。已启用 ESLint（`next/core-web-vitals` + `prettier`），提交前务必运行 `npm run lint` 与 `npm run prettier:check`。
 
 ## 测试指引
 
-暂未接入自动化测试，计划落地 Jest + `next/jest` 与 React Testing Library。组件测试文件命名为 `Component.test.tsx` 并与源码邻近；跨模块用例可集中在 `tests/`。Mock `lib/api` 中的请求层即可隔离后端依赖，必要时使用 MSW 或 `fetch` polyfill。当前阶段需结合 `npm run prettier:check`、关键购买流程（搜索 → 商品详情 → 加入购物车）、移动端断点、深浅色主题以及重要文案的多语言展示做手动验证。
+当前阶段手动验证清单：
 
-## 提交与拉取请求规范
-
-提交信息保持简短祈使句，必要时辅以 `feat:`、`fix:` 等前缀说明范围。PR 必须关联 Issue，UI 变更附截图或录屏，并标记配置/依赖调整。合并前确认 `npm run build` 与 `npm run prettier:check` 均通过，同时列出手动验证步骤以便复核。
+- 运行 `npm run prettier:check` 保持格式一致。
+- 关键购买流程：搜索 → 商品详情 → 加入购物车。
+- 移动端断点与导航交互。
+- 深/浅色主题切换与样式一致性。
+- 重要文案的多语言展示。
 
 ## 环境与配置提示
 
@@ -60,14 +58,15 @@
 - 重写应附带 `x-device` 并设置 `Vary: x-device`，确保缓存隔离与可观测性。
 - 设备分流放在 Middleware，根布局不做两套 DOM 的客户端条件切换，避免水合错位。
 
+> 重要澄清（经官方文档验证）：不要在 `app/(desktop)` / `app/(mobile)` 路由组下维护两套同名页面。路由组不改变真实路径，既无法作为重写锚点，也容易造成同路径缓存/预取串包与水合告警。请使用真实内部子路径 `/d`、`/m` 并通过 Middleware 重写。
+
 ### 目录组织
 
 - `app/d`：桌面外壳（真实渲染路径）。
 - `app/m`：移动外壳（真实渲染路径）。
 - `app/_shared`：复用的领域组件与纯展示逻辑（如 ProductCard、Price、Rating、SkuSelector；以及 format/currency 等工具）。
 - `app/page.tsx`：可选兜底或静态说明。
-- `middleware.ts`：UA → `x-device` 判定与重写。
-- Monorepo 场景：`packages/ui`（设计系统）、`packages/api`（OpenAPI 生成 SDK）。
+- `middleware.ts`：UA 判定、query/cookie 覆盖与重写；设置 `x-device` 与 `Vary: x-device`。
 
 ### Middleware 策略
 
@@ -77,11 +76,64 @@
 - 头与缓存：设置 `x-device` 与 `Vary: x-device`，必要时持久化 `device` 覆盖到 cookie。
 - 匹配：限定 Middleware 仅作用于应用路由，排除静态资源路径。
 
+#### 实施要点（落地规范）
+
+- Cookie 与头部：
+  - 覆盖用 `device` Cookie（取值 `d|m`），不要把 Cookie 命名为 `x-device`。
+  - 在请求/响应头使用 `x-device` 标记设备，并设置响应头 `Vary: x-device` 做缓存隔离。
+- UA 识别：`userAgent(req)`（`next/server`）读取 `device.type`，将 `mobile`、`tablet` 归为 `m`，其余归为 `d`。
+- 头部透传：在 `rewrite` 调用中通过 `request.headers` 透传 `x-device`，使其参与上游（RSC/预取）缓存键。
+- 覆盖优先级：`?device` > `device` Cookie > UA 推断；当存在 `?device` 且与 Cookie 不一致时，写回 Cookie。
+- 匹配范围：建议排除 `api`、`/_next/static`、`/_next/image`、`favicon.ico`、`robots.txt`、`sitemap.xml` 等路径。
+
+#### `middleware.ts` 示例（精简）
+
+```ts
+import { NextRequest, NextResponse, userAgent } from "next/server";
+
+export function middleware(req: NextRequest) {
+  const url = req.nextUrl;
+  const q = url.searchParams.get("device"); // query 覆盖
+  const c = req.cookies.get("device")?.value; // cookie 覆盖
+  const { device } = userAgent(req); // UA 推断
+  const inferred =
+    device.type === "mobile" || device.type === "tablet" ? "m" : "d";
+  const dev = (q || c || inferred) === "m" ? "m" : "d";
+
+  // 目标内部路径（地址栏保持原始 URL）
+  const dest = url.clone();
+  dest.pathname = `/${dev}${url.pathname}`;
+
+  // 将 x-device 透传到上游请求头，参与缓存键
+  const headers = new Headers(req.headers);
+  headers.set("x-device", dev);
+
+  const res = NextResponse.rewrite(dest, { request: { headers } });
+  res.headers.set("x-device", dev);
+  res.headers.set("Vary", "x-device");
+  if (q && q !== c) res.cookies.set("device", dev, { path: "/" });
+  return res;
+}
+
+export const config = {
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml).*)",
+  ],
+};
+```
+
 ### 路由形状与实现约束
 
 - `app/d` 与 `app/m` 路由形状需一致（如都具备 `product/[slug]/page.tsx`）。
 - 业务组件尽量放入 `app/_shared`，减少重复与发散。
 - 链接/跳转（`next/link`）始终使用用户 URL（不含 `/d`、`/m`），由 Middleware 负责分流。
+
+#### 开发 Checklist（桌面/移动外壳）
+
+- `app/d` 与 `app/m` 路由树一致，页面主体复用 `app/_shared` 组合。
+- 各自 `(shell)/layout.tsx` 承载导航/页眉/页脚等外壳差异；尽量保持骨架 DOM 结构一致，减少水合差异。
+- 组件内的 `<Link>` 和编程式跳转统一指向用户 URL，不携带 `/d`、`/m` 前缀。
+- 若必须读取窗口尺寸，仅做微交互，不改变关键节点顺序与数量。
 
 ### SSR 与水合一致性
 

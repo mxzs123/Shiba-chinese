@@ -36,6 +36,7 @@
 - `npm run dev`：启动 Turbopack 开发模式。
 - `npm run build`：构建生产包。
 - `npm run start`：预览生产构建。
+- `npm run lint`：运行 ESLint（Next.js 集成）。
 - `npm run prettier` / `npm run prettier:check`：格式化与校验代码风格。
 
 ## 目录速览
