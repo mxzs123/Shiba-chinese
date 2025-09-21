@@ -259,21 +259,30 @@ function ProductHero({
             </div>
           </div>
           <div className="space-y-6 rounded-2xl border border-neutral-100 bg-neutral-50/80 p-6">
-            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-              <Price
-                value={price}
-                className="text-4xl font-semibold text-neutral-900"
-                currencyClassName="text-lg font-medium text-neutral-500"
-              />
-              <span className="text-xs text-neutral-500">
-                含税价 · 预计 24 小时内出库
-              </span>
-            </div>
+            <Price
+              value={price}
+              className="text-4xl font-semibold text-neutral-900"
+              currencyClassName="text-lg font-medium text-neutral-500"
+            />
             <AddToCartForm product={product} />
-            <ul className="space-y-1.5 text-xs text-neutral-500">
-              <li>・ 关税与检疫流程由芝园专员全程跟进。</li>
-              <li>・ 订单确认后可预约药剂师进行用药复核。</li>
-            </ul>
+            <div className="grid grid-cols-1 gap-3 text-sm text-neutral-600 sm:grid-cols-2">
+              <div className="space-y-1 rounded-xl border border-neutral-200 bg-white p-4">
+                <p className="text-sm font-semibold text-neutral-900">
+                  药剂师在线答疑
+                </p>
+                <p className="text-xs leading-5 text-neutral-500">
+                  有疑问随时点击客服咨询按钮，连接日本注册药剂师，获取用药建议。
+                </p>
+              </div>
+              <div className="space-y-1 rounded-xl border border-neutral-200 bg-white p-4">
+                <p className="text-sm font-semibold text-neutral-900">
+                  正品保障承诺
+                </p>
+                <p className="text-xs leading-5 text-neutral-500">
+                  100% 确保日本原装正品，出库即附官方溯源码与批次证明。
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
