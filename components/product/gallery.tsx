@@ -12,85 +12,116 @@ export function Gallery({
 }) {
   const { state, updateImage } = useProduct();
   const updateURL = useUpdateURL();
-  const imageIndex = state.image ? parseInt(state.image) : 0;
+  const imageIndex = state.image ? parseInt(state.image, 10) : 0;
 
-  const nextImageIndex = imageIndex + 1 < images.length ? imageIndex + 1 : 0;
-  const previousImageIndex =
-    imageIndex === 0 ? images.length - 1 : imageIndex - 1;
+  const totalImages = images.length;
+  const hasMultiple = totalImages > 1;
+  const nextIndex = imageIndex + 1 < totalImages ? imageIndex + 1 : 0;
+  const previousIndex = imageIndex === 0 ? totalImages - 1 : imageIndex - 1;
 
-  const buttonClassName =
-    "h-full px-6 transition-all ease-in-out hover:scale-110 hover:text-black flex items-center justify-center";
+  const changeImage = (index: number) => () => {
+    const newState = updateImage(index.toString());
+    updateURL(newState);
+  };
 
   return (
-    <form>
-      <div className="relative aspect-square h-full max-h-[550px] w-full overflow-hidden">
-        {images[imageIndex] && (
+    <form className="space-y-5">
+      <div className="relative aspect-square w-full overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-50">
+        {images[imageIndex] ? (
           <Image
-            className="h-full w-full object-contain"
             fill
-            sizes="(min-width: 1024px) 66vw, 100vw"
+            priority
+            className="h-full w-full object-contain"
+            sizes="(min-width: 1024px) 50vw, 100vw"
             alt={images[imageIndex]?.altText as string}
             src={images[imageIndex]?.src as string}
-            priority={true}
           />
-        )}
+        ) : null}
 
-        {images.length > 1 ? (
-          <div className="absolute bottom-[15%] flex w-full justify-center">
-            <div className="mx-auto flex h-11 items-center rounded-full border border-white bg-neutral-50/80 text-neutral-500 backdrop-blur-sm">
-              <button
-                formAction={() => {
-                  const newState = updateImage(previousImageIndex.toString());
-                  updateURL(newState);
-                }}
-                aria-label="Previous product image"
-                className={buttonClassName}
-              >
-                <ArrowLeftIcon className="h-5" />
-              </button>
-              <div className="mx-1 h-6 w-px bg-neutral-500"></div>
-              <button
-                formAction={() => {
-                  const newState = updateImage(nextImageIndex.toString());
-                  updateURL(newState);
-                }}
-                aria-label="Next product image"
-                className={buttonClassName}
-              >
-                <ArrowRightIcon className="h-5" />
-              </button>
+        {hasMultiple ? (
+          <>
+            <button
+              type="submit"
+              formAction={changeImage(previousIndex)}
+              aria-label="上一张商品图"
+              className="group absolute left-4 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-2xl border border-white/70 bg-white/90 p-3 text-neutral-700 shadow-sm transition hover:border-teal-100 hover:text-teal-600"
+            >
+              <ArrowLeftIcon className="h-5 w-5 transition group-hover:-translate-x-0.5" />
+            </button>
+            <button
+              type="submit"
+              formAction={changeImage(nextIndex)}
+              aria-label="下一张商品图"
+              className="group absolute right-4 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-2xl border border-white/70 bg-white/90 p-3 text-neutral-700 shadow-sm transition hover:border-teal-100 hover:text-teal-600"
+            >
+              <ArrowRightIcon className="h-5 w-5 transition group-hover:translate-x-0.5" />
+            </button>
+            <div className="pointer-events-none absolute inset-x-0 bottom-5 flex justify-center gap-1.5">
+              {images.map((image, index) => (
+                <span
+                  key={image.src}
+                  aria-hidden
+                  className={`h-1.5 w-6 rounded-full transition ${
+                    index === imageIndex
+                      ? "bg-teal-500"
+                      : "bg-white/70 backdrop-blur"
+                  }`}
+                />
+              ))}
             </div>
-          </div>
+          </>
         ) : null}
       </div>
 
-      {images.length > 1 ? (
-        <ul className="my-12 flex items-center flex-wrap justify-center gap-2 overflow-auto py-1 lg:mb-0">
-          {images.map((image, index) => {
-            const isActive = index === imageIndex;
+      {hasMultiple ? (
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            formAction={changeImage(previousIndex)}
+            aria-label="上一张商品图"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 transition hover:border-teal-200 hover:text-teal-600"
+          >
+            <ArrowLeftIcon className="h-4 w-4" />
+          </button>
+          <ul className="flex flex-1 items-center gap-3 overflow-x-auto">
+            {images.map((image, index) => {
+              const isActive = index === imageIndex;
 
-            return (
-              <li key={image.src} className="h-20 w-20">
-                <button
-                  formAction={() => {
-                    const newState = updateImage(index.toString());
-                    updateURL(newState);
-                  }}
-                  aria-label="Select product image"
-                  className="h-full w-full"
-                >
-                  <GridTileImage
-                    alt={image.altText}
-                    src={image.src}
-                    width={80}
-                    height={80}
-                    active={isActive}
-                  />
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+              return (
+                <li key={image.src} className="shrink-0">
+                  <button
+                    type="submit"
+                    formAction={changeImage(index)}
+                    aria-label={`查看第 ${index + 1} 张商品图`}
+                    className="relative block h-20 w-20 overflow-hidden rounded-2xl border border-neutral-200 bg-white"
+                  >
+                    <GridTileImage
+                      alt={image.altText}
+                      src={image.src}
+                      width={80}
+                      height={80}
+                      active={isActive}
+                    />
+                    {isActive ? (
+                      <span
+                        aria-hidden
+                        className="absolute inset-0 rounded-2xl ring-2 ring-inset ring-teal-500"
+                      />
+                    ) : null}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <button
+            type="submit"
+            formAction={changeImage(nextIndex)}
+            aria-label="下一张商品图"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 transition hover:border-teal-200 hover:text-teal-600"
+          >
+            <ArrowRightIcon className="h-4 w-4" />
+          </button>
+        </div>
       ) : null}
     </form>
   );

@@ -23,6 +23,7 @@ const CART_COOKIE_OPTIONS = {
 export async function addItem(
   prevState: any,
   selectedVariantId: string | undefined,
+  quantity = 1,
 ) {
   if (!selectedVariantId) {
     return "Error adding item to cart";
@@ -30,8 +31,12 @@ export async function addItem(
 
   try {
     const cookieStore = await cookies();
+    const normalizedQuantity = Math.max(
+      1,
+      Number.isFinite(quantity) ? quantity : 1,
+    );
     const cart = await addToCart([
-      { merchandiseId: selectedVariantId, quantity: 1 },
+      { merchandiseId: selectedVariantId, quantity: normalizedQuantity },
     ]);
 
     if (!cookieStore.get(CART_ID_COOKIE)) {
