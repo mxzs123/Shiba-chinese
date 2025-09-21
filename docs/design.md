@@ -1,170 +1,122 @@
-# 设计规范（Design System）
+「安心感」设计规范 (Anshin-kan Design System)
+我们的北极星指标：让每一次点击都像在值得信赖的药师指导下完成。本规范保留品牌语气，同时补足设计 Token、组件尺寸与主题切换的可执行细节。所有规则与 AGENTS.md 的工程约束保持一致：Next.js App Router、Tailwind v4、shadcn/ui（new-york，baseColor: neutral）、Inter 作为主字体，`--font-sans` 聚合中英混排。
 
-面向本仓库的统一 UI 设计规范。该规范与 AGENTS.md 中的工程约束保持一致：
+## 快速参考
+在动笔或编码前，可先对照下列速查表确认核心 token 与组件基线。所有值的权威来源是 `app/globals.css`；Tailwind 原子类通过 `@theme inline` 自动映射 `--color-*` 变量。
 
-- 技术栈：Next.js App Router + Tailwind v4 + shadcn/ui（new-york，baseColor: neutral）
-- 主题与变量：使用 `@theme inline` 与 CSS 自定义属性
-- 字体：Inter 作为主字体，`--font-sans` 聚合中英混排
+### 颜色语义
+| 语义 | CSS 变量 | Tailwind 变量 | Light 值 | 说明 |
+| --- | --- | --- | --- | --- |
+| 背景 | `--background` | `bg-background` | `oklch(1 0 0)` | 默认页面背景，维持「間」的留白 |
+| 前景 | `--foreground` | `text-foreground` | `oklch(0.145 0 0)` | 主文本颜色，满足 8:1 对比 |
+| 卡片 | `--card` / `--card-foreground` | `bg-card` / `text-card-foreground` | `oklch(1 0 0)` / `oklch(0.145 0 0)` | 信息容器与正文组合 |
+| Popover | `--popover` / `--popover-foreground` | `bg-popover` | 同卡片 | 用于浮层与 Tooltip |
+| 主要按钮 | `--primary` / `--primary-foreground` | `bg-primary` / `text-primary-foreground` | `#019d68` / `#ffffff` | 签名式主色，SR ratio 4.5+ |
+| 次要按钮 | `--secondary` / `--secondary-foreground` | `bg-secondary` | `oklch(0.97 0 0)` / `oklch(0.205 0 0)` | 低强调操作，保持 3:1 |
+| 提示色 | `--accent` / `--accent-foreground` | `bg-accent` | `#019d68` / `#ffffff` | 点状提醒，与主色一致减轻认知负担 |
+| 错误 | `--destructive` / `--foreground` | `bg-destructive` | `oklch(0.577 0.245 27.325)` | 致命错误，必须达 4.5:1 |
+| 边框 | `--border` | `border-border` | `oklch(0.922 0 0)` | 规则清晰但不过度强调 |
+| 输入框 | `--input` | `border-input` | `oklch(0.922 0 0)` | 输入控件描边 |
+| 焦点环 | `--ring` | `ring-ring` | `oklch(0.708 0 0)` | 辅助键盘导航 |
+| 侧栏系 | `--sidebar-*` | `bg-sidebar` 等 | `oklch(0.985 0 0)` 等 | 侧栏独立调色，保持温差感 |
+| 数据可视化 | `--chart-1` … `--chart-5` | `text-chart-1` 等 | 见 `globals.css` | 定量对照的配色参考 |
 
-本文定义主题色、圆角弧度、排版、动效、组件尺寸等标准与使用规则，并说明如何在 `app/globals.css` 中落地与演进。
+> 构建设计稿时，请直接标注语义名称（如「Primary / Default」），而非写死颜色值，确保研发能复用 token。
 
-## 1. 设计目标
+### 圆角与分层
+| Token | Light 值 | 建议用途 |
+| --- | --- | --- |
+| `--radius` | `0.625rem` | 卡片、弹窗的基础半径 |
+| `--radius-sm` | `calc(var(--radius) - 4px)` | 徽章、标签 |
+| `--radius-md` | `calc(var(--radius) - 2px)` | 按钮、输入框 |
+| `--radius-lg` | 与 `--radius` 相同 | 卡片壳体 |
+| `--radius-xl` | `calc(var(--radius) + 4px)` | 模态框等大型容器 |
 
-- 一致：跨页面与组件统一外观与交互反馈
-- 可扩展：变量化主题，支持品牌色扩展
-- 可实现：紧贴 shadcn/ui 约定与 Tailwind v4 能力，最小改动即可复用
-- 可维护：通过文档和 tokens 规范组件实现，减少分歧与重造
+| 层级 | 阴影建议 | 典型场景 |
+| --- | --- | --- |
+| Base | 无阴影 | 卡片列表、表格背景 |
+| Level 1 | `shadow-sm` | 按钮 hover、可点击控件 |
+| Level 2 | `shadow-md` | Popover、浮层 |
+| Level 3 | `shadow-lg` | 模态框、关键信息提示 |
 
-## 2. 主题架构与变量来源
+### 排版
+| 语义 | Tailwind 类 | 字号 / 行高 | 用途 |
+| --- | --- | --- | --- |
+| H1 | `text-3xl font-semibold` | 30px / 1.25 | 页面主标题 |
+| H2 | `text-2xl font-semibold` | 24px / 1.3 | 模块标题 |
+| H3 | `text-xl font-semibold` | 20px / 1.35 | 区块标题 |
+| Body | `text-base leading-7` | 16px / 1.7 | 正文说明 |
+| Body Small | `text-sm leading-6` | 14px / 1.6 | 次要说明、表单描述 |
+| Caption | `text-xs leading-5` | 12px / 1.5 | 标签、脚注 |
 
-- 主题层使用 CSS 变量承载语义色与尺寸，Tailwind v4 通过 `@theme inline` 映射为原子类：
-  - 变量声明：`app/globals.css :root`
-  - 原子映射：`@theme inline` 中的 `--color-*`、`--radius-*`
-  - shadcn/ui 组件默认消费上述语义变量；新增组件也应优先使用这些语义变量而非硬编码颜色/尺寸。
+字体统一使用 `font-sans`（Inter + 中文系统字体），除非有特定品牌需求。
 
-> 变量总览（与当前实现保持一致，更多见 app/globals.css）：
+### 间距与控件尺寸
+| 场景 | 建议值 | Tailwind 类 |
+| --- | --- | --- |
+| 主操作按钮高度 | 44px | `h-11` / `px-6` |
+| 次操作按钮高度 | 40px | `h-10` / `px-5` |
+| 输入框高度 | 40px | `h-10` / `px-4` |
+| 表单垂直间距 | 16px | `space-y-4` 或 `gap-4` |
+| 模块外边距 | 32px | `py-8`、`mt-8` |
+| 卡片内边距 | 24px | `p-6` |
+| 列表项间距 | 12~16px | `gap-3` ~ `gap-4` |
 
-- 语义色：`--background`、`--foreground`、`--card`、`--popover`、`--primary`、`--secondary`、`--muted`、`--accent`、`--destructive`、`--border`、`--input`、`--ring`
-- 扩展色：`--chart-1..5`、`--sidebar-*`
-- 半径基准：`--radius`，派生：`--radius-sm`、`--radius-md`、`--radius-lg`、`--radius-xl`
+控件最小可点击区域保持 ≥ 40×40px，必要时通过额外的 `px`/`py` 补足。
 
-## 3. 颜色系统（Colors）
+## 设计支柱与目标
+我们继续以三大支柱指导全局设计决策：
+1. **医药品级别的正确性（0 容错）**：建立可维护、一致的实现策略。所有颜色、间距、排版均通过 Token 管理，避免临时值。
+2. **温泉旅馆般的おもてなし（预判需求）**：设计优先照顾高龄与低熟练用户，无障碍与键盘体验视为默认要求。
+3. **神社般的静寂（不打扰，只守护）**：克制视觉噪点，让界面成为内容的宁静容器。
 
-本项目基础色为中性（neutral），兼顾电商场景的可读性与内容优先。推荐遵循以下语义分层：
+## 主题架构与实现
+1. `:root` 内维护语义 Token；新增主题或 Token 时，保持命名在「语义而非表现」层面。
+2. `@theme inline` 将 `--color-*` 映射到 Tailwind 原子类，设计稿不需关心具体类名，只需标注语义。
+3. 新增组件必须通过 `cn` 与 Tailwind 原子类引用上述变量，避免硬编码颜色/间距。
 
-- 基础（Background & Surface）
+## 色彩使用细则
+- **层级优先**：先选语义层级（背景、表面、交互、状态），再选择对应 Token，杜绝自定义色块。
+- **密度控制**：Primary/Accent 同色系，避免页面出现超过 2 种高饱和度颜色。
+- **对比度**：正文、按钮文案与背景至少达到 4.5:1，高龄用户常用的说明文字至少 7:1。
+- **焦点状态**：`focus-visible` 必须显示 `ring`，Hover/Active 状态用于补充反馈但不改变 DOM 结构。
 
-  - `--background`：页面背景
-  - `--card` / `--popover`：容器/浮层背景
-  - `--border` / `--input`：边框与输入描边
+## 组件尺寸与布局
+- **按钮**：使用 shadcn/ui Button 作为基线；Primary 采用 `h-11 px-6 text-base font-semibold`，Secondary 保持 `h-10 px-5` 与 `border-border`。
+- **输入控件**：Input、Select、Combobox 统一 `h-10 px-4`，错误状态添加 `data-[invalid=true]:border-destructive`。
+- **卡片**：默认 `rounded-lg shadow-sm p-6`，信息密集场景可缩至 `p-4`，但需保持 ≥ 24px 的内部空隙。
+- **导航/页眉**：桌面端 `h-16`，移动端 `h-14`，左右留白 `px-6`（桌面）/`px-4`（移动）。
+- **列表与表格**：垂直节奏使用 `gap-4`；表格行高维持 ≥ 44px，确保触控友好。
 
-- 文本（Foreground）
+## 图标与动效
+- 图标统一封装在 `components/icons/`；默认尺寸 20px，与文字对齐时设置 `className="size-5"`。
+- 颜色继承文字，禁用状态降低透明度至 40%。
+- 动效以 Framer Motion 实现：
+  - 入场使用 `transition={{ type: "spring", damping: 20, stiffness: 180 }}` 或简化 `ease-out`。
+  - 退场使用 `ease-in`，时间 ≤ 180ms。
+  - 悬浮/聚焦微交互建议使用 `scale` 1.02 以下或轻微阴影，不破坏静寂感。
 
-  - `--foreground`：正文与主要文本
-  - `--muted-foreground`：次级/弱化文本
+## 可访问性承诺
+- 焦点环不可移除；若视觉冲突，可通过 `ring-offset` 调整层次。
+- 表单控件需搭配 `<Label>` 与 `aria-describedby`，错误文本使用 `text-destructive`。
+- 所有触发对话框的操作需提供可见提示（icon + 文案），避免仅依赖颜色传达含义。
+- 移动端触控元素保持最小 40×40px；复杂交互加上动效反馈以确认操作。
 
-- 交互（Actions）
+## 实施流程与变更管理
+1. 设计或产品提出新需求 → 评估是否已有 Token/组件能覆盖；如需新增 Token，预先在 `globals.css` 定义并更新本规范表格。
+2. 设计稿在交付时附带外壳（桌面/移动）对照与交互说明；研发通过 Tailwind 语义类实现。
+3. 开发完成后提交 PR：
+   - 指明使用或新增的 Token。
+   - 附带截图（两套外壳）。
+   - 运行 `npm run lint`、`npm run prettier:check` 并在说明中确认通过。
+4. 规范变更需记录在 `docs/changelog.md`，简述原因与影响范围。
 
-  - `--primary` / `--primary-foreground`：主操作、强调态
-  - `--secondary` / `--secondary-foreground`：次操作、弱强调
-  - `--accent` / `--accent-foreground`：营销/吸引注意的点状强调（例如徽标、新品标签）
-  - `--ring`：可访问性焦点环颜色
+## Checklists
+- [ ] 新组件是否完全使用语义 Token？
+- [ ] 桌面/移动外壳是否同步更新？
+- [ ] 按钮、输入框是否满足最小尺寸与触控要求？
+- [ ] 焦点状态在键盘操作下是否可见？
+- [ ] 文案对齐「安心感」语气，无多余视觉噪点？
 
-- 状态（States）
-
-  - `--destructive`：危险/删除/错误
-  - 成功/警告如有需要，优先通过组件语义类（如 `text-green-600`）或新增 `--success`、`--warning` 语义变量统一。
-
-- 数据可视（DataViz）
-  - `--chart-1..5`：图表序列色；如需更多序列，按 OKLCH 均匀调节 `l/c/h` 保持对比度。
-
-实现与示例请参考：`app/globals.css: :root`。
-
-### 3.1 品牌色定义
-
-- 主色（Primary）：`#019d68`（rgb(1,157,104)）
-  - Tokens：`--primary: #019d68`，`--primary-foreground: #ffffff`
-  - 用途：主操作按钮、强调链接、关键状态
-- 辅助色（Accent）：`#019d68`（与主色一致）
-  - Tokens：`--accent: #019d68`，`--accent-foreground: #ffffff`
-  - 用途：徽章、营销标识、少量点状强调
-- 交互亮度建议：
-  - hover：在当前主题基础上整体降低亮度约 0.03–0.06
-  - active：在 hover 基础上再降低约 0.02
-  - 保持 `--ring` 与 `--primary` 的对比度达到 WCAG AA
-
-## 4. 圆角与形状（Radius）
-
-- 基准：`--radius: 10px`（当前配置为 `0.625rem`），派生：
-  - `--radius-sm = --radius - 4px`：徽章、Tag、紧凑控件
-  - `--radius-md = --radius - 2px`：输入框、按钮、开关
-  - `--radius-lg = --radius`：卡片、列表单元
-  - `--radius-xl = --radius + 4px`：模态、抽屉、大型容器
-- 组件建议：
-  - 表单类（Input/Select/Textarea）：`rounded-md`
-  - 按钮：默认 `rounded-md`，圆形按钮使用 `rounded-full`
-  - 卡片/弹层：卡片 `rounded-lg`；模态/抽屉 `rounded-xl`（或顶部/底部定向圆角）
-
-## 5. 阴影与分层（Elevation）
-
-- 分层阶梯（可映射到 Tailwind）：
-  - Base：无阴影
-  - Level 1（交互容器）：`shadow-sm`（或自定义 `--shadow-1`）
-  - Level 2（浮层/Popover）：`shadow-md`
-  - Level 3（模态/对话框）：`shadow-lg` + `ring-1 ring-border/50`
-- 避免在可滚动大容器使用高阶阴影；优先通过 `border` 与背景对比制造层次。
-
-## 6. 字体与排版（Typography）
-
-- 字体：全局 `font-family: var(--font-sans)`，勿直接覆盖为具体字体；必要时在组件内扩展变量。
-- 层级：
-  - H1：`text-3xl/none font-semibold`
-  - H2：`text-2xl/none font-semibold`
-  - H3：`text-xl/none font-semibold`
-  - Body: `text-base leading-7`
-  - Small: `text-sm leading-6 text-muted-foreground`
-- 数字/价格：在关键区域可使用 `tabular-nums` 保持对齐。
-- 行高：中文正文建议 `1.6–1.75`，标题更紧凑 `1.2–1.35`。
-
-## 7. 间距与尺寸（Spacing & Sizing）
-
-- 控件高度（与 shadcn/ui 对齐）：
-  - XS: `h-8 px-3`（密集场景）
-  - SM: `h-9 px-3.5`（默认表单）
-  - MD: `h-10 px-4`
-  - LG: `h-11 px-5`（重要主按钮）
-- 区块内边距：卡片 `p-4`，弹层 `p-4 md:p-6`
-- 栅格与间距：内容区 `gap-4/6/8`，同级兄弟元素优先使用统一 `gap-*` 控制间距
-
-## 8. 图标与插图（Icons & Imagery）
-
-- 图标库：`lucide-react`，务必通过 `components/icons/` 二次封装命名
-- 尺寸：常用 `16/18/20/24`；默认 `20`，工具条 `18`，按钮内 `16`
-- 线宽：与库默认保持一致；颜色使用 `currentColor`
-
-## 9. 交互动效（Motion）
-
-- 基础时间函数：
-  - 入场：`duration-200 ease-out`
-  - 退场：`duration-150 ease-in`
-  - 重要转场/抽屉：`duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]`
-- Framer Motion：将变体集中在 hooks 或驱动组件内复用，避免分散硬编码。
-- 微交互：悬浮上移 `translate-y-[-1px]`、阴影增强一阶；避免大幅缩放。
-
-## 10. 组件规范速查（与 shadcn/ui 对齐）
-
-- Button
-  - 语义色：`variant=default` 使用 `--primary`；`secondary` 使用 `--secondary`；`destructive` 使用 `--destructive`
-  - 尺寸：默认 `h-9 px-3.5`；圆角 `rounded-md`
-  - 焦点：`ring-2 ring-ring ring-offset-2`
-- Input/Select/Textarea
-  - 边框：`border-input`；圆角 `rounded-md`；禁用使用 `opacity-50` 与 `cursor-not-allowed`
-- Card/Sheet/Popover
-  - 背景：`bg-card`/`bg-popover`；文本 `text-card-foreground`/`text-popover-foreground`
-  - 阴影：Level 1/2/3 视层级选择
-- Badge
-  - 默认 `rounded-sm`；语义色使用 `--accent` 或灰阶 muted
-
-## 11. 可访问性（A11y）
-
-- 焦点可见：始终保留 `focus-visible` 的 `ring`（当前默认 `ring-neutral-400` 与 `ring-offset-neutral-50`）
-- 对比度：正文与背景建议达标 WCAG AA（对比度 ≥ 4.5:1）
-- 触控目标：可点击区域不小于 `40×40` 设备像素（在高密度屏约等于 `h-10`）
-
-## 12. 实施与变更流程
-
-- 修改主题变量：直接在 `app/globals.css` 中维护 `:root`
-- 新增组件：
-  1. `npx shadcn@latest add <component>` 生成到 `components/ui/`
-  2. 仅使用语义变量与尺寸 tokens，不直接写死颜色
-- 调整品牌色/主题：提交 PR 时附视觉对比截图；确保 `npm run build` 与 `npm run prettier:check` 通过
-- 外链图与远程资源：按 AGENTS.md 说明维护 `next.config.ts` 的 `images.remotePatterns`
-
-## 13. 品牌色落地
-
-已在 `app/globals.css: :root` 中设置：
-
-- `--primary: #019d68; --primary-foreground: #ffffff`
-- `--accent: #019d68; --accent-foreground: #ffffff`
-
-—— 以上为规范性文档。若设计更新，请同步调整本文与 `app/globals.css`，并在 PR 中说明影响范围（按钮、输入、卡片等）与手动验证清单（移动端、关键流程）。
+## 结语
+「良いデザインは、気づかぬうちに病みつかれる安心感である。」——好的设计，是在不知不觉间构筑起来的信赖。愿这份更具操作性的规范，帮助我们在每一次像素调整中兑现药师般的陪伴。
