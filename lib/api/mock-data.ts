@@ -1,4 +1,15 @@
-import { Collection, Menu, Page, Product } from "./types";
+import type {
+  Address,
+  AppliedCoupon,
+  Collection,
+  Coupon,
+  Menu,
+  Order,
+  Page,
+  PointAccount,
+  Product,
+  User,
+} from "./types";
 
 type ProductRecord = Product & {
   collections: string[];
@@ -21,6 +32,84 @@ const featuredImage = (url: string, altText: string) => ({
   width: 1600,
   height: 1600,
 });
+
+const demoAddress: Address = {
+  id: "addr-demo-home",
+  firstName: "芝园",
+  lastName: "会员",
+  phone: "+86 13800000000",
+  country: "中国",
+  countryCode: "CN",
+  province: "上海市",
+  city: "上海",
+  district: "黄浦区",
+  postalCode: "200001",
+  address1: "中山东一路 12 号",
+  address2: "1001 室",
+  isDefault: true,
+  formatted: ["上海市黄浦区中山东一路 12 号", "1001 室", "上海", "中国 200001"],
+};
+
+const welcomeCoupon: Coupon = {
+  id: "coupon-welcome",
+  code: "WELCOME10",
+  title: "新人优惠 9 折",
+  description: "首次下单立享 9 折优惠",
+  type: "percentage",
+  value: 10,
+  startsAt: `${thisYear}-01-01T00:00:00.000Z`,
+  expiresAt: `${thisYear}-12-31T23:59:59.000Z`,
+  minimumSubtotal: { amount: "199.00", currencyCode: CURRENCY },
+};
+
+const welcomeAppliedCoupon: AppliedCoupon = {
+  coupon: welcomeCoupon,
+  amount: { amount: "40.80", currencyCode: CURRENCY },
+};
+
+const loyaltyAccount: PointAccount = {
+  userId: "user-demo",
+  balance: 320,
+  updatedAt: now.toISOString(),
+  transactions: [
+    {
+      id: "point-earn-001",
+      type: "earn",
+      amount: 300,
+      balanceAfter: 320,
+      occurredAt: `${thisYear}-04-18T10:15:00.000Z`,
+      description: "完成订单 ORD-00001 获得积分",
+      referenceOrderId: "ord-demo-001",
+    },
+    {
+      id: "point-adjust-001",
+      type: "adjust",
+      amount: 20,
+      balanceAfter: 20,
+      occurredAt: `${thisYear}-03-08T11:30:00.000Z`,
+      description: "联系客服补发积分",
+    },
+  ],
+};
+
+export const coupons: Coupon[] = [welcomeCoupon];
+
+export const users: User[] = [
+  {
+    id: "user-demo",
+    email: "member@shiba-commerce.cn",
+    firstName: "芝园",
+    lastName: "会员",
+    phone: "+86 13800000000",
+    createdAt: `${thisYear}-01-05T08:00:00.000Z`,
+    updatedAt: now.toISOString(),
+    defaultAddress: demoAddress,
+    addresses: [demoAddress],
+    loyalty: loyaltyAccount,
+  },
+];
+
+export const loyaltyAccounts: PointAccount[] = [loyaltyAccount];
 
 export const products: ProductRecord[] = [
   {
@@ -258,6 +347,72 @@ export const products: ProductRecord[] = [
       "accessories",
     ],
     bestsellerRank: 4,
+  },
+];
+
+const matchaProduct = products[0]!;
+const herbalProduct = products[1]!;
+const bottleProduct = products[3]!;
+const matchaVariant = matchaProduct.variants[1]!;
+const herbalVariant = herbalProduct.variants[1]!;
+const bottleVariant = bottleProduct.variants[1]!;
+
+export const orders: Order[] = [
+  {
+    id: "ord-demo-001",
+    number: "ORD-00001",
+    status: "fulfilled",
+    financialStatus: "paid",
+    fulfillmentStatus: "fulfilled",
+    createdAt: `${thisYear}-04-16T08:12:00.000Z`,
+    updatedAt: `${thisYear}-04-18T12:30:00.000Z`,
+    processedAt: `${thisYear}-04-16T08:15:00.000Z`,
+    fulfilledAt: `${thisYear}-04-18T11:40:00.000Z`,
+    subtotalPrice: { amount: "408.00", currencyCode: CURRENCY },
+    totalPrice: { amount: "387.20", currencyCode: CURRENCY },
+    totalTax: { amount: "0.00", currencyCode: CURRENCY },
+    totalShipping: { amount: "20.00", currencyCode: CURRENCY },
+    currencyCode: CURRENCY,
+    lineItems: [
+      {
+        id: "ord-demo-001-line-1",
+        productId: matchaProduct.id,
+        productTitle: matchaProduct.title,
+        variantId: matchaVariant.id,
+        variantTitle: matchaVariant.title,
+        quantity: 2,
+        unitPrice: matchaVariant.price,
+        totalPrice: { amount: "192.00", currencyCode: CURRENCY },
+        image: matchaProduct.featuredImage,
+      },
+      {
+        id: "ord-demo-001-line-2",
+        productId: herbalProduct.id,
+        productTitle: herbalProduct.title,
+        variantId: herbalVariant.id,
+        variantTitle: herbalVariant.title,
+        quantity: 1,
+        unitPrice: herbalVariant.price,
+        totalPrice: { amount: "78.00", currencyCode: CURRENCY },
+        image: herbalProduct.featuredImage,
+      },
+      {
+        id: "ord-demo-001-line-3",
+        productId: bottleProduct.id,
+        productTitle: bottleProduct.title,
+        variantId: bottleVariant.id,
+        variantTitle: bottleVariant.title,
+        quantity: 1,
+        unitPrice: bottleVariant.price,
+        totalPrice: { amount: "138.00", currencyCode: CURRENCY },
+        image: bottleProduct.featuredImage,
+      },
+    ],
+    shippingAddress: demoAddress,
+    billingAddress: demoAddress,
+    customerId: "user-demo",
+    appliedCoupons: [welcomeAppliedCoupon],
+    loyaltyDelta: 300,
   },
 ];
 

@@ -6,19 +6,28 @@ import {
   findCollectionByHandle,
   findProductByHandle,
   findVariantById,
+  loyaltyAccounts,
   listVisibleCollections,
   menus,
+  orders,
   pages,
   products,
+  coupons,
+  users,
 } from "./mock-data";
 import type {
+  AppliedCoupon,
   Cart,
   CartItem,
   Collection,
+  Coupon,
   Menu,
+  Order,
   Page,
+  PointAccount,
   Product,
   ProductVariant,
+  User,
 } from "./types";
 import { cookies, headers } from "next/headers";
 import { revalidateTag } from "next/cache";
@@ -40,18 +49,97 @@ function formatAmount(value: number): string {
   return value.toFixed(2);
 }
 
-function calculateCartTotals(lines: CartItem[]) {
+function getCurrency(
+  lines: CartItem[],
+  appliedCoupons: AppliedCoupon[] | undefined,
+) {
+  return (
+    lines[0]?.cost.totalAmount.currencyCode ||
+    appliedCoupons?.[0]?.amount.currencyCode ||
+    defaultCurrency
+  );
+}
+
+function evaluateCouponDiscount(coupon: Coupon, subtotalValue: number) {
+  if (coupon.minimumSubtotal) {
+    const minimum = Number(coupon.minimumSubtotal.amount);
+    if (subtotalValue < minimum) {
+      return 0;
+    }
+  }
+
+  let discount = 0;
+
+  switch (coupon.type) {
+    case "percentage":
+      discount = (subtotalValue * coupon.value) / 100;
+      break;
+    case "fixed_amount":
+      discount = coupon.value;
+      break;
+    case "free_shipping":
+      discount = 0;
+      break;
+    default:
+      discount = 0;
+      break;
+  }
+
+  return Math.min(discount, subtotalValue);
+}
+
+function findCouponByCode(code: string) {
+  const normalised = code.trim().toLowerCase();
+  if (!normalised) {
+    return undefined;
+  }
+
+  return coupons.find(
+    (entry) => entry.code.trim().toLowerCase() === normalised,
+  );
+}
+
+function recalculateAppliedCoupons(
+  appliedCoupons: AppliedCoupon[] | undefined,
+  subtotalValue: number,
+  currencyCode: string,
+) {
+  let totalDiscount = 0;
+
+  appliedCoupons?.forEach((entry) => {
+    const discount = evaluateCouponDiscount(entry.coupon, subtotalValue);
+    totalDiscount += discount;
+    entry.amount = {
+      amount: formatAmount(discount),
+      currencyCode: entry.amount.currencyCode || currencyCode,
+    };
+  });
+
+  return totalDiscount;
+}
+
+function calculateCartTotals(
+  lines: CartItem[],
+  appliedCoupons: AppliedCoupon[] | undefined,
+) {
   const totalQuantity = lines.reduce((acc, line) => acc + line.quantity, 0);
-  const subtotal = lines.reduce(
+  const subtotalValue = lines.reduce(
     (acc, line) => acc + Number(line.cost.totalAmount.amount),
     0,
   );
-  const currencyCode =
-    lines[0]?.cost.totalAmount.currencyCode || defaultCurrency;
+  const currencyCode = getCurrency(lines, appliedCoupons);
+  const discountValue = recalculateAppliedCoupons(
+    appliedCoupons,
+    subtotalValue,
+    currencyCode,
+  );
+  const totalValue = Math.max(subtotalValue - discountValue, 0);
 
   return {
     totalQuantity,
-    subtotal: formatAmount(subtotal),
+    subtotalAmount: formatAmount(subtotalValue),
+    discountAmount: formatAmount(discountValue),
+    totalAmount: formatAmount(totalValue),
     currencyCode,
   };
 }
@@ -63,12 +151,15 @@ function createEmptyCart(): Cart {
     id,
     checkoutUrl: CHECKOUT_URL,
     lines: [],
+    appliedCoupons: [],
     totalQuantity: 0,
     cost: {
       subtotalAmount: { amount: "0.00", currencyCode: defaultCurrency },
       totalAmount: { amount: "0.00", currencyCode: defaultCurrency },
       totalTaxAmount: { amount: "0.00", currencyCode: defaultCurrency },
+      discountAmount: { amount: "0.00", currencyCode: defaultCurrency },
     },
+    updatedAt: new Date().toISOString(),
   };
 }
 
@@ -81,6 +172,7 @@ function getCartStore(): CartStore {
 }
 
 function saveCart(cart: Cart) {
+  cart.updatedAt = new Date().toISOString();
   const store = getCartStore();
   store.set(cart.id, cart);
 }
@@ -94,6 +186,16 @@ async function loadCart(): Promise<Cart | undefined> {
   }
 
   return getCartStore().get(cartId);
+}
+
+async function ensureCartInstance(): Promise<Cart> {
+  const existing = await loadCart();
+
+  if (existing) {
+    return existing;
+  }
+
+  return createCart();
 }
 
 function upsertCartLine(cart: Cart, variant: ProductVariant, quantity: number) {
@@ -219,15 +321,22 @@ function setCartLine(cart: Cart, variant: ProductVariant, quantity: number) {
 }
 
 function normalizeCartTotals(cart: Cart) {
-  const { currencyCode, subtotal, totalQuantity } = calculateCartTotals(
-    cart.lines,
-  );
+  cart.appliedCoupons = cart.appliedCoupons ?? [];
+
+  const {
+    currencyCode,
+    subtotalAmount,
+    discountAmount,
+    totalAmount,
+    totalQuantity,
+  } = calculateCartTotals(cart.lines, cart.appliedCoupons);
 
   cart.totalQuantity = totalQuantity;
   cart.cost = {
-    subtotalAmount: { amount: subtotal, currencyCode },
-    totalAmount: { amount: subtotal, currencyCode },
+    subtotalAmount: { amount: subtotalAmount, currencyCode },
+    totalAmount: { amount: totalAmount, currencyCode },
     totalTaxAmount: { amount: "0.00", currencyCode },
+    discountAmount: { amount: discountAmount, currencyCode },
   };
 }
 
@@ -282,11 +391,7 @@ export async function createCart(): Promise<Cart> {
 export async function addToCart(
   lines: { merchandiseId: string; quantity: number }[],
 ): Promise<Cart> {
-  let cart = await loadCart();
-
-  if (!cart) {
-    cart = await createCart();
-  }
+  const cart = await ensureCartInstance();
 
   for (const line of lines) {
     const match = findVariantById(line.merchandiseId);
@@ -305,11 +410,7 @@ export async function addToCart(
 }
 
 export async function removeFromCart(lineIds: string[]): Promise<Cart> {
-  let cart = await loadCart();
-
-  if (!cart) {
-    cart = await createCart();
-  }
+  const cart = await ensureCartInstance();
 
   cart.lines = cart.lines.filter((line) =>
     line.id ? !lineIds.includes(line.id) : true,
@@ -323,11 +424,7 @@ export async function removeFromCart(lineIds: string[]): Promise<Cart> {
 export async function updateCart(
   lines: { id: string; merchandiseId: string; quantity: number }[],
 ): Promise<Cart> {
-  let cart = await loadCart();
-
-  if (!cart) {
-    cart = await createCart();
-  }
+  const cart = await ensureCartInstance();
 
   for (const line of lines) {
     const match = findVariantById(line.merchandiseId);
@@ -354,6 +451,97 @@ export async function getCart(): Promise<Cart | undefined> {
 
   normalizeCartTotals(cart);
   return cart;
+}
+
+export async function applyCouponToCart(code: string): Promise<Cart> {
+  const cart = await ensureCartInstance();
+  const coupon = findCouponByCode(code);
+
+  if (!coupon) {
+    throw new Error(`Coupon ${code} not found`);
+  }
+
+  cart.appliedCoupons = cart.appliedCoupons ?? [];
+
+  const exists = cart.appliedCoupons.some(
+    (entry) => entry.coupon.code.toLowerCase() === coupon.code.toLowerCase(),
+  );
+
+  if (!exists) {
+    const subtotalValue = cart.lines.reduce(
+      (acc, line) => acc + Number(line.cost.totalAmount.amount),
+      0,
+    );
+    const currencyCode = getCurrency(cart.lines, cart.appliedCoupons);
+    const discountPreview = evaluateCouponDiscount(coupon, subtotalValue);
+
+    if (discountPreview <= 0 && coupon.minimumSubtotal) {
+      throw new Error("Coupon requirements not met");
+    }
+
+    cart.appliedCoupons.push({
+      coupon,
+      amount: { amount: formatAmount(discountPreview), currencyCode },
+    });
+  }
+
+  normalizeCartTotals(cart);
+  saveCart(cart);
+
+  return cart;
+}
+
+export async function removeCouponFromCart(code: string): Promise<Cart> {
+  const cart = await ensureCartInstance();
+
+  cart.appliedCoupons = (cart.appliedCoupons ?? []).filter(
+    (entry) => entry.coupon.code.toLowerCase() !== code.trim().toLowerCase(),
+  );
+
+  normalizeCartTotals(cart);
+  saveCart(cart);
+
+  return cart;
+}
+
+export async function getAvailableCoupons(): Promise<Coupon[]> {
+  return coupons.map((entry) => ({ ...entry }));
+}
+
+export async function getCouponByCode(
+  code: string,
+): Promise<Coupon | undefined> {
+  const coupon = findCouponByCode(code);
+
+  if (!coupon) {
+    return undefined;
+  }
+
+  return { ...coupon };
+}
+
+export async function getCurrentUser(): Promise<User | undefined> {
+  return users[0];
+}
+
+export async function getUserById(id: string): Promise<User | undefined> {
+  return users.find((user) => user.id === id);
+}
+
+export async function getUserOrders(userId: string): Promise<Order[]> {
+  return orders.filter((order) => order.customerId === userId);
+}
+
+export async function getOrderById(
+  orderId: string,
+): Promise<Order | undefined> {
+  return orders.find((order) => order.id === orderId);
+}
+
+export async function getLoyaltyAccount(
+  userId: string,
+): Promise<PointAccount | undefined> {
+  return loyaltyAccounts.find((account) => account.userId === userId);
 }
 
 export async function getCollection(

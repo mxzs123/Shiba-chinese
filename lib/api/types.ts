@@ -10,6 +10,11 @@ export type Image = {
   height: number;
 };
 
+export type SEO = {
+  title: string;
+  description: string;
+};
+
 export type ProductOption = {
   id: string;
   name: string;
@@ -25,11 +30,6 @@ export type ProductVariant = {
     value: string;
   }[];
   price: Money;
-};
-
-export type SEO = {
-  title: string;
-  description: string;
 };
 
 export type Product = {
@@ -77,6 +77,60 @@ export type Menu = {
   path: string;
 };
 
+export type Address = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  company?: string;
+  country: string;
+  countryCode: string;
+  province?: string;
+  city: string;
+  district?: string;
+  postalCode?: string;
+  address1: string;
+  address2?: string;
+  isDefault?: boolean;
+  formatted?: string[];
+};
+
+export type PointTransactionType = "earn" | "redeem" | "adjust";
+
+export type PointTransaction = {
+  id: string;
+  type: PointTransactionType;
+  amount: number;
+  balanceAfter: number;
+  occurredAt: string;
+  description?: string;
+  referenceOrderId?: string;
+};
+
+export type Point = {
+  userId: string;
+  balance: number;
+  updatedAt: string;
+};
+
+export type PointAccount = Point & {
+  transactions: PointTransaction[];
+};
+
+export type User = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  avatarUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+  defaultAddress?: Address;
+  addresses: Address[];
+  loyalty?: PointAccount;
+};
+
 export type CartProduct = {
   id: string;
   handle: string;
@@ -101,14 +155,101 @@ export type CartItem = {
   };
 };
 
+export type CartCost = {
+  subtotalAmount: Money;
+  totalAmount: Money;
+  totalTaxAmount: Money;
+  dutiesAmount?: Money;
+  discountAmount?: Money;
+};
+
+export type CouponType = "percentage" | "fixed_amount" | "free_shipping";
+
+export type Coupon = {
+  id: string;
+  code: string;
+  title: string;
+  description?: string;
+  type: CouponType;
+  value: number;
+  currencyCode?: string;
+  startsAt?: string;
+  expiresAt?: string;
+  minimumSubtotal?: Money;
+  appliesToProductIds?: string[];
+  appliesToCollectionHandles?: string[];
+};
+
+export type AppliedCoupon = {
+  coupon: Coupon;
+  amount: Money;
+};
+
 export type Cart = {
   id: string;
   checkoutUrl: string;
-  cost: {
-    subtotalAmount: Money;
-    totalAmount: Money;
-    totalTaxAmount: Money;
-  };
+  cost: CartCost;
   lines: CartItem[];
   totalQuantity: number;
+  note?: string;
+  updatedAt?: string;
+  buyer?: User;
+  appliedCoupons?: AppliedCoupon[];
+};
+
+export type OrderStatus =
+  | "draft"
+  | "pending"
+  | "paid"
+  | "processing"
+  | "fulfilled"
+  | "cancelled";
+
+export type FinancialStatus =
+  | "pending"
+  | "authorized"
+  | "paid"
+  | "partially_refunded"
+  | "refunded"
+  | "voided";
+
+export type FulfillmentStatus =
+  | "unfulfilled"
+  | "partial"
+  | "fulfilled"
+  | "restocked";
+
+export type OrderLineItem = {
+  id: string;
+  productId: string;
+  productTitle: string;
+  variantId?: string;
+  variantTitle?: string;
+  quantity: number;
+  unitPrice: Money;
+  totalPrice: Money;
+  image?: Image;
+};
+
+export type Order = {
+  id: string;
+  number: string;
+  status: OrderStatus;
+  financialStatus: FinancialStatus;
+  fulfillmentStatus: FulfillmentStatus;
+  createdAt: string;
+  updatedAt: string;
+  processedAt?: string;
+  fulfilledAt?: string;
+  subtotalPrice: Money;
+  totalPrice: Money;
+  totalTax: Money;
+  totalShipping: Money;
+  currencyCode: string;
+  lineItems: OrderLineItem[];
+  shippingAddress: Address;
+  billingAddress?: Address;
+  customerId: string;
+  appliedCoupons?: AppliedCoupon[];
+  loyaltyDelta?: number;
 };
