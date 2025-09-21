@@ -8,8 +8,7 @@ const assurances = [
   },
   {
     title: "正品保障承诺",
-    description:
-      "100% 确保日本原装正品，出库即附官方溯源码与批次证明。",
+    description: "100% 确保日本原装正品，出库即附官方溯源码与批次证明。",
   },
 ];
 
@@ -34,8 +33,12 @@ export function ReassuranceNotice({ className }: ReassuranceNoticeProps) {
             key={item.title}
             className="space-y-1 rounded-xl border border-neutral-100 bg-neutral-50/80 p-4"
           >
-            <h3 className="text-sm font-semibold text-neutral-900">{item.title}</h3>
-            <p className="text-xs leading-5 text-neutral-500">{item.description}</p>
+            <h3 className="text-sm font-semibold text-neutral-900">
+              {item.title}
+            </h3>
+            <p className="text-xs leading-5 text-neutral-500">
+              {item.description}
+            </p>
           </article>
         ))}
       </div>

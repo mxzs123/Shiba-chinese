@@ -1,4 +1,4 @@
-import CartModal from "components/cart/modal";
+import CartLink from "components/cart/cart-link";
 import LogoSquare from "components/logo-square";
 import { getMenu } from "lib/api";
 import { Menu } from "lib/api/types";
@@ -53,7 +53,7 @@ export async function Navbar() {
           </Suspense>
         </div>
         <div className="flex justify-end md:w-1/3">
-          <CartModal />
+          <CartLink />
         </div>
       </div>
     </nav>

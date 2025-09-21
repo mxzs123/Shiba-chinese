@@ -7,7 +7,6 @@ import { AddToCartButton } from "app/_shared";
 import { addItem } from "components/cart/actions";
 import { useCart } from "components/cart/cart-context";
 import type { Product, ProductVariant } from "lib/api/types";
-import { useCartStore } from "hooks/use-cart-store";
 
 function getPrimaryVariant(product: Product): ProductVariant | undefined {
   if (!product.variants.length) {
@@ -19,7 +18,6 @@ function getPrimaryVariant(product: Product): ProductVariant | undefined {
 
 export function AddToCartForm({ product }: { product: Product }) {
   const { addCartItem } = useCart();
-  const openCart = useCartStore((state) => state.open);
   const primaryVariant = getPrimaryVariant(product);
   const [quantity, setQuantity] = useState(1);
 
@@ -62,14 +60,13 @@ export function AddToCartForm({ product }: { product: Product }) {
       toast.success("已加入购物车", {
         description: `${product.title} × ${quantity} 已添加，稍后可在购物车查看。`,
       });
-      openCart();
     } catch (error) {
       console.error(error);
       toast.error("未能加入购物车", {
         description: "系统繁忙，请稍后再试。",
       });
     }
-  }, [addCartItem, openCart, primaryVariant, product, quantity]);
+  }, [addCartItem, primaryVariant, product, quantity]);
 
   const isDisabled =
     !product.availableForSale || !primaryVariant?.availableForSale;
