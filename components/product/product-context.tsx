@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import React, {
   createContext,
+  useCallback,
   useContext,
   useMemo,
   useOptimistic,
@@ -41,17 +42,23 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     }),
   );
 
-  const updateOption = (name: string, value: string) => {
-    const newState = { [name]: value };
-    setOptimisticState(newState);
-    return { ...state, ...newState };
-  };
+  const updateOption = useCallback(
+    (name: string, value: string) => {
+      const newState = { [name]: value };
+      setOptimisticState(newState);
+      return { ...state, ...newState };
+    },
+    [setOptimisticState, state],
+  );
 
-  const updateImage = (index: string) => {
-    const newState = { image: index };
-    setOptimisticState(newState);
-    return { ...state, ...newState };
-  };
+  const updateImage = useCallback(
+    (index: string) => {
+      const newState = { image: index };
+      setOptimisticState(newState);
+      return { ...state, ...newState };
+    },
+    [setOptimisticState, state],
+  );
 
   const value = useMemo(
     () => ({
@@ -59,7 +66,7 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
       updateOption,
       updateImage,
     }),
-    [state],
+    [state, updateOption, updateImage],
   );
 
   return (
