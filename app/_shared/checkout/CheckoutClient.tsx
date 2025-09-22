@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { ButtonHTMLAttributes, FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { PrimaryButton } from "app/_shared";
 import {
@@ -22,7 +23,16 @@ import type {
   User,
   AddressInput,
 } from "lib/api/types";
-import { Check, Loader2, Plus, Ticket, Truck, Wallet } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Check,
+  Loader2,
+  Plus,
+  Ticket,
+  Truck,
+  Wallet,
+} from "lucide-react";
 
 type CheckoutClientProps = {
   cart?: Cart;
@@ -108,6 +118,7 @@ export function CheckoutClient({
   paymentMethods,
   availableCoupons,
 }: CheckoutClientProps) {
+  const router = useRouter();
   const initialAddresses = customer?.addresses ?? [];
   const [addresses, setAddresses] = useState<Address[]>(initialAddresses);
   const [selectedAddressId, setSelectedAddressId] = useState<
@@ -144,6 +155,7 @@ export function CheckoutClient({
   const [pointsApplied, setPointsApplied] = useState(0);
   const [pointsError, setPointsError] = useState<string | null>(null);
   const [pointsSuccess, setPointsSuccess] = useState<string | null>(null);
+  const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!addresses.length) {
@@ -465,23 +477,56 @@ export function CheckoutClient({
   const canProceedToPay =
     !cartIsEmpty && selectedAddress && selectedShipping && selectedPayment;
 
+  const clearRedirectTimer = () => {
+    if (redirectTimerRef.current) {
+      clearTimeout(redirectTimerRef.current);
+      redirectTimerRef.current = null;
+    }
+  };
+
   const handleOpenPayment = () => {
     if (!canProceedToPay) {
       return;
     }
 
+    clearRedirectTimer();
     setPaymentModalOpen(true);
     setPaymentStep("pending");
   };
 
   const handleClosePayment = () => {
+    clearRedirectTimer();
     setPaymentModalOpen(false);
     setPaymentStep("idle");
   };
 
+  const handleNavigateToSuccess = () => {
+    clearRedirectTimer();
+    setPaymentModalOpen(false);
+    setPaymentStep("idle");
+    router.push("/checkout/success");
+  };
+
   const handleMockPaymentComplete = () => {
     setPaymentStep("success");
+    clearRedirectTimer();
+    redirectTimerRef.current = setTimeout(() => {
+      handleNavigateToSuccess();
+    }, 800);
   };
+
+  const handlePaymentFailed = () => {
+    clearRedirectTimer();
+    setPaymentModalOpen(false);
+    setPaymentStep("idle");
+    router.push("/checkout/failed");
+  };
+
+  useEffect(() => {
+    return () => {
+      clearRedirectTimer();
+    };
+  }, []);
 
   if (cartIsEmpty) {
     return (
@@ -1206,7 +1251,7 @@ export function CheckoutClient({
                 QR Code Placeholder
               </div>
               {paymentStep === "pending" ? (
-                <>
+                <div className="flex w-full flex-col items-center gap-3">
                   <p className="text-xs text-neutral-500">
                     请使用微信 / 支付宝扫码，完成后点击下方按钮模拟支付完成。
                   </p>
@@ -1217,11 +1262,27 @@ export function CheckoutClient({
                   >
                     模拟支付完成
                   </PrimaryButton>
-                </>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-2 text-xs font-medium text-neutral-400 transition hover:text-neutral-600"
+                    onClick={handlePaymentFailed}
+                  >
+                    <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
+                    支付遇到问题？
+                  </button>
+                </div>
               ) : null}
               {paymentStep === "success" ? (
-                <div className="w-full rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-600">
-                  支付成功（模拟）。待后端接入后将根据真实回调更新状态。
+                <div className="flex w-full flex-col items-center gap-3 rounded-xl bg-emerald-50 px-4 py-4 text-sm text-emerald-600">
+                  <p>支付成功（模拟），即将跳转到结果页。</p>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 transition hover:text-emerald-600"
+                    onClick={handleNavigateToSuccess}
+                  >
+                    立即查看结果页
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                  </button>
                 </div>
               ) : null}
               <button

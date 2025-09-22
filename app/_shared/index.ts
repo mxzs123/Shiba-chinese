@@ -8,3 +8,7 @@ export { DesktopSearchView } from "./search/DesktopSearchView";
 export { Rating } from "./Rating";
 export { SkuSelector } from "./SkuSelector";
 export { CheckoutClient } from "./checkout/CheckoutClient";
+export {
+  CheckoutResult,
+  checkoutResultPlaceholders,
+} from "./checkout/CheckoutResult";
