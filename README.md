@@ -19,6 +19,7 @@
    - `COMMERCE_API_URL`：内部商品服务地址（未配置时使用模拟数据）。
    - `COMMERCE_CHECKOUT_URL`：下单跳转地址。
    - `REVALIDATION_SECRET`：用于触发 `/api/revalidate` 的安全令牌。
+   - `NEXT_PUBLIC_JPY_TO_CNY_RATE`：日元至人民币的换算汇率（默认 0.052，可按月更新）。
 3. 启动开发服务器：
    ```bash
    npm run dev

@@ -55,11 +55,10 @@ function toNumber(amount?: string) {
 }
 
 function formatCurrency(amount: number, currencyCode: string) {
-  return new Intl.NumberFormat("zh-CN", {
+  return new Intl.NumberFormat(undefined, {
     style: "currency",
     currency: currencyCode,
     currencyDisplay: "narrowSymbol",
-    minimumFractionDigits: 2,
   }).format(amount);
 }
 
@@ -102,6 +101,10 @@ export function CheckoutClient({
   const [paymentStep, setPaymentStep] = useState<
     "idle" | "pending" | "success"
   >("idle");
+  const [pointsInput, setPointsInput] = useState("");
+  const [pointsApplied, setPointsApplied] = useState(0);
+  const [pointsError, setPointsError] = useState<string | null>(null);
+  const [pointsSuccess, setPointsSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     if (!addresses.length) {
@@ -169,15 +172,128 @@ export function CheckoutClient({
   const cartCurrency =
     currentCart?.cost.totalAmount.currencyCode ||
     selectedShipping?.price.currencyCode ||
-    "CNY";
+    "JPY";
 
-  const itemsSubtotal = toNumber(currentCart?.cost.subtotalAmount.amount);
-  const couponsTotal = toNumber(currentCart?.cost.discountAmount?.amount);
-  const shippingFee = toNumber(selectedShipping?.price.amount);
-  const payable = Math.max(itemsSubtotal - couponsTotal + shippingFee, 0);
+  const itemsSubtotalRaw = toNumber(currentCart?.cost.subtotalAmount.amount);
+  const couponsTotalRaw = toNumber(currentCart?.cost.discountAmount?.amount);
+  const shippingFeeRaw = toNumber(selectedShipping?.price.amount);
+
+  const itemsSubtotal = Number.isFinite(itemsSubtotalRaw)
+    ? itemsSubtotalRaw
+    : 0;
+  const couponsTotal = Number.isFinite(couponsTotalRaw)
+    ? couponsTotalRaw
+    : 0;
+  const shippingFee = Number.isFinite(shippingFeeRaw) ? shippingFeeRaw : 0;
+
+  const rawPayable = itemsSubtotal - couponsTotal + shippingFee;
+  const payableBeforePoints = Number.isFinite(rawPayable)
+    ? Math.max(rawPayable, 0)
+    : 0;
 
   const loyaltyAccount: PointAccount | undefined = customer?.loyalty;
+  const loyaltyBalance = loyaltyAccount?.balance ?? 0;
+  const maxPointRedeemable = Math.min(
+    loyaltyBalance,
+    Math.floor(payableBeforePoints),
+  );
+  const payable = Math.max(payableBeforePoints - pointsApplied, 0);
+  const pointsRemaining = Math.max(loyaltyBalance - pointsApplied, 0);
   const paymentLocked = paymentModalOpen && paymentStep === "pending";
+
+  useEffect(() => {
+    if (maxPointRedeemable <= 0) {
+      if (pointsApplied !== 0) {
+        setPointsApplied(0);
+      }
+      if (pointsInput !== "") {
+        setPointsInput("");
+      }
+      setPointsError(null);
+      setPointsSuccess(null);
+      return;
+    }
+
+    if (pointsApplied > maxPointRedeemable) {
+      setPointsApplied(maxPointRedeemable);
+      setPointsInput(String(maxPointRedeemable));
+      setPointsError(
+        "积分抵扣金额已根据当前应付总计自动调整。",
+      );
+      setPointsSuccess(null);
+    }
+  }, [maxPointRedeemable, pointsApplied, pointsInput]);
+
+  const handlePointsInputChange = (value: string) => {
+    if (!/^[0-9]*$/.test(value)) {
+      return;
+    }
+    setPointsInput(value);
+    setPointsError(null);
+    setPointsSuccess(null);
+  };
+
+  const applyPoints = (rawValue: number) => {
+    if (!maxPointRedeemable || maxPointRedeemable <= 0) {
+      setPointsApplied(0);
+      setPointsInput("");
+      setPointsError("暂无可用积分可抵扣。");
+      setPointsSuccess(null);
+      return;
+    }
+
+    const clamped = Math.max(0, Math.min(Math.floor(rawValue), maxPointRedeemable));
+
+    if (clamped === 0) {
+      setPointsApplied(0);
+      setPointsInput("");
+      setPointsError(null);
+      setPointsSuccess("已取消积分抵扣。");
+      return;
+    }
+
+    if (clamped !== rawValue) {
+      setPointsError(`已自动调整为可抵扣的最大积分 ${clamped}。`);
+    } else {
+      setPointsError(null);
+    }
+
+    setPointsApplied(clamped);
+    setPointsInput(String(clamped));
+    setPointsSuccess(
+      `已使用 ${clamped} 积分抵扣 ${formatCurrency(clamped, cartCurrency)}。`,
+    );
+  };
+
+  const handleApplyPoints = () => {
+    if (!loyaltyBalance) {
+      setPointsError("当前账户暂无积分可用。");
+      setPointsSuccess(null);
+      return;
+    }
+
+    const parsed = Number.parseInt(pointsInput, 10);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      setPointsApplied(0);
+      setPointsInput("");
+      setPointsError(null);
+      setPointsSuccess("已取消积分抵扣。");
+      return;
+    }
+
+    applyPoints(parsed);
+  };
+
+  const handleApplyMaxPoints = () => {
+    applyPoints(maxPointRedeemable);
+  };
+
+  const handleResetPoints = () => {
+    setPointsApplied(0);
+    setPointsInput("");
+    setPointsError(null);
+    setPointsSuccess(null);
+  };
 
   const handleAddressFieldChange = (
     field: keyof AddressFormState,
@@ -802,25 +918,87 @@ export function CheckoutClient({
         </section>
 
         <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
-          <header className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-neutral-900">
+          <header className="flex flex-wrap items-center justify-between gap-3 text-neutral-900">
+            <div className="flex items-center gap-2">
               <Wallet className="h-5 w-5" aria-hidden />
               <h2 className="text-lg font-semibold">积分抵扣</h2>
             </div>
-            <span className="inline-flex items-center rounded-full bg-neutral-800 px-2 py-0.5 text-[11px] font-medium text-white">
-              功能待接入
+            <span className="text-xs font-medium text-neutral-500">
+              1 积分可抵扣 {formatCurrency(1, cartCurrency)}
             </span>
           </header>
           <p className="mt-2 text-sm text-neutral-500">
             当前积分余额：
-            <span className="font-semibold text-neutral-900">
-              {loyaltyAccount ? loyaltyAccount.balance : 0}
+            <span className="font-semibold text-neutral-900">{loyaltyBalance}</span>
+            分，最多可抵扣
+            <span className="ml-1 font-semibold text-neutral-900">
+              {formatCurrency(maxPointRedeemable, cartCurrency)}
             </span>
-            分。抵扣规则将在确认后补充，目前仅展示样式。
+            。
           </p>
-          <div className="mt-3 rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-3 text-xs text-neutral-500">
-            积分抵扣逻辑尚未实现，等待后端策略确认后接入。
+          <div className="mt-4 space-y-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="flex flex-1 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 transition focus-within:border-neutral-400 focus-within:ring-1 focus-within:ring-neutral-300">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  className="w-full bg-transparent text-sm text-neutral-900 outline-none placeholder:text-neutral-400"
+                  placeholder={
+                    maxPointRedeemable
+                      ? `最多可使用 ${maxPointRedeemable} 积分`
+                      : "当前无可用积分"
+                  }
+                  value={pointsInput}
+                  onChange={(event) => handlePointsInputChange(event.target.value)}
+                  disabled={paymentLocked || !maxPointRedeemable}
+                />
+                <button
+                  type="button"
+                  className="text-xs font-medium text-teal-600 transition hover:text-teal-500 disabled:text-neutral-300"
+                  onClick={handleApplyMaxPoints}
+                  disabled={paymentLocked || !maxPointRedeemable}
+                >
+                  全部使用
+                </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
+                  onClick={handleApplyPoints}
+                  disabled={paymentLocked || !loyaltyBalance}
+                >
+                  确认抵扣
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center rounded-xl border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-600 transition hover:border-neutral-400 hover:text-neutral-900 disabled:cursor-not-allowed disabled:border-neutral-200 disabled:text-neutral-300"
+                  onClick={handleResetPoints}
+                  disabled={paymentLocked || pointsApplied === 0}
+                >
+                  清除
+                </button>
+              </div>
+            </div>
+            <p className="text-xs text-neutral-500">
+              已抵扣
+              <span className="mx-1 font-semibold text-neutral-900">{pointsApplied}</span>
+              分（{formatCurrency(pointsApplied, cartCurrency)}），剩余
+              <span className="mx-1 font-semibold text-neutral-900">{pointsRemaining}</span>
+              分。
+            </p>
           </div>
+          {pointsError ? (
+            <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-500">
+              {pointsError}
+            </p>
+          ) : null}
+          {pointsSuccess ? (
+            <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-600">
+              {pointsSuccess}
+            </p>
+          ) : null}
         </section>
 
         <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
@@ -928,6 +1106,14 @@ export function CheckoutClient({
                 {formatCurrency(-couponsTotal, cartCurrency)}
               </dd>
             </div>
+            {pointsApplied > 0 ? (
+              <div className="flex items-center justify-between">
+                <dt>积分抵扣</dt>
+                <dd className="text-sm font-semibold text-emerald-600">
+                  {formatCurrency(-pointsApplied, cartCurrency)}
+                </dd>
+              </div>
+            ) : null}
             <div className="flex items-center justify-between">
               <dt>运费</dt>
               <dd className="text-sm font-semibold text-neutral-900">

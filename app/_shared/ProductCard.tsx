@@ -58,10 +58,15 @@ export function ProductCard({
             {product.description}
           </p>
         </div>
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-start justify-between gap-3">
           <Price
             value={priceRange.minVariantPrice}
             className="text-lg font-semibold text-neutral-900 dark:text-neutral-50"
+            currencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400"
+            showConvertedPrice
+            convertedClassName="text-sm font-medium text-neutral-500 dark:text-neutral-400"
+            convertedCurrencyClassName="text-[10px] font-medium uppercase tracking-wide text-neutral-400 dark:text-neutral-500"
+            wrapperClassName="gap-1"
           />
           {actionSlot}
         </div>

@@ -22,7 +22,7 @@ type CollectionRecord = Collection & {
   isHidden?: boolean;
 };
 
-const CURRENCY = "CNY";
+const CURRENCY = "JPY";
 const CHECKOUT_FALLBACK = "/checkout";
 
 const now = new Date();

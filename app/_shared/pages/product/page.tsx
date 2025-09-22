@@ -136,6 +136,10 @@ function ProductHighlights({ product }: { product: Product }) {
           value={price}
           className="text-3xl font-semibold text-neutral-900"
           currencyClassName="text-base font-medium text-neutral-500"
+          showConvertedPrice
+          convertedClassName="text-sm font-medium text-neutral-500"
+          convertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400"
+          wrapperClassName="gap-1"
         />
         <span className="text-xs text-neutral-500">
           含税价 · 下单后 24 小时内出库

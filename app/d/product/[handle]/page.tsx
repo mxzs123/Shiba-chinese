@@ -265,6 +265,10 @@ function ProductHero({
               value={price}
               className="text-4xl font-semibold text-neutral-900"
               currencyClassName="text-lg font-medium text-neutral-500"
+              showConvertedPrice
+              convertedClassName="text-base font-medium text-neutral-500"
+              convertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400"
+              wrapperClassName="gap-1"
             />
             <AddToCartForm product={product} />
           </div>

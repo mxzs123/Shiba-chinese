@@ -26,4 +26,11 @@ export const validateEnvironmentVariables = () => {
       "[commerce] COMMERCE_API_URL 未配置，系统将使用内置的模拟数据。",
     );
   }
+
+  const rate = process.env.NEXT_PUBLIC_JPY_TO_CNY_RATE;
+  if (rate && Number.isNaN(Number.parseFloat(rate))) {
+    console.warn(
+      "[commerce] NEXT_PUBLIC_JPY_TO_CNY_RATE 配置无效，将使用默认的 0.052。",
+    );
+  }
 };
