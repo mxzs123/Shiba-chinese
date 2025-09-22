@@ -160,6 +160,7 @@ export type User = {
   firstName: string;
   lastName: string;
   phone?: string;
+  nickname?: string;
   avatarUrl?: string;
   createdAt: string;
   updatedAt: string;

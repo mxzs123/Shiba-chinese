@@ -140,6 +140,7 @@ export const users: User[] = [
     firstName: "芝园",
     lastName: "会员",
     phone: "+86 13800000000",
+    nickname: "芝园会员",
     createdAt: `${thisYear}-01-05T08:00:00.000Z`,
     updatedAt: now.toISOString(),
     defaultAddress: demoAddress,
