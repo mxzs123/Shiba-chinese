@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { FormEvent } from "react";
+import type { ButtonHTMLAttributes, FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 
 import { PrimaryButton } from "app/_shared";
@@ -60,6 +60,45 @@ function formatCurrency(amount: number, currencyCode: string) {
     currency: currencyCode,
     currencyDisplay: "narrowSymbol",
   }).format(amount);
+}
+
+type CheckoutActionButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: "primary" | "secondary" | "accent" | "accentOutline" | "ghost";
+  size?: "default" | "sm";
+};
+
+function CheckoutActionButton({
+  variant = "primary",
+  size = "default",
+  type = "button",
+  className,
+  ...props
+}: CheckoutActionButtonProps) {
+  const sizeClasses = size === "sm" ? "h-8 px-3 text-xs" : "h-10 px-4 text-sm";
+
+  const variantClasses =
+    variant === "primary"
+      ? "bg-neutral-900 text-white hover:bg-neutral-800 disabled:bg-neutral-300 disabled:text-neutral-500"
+      : variant === "secondary"
+        ? "border border-neutral-200 text-neutral-600 hover:border-neutral-400 hover:text-neutral-900 disabled:border-neutral-200 disabled:text-neutral-300"
+        : variant === "accent"
+          ? "bg-emerald-500 text-white hover:bg-emerald-600 disabled:bg-emerald-200 disabled:text-white/80"
+          : variant === "accentOutline"
+            ? "border border-emerald-500 text-emerald-600 hover:bg-emerald-50 disabled:border-emerald-200 disabled:text-emerald-200"
+            : "text-xs font-semibold text-emerald-600 hover:text-emerald-500 disabled:text-neutral-300";
+
+  return (
+    <button
+      type={type}
+      className={cn(
+        "inline-flex items-center justify-center rounded-xl font-medium transition disabled:cursor-not-allowed",
+        sizeClasses,
+        variantClasses,
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 export function CheckoutClient({
@@ -181,9 +220,7 @@ export function CheckoutClient({
   const itemsSubtotal = Number.isFinite(itemsSubtotalRaw)
     ? itemsSubtotalRaw
     : 0;
-  const couponsTotal = Number.isFinite(couponsTotalRaw)
-    ? couponsTotalRaw
-    : 0;
+  const couponsTotal = Number.isFinite(couponsTotalRaw) ? couponsTotalRaw : 0;
   const shippingFee = Number.isFinite(shippingFeeRaw) ? shippingFeeRaw : 0;
 
   const rawPayable = itemsSubtotal - couponsTotal + shippingFee;
@@ -217,9 +254,7 @@ export function CheckoutClient({
     if (pointsApplied > maxPointRedeemable) {
       setPointsApplied(maxPointRedeemable);
       setPointsInput(String(maxPointRedeemable));
-      setPointsError(
-        "积分抵扣金额已根据当前应付总计自动调整。",
-      );
+      setPointsError("积分抵扣金额已根据当前应付总计自动调整。");
       setPointsSuccess(null);
     }
   }, [maxPointRedeemable, pointsApplied, pointsInput]);
@@ -242,7 +277,10 @@ export function CheckoutClient({
       return;
     }
 
-    const clamped = Math.max(0, Math.min(Math.floor(rawValue), maxPointRedeemable));
+    const clamped = Math.max(
+      0,
+      Math.min(Math.floor(rawValue), maxPointRedeemable),
+    );
 
     if (clamped === 0) {
       setPointsApplied(0);
@@ -253,16 +291,14 @@ export function CheckoutClient({
     }
 
     if (clamped !== rawValue) {
-      setPointsError(`已自动调整为可抵扣的最大积分 ${clamped}。`);
+      setPointsError(`已自动调整为可抵扣的积分数 ${clamped}。`);
     } else {
       setPointsError(null);
     }
 
     setPointsApplied(clamped);
     setPointsInput(String(clamped));
-    setPointsSuccess(
-      `已使用 ${clamped} 积分抵扣 ${formatCurrency(clamped, cartCurrency)}。`,
-    );
+    setPointsSuccess(null);
   };
 
   const handleApplyPoints = () => {
@@ -871,14 +907,10 @@ export function CheckoutClient({
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <button
-                        type="button"
-                        className={cn(
-                          "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition",
-                          isApplied
-                            ? "border border-neutral-900 bg-neutral-900 text-white hover:bg-neutral-950"
-                            : "border border-neutral-200 text-neutral-700 hover:border-neutral-900 hover:text-neutral-900",
-                        )}
+                      <CheckoutActionButton
+                        variant={isApplied ? "accent" : "accentOutline"}
+                        size="sm"
+                        className="gap-1.5"
                         onClick={() =>
                           isApplied
                             ? handleRemoveCoupon(coupon.code)
@@ -893,7 +925,7 @@ export function CheckoutClient({
                           />
                         ) : null}
                         {isApplied ? "已使用" : "使用优惠"}
-                      </button>
+                      </CheckoutActionButton>
                       <span className="text-sm font-semibold text-neutral-900">
                         {coupon.type === "percentage"
                           ? `${coupon.value}%`
@@ -918,23 +950,16 @@ export function CheckoutClient({
         </section>
 
         <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
-          <header className="flex flex-wrap items-center justify-between gap-3 text-neutral-900">
-            <div className="flex items-center gap-2">
-              <Wallet className="h-5 w-5" aria-hidden />
-              <h2 className="text-lg font-semibold">积分抵扣</h2>
-            </div>
-            <span className="text-xs font-medium text-neutral-500">
-              1 积分可抵扣 {formatCurrency(1, cartCurrency)}
-            </span>
+          <header className="flex items-center gap-2 text-neutral-900">
+            <Wallet className="h-5 w-5" aria-hidden />
+            <h2 className="text-lg font-semibold">积分抵扣</h2>
           </header>
           <p className="mt-2 text-sm text-neutral-500">
-            当前积分余额：
-            <span className="font-semibold text-neutral-900">{loyaltyBalance}</span>
-            分，最多可抵扣
-            <span className="ml-1 font-semibold text-neutral-900">
-              {formatCurrency(maxPointRedeemable, cartCurrency)}
+            可用积分
+            <span className="mx-1 font-semibold text-neutral-900">
+              {loyaltyBalance}
             </span>
-            。
+            分。
           </p>
           <div className="mt-4 space-y-3">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -946,48 +971,63 @@ export function CheckoutClient({
                   className="w-full bg-transparent text-sm text-neutral-900 outline-none placeholder:text-neutral-400"
                   placeholder={
                     maxPointRedeemable
-                      ? `最多可使用 ${maxPointRedeemable} 积分`
+                      ? "请输入想要使用的积分数量"
                       : "当前无可用积分"
                   }
                   value={pointsInput}
-                  onChange={(event) => handlePointsInputChange(event.target.value)}
+                  onChange={(event) =>
+                    handlePointsInputChange(event.target.value)
+                  }
                   disabled={paymentLocked || !maxPointRedeemable}
                 />
-                <button
-                  type="button"
-                  className="text-xs font-medium text-teal-600 transition hover:text-teal-500 disabled:text-neutral-300"
+                <CheckoutActionButton
+                  variant="ghost"
+                  size="sm"
                   onClick={handleApplyMaxPoints}
                   disabled={paymentLocked || !maxPointRedeemable}
+                  className="shrink-0"
                 >
                   全部使用
-                </button>
+                </CheckoutActionButton>
               </div>
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
+                <CheckoutActionButton
+                  variant="primary"
                   onClick={handleApplyPoints}
                   disabled={paymentLocked || !loyaltyBalance}
                 >
                   确认抵扣
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center rounded-xl border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-600 transition hover:border-neutral-400 hover:text-neutral-900 disabled:cursor-not-allowed disabled:border-neutral-200 disabled:text-neutral-300"
+                </CheckoutActionButton>
+                <CheckoutActionButton
+                  variant="secondary"
                   onClick={handleResetPoints}
                   disabled={paymentLocked || pointsApplied === 0}
                 >
                   清除
-                </button>
+                </CheckoutActionButton>
               </div>
             </div>
-            <p className="text-xs text-neutral-500">
-              已抵扣
-              <span className="mx-1 font-semibold text-neutral-900">{pointsApplied}</span>
-              分（{formatCurrency(pointsApplied, cartCurrency)}），剩余
-              <span className="mx-1 font-semibold text-neutral-900">{pointsRemaining}</span>
-              分。
-            </p>
+            {pointsApplied > 0 ? (
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500">
+                <span>使用积分</span>
+                <span className="font-semibold text-neutral-900">
+                  {pointsApplied}
+                </span>
+                <span>抵扣金额</span>
+                <span className="font-semibold text-neutral-900">
+                  {formatCurrency(pointsApplied, cartCurrency)}
+                </span>
+                <span>剩余积分</span>
+                <span className="font-semibold text-neutral-900">
+                  {pointsRemaining}
+                </span>
+                <span>。</span>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500">
+                <span>未使用积分抵扣，可根据需要输入积分数量。</span>
+              </div>
+            )}
           </div>
           {pointsError ? (
             <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-500">
