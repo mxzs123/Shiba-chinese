@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { useAuthStore } from "@/hooks/useAuthStore";
+import { sanitizeRedirect } from "@/lib/utils";
 
 import type { User } from "@/lib/api/types";
 
@@ -42,6 +43,7 @@ function normalisePhone(value: string) {
 export function LoginForm({ redirectTo }: LoginFormProps) {
   const router = useRouter();
   const setUser = useAuthStore((state) => state.setUser);
+  const safeRedirect = useMemo(() => sanitizeRedirect(redirectTo), [redirectTo]);
   const [identifierType, setIdentifierType] = useState<IdentifierType>("email");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -144,7 +146,7 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
         const result = (await response.json()) as { user: User };
         setUser(result.user);
         toast.success("登录成功");
-        router.replace(redirectTo || "/checkout");
+        router.replace(safeRedirect ?? "/checkout");
       } catch (error) {
         console.error("login failed", error);
         toast.error("登录失败，请检查网络后重试");
@@ -160,7 +162,7 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
       identifierValue,
       loadCaptcha,
       password,
-      redirectTo,
+      safeRedirect,
       router,
       setUser,
     ],

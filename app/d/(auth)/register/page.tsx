@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AuthPageShell, RegisterForm } from "@/app/_shared/auth";
+import { sanitizeRedirect } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "注册",
@@ -22,11 +23,12 @@ function buildLoginHref(next?: string) {
 export default async function RegisterPage({ searchParams }: RegisterPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const rawNext = resolvedSearchParams?.next;
-  const redirectTo = Array.isArray(rawNext)
+  const nextCandidate = Array.isArray(rawNext)
     ? rawNext[0]
     : typeof rawNext === "string"
       ? rawNext
       : undefined;
+  const redirectTo = sanitizeRedirect(nextCandidate);
 
   return (
     <AuthPageShell

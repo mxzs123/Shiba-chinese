@@ -20,6 +20,32 @@ export const createUrl = (
   return `${pathname}${queryString}`;
 };
 
+export function isSafeAppRedirect(value: string | undefined | null): value is string {
+  if (!value) {
+    return false;
+  }
+
+  if (!value.startsWith("/")) {
+    return false;
+  }
+
+  if (value.startsWith("//")) {
+    return false;
+  }
+
+  if (value.includes("://")) {
+    return false;
+  }
+
+  return true;
+}
+
+export function sanitizeRedirect(
+  value: string | undefined | null,
+): string | undefined {
+  return isSafeAppRedirect(value) ? value : undefined;
+}
+
 export const validateEnvironmentVariables = () => {
   if (!process.env.COMMERCE_API_URL) {
     console.warn(
