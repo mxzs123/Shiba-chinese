@@ -6,6 +6,10 @@ import type {
   IdentityVerification,
   Membership,
   PointAccount,
+  SurveyAnswer,
+  SurveyAssignment,
+  SurveyTemplate,
+  SurveyUploadedFile,
   User,
 } from "./types";
 
@@ -73,6 +77,65 @@ export function cloneIdentityVerification(
     document: verification.document
       ? cloneIdentityDocument(verification.document)
       : undefined,
+  };
+}
+
+function cloneSurveyUploadedFile(file: SurveyUploadedFile): SurveyUploadedFile {
+  return { ...file };
+}
+
+export function cloneSurveyAnswer(answer: SurveyAnswer): SurveyAnswer {
+  const value = answer.value;
+
+  let clonedValue = value;
+
+  if (Array.isArray(value)) {
+    if (!value.length) {
+      clonedValue = [];
+    } else if (typeof value[0] === "string") {
+      clonedValue = [...(value as string[])];
+    } else {
+      clonedValue = (value as SurveyUploadedFile[]).map((file) =>
+        cloneSurveyUploadedFile(file),
+      );
+    }
+  }
+
+  return {
+    ...answer,
+    value: clonedValue,
+  };
+}
+
+export function cloneSurveyAssignment(
+  assignment: SurveyAssignment,
+): SurveyAssignment {
+  return {
+    ...assignment,
+    productIds: [...assignment.productIds],
+    productTitles: [...assignment.productTitles],
+    answers: assignment.answers.map(cloneSurveyAnswer),
+  };
+}
+
+export function cloneSurveyTemplate(template: SurveyTemplate): SurveyTemplate {
+  return {
+    ...template,
+    productTags: template.productTags ? [...template.productTags] : undefined,
+    productIds: template.productIds ? [...template.productIds] : undefined,
+    questions: template.questions.map((question) => {
+      if (
+        question.type === "single_choice" ||
+        question.type === "multiple_choice"
+      ) {
+        return {
+          ...question,
+          options: question.options.map((option) => ({ ...option })),
+        };
+      }
+
+      return { ...question };
+    }),
   };
 }
 

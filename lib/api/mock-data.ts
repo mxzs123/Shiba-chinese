@@ -14,6 +14,9 @@ import type {
   PointRule,
   Product,
   ShippingMethod,
+  SurveyAnswer,
+  SurveyAssignment,
+  SurveyTemplate,
   User,
 } from "./types";
 
@@ -274,6 +277,54 @@ export const pointRules = loyaltyRules;
 
 export const products: ProductRecord[] = [
   {
+    id: "prod-adhd-medication",
+    handle: "adhd-focus-prescription",
+    availableForSale: true,
+    title: "专注力调节处方药 30 粒",
+    description:
+      "用于缓解成人注意力缺陷与多动症状的处方药，仅限经医生诊断后使用。",
+    descriptionHtml:
+      "<p>处方药信息仅供演示使用，请在执业医师指导下合理用药。</p>",
+    options: [
+      {
+        id: "opt-adhd-dosage",
+        name: "剂量",
+        values: ["18mg"],
+      },
+    ],
+    priceRange: {
+      minVariantPrice: { amount: "399", currencyCode: CURRENCY },
+      maxVariantPrice: { amount: "399", currencyCode: CURRENCY },
+    },
+    variants: [
+      {
+        id: "var-adhd-18mg",
+        title: "18mg",
+        availableForSale: true,
+        selectedOptions: [{ name: "剂量", value: "18mg" }],
+        price: { amount: "399", currencyCode: CURRENCY },
+      },
+    ],
+    featuredImage: featuredImage(
+      "https://images.unsplash.com/photo-1582719478148-9fffe0c0f6f3?auto=format&fit=crop&w=1600&q=80",
+      "专注力调节处方药",
+    ),
+    images: [
+      featuredImage(
+        "https://images.unsplash.com/photo-1582719478148-9fffe0c0f6f3?auto=format&fit=crop&w=1600&q=80",
+        "专注力调节处方药包装图",
+      ),
+    ],
+    seo: {
+      title: "专注力调节处方药 30 粒",
+      description: "ADHD 专用处方药，仅限凭处方购买。",
+    },
+    tags: ["prescription", "rx:adhd"],
+    updatedAt: `${thisYear}-04-28T12:00:00.000Z`,
+    collections: ["pharmacy"],
+    bestsellerRank: 1,
+  },
+  {
     id: "prod-matcha-kit",
     handle: "matcha-latte-kit",
     availableForSale: true,
@@ -511,14 +562,55 @@ export const products: ProductRecord[] = [
   },
 ];
 
-const matchaProduct = products[0]!;
-const herbalProduct = products[1]!;
-const bottleProduct = products[3]!;
+const adhdProduct = products.find(
+  (product) => product.id === "prod-adhd-medication",
+)!;
+const matchaProduct = products.find(
+  (product) => product.id === "prod-matcha-kit",
+)!;
+const herbalProduct = products.find((product) => product.id === "prod-herbal")!;
+const bottleProduct = products.find((product) => product.id === "prod-bottle")!;
+
 const matchaVariant = matchaProduct.variants[1]!;
 const herbalVariant = herbalProduct.variants[1]!;
 const bottleVariant = bottleProduct.variants[1]!;
+const adhdVariant = adhdProduct.variants[0]!;
 
 export const orders: Order[] = [
+  {
+    id: "ord-demo-002",
+    number: "ORD-00002",
+    status: "processing",
+    financialStatus: "paid",
+    fulfillmentStatus: "unfulfilled",
+    createdAt: `${thisYear}-04-27T14:12:00.000Z`,
+    updatedAt: `${thisYear}-04-27T14:20:00.000Z`,
+    processedAt: `${thisYear}-04-27T14:15:00.000Z`,
+    subtotalPrice: { amount: "399.00", currencyCode: CURRENCY },
+    totalPrice: { amount: "419.00", currencyCode: CURRENCY },
+    totalTax: { amount: "0.00", currencyCode: CURRENCY },
+    totalShipping: { amount: "20.00", currencyCode: CURRENCY },
+    currencyCode: CURRENCY,
+    lineItems: [
+      {
+        id: "ord-demo-002-line-1",
+        productId: adhdProduct.id,
+        productTitle: adhdProduct.title,
+        variantId: adhdVariant.id,
+        variantTitle: adhdVariant.title,
+        quantity: 1,
+        unitPrice: adhdVariant.price,
+        totalPrice: { amount: "399.00", currencyCode: CURRENCY },
+        image: adhdProduct.featuredImage,
+      },
+    ],
+    shippingAddress: demoAddress,
+    billingAddress: demoAddress,
+    shippingMethod: desktopShippingMethods[1],
+    customerId: "user-demo",
+    appliedCoupons: [],
+    loyaltyDelta: 120,
+  },
   {
     id: "ord-demo-001",
     number: "ORD-00001",
@@ -580,9 +672,207 @@ export const orders: Order[] = [
       trackingNumber: "SF1234567890",
     },
   },
+  {
+    id: "ord-demo-000",
+    number: "ORD-00000",
+    status: "fulfilled",
+    financialStatus: "paid",
+    fulfillmentStatus: "fulfilled",
+    createdAt: `${thisYear}-03-22T10:05:00.000Z`,
+    updatedAt: `${thisYear}-03-24T18:30:00.000Z`,
+    processedAt: `${thisYear}-03-22T10:08:00.000Z`,
+    fulfilledAt: `${thisYear}-03-24T16:40:00.000Z`,
+    subtotalPrice: { amount: "399.00", currencyCode: CURRENCY },
+    totalPrice: { amount: "419.00", currencyCode: CURRENCY },
+    totalTax: { amount: "0.00", currencyCode: CURRENCY },
+    totalShipping: { amount: "20.00", currencyCode: CURRENCY },
+    currencyCode: CURRENCY,
+    lineItems: [
+      {
+        id: "ord-demo-000-line-1",
+        productId: adhdProduct.id,
+        productTitle: adhdProduct.title,
+        variantId: adhdVariant.id,
+        variantTitle: adhdVariant.title,
+        quantity: 1,
+        unitPrice: adhdVariant.price,
+        totalPrice: { amount: "399.00", currencyCode: CURRENCY },
+        image: adhdProduct.featuredImage,
+      },
+    ],
+    shippingAddress: demoAddress,
+    billingAddress: demoAddress,
+    shippingMethod: desktopShippingMethods[1],
+    customerId: "user-demo",
+    appliedCoupons: [],
+    loyaltyDelta: 120,
+    tracking: {
+      carrier: "顺丰速运",
+      trackingNumber: "SF0987654321",
+    },
+  },
+];
+
+const adhdSurveyTemplate: SurveyTemplate = {
+  id: "survey-template-adhd",
+  title: "ADHD 用药随访问卷",
+  description: "请确认近期的就诊情况、药物反应与使用目的，便于药师复核。",
+  category: "rx:adhd",
+  productTags: ["rx:adhd"],
+  questions: [
+    {
+      id: "adhd-symptom-notes",
+      type: "text",
+      title: "近 30 天用药与症状变化",
+      description: "请概述服药频率、是否按照医嘱调整剂量以及症状缓解情况。",
+      required: true,
+      placeholder: "例如：每日早晨 1 粒，症状保持稳定，无明显副作用。",
+      maxLength: 400,
+    },
+    {
+      id: "adhd-side-effects",
+      type: "single_choice",
+      title: "是否出现副作用",
+      description: "若存在不适，请在备注中补充具体表现。",
+      options: [
+        { value: "none", label: "未出现副作用" },
+        { value: "mild", label: "出现轻微副作用，可自行缓解" },
+        { value: "severe", label: "出现明显副作用，已联系医生" },
+      ],
+      required: true,
+    },
+    {
+      id: "adhd-reason",
+      type: "multiple_choice",
+      title: "本次购买的主要目的",
+      description: "可多选，帮助我们了解复购背景。",
+      options: [
+        { value: "focus", label: "维持专注度" },
+        { value: "inventory", label: "补齐库存，防止断档" },
+        { value: "doctor", label: "医生建议继续服用" },
+        { value: "other", label: "其他" },
+      ],
+      minChoices: 1,
+      maxChoices: 3,
+    },
+    {
+      id: "adhd-last-visit",
+      type: "date",
+      title: "最近一次复诊日期",
+      description: "如暂未复诊，可填写计划复诊日期。",
+      required: true,
+    },
+    {
+      id: "adhd-id-proof",
+      type: "upload",
+      title: "处方/诊断证明",
+      description: "请上传处方或医生开具的诊断证明照片，最多 2 张。",
+      accept: ["image/jpeg", "image/png", "image/webp"],
+      maxFiles: 2,
+      maxSizeMB: 5,
+    },
+  ],
+  updatedAt: `${thisYear}-04-20T12:00:00.000Z`,
+};
+
+const surveyAssignmentPending: SurveyAssignment = {
+  id: "survey-assignment-ord-demo-002-adhd",
+  userId: "user-demo",
+  orderId: "ord-demo-002",
+  orderNumber: "ORD-00002",
+  category: "rx:adhd",
+  templateId: adhdSurveyTemplate.id,
+  productIds: [adhdProduct.id],
+  productTitles: [adhdProduct.title],
+  createdAt: `${thisYear}-04-27T14:15:00.000Z`,
+  updatedAt: `${thisYear}-04-27T14:15:00.000Z`,
+  status: "pending",
+  answers: [
+    {
+      questionId: "adhd-symptom-notes",
+      value: "坚持每日早晨服用 18mg，症状保持稳定。",
+    },
+    {
+      questionId: "adhd-side-effects",
+      value: "none",
+    },
+    {
+      questionId: "adhd-reason",
+      value: ["focus", "inventory"],
+    },
+    {
+      questionId: "adhd-last-visit",
+      value: `${thisYear}-04-12`,
+    },
+    {
+      questionId: "adhd-id-proof",
+      value: [],
+    },
+  ],
+};
+
+const surveyAssignmentSubmitted: SurveyAssignment = {
+  id: "survey-assignment-ord-demo-000-adhd",
+  userId: "user-demo",
+  orderId: "ord-demo-000",
+  orderNumber: "ORD-00000",
+  category: "rx:adhd",
+  templateId: adhdSurveyTemplate.id,
+  productIds: [adhdProduct.id],
+  productTitles: [adhdProduct.title],
+  createdAt: `${thisYear}-03-22T10:10:00.000Z`,
+  updatedAt: `${thisYear}-03-23T09:10:00.000Z`,
+  submittedAt: `${thisYear}-03-23T09:10:00.000Z`,
+  status: "submitted",
+  answers: [
+    {
+      questionId: "adhd-symptom-notes",
+      value: "按照医嘱每日上午 1 粒，注意力明显提升。",
+    },
+    {
+      questionId: "adhd-side-effects",
+      value: "mild",
+    },
+    {
+      questionId: "adhd-reason",
+      value: ["doctor"],
+    },
+    {
+      questionId: "adhd-last-visit",
+      value: `${thisYear}-03-18`,
+    },
+    {
+      questionId: "adhd-id-proof",
+      value: [
+        {
+          id: "proof-front",
+          name: "prescription-front.jpg",
+          url: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1200&q=80",
+          uploadedAt: `${thisYear}-03-23T09:08:00.000Z`,
+        },
+      ],
+    },
+  ],
+};
+
+export const surveyTemplates: SurveyTemplate[] = [adhdSurveyTemplate];
+export const surveyAssignments: SurveyAssignment[] = [
+  surveyAssignmentPending,
+  surveyAssignmentSubmitted,
 ];
 
 export const collections: CollectionRecord[] = [
+  {
+    handle: "pharmacy",
+    title: "处方药专区",
+    description: "仅限凭处方购买的专属药品与用药指导问卷。",
+    seo: {
+      title: "处方药专区",
+      description: "严选处方药品，需完成合规问卷后发货。",
+    },
+    updatedAt: `${thisYear}-04-20T00:00:00.000Z`,
+    path: "/search/pharmacy",
+  },
   {
     handle: "hidden-homepage-featured-items",
     title: "主页推荐",

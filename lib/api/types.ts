@@ -196,6 +196,104 @@ export type IdentityDocumentInput = {
   backImage: string;
 };
 
+export type SurveyQuestionType =
+  | "text"
+  | "single_choice"
+  | "multiple_choice"
+  | "date"
+  | "upload";
+
+export type SurveyOption = {
+  value: string;
+  label: string;
+  description?: string;
+};
+
+type SurveyQuestionBase<Type extends SurveyQuestionType> = {
+  id: string;
+  title: string;
+  description?: string;
+  required?: boolean;
+  type: Type;
+};
+
+export type SurveyTextQuestion = SurveyQuestionBase<"text"> & {
+  placeholder?: string;
+  maxLength?: number;
+};
+
+export type SurveySingleChoiceQuestion = SurveyQuestionBase<"single_choice"> & {
+  options: SurveyOption[];
+};
+
+export type SurveyMultipleChoiceQuestion =
+  SurveyQuestionBase<"multiple_choice"> & {
+    options: SurveyOption[];
+    minChoices?: number;
+    maxChoices?: number;
+  };
+
+export type SurveyDateQuestion = SurveyQuestionBase<"date"> & {
+  min?: string;
+  max?: string;
+};
+
+export type SurveyUploadQuestion = SurveyQuestionBase<"upload"> & {
+  accept?: string[];
+  maxFiles?: number;
+  maxSizeMB?: number;
+};
+
+export type SurveyQuestion =
+  | SurveyTextQuestion
+  | SurveySingleChoiceQuestion
+  | SurveyMultipleChoiceQuestion
+  | SurveyDateQuestion
+  | SurveyUploadQuestion;
+
+export type SurveyAnswerValue = string | string[] | SurveyUploadedFile[];
+
+export type SurveyAnswer = {
+  questionId: string;
+  value: SurveyAnswerValue;
+};
+
+export type SurveyUploadedFile = {
+  id: string;
+  name: string;
+  url: string;
+  uploadedAt: string;
+};
+
+export type SurveyTemplate = {
+  id: string;
+  title: string;
+  description?: string;
+  category: string;
+  productTags?: string[];
+  productIds?: string[];
+  questions: SurveyQuestion[];
+  updatedAt: string;
+};
+
+export type SurveyAssignmentStatus = "pending" | "submitted";
+
+export type SurveyAssignment = {
+  id: string;
+  userId: string;
+  orderId: string;
+  orderNumber: string;
+  category: string;
+  templateId: string;
+  productIds: string[];
+  productTitles: string[];
+  createdAt: string;
+  updatedAt: string;
+  submittedAt?: string;
+  status: SurveyAssignmentStatus;
+  answers: SurveyAnswer[];
+};
+
 export type User = {
   id: string;
   email: string;

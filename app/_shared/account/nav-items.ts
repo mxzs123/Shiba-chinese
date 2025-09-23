@@ -18,6 +18,12 @@ export const ACCOUNT_NAV_ITEMS = [
     href: "/account/coupons",
   },
   {
+    key: "surveys",
+    label: "我的问卷",
+    description: "查看处方药问卷的待办与历史记录。",
+    href: "/account/surveys",
+  },
+  {
     key: "membership",
     label: "会员权益",
     description: "了解当前等级、积分余额与专属权益。",

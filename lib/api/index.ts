@@ -15,6 +15,8 @@ import {
   paymentMethods,
   pages,
   products,
+  surveyAssignments,
+  surveyTemplates,
   shippingMethods,
   pointRules,
   users,
@@ -24,6 +26,9 @@ import {
   cloneCustomerCoupon,
   cloneIdentityVerification,
   clonePointAccount,
+  cloneSurveyAnswer,
+  cloneSurveyAssignment,
+  cloneSurveyTemplate,
   cloneUser,
   createAddressRecord,
   formatAddressLines,
@@ -46,6 +51,9 @@ import type {
   Product,
   ProductVariant,
   ShippingMethod,
+  SurveyAnswer,
+  SurveyAssignment,
+  SurveyTemplate,
   User,
   UserProfileInput,
   Money,
@@ -77,6 +85,14 @@ function cloneMoney(money: Money): Money {
 
 function findUserRecord(userId: string) {
   return users.find((user) => user.id === userId);
+}
+
+function findSurveyAssignmentRecord(assignmentId: string) {
+  return surveyAssignments.find((assignment) => assignment.id === assignmentId);
+}
+
+function findSurveyTemplateRecord(templateId: string) {
+  return surveyTemplates.find((template) => template.id === templateId);
 }
 
 function cloneShippingMethod(method: ShippingMethod): ShippingMethod {
@@ -916,6 +932,87 @@ export async function getPointRules(): Promise<PointRule[]> {
   return pointRules.map((rule) => ({ ...rule }));
 }
 
+export async function getSurveyTemplates(): Promise<SurveyTemplate[]> {
+  return surveyTemplates.map((template) => cloneSurveyTemplate(template));
+}
+
+export async function getSurveyTemplateById(
+  templateId: string,
+): Promise<SurveyTemplate | undefined> {
+  const template = findSurveyTemplateRecord(templateId);
+  return template ? cloneSurveyTemplate(template) : undefined;
+}
+
+export async function getSurveyAssignmentsByUser(
+  userId: string,
+): Promise<SurveyAssignment[]> {
+  return surveyAssignments
+    .filter((assignment) => assignment.userId === userId)
+    .map((assignment) => cloneSurveyAssignment(assignment));
+}
+
+export async function getSurveyAssignmentById(
+  assignmentId: string,
+): Promise<SurveyAssignment | undefined> {
+  const assignment = findSurveyAssignmentRecord(assignmentId);
+  return assignment ? cloneSurveyAssignment(assignment) : undefined;
+}
+
+function upsertSurveyAnswers(
+  assignment: SurveyAssignment,
+  answers: SurveyAnswer[],
+) {
+  assignment.answers = answers.map((answer) => cloneSurveyAnswer(answer));
+  assignment.updatedAt = new Date().toISOString();
+}
+
+export async function saveSurveyAssignmentDraft(
+  userId: string,
+  assignmentId: string,
+  answers: SurveyAnswer[],
+): Promise<SurveyAssignment> {
+  const assignment = findSurveyAssignmentRecord(assignmentId);
+
+  if (!assignment) {
+    throw new Error("问卷不存在");
+  }
+
+  if (assignment.userId !== userId) {
+    throw new Error("无权访问该问卷");
+  }
+
+  upsertSurveyAnswers(assignment, answers);
+
+  if (assignment.status !== "submitted") {
+    assignment.status = "pending";
+    assignment.submittedAt = undefined;
+  }
+
+  return cloneSurveyAssignment(assignment);
+}
+
+export async function submitSurveyAssignment(
+  userId: string,
+  assignmentId: string,
+  answers: SurveyAnswer[],
+): Promise<SurveyAssignment> {
+  const assignment = findSurveyAssignmentRecord(assignmentId);
+
+  if (!assignment) {
+    throw new Error("问卷不存在");
+  }
+
+  if (assignment.userId !== userId) {
+    throw new Error("无权访问该问卷");
+  }
+
+  upsertSurveyAnswers(assignment, answers);
+  assignment.status = "submitted";
+  assignment.submittedAt = new Date().toISOString();
+
+  return cloneSurveyAssignment(assignment);
+}
+
 export async function getCollection(
   handle: string,
 ): Promise<Collection | undefined> {
@@ -988,6 +1085,18 @@ export async function getPages(): Promise<Page[]> {
 
 export async function getProduct(handle: string): Promise<Product | undefined> {
   const product = findProductByHandle(handle);
+
+  if (!product) {
+    return undefined;
+  }
+
+  const { collections: _collections, bestsellerRank: _rank, ...rest } = product;
+
+  return rest;
+}
+
+export async function getProductById(id: string): Promise<Product | undefined> {
+  const product = products.find((entry) => entry.id === id);
 
   if (!product) {
     return undefined;

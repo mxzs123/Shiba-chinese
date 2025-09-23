@@ -9,6 +9,8 @@ import {
   upsertCustomerAddress,
   updateUserProfile,
   submitIdentityVerification,
+  saveSurveyAssignmentDraft,
+  submitSurveyAssignment,
 } from "@/lib/api";
 import type {
   Address,
@@ -16,6 +18,8 @@ import type {
   CustomerCoupon,
   IdentityDocumentInput,
   IdentityVerification,
+  SurveyAnswer,
+  SurveyAssignment,
   User,
 } from "@/lib/api/types";
 
@@ -194,6 +198,50 @@ export async function submitIdentityVerificationAction(
 ): Promise<ActionResult<IdentityVerification>> {
   try {
     const result = await submitIdentityVerification(userId, payload);
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: getErrorMessage(error),
+    };
+  }
+}
+
+export async function saveSurveyDraftAction(
+  userId: string,
+  assignmentId: string,
+  answers: SurveyAnswer[],
+): Promise<ActionResult<SurveyAssignment>> {
+  try {
+    const result = await saveSurveyAssignmentDraft(
+      userId,
+      assignmentId,
+      answers,
+    );
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: getErrorMessage(error),
+    };
+  }
+}
+
+export async function submitSurveyAction(
+  userId: string,
+  assignmentId: string,
+  answers: SurveyAnswer[],
+): Promise<ActionResult<SurveyAssignment>> {
+  try {
+    const result = await submitSurveyAssignment(userId, assignmentId, answers);
 
     return {
       success: true,
