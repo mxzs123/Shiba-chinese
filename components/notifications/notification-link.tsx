@@ -1,8 +1,8 @@
 "use client";
 
 import { Popover, Transition } from "@headlessui/react";
-import { Bell } from "lucide-react";
-import { Fragment, useMemo } from "react";
+import { Bell, X } from "lucide-react";
+import { Fragment, useCallback, useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import type { Notification, NotificationCategory } from "lib/api/types";
@@ -19,12 +19,26 @@ type NotificationLinkProps = {
 };
 
 export function NotificationLink({ notifications }: NotificationLinkProps) {
-  const grouped = useMemo(() => groupNotifications(notifications), [notifications]);
-  const unreadCount = notifications.filter((entry) => !entry.readAt).length;
+  const [items, setItems] = useState(() => notifications.map((entry) => ({ ...entry })));
+  const grouped = useMemo(() => groupNotifications(items), [items]);
+  const unreadCount = useMemo(
+    () => items.filter((entry) => !entry.readAt).length,
+    [items],
+  );
+
+  const markAsRead = useCallback((id: string) => {
+    setItems((prev) =>
+      prev.map((entry) =>
+        entry.id === id && !entry.readAt
+          ? { ...entry, readAt: new Date().toISOString() }
+          : entry,
+      ),
+    );
+  }, []);
 
   return (
-    <Popover className="relative inline-flex">
-      {({ open }) => (
+    <Popover as="div" className="relative inline-flex">
+      {({ open, close }) => (
         <>
           <Popover.Button
             aria-label="查看通知"
@@ -47,14 +61,32 @@ export function NotificationLink({ notifications }: NotificationLinkProps) {
           <Transition
             as={Fragment}
             enter="transition ease-out duration-150"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <Popover.Overlay className="fixed inset-0 z-10 bg-transparent" aria-hidden="true" />
+          </Transition>
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-150"
             enterFrom="opacity-0 translate-y-1"
             enterTo="opacity-100 translate-y-0"
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <Popover.Panel className="absolute right-0 z-20 mt-3 w-[22rem] origin-top-right rounded-2xl border border-neutral-200 bg-white p-4 shadow-lg focus:outline-none">
-              <NotificationContent grouped={grouped} hasNotifications={notifications.length > 0} />
+            <Popover.Panel className="absolute right-0 top-full z-20 mt-3 w-[22rem] origin-top-right rounded-2xl border border-neutral-200 bg-white p-4 shadow-lg focus:outline-none">
+              <NotificationContent
+                grouped={grouped}
+                hasNotifications={items.length > 0}
+                onItemSelect={(id) => {
+                  markAsRead(id);
+                }}
+                onClose={close}
+              />
             </Popover.Panel>
           </Transition>
         </>
@@ -78,9 +110,16 @@ function groupNotifications(notifications: Notification[]): GroupedNotifications
 type NotificationContentProps = {
   grouped: GroupedNotifications;
   hasNotifications: boolean;
+  onItemSelect: (id: string) => void;
+  onClose: () => void;
 };
 
-function NotificationContent({ grouped, hasNotifications }: NotificationContentProps) {
+function NotificationContent({
+  grouped,
+  hasNotifications,
+  onItemSelect,
+  onClose,
+}: NotificationContentProps) {
   if (!hasNotifications) {
     return (
       <div className="flex flex-col items-center justify-center py-6 text-center text-sm text-neutral-500">
@@ -91,9 +130,19 @@ function NotificationContent({ grouped, hasNotifications }: NotificationContentP
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <p className="text-sm font-medium text-neutral-900">消息通知</p>
-        <p className="text-xs text-neutral-500">包含系统提醒与订单动态</p>
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <p className="text-sm font-medium text-neutral-900">消息通知</p>
+          <p className="text-xs text-neutral-500">包含系统提醒与订单动态</p>
+        </div>
+        <button
+          type="button"
+          aria-label="关闭通知"
+          onClick={onClose}
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-transparent text-neutral-400 transition hover:border-neutral-200 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#049e6b] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+        >
+          <X className="h-4 w-4" aria-hidden />
+        </button>
       </div>
       <div className="flex flex-col gap-4">
         {grouped.map(({ category, items }) => {
@@ -108,24 +157,32 @@ function NotificationContent({ grouped, hasNotifications }: NotificationContentP
               </h3>
               <ul className="space-y-2">
                 {items.map((item) => (
-                  <li
-                    key={item.id}
-                    className="rounded-xl border border-neutral-100 bg-neutral-50/60 p-3 transition hover:border-[#049e6b1a] hover:bg-white"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-medium text-neutral-900">
-                        {item.title}
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => onItemSelect(item.id)}
+                      className={cn(
+                        "w-full rounded-xl border p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#049e6b] focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+                        item.readAt
+                          ? "border-transparent bg-white hover:border-[#049e6b1a]"
+                          : "border-neutral-100 bg-neutral-50/60 hover:border-[#049e6b1a] hover:bg-white",
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-sm font-medium text-neutral-900">
+                          {item.title}
+                        </p>
+                        {!item.readAt ? (
+                          <span className="mt-0.5 h-2 w-2 flex-none rounded-full bg-[#049e6b]" />
+                        ) : null}
+                      </div>
+                      <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+                        {item.description}
                       </p>
-                      {!item.readAt ? (
-                        <span className="mt-0.5 h-2 w-2 rounded-full bg-[#049e6b]" />
-                      ) : null}
-                    </div>
-                    <p className="mt-1 text-xs leading-relaxed text-neutral-500">
-                      {item.description}
-                    </p>
-                    <time className="mt-2 block text-[11px] text-neutral-400" dateTime={item.createdAt}>
-                      {formatTimestamp(item.createdAt)}
-                    </time>
+                      <time className="mt-2 block text-[11px] text-neutral-400" dateTime={item.createdAt}>
+                        {formatTimestamp(item.createdAt)}
+                      </time>
+                    </button>
                   </li>
                 ))}
               </ul>
