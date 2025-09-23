@@ -455,6 +455,10 @@ export const orders: Order[] = [
     customerId: "user-demo",
     appliedCoupons: [welcomeAppliedCoupon],
     loyaltyDelta: 300,
+    tracking: {
+      carrier: "顺丰速运",
+      trackingNumber: "SF1234567890",
+    },
   },
 ];
 

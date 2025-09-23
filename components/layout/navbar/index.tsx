@@ -1,3 +1,4 @@
+import AccountLink from "components/account/account-link";
 import CartLink from "components/cart/cart-link";
 import LogoSquare from "components/logo-square";
 import { getMenu } from "lib/api";
@@ -52,7 +53,8 @@ export async function Navbar() {
             <Search />
           </Suspense>
         </div>
-        <div className="flex justify-end md:w-1/3">
+        <div className="flex items-center justify-end gap-3 md:w-1/3">
+          <AccountLink />
           <CartLink />
         </div>
       </div>

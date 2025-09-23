@@ -269,6 +269,12 @@ export type OrderLineItem = {
   image?: Image;
 };
 
+export type OrderTracking = {
+  carrier?: string;
+  trackingNumber: string;
+  url?: string;
+};
+
 export type Order = {
   id: string;
   number: string;
@@ -290,4 +296,5 @@ export type Order = {
   customerId: string;
   appliedCoupons?: AppliedCoupon[];
   loyaltyDelta?: number;
+  tracking?: OrderTracking;
 };
