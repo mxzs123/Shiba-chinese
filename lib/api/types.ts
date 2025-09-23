@@ -154,6 +154,30 @@ export type PointAccount = Point & {
   transactions: PointTransaction[];
 };
 
+export type PointRuleKind = "earn" | "redeem" | "notice";
+
+export type PointRule = {
+  id: string;
+  title: string;
+  description: string;
+  kind?: PointRuleKind;
+};
+
+export type MembershipTierProgress = {
+  title: string;
+  requirement: string;
+};
+
+export type Membership = {
+  id: string;
+  tier: string;
+  level: number;
+  since: string;
+  expiresAt?: string;
+  benefits: string[];
+  next?: MembershipTierProgress;
+};
+
 export type User = {
   id: string;
   email: string;
@@ -167,6 +191,15 @@ export type User = {
   defaultAddress?: Address;
   addresses: Address[];
   loyalty?: PointAccount;
+  membership?: Membership;
+  coupons?: CustomerCoupon[];
+};
+
+export type UserProfileInput = {
+  firstName?: string;
+  lastName?: string;
+  nickname?: string;
+  phone?: string;
 };
 
 export type CartProduct = {
@@ -221,6 +254,20 @@ export type Coupon = {
 export type AppliedCoupon = {
   coupon: Coupon;
   amount: Money;
+};
+
+export type CustomerCouponState = "active" | "used" | "expired" | "scheduled";
+
+export type CustomerCoupon = {
+  id: string;
+  coupon: Coupon;
+  state: CustomerCouponState;
+  assignedAt: string;
+  usedAt?: string;
+  orderId?: string;
+  note?: string;
+  source?: string;
+  expiresAt?: string;
 };
 
 export type Cart = {
@@ -298,4 +345,15 @@ export type Order = {
   appliedCoupons?: AppliedCoupon[];
   loyaltyDelta?: number;
   tracking?: OrderTracking;
+};
+
+export type NotificationCategory = "system" | "order";
+
+export type Notification = {
+  id: string;
+  category: NotificationCategory;
+  title: string;
+  description: string;
+  createdAt: string;
+  readAt?: string;
 };

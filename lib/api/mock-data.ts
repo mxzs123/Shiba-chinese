@@ -3,11 +3,15 @@ import type {
   AppliedCoupon,
   Collection,
   Coupon,
+  CustomerCoupon,
+  Membership,
   Menu,
+  Notification,
   Order,
   Page,
   PaymentMethod,
   PointAccount,
+  PointRule,
   Product,
   ShippingMethod,
   User,
@@ -50,6 +54,40 @@ const demoAddress: Address = {
   address2: "1001 室",
   isDefault: true,
   formatted: ["上海市黄浦区中山东一路 12 号", "1001 室", "上海", "中国 200001"],
+};
+
+const officeAddress: Address = {
+  id: "addr-demo-office",
+  firstName: "芝园",
+  lastName: "会员",
+  phone: "+86 13800000000",
+  country: "中国",
+  countryCode: "CN",
+  province: "上海市",
+  city: "上海",
+  district: "杨浦区",
+  postalCode: "200082",
+  address1: "政益路 88 号",
+  address2: "A 座 502",
+  isDefault: false,
+  formatted: ["上海市杨浦区政益路 88 号", "A 座 502", "上海", "中国 200082"],
+};
+
+const membership: Membership = {
+  id: "member-tier-gold",
+  tier: "金卡会员",
+  level: 3,
+  since: `${thisYear}-01-05T08:00:00.000Z`,
+  expiresAt: `${thisYear}-12-31T23:59:59.000Z`,
+  benefits: [
+    "消费满 ¥199 免运费",
+    "每月 2 张补贴券",
+    "专属客服与线下快线",
+  ],
+  next: {
+    title: "升级至铂金会员",
+    requirement: "年度消费满 ¥5,000 或积分累计 5,000 以上",
+  },
 };
 
 const desktopShippingMethods: ShippingMethod[] = [
@@ -101,10 +139,64 @@ const welcomeCoupon: Coupon = {
   minimumSubtotal: { amount: "199.00", currencyCode: CURRENCY },
 };
 
+const springCoupon: Coupon = {
+  id: "coupon-spring-15",
+  code: "SPRING15",
+  title: "春日茶饮 85 折",
+  description: "精选茶饮系列 85 折，部分新品不参加",
+  type: "percentage",
+  value: 15,
+  startsAt: `${thisYear}-03-01T00:00:00.000Z`,
+  expiresAt: `${thisYear}-06-30T23:59:59.000Z`,
+  appliesToCollectionHandles: ["matcha"],
+};
+
+const freeShippingCoupon: Coupon = {
+  id: "coupon-free-ship",
+  code: "FREESHIP",
+  title: "全场免运券",
+  description: "一次性免运费，可与积分叠加使用",
+  type: "free_shipping",
+  value: 0,
+  startsAt: `${thisYear}-02-01T00:00:00.000Z`,
+  expiresAt: `${thisYear}-08-01T23:59:59.000Z`,
+};
+
 const welcomeAppliedCoupon: AppliedCoupon = {
   coupon: welcomeCoupon,
   amount: { amount: "40.80", currencyCode: CURRENCY },
 };
+
+const customerCoupons: CustomerCoupon[] = [
+  {
+    id: "user-coupon-welcome",
+    coupon: welcomeCoupon,
+    state: "active",
+    assignedAt: `${thisYear}-01-05T08:05:00.000Z`,
+    expiresAt: welcomeCoupon.expiresAt,
+    note: "新人礼包自动发放",
+    source: "系统发放",
+  },
+  {
+    id: "user-coupon-spring",
+    coupon: springCoupon,
+    state: "used",
+    assignedAt: `${thisYear}-03-10T10:00:00.000Z`,
+    usedAt: `${thisYear}-04-18T10:15:00.000Z`,
+    orderId: "ord-demo-001",
+    note: "春季茶礼促销活动",
+    source: "活动领取",
+  },
+  {
+    id: "user-coupon-ship",
+    coupon: freeShippingCoupon,
+    state: "expired",
+    assignedAt: `${thisYear}-02-02T09:00:00.000Z`,
+    expiresAt: `${thisYear}-05-30T23:59:59.000Z`,
+    note: "会员日免运福利",
+    source: "会员权益",
+  },
+];
 
 const loyaltyAccount: PointAccount = {
   userId: "user-demo",
@@ -131,27 +223,51 @@ const loyaltyAccount: PointAccount = {
   ],
 };
 
-export const coupons: Coupon[] = [welcomeCoupon];
+const loyaltyRules: PointRule[] = [
+  {
+    id: "rule-earn-order",
+    title: "下单即得积分",
+    description: "每消费 ¥1 获得 1 积分，订单完成后 24 小时内到账",
+    kind: "earn",
+  },
+  {
+    id: "rule-redeem",
+    title: "积分抵扣规则",
+    description: "100 积分可抵扣 ¥10，无最低消费限制，可与优惠券叠加使用",
+    kind: "redeem",
+  },
+  {
+    id: "rule-expire",
+    title: "有效期说明",
+    description: "积分以自然年为周期，于次年 3 月 31 日统一清零，请及时使用",
+    kind: "notice",
+  },
+];
+
+export const coupons: Coupon[] = [welcomeCoupon, springCoupon, freeShippingCoupon];
 
 export const users: User[] = [
   {
     id: "user-demo",
-    email: "member@shiba-commerce.cn",
-    firstName: "芝园",
-    lastName: "会员",
-    phone: "+86 13800000000",
-    nickname: "芝园会员",
-    createdAt: `${thisYear}-01-05T08:00:00.000Z`,
-    updatedAt: now.toISOString(),
-    defaultAddress: demoAddress,
-    addresses: [demoAddress],
-    loyalty: loyaltyAccount,
+  email: "member@shiba-commerce.cn",
+  firstName: "芝园",
+  lastName: "会员",
+  phone: "+86 13800000000",
+  nickname: "芝园会员",
+  createdAt: `${thisYear}-01-05T08:00:00.000Z`,
+  updatedAt: now.toISOString(),
+  defaultAddress: demoAddress,
+  addresses: [demoAddress, officeAddress],
+  loyalty: loyaltyAccount,
+  membership,
+  coupons: customerCoupons,
   },
 ];
 
 export const loyaltyAccounts: PointAccount[] = [loyaltyAccount];
 export const shippingMethods = desktopShippingMethods;
 export const paymentMethods = desktopPaymentMethods;
+export const pointRules = loyaltyRules;
 
 export const products: ProductRecord[] = [
   {
@@ -566,6 +682,39 @@ export const menus: Record<string, Menu[]> = {
     { title: "隐私政策", path: "/page/faq" },
   ],
 };
+
+export const notifications: Notification[] = [
+  {
+    id: "notice-system-001",
+    category: "system",
+    title: "积分体系升级完毕",
+    description: "新的积分换购商品已经上线，快去看看有哪些惊喜。",
+    createdAt: `${thisYear}-05-20T09:00:00.000Z`,
+  },
+  {
+    id: "notice-order-001",
+    category: "order",
+    title: "订单 #ZY240518 已发货",
+    description: "顺丰速运已经揽收，预计 1-2 个工作日送达。",
+    createdAt: `${thisYear}-05-18T12:30:00.000Z`,
+  },
+  {
+    id: "notice-system-002",
+    category: "system",
+    title: "补贴券到账提醒",
+    description: "本月会员补贴券已发放 2 张，可在下单时叠加使用。",
+    createdAt: `${thisYear}-05-15T08:00:00.000Z`,
+    readAt: `${thisYear}-05-15T09:05:00.000Z`,
+  },
+  {
+    id: "notice-order-002",
+    category: "order",
+    title: "订单 #ZY240510 已完成",
+    description: "感谢你的耐心等待，欢迎对本次购物体验进行评价。",
+    createdAt: `${thisYear}-05-12T19:45:00.000Z`,
+    readAt: `${thisYear}-05-13T08:12:00.000Z`,
+  },
+];
 
 export const checkoutUrl = CHECKOUT_FALLBACK;
 export const defaultCurrency = CURRENCY;

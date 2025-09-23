@@ -1,7 +1,8 @@
 import AccountLink from "components/account/account-link";
 import CartLink from "components/cart/cart-link";
+import NotificationLink from "components/notifications/notification-link";
 import LogoSquare from "components/logo-square";
-import { getMenu } from "lib/api";
+import { getMenu, getNotifications } from "lib/api";
 import { Menu } from "lib/api/types";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -12,6 +13,7 @@ const { SITE_NAME } = process.env;
 
 export async function Navbar() {
   const menu = await getMenu("next-js-frontend-header-menu");
+  const notifications = await getNotifications();
 
   return (
     <nav className="relative flex items-center justify-between p-4 lg:px-6">
@@ -54,6 +56,7 @@ export async function Navbar() {
           </Suspense>
         </div>
         <div className="flex items-center justify-end gap-3 md:w-1/3">
+          <NotificationLink notifications={notifications} />
           <AccountLink />
           <CartLink />
         </div>

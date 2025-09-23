@@ -1,4 +1,11 @@
-import type { Address, AddressInput, PointAccount, User } from "./types";
+import type {
+  Address,
+  AddressInput,
+  CustomerCoupon,
+  Membership,
+  PointAccount,
+  User,
+} from "./types";
 
 export function formatAddressLines(address: Address) {
   const lines = [
@@ -31,6 +38,21 @@ export function clonePointAccount(account: PointAccount): PointAccount {
   };
 }
 
+export function cloneMembership(membership: Membership): Membership {
+  return {
+    ...membership,
+    benefits: [...membership.benefits],
+    next: membership.next ? { ...membership.next } : undefined,
+  };
+}
+
+export function cloneCustomerCoupon(coupon: CustomerCoupon): CustomerCoupon {
+  return {
+    ...coupon,
+    coupon: { ...coupon.coupon },
+  };
+}
+
 export function cloneUser(user: User): User {
   return {
     ...user,
@@ -39,6 +61,8 @@ export function cloneUser(user: User): User {
       : undefined,
     addresses: user.addresses.map(cloneAddress),
     loyalty: user.loyalty ? clonePointAccount(user.loyalty) : undefined,
+    membership: user.membership ? cloneMembership(user.membership) : undefined,
+    coupons: user.coupons ? user.coupons.map(cloneCustomerCoupon) : undefined,
   };
 }
 

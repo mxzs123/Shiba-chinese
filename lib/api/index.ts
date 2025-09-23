@@ -10,15 +10,18 @@ import {
   loyaltyAccounts,
   listVisibleCollections,
   menus,
+  notifications,
   orders,
   paymentMethods,
   pages,
   products,
   shippingMethods,
+  pointRules,
   users,
 } from "./mock-data";
 import {
   cloneAddress,
+  cloneCustomerCoupon,
   clonePointAccount,
   cloneUser,
   createAddressRecord,
@@ -32,16 +35,21 @@ import type {
   CartItem,
   Collection,
   Coupon,
+  CustomerCoupon,
   Menu,
   Order,
   Page,
   PaymentMethod,
   PointAccount,
+  PointRule,
   Product,
   ProductVariant,
   ShippingMethod,
   User,
+  UserProfileInput,
   Money,
+  Notification,
+  NotificationCategory,
 } from "./types";
 import { cookies, headers } from "next/headers";
 import { revalidateTag } from "next/cache";
@@ -178,6 +186,26 @@ function calculateCartTotals(
   };
 }
 
+type GetNotificationsOptions = {
+  categories?: NotificationCategory[];
+};
+
+export async function getNotifications(
+  options?: GetNotificationsOptions,
+): Promise<Notification[]> {
+  const categories = options?.categories;
+  const filtered = categories?.length
+    ? notifications.filter((entry) => categories.includes(entry.category))
+    : notifications;
+
+  return filtered
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+}
+
 export async function getShippingMethods(): Promise<ShippingMethod[]> {
   return shippingMethods.map(cloneShippingMethod);
 }
@@ -200,31 +228,72 @@ export async function addCustomerAddress(
   userId: string,
   payload: AddressInput,
 ): Promise<Address> {
+  return upsertCustomerAddress(userId, payload);
+}
+
+export async function upsertCustomerAddress(
+  userId: string,
+  payload: AddressInput,
+): Promise<Address> {
   const user = findUserRecord(userId);
 
   if (!user) {
     throw new Error("User not found");
   }
 
-  const address = createAddressRecord(payload);
+  const addressRecord = createAddressRecord(payload);
+  const existing = addressRecord.id
+    ? user.addresses.find((entry) => entry.id === addressRecord.id)
+    : undefined;
 
-  user.addresses.push(address);
+  if (existing) {
+    Object.assign(existing, addressRecord);
+  } else {
+    user.addresses.push(addressRecord);
+  }
 
-  if (address.isDefault) {
+  if (addressRecord.isDefault) {
     user.addresses = user.addresses.map((entry) => ({
       ...entry,
-      isDefault: entry.id === address.id,
+      isDefault: entry.id === addressRecord.id,
       formatted: entry.formatted || formatAddressLines(entry),
     }));
     user.defaultAddress = user.addresses.find(
-      (entry) => entry.id === address.id,
+      (entry) => entry.id === addressRecord.id,
     );
   } else if (!user.defaultAddress) {
-    user.defaultAddress = address;
-    address.isDefault = true;
+    addressRecord.isDefault = true;
+    user.defaultAddress = addressRecord;
+  } else if (
+    existing &&
+    user.defaultAddress?.id === existing.id &&
+    !existing.isDefault
+  ) {
+    const fallbackCandidate =
+      user.addresses.find((entry) => entry.isDefault && entry.id !== existing.id) ||
+      user.addresses.find((entry) => entry.id !== existing.id) ||
+      user.addresses[0];
+
+    if (fallbackCandidate) {
+      user.addresses = user.addresses.map((entry) => ({
+        ...entry,
+        isDefault: entry.id === fallbackCandidate.id,
+        formatted: entry.formatted || formatAddressLines(entry),
+      }));
+      user.defaultAddress = user.addresses.find(
+        (entry) => entry.id === fallbackCandidate.id,
+      );
+    } else {
+      user.defaultAddress = undefined;
+    }
   }
 
-  return cloneAddress(address);
+  const updated = existing ?? addressRecord;
+
+  return cloneAddress({
+    ...updated,
+    formatted: updated.formatted || formatAddressLines(updated),
+  });
 }
 
 export async function setDefaultCustomerAddress(
@@ -253,6 +322,43 @@ export async function setDefaultCustomerAddress(
   user.defaultAddress = defaultAddress;
 
   return defaultAddress ? cloneAddress(defaultAddress) : undefined;
+}
+
+export async function deleteCustomerAddress(
+  userId: string,
+  addressId: string,
+): Promise<Address[]> {
+  const user = findUserRecord(userId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const wasDefault = user.defaultAddress?.id === addressId;
+
+  user.addresses = user.addresses
+    .filter((entry) => entry.id !== addressId)
+    .map((entry) => ({
+      ...entry,
+      formatted: entry.formatted || formatAddressLines(entry),
+    }));
+
+  if (wasDefault) {
+    const fallback = user.addresses[0];
+    if (fallback) {
+      fallback.isDefault = true;
+      user.defaultAddress = fallback;
+    } else {
+      user.defaultAddress = undefined;
+    }
+  } else if (
+    user.defaultAddress &&
+    !user.addresses.some((entry) => entry.id === user.defaultAddress?.id)
+  ) {
+    user.defaultAddress = user.addresses.find((entry) => entry.isDefault);
+  }
+
+  return user.addresses.map(cloneAddress);
 }
 
 function createEmptyCart(): Cart {
@@ -631,6 +737,78 @@ export async function getCouponByCode(
   return { ...coupon };
 }
 
+export async function getCustomerCoupons(
+  userId: string,
+): Promise<CustomerCoupon[]> {
+  const user = findUserRecord(userId);
+
+  if (!user || !user.coupons) {
+    return [];
+  }
+
+  return user.coupons.map(cloneCustomerCoupon);
+}
+
+function determineCouponState(
+  coupon: Coupon,
+): "active" | "scheduled" | "expired" {
+  const now = Date.now();
+
+  if (coupon.startsAt && new Date(coupon.startsAt).getTime() > now) {
+    return "scheduled";
+  }
+
+  if (coupon.expiresAt && new Date(coupon.expiresAt).getTime() < now) {
+    return "expired";
+  }
+
+  return "active";
+}
+
+export async function redeemCouponForUser(
+  userId: string,
+  code: string,
+): Promise<CustomerCoupon> {
+  const user = findUserRecord(userId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const coupon = findCouponByCode(code);
+
+  if (!coupon) {
+    throw new Error("优惠券不存在或已下架");
+  }
+
+  user.coupons = user.coupons ?? [];
+
+  const exists = user.coupons.some(
+    (entry) => entry.coupon.code.toLowerCase() === coupon.code.toLowerCase(),
+  );
+
+  if (exists) {
+    throw new Error("该优惠券已在账户中，无需重复兑换");
+  }
+
+  const state = determineCouponState(coupon);
+  const now = new Date().toISOString();
+
+  const customerCoupon: CustomerCoupon = {
+    id: `user-coupon-${crypto.randomUUID()}`,
+    coupon,
+    state,
+    assignedAt: now,
+    expiresAt: coupon.expiresAt,
+    source: "兑换码输入",
+  };
+
+  user.coupons.push(customerCoupon);
+  user.updatedAt = now;
+
+  return cloneCustomerCoupon(customerCoupon);
+}
+
 export async function getCurrentUser(): Promise<User | undefined> {
   return getUserFromSessionCookie();
 }
@@ -638,6 +816,37 @@ export async function getCurrentUser(): Promise<User | undefined> {
 export async function getUserById(id: string): Promise<User | undefined> {
   const user = users.find((entry) => entry.id === id);
   return user ? cloneUser(user) : undefined;
+}
+
+export async function updateUserProfile(
+  userId: string,
+  input: UserProfileInput,
+): Promise<User> {
+  const user = findUserRecord(userId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (input.firstName !== undefined) {
+    user.firstName = input.firstName.trim();
+  }
+
+  if (input.lastName !== undefined) {
+    user.lastName = input.lastName.trim();
+  }
+
+  if (input.nickname !== undefined) {
+    user.nickname = input.nickname.trim() || undefined;
+  }
+
+  if (input.phone !== undefined) {
+    user.phone = input.phone.trim() || undefined;
+  }
+
+  user.updatedAt = new Date().toISOString();
+
+  return cloneUser(user);
 }
 
 export async function getUserOrders(userId: string): Promise<Order[]> {
@@ -656,6 +865,10 @@ export async function getLoyaltyAccount(
   const account = loyaltyAccounts.find((entry) => entry.userId === userId);
 
   return account ? clonePointAccount(account) : undefined;
+}
+
+export async function getPointRules(): Promise<PointRule[]> {
+  return pointRules.map((rule) => ({ ...rule }));
 }
 
 export async function getCollection(
