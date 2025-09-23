@@ -293,6 +293,7 @@ export type Order = {
   lineItems: OrderLineItem[];
   shippingAddress: Address;
   billingAddress?: Address;
+  shippingMethod?: ShippingMethod;
   customerId: string;
   appliedCoupons?: AppliedCoupon[];
   loyaltyDelta?: number;

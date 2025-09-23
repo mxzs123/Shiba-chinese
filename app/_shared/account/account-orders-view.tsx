@@ -1,20 +1,19 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import type { Order } from "@/lib/api/types";
-import { PackageCheck, Truck } from "lucide-react";
+import { ArrowRight, PackageCheck } from "lucide-react";
 
-const ORDER_STAGES = [
-  { key: "created", label: "创建" },
-  { key: "pending", label: "待支付" },
-  { key: "paid", label: "已支付待确认" },
-  { key: "fulfilled", label: "已发货" },
-] as const;
-
-type OrderStage = (typeof ORDER_STAGES)[number]["key"];
+import {
+  ORDER_STAGES,
+  type OrderStage,
+  getStageLabel,
+  resolveOrderStage,
+} from "./order-stages";
 
 type OrderEntry = {
   order: Order;
@@ -127,84 +126,66 @@ function OrderCard({ order, stage }: OrderCardProps) {
     order.totalPrice.amount,
     order.totalPrice.currencyCode,
   );
-  const trackingNumber = order.tracking?.trackingNumber ?? "待更新";
+  const firstItem = order.lineItems[0];
+  const totalQuantity = order.lineItems.reduce((sum, item) => sum + item.quantity, 0);
+  const extraItems = order.lineItems.length - 1;
+  const summaryTitle = firstItem
+    ? `${firstItem.productTitle}${extraItems > 0 ? ` 等 ${order.lineItems.length} 款` : ""}`
+    : "商品信息待确认";
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-1 text-sm text-neutral-500">
-          <p className="font-mono text-sm font-semibold text-neutral-900">
-            订单号 {order.number}
-          </p>
-          <p className="text-xs text-neutral-400">创建于 {createdAt}</p>
-        </div>
-        <div className="flex flex-col items-end gap-2">
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
+    <Link
+      href={`/account/orders/${order.id}`}
+      className="block rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-lg hover:shadow-neutral-900/5"
+    >
+      <div className="flex flex-col gap-4">
+        <header className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-1 text-sm text-neutral-500">
+            <p className="font-mono text-sm font-semibold text-neutral-900">
+              订单号 {order.number}
+            </p>
+            <p className="text-xs text-neutral-400">创建于 {createdAt}</p>
+          </div>
+          <span className="inline-flex items-center gap-1 self-start rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
             <PackageCheck className="h-4 w-4" aria-hidden />
             {getStageLabel(stage)}
           </span>
-        </div>
-      </header>
+        </header>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_220px]">
-        <div className="rounded-2xl border border-neutral-100 bg-neutral-50 p-4">
-          <h3 className="text-sm font-semibold text-neutral-800">商品明细</h3>
-          <ul className="mt-3 divide-y divide-neutral-200">
-            {order.lineItems.map((item) => (
-              <li key={item.id} className="flex items-center gap-4 py-3">
-                {item.image ? (
-                  <div className="relative h-14 w-14 flex-none overflow-hidden rounded-xl border border-neutral-200 bg-white">
-                    <Image
-                      fill
-                      sizes="56px"
-                      src={item.image.url}
-                      alt={item.image.altText || item.productTitle}
-                      className="object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-dashed border-neutral-200 bg-white text-xs text-neutral-400">
-                    无图
-                  </div>
-                )}
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <p className="truncate text-sm font-semibold text-neutral-900">
-                    {item.productTitle}
-                  </p>
-                  {item.variantTitle ? (
-                    <p className="truncate text-xs text-neutral-500">
-                      {item.variantTitle}
-                    </p>
-                  ) : null}
-                  <p className="text-xs text-neutral-400">数量 × {item.quantity}</p>
-                </div>
-                <span className="text-sm font-semibold text-neutral-900">
-                  {formatMoney(item.totalPrice.amount, item.totalPrice.currencyCode)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <aside className="space-y-3">
-          <div className="rounded-2xl border border-neutral-100 bg-white/80 px-4 py-3">
-            <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">
-              实付金额
-            </p>
-            <p className="mt-2 text-lg font-semibold text-neutral-900">{totalAmount}</p>
-          </div>
-          <div className="rounded-2xl border border-neutral-100 bg-white/80 px-4 py-3 text-sm text-neutral-600">
-            <div className="flex items-center gap-2 text-neutral-500">
-              <Truck className="h-4 w-4 text-neutral-400" aria-hidden />
-              <span>运单号</span>
+        <div className="flex gap-4">
+          {firstItem?.image ? (
+            <div className="relative h-14 w-14 flex-none overflow-hidden rounded-xl border border-neutral-200 bg-white">
+              <Image
+                fill
+                sizes="56px"
+                src={firstItem.image.url}
+                alt={firstItem.image.altText || firstItem.productTitle}
+                className="object-cover"
+              />
             </div>
-            <p className="mt-3 font-medium text-neutral-900">{trackingNumber}</p>
-            <p className="mt-1 text-xs text-neutral-400">
-              若需查看实时轨迹，请通过客服查询。
-            </p>
+          ) : (
+            <div className="flex h-14 w-14 flex-none items-center justify-center rounded-xl border border-dashed border-neutral-200 bg-white text-xs text-neutral-400">
+              无图
+            </div>
+          )}
+          <div className="flex-1 space-y-2 text-sm text-neutral-600">
+            <p className="font-semibold text-neutral-900">{summaryTitle}</p>
+            {firstItem?.variantTitle ? (
+              <p className="text-xs text-neutral-500">{firstItem.variantTitle}</p>
+            ) : null}
+            <p className="text-xs text-neutral-400">共 {totalQuantity} 件 · 实付 {totalAmount}</p>
           </div>
-        </aside>
+        </div>
+
+        <footer className="flex items-center justify-between text-xs text-neutral-400">
+          <span>点击查看订单详情</span>
+          <span className="inline-flex items-center gap-1 text-[#049e6b]">
+            查看详情
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </span>
+        </footer>
       </div>
-    </article>
+    </Link>
   );
 }
 
@@ -229,31 +210,6 @@ function StageEmptyState({ stage }: StageEmptyStateProps) {
       暂无处于「{getStageLabel(stage)}」阶段的订单。
     </div>
   );
-}
-
-function resolveOrderStage(order: Order): OrderStage {
-  if (order.fulfillmentStatus === "fulfilled" || order.status === "fulfilled") {
-    return "fulfilled";
-  }
-
-  if (
-    order.status === "paid" ||
-    order.financialStatus === "paid" ||
-    order.financialStatus === "authorized" ||
-    order.status === "processing"
-  ) {
-    return "paid";
-  }
-
-  if (order.status === "pending" || order.financialStatus === "pending") {
-    return "pending";
-  }
-
-  return "created";
-}
-
-function getStageLabel(stage: OrderStage) {
-  return ORDER_STAGES.find((entry) => entry.key === stage)?.label ?? stage;
 }
 
 function formatDate(isoString: string) {

@@ -452,6 +452,7 @@ export const orders: Order[] = [
     ],
     shippingAddress: demoAddress,
     billingAddress: demoAddress,
+    shippingMethod: desktopShippingMethods[1],
     customerId: "user-demo",
     appliedCoupons: [welcomeAppliedCoupon],
     loyaltyDelta: 300,
