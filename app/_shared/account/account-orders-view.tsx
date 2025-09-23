@@ -25,7 +25,10 @@ type AccountOrdersViewProps = {
   customerName?: string;
 };
 
-export function AccountOrdersView({ orders, customerName }: AccountOrdersViewProps) {
+export function AccountOrdersView({
+  orders,
+  customerName,
+}: AccountOrdersViewProps) {
   const entries = useMemo<OrderEntry[]>(
     () =>
       orders.map((order) => ({
@@ -51,7 +54,9 @@ export function AccountOrdersView({ orders, customerName }: AccountOrdersViewPro
   }, [entries]);
 
   const initialStage = useMemo<OrderStage>(() => {
-    const firstWithOrders = ORDER_STAGES.find((stage) => stageCounts[stage.key] > 0);
+    const firstWithOrders = ORDER_STAGES.find(
+      (stage) => stageCounts[stage.key] > 0,
+    );
     return (firstWithOrders ?? ORDER_STAGES[0]!).key;
   }, [stageCounts]);
 
@@ -127,7 +132,10 @@ function OrderCard({ order, stage }: OrderCardProps) {
     order.totalPrice.currencyCode,
   );
   const firstItem = order.lineItems[0];
-  const totalQuantity = order.lineItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalQuantity = order.lineItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  );
   const extraItems = order.lineItems.length - 1;
   const summaryTitle = firstItem
     ? `${firstItem.productTitle}${extraItems > 0 ? ` 等 ${order.lineItems.length} 款` : ""}`
@@ -171,9 +179,13 @@ function OrderCard({ order, stage }: OrderCardProps) {
           <div className="flex-1 space-y-2 text-sm text-neutral-600">
             <p className="font-semibold text-neutral-900">{summaryTitle}</p>
             {firstItem?.variantTitle ? (
-              <p className="text-xs text-neutral-500">{firstItem.variantTitle}</p>
+              <p className="text-xs text-neutral-500">
+                {firstItem.variantTitle}
+              </p>
             ) : null}
-            <p className="text-xs text-neutral-400">共 {totalQuantity} 件 · 实付 {totalAmount}</p>
+            <p className="text-xs text-neutral-400">
+              共 {totalQuantity} 件 · 实付 {totalAmount}
+            </p>
           </div>
         </div>
 

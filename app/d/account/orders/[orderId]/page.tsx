@@ -17,7 +17,9 @@ type OrderDetailPageProps = {
   params: Promise<{ orderId: string }>;
 };
 
-export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
+export default async function OrderDetailPage({
+  params,
+}: OrderDetailPageProps) {
   const resolvedParams = await params;
   const orderId = decodeURIComponent(resolvedParams.orderId);
 

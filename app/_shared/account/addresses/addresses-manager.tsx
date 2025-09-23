@@ -88,9 +88,9 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
   });
   const [formPending, startFormTransition] = useTransition();
   const [listPendingId, setListPendingId] = useState<string | null>(null);
-  const [listPendingType, setListPendingType] = useState<"default" | "delete" | null>(
-    null,
-  );
+  const [listPendingType, setListPendingType] = useState<
+    "default" | "delete" | null
+  >(null);
   const [formError, setFormError] = useState<string | null>(null);
 
   const hasAddresses = addresses.length > 0;
@@ -136,7 +136,8 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
       ...current,
       addresses: nextAddresses,
       defaultAddress:
-        nextAddresses.find((entry) => entry.isDefault) ?? current.defaultAddress,
+        nextAddresses.find((entry) => entry.isDefault) ??
+        current.defaultAddress,
     }));
   };
 
@@ -266,10 +267,13 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
                           <p className="text-sm font-semibold text-neutral-900">
-                            {`${address.lastName ?? ""}${address.firstName ?? ""}` || "--"}
+                            {`${address.lastName ?? ""}${address.firstName ?? ""}` ||
+                              "--"}
                           </p>
                           {address.phone ? (
-                            <p className="mt-1 text-xs text-neutral-500">{address.phone}</p>
+                            <p className="mt-1 text-xs text-neutral-500">
+                              {address.phone}
+                            </p>
                           ) : null}
                         </div>
                         <div className="flex items-center gap-2">
@@ -283,7 +287,9 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
                               onClick={() => void handleSetDefault(address.id)}
                               className={cn(
                                 "text-xs font-medium text-neutral-500 transition hover:text-neutral-900",
-                                pendingType === "default" && isPending && "opacity-60",
+                                pendingType === "default" &&
+                                  isPending &&
+                                  "opacity-60",
                               )}
                               disabled={pendingType === "default" && isPending}
                             >
@@ -295,15 +301,25 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
 
                       <div className="flex flex-col gap-2 text-sm text-neutral-600">
                         <div className="inline-flex items-start gap-2 text-sm text-neutral-600">
-                          <MapPin className="mt-0.5 h-4 w-4 flex-none text-neutral-400" aria-hidden />
+                          <MapPin
+                            className="mt-0.5 h-4 w-4 flex-none text-neutral-400"
+                            aria-hidden
+                          />
                           <span>
-                            {[address.province, address.city, address.district, address.address1]
+                            {[
+                              address.province,
+                              address.city,
+                              address.district,
+                              address.address1,
+                            ]
                               .filter(Boolean)
                               .join(" ")}
                           </span>
                         </div>
                         {address.address2 ? (
-                          <p className="text-xs text-neutral-500">{address.address2}</p>
+                          <p className="text-xs text-neutral-500">
+                            {address.address2}
+                          </p>
                         ) : null}
                         {address.postalCode ? (
                           <p className="text-xs text-neutral-400">
@@ -339,7 +355,7 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
         </div>
       ) : (
         <AddressForm
-          key={mode === "edit" ? formState.id ?? "edit" : "create"}
+          key={mode === "edit" ? (formState.id ?? "edit") : "create"}
           formState={formState}
           setFormState={setFormState}
           error={formError}
@@ -472,14 +488,18 @@ function AddressForm({
           disabled={pending}
         />
         <div className="space-y-2">
-          <label className="text-sm font-medium text-neutral-700">设为默认地址</label>
+          <label className="text-sm font-medium text-neutral-700">
+            设为默认地址
+          </label>
           <div className="flex h-11 items-center rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-600">
             <input
               id={defaultFieldId}
               type="checkbox"
               className="h-4 w-4 border-neutral-300 text-neutral-900 focus:ring-neutral-900"
               checked={Boolean(formState.isDefault)}
-              onChange={(event) => handleChange("isDefault", event.target.checked)}
+              onChange={(event) =>
+                handleChange("isDefault", event.target.checked)
+              }
               disabled={pending}
             />
             <label

@@ -1,7 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useTransition, type ChangeEvent, type FormEvent } from "react";
+import {
+  useState,
+  useTransition,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -244,7 +249,9 @@ export function IdentityVerificationCard({
           </div>
 
           <ul className="space-y-1 text-xs text-neutral-400">
-            <li>• 仅支持 JPG、PNG、WebP 格式，大小不超过 {MAX_SIZE_IN_MB}MB。</li>
+            <li>
+              • 仅支持 JPG、PNG、WebP 格式，大小不超过 {MAX_SIZE_IN_MB}MB。
+            </li>
             <li>• 信息仅用于完成实名认证，不会用于其他用途。</li>
           </ul>
 

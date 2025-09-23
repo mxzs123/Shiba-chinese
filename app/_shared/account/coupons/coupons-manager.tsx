@@ -36,7 +36,10 @@ type CouponsManagerProps = {
   coupons: CustomerCoupon[];
 };
 
-export default function CouponsManager({ userId, coupons }: CouponsManagerProps) {
+export default function CouponsManager({
+  userId,
+  coupons,
+}: CouponsManagerProps) {
   const router = useRouter();
   const updateUser = useAuthStore((state) => state.updateUser);
   const [items, setItems] = useState(coupons);
@@ -87,7 +90,9 @@ export default function CouponsManager({ userId, coupons }: CouponsManagerProps)
         onSubmit={handleRedeem}
         className="rounded-2xl border border-neutral-200 bg-white/95 p-5 shadow-sm shadow-black/[0.02]"
       >
-        <h3 className="text-sm font-semibold text-neutral-700">手动兑换优惠券</h3>
+        <h3 className="text-sm font-semibold text-neutral-700">
+          手动兑换优惠券
+        </h3>
         <p className="mt-1 text-xs text-neutral-500">
           输入活动或客服提供的兑换码，成功后可在下方列表查看。
         </p>
@@ -153,14 +158,20 @@ type CouponCardProps = {
   coupon: CustomerCoupon;
 };
 
-const STATE_LABEL: Record<CustomerCouponState, { label: string; tone: "positive" | "warning" | "muted" }> = {
+const STATE_LABEL: Record<
+  CustomerCouponState,
+  { label: string; tone: "positive" | "warning" | "muted" }
+> = {
   active: { label: "可用", tone: "positive" },
   scheduled: { label: "待生效", tone: "warning" },
   used: { label: "已使用", tone: "muted" },
   expired: { label: "已过期", tone: "muted" },
 };
 
-const STATE_ICON: Record<CustomerCouponState, ComponentType<{ className?: string }>> = {
+const STATE_ICON: Record<
+  CustomerCouponState,
+  ComponentType<{ className?: string }>
+> = {
   active: PartyPopper,
   scheduled: Clock,
   used: BadgeCheck,
@@ -182,7 +193,9 @@ function CouponCard({ coupon }: CouponCardProps) {
     <div className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-lg font-semibold text-neutral-900">{definition.title}</p>
+          <p className="text-lg font-semibold text-neutral-900">
+            {definition.title}
+          </p>
           {definition.description ? (
             <p className="text-sm text-neutral-500">{definition.description}</p>
           ) : null}
@@ -210,7 +223,9 @@ function CouponCard({ coupon }: CouponCardProps) {
         </span>
         <span className="text-xs text-neutral-400">{minimum}</span>
         {coupon.source ? (
-          <span className="text-xs text-neutral-400">来源：{coupon.source}</span>
+          <span className="text-xs text-neutral-400">
+            来源：{coupon.source}
+          </span>
         ) : null}
       </div>
 

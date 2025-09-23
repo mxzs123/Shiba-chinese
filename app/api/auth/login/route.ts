@@ -23,10 +23,7 @@ export async function POST(request: Request) {
   try {
     payload = (await request.json()) as LoginPayload;
   } catch (error) {
-    return NextResponse.json(
-      { error: "请求体验证失败" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "请求体验证失败" }, { status: 400 });
   }
 
   try {

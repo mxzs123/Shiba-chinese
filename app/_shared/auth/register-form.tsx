@@ -1,7 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type FormEvent,
+} from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -43,7 +49,10 @@ function normalisePhone(value: string) {
 export function RegisterForm({ redirectTo }: RegisterFormProps) {
   const router = useRouter();
   const setUser = useAuthStore((state) => state.setUser);
-  const safeRedirect = useMemo(() => sanitizeRedirect(redirectTo), [redirectTo]);
+  const safeRedirect = useMemo(
+    () => sanitizeRedirect(redirectTo),
+    [redirectTo],
+  );
   const [identifierType, setIdentifierType] = useState<IdentifierType>("email");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -226,7 +235,9 @@ export function RegisterForm({ redirectTo }: RegisterFormProps) {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-neutral-700">昵称（可选）</label>
+        <label className="text-sm font-medium text-neutral-700">
+          昵称（可选）
+        </label>
         <input
           type="text"
           autoComplete="nickname"
@@ -244,7 +255,9 @@ export function RegisterForm({ redirectTo }: RegisterFormProps) {
             autoComplete="off"
             maxLength={6}
             value={captchaCode}
-            onChange={(event) => setCaptchaCode(event.target.value.toUpperCase())}
+            onChange={(event) =>
+              setCaptchaCode(event.target.value.toUpperCase())
+            }
             placeholder="请输入图形验证码"
             className="h-11 flex-1 rounded-lg border border-neutral-200 bg-white px-3 text-sm uppercase tracking-[0.3em] text-neutral-900 outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200"
           />

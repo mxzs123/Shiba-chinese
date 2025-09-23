@@ -310,11 +310,7 @@ function ensureIdentifier(
   };
 }
 
-function ensureAccountUnique(
-  store: AuthStore,
-  email?: string,
-  phone?: string,
-) {
+function ensureAccountUnique(store: AuthStore, email?: string, phone?: string) {
   if (email && store.accounts.some((entry) => entry.email === email)) {
     throw new AuthError("ACCOUNT_EXISTS", "该邮箱已注册");
   }
@@ -438,7 +434,11 @@ export function authenticateUser(payload: LoginPayload): AuthResult {
     throw new AuthError("INVALID_CREDENTIALS", "账号不存在或未注册");
   }
 
-  const isValid = verifyPassword(payload.password, account.passwordHash, account.salt);
+  const isValid = verifyPassword(
+    payload.password,
+    account.passwordHash,
+    account.salt,
+  );
 
   if (!isValid) {
     throw new AuthError("INVALID_CREDENTIALS", "账号或密码不匹配");
@@ -526,7 +526,9 @@ export function updateUserProfile(
 
   user.updatedAt = now;
 
-  const account = getAuthStore().accounts.find((entry) => entry.userId === userId);
+  const account = getAuthStore().accounts.find(
+    (entry) => entry.userId === userId,
+  );
   if (account) {
     account.updatedAt = now;
     if (user.phone) {
@@ -582,7 +584,9 @@ export function upsertCustomerAddress(
       isDefault: entry.id === nextAddress.id,
       formatted: entry.formatted || formatAddressLines(entry),
     }));
-    user.defaultAddress = user.addresses.find((entry) => entry.id === nextAddress.id);
+    user.defaultAddress = user.addresses.find(
+      (entry) => entry.id === nextAddress.id,
+    );
   } else if (!user.defaultAddress) {
     user.defaultAddress = nextAddress;
     nextAddress.isDefault = true;

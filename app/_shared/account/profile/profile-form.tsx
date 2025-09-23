@@ -21,7 +21,10 @@ function buildInitialFullName(user: User) {
   return parts || user.email.split("@")[0] || "";
 }
 
-export default function AccountProfileForm({ user, action }: AccountProfileFormProps) {
+export default function AccountProfileForm({
+  user,
+  action,
+}: AccountProfileFormProps) {
   const router = useRouter();
   const setUser = useAuthStore((state) => state.setUser);
   const [fullName, setFullName] = useState(() => buildInitialFullName(user));
@@ -58,7 +61,10 @@ export default function AccountProfileForm({ user, action }: AccountProfileFormP
     <form className="space-y-6" onSubmit={handleSubmit}>
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-neutral-700" htmlFor="account-full-name">
+          <label
+            className="text-sm font-medium text-neutral-700"
+            htmlFor="account-full-name"
+          >
             姓名
           </label>
           <input
@@ -71,7 +77,10 @@ export default function AccountProfileForm({ user, action }: AccountProfileFormP
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-neutral-700" htmlFor="account-phone">
+          <label
+            className="text-sm font-medium text-neutral-700"
+            htmlFor="account-phone"
+          >
             手机号
           </label>
           <input
@@ -92,12 +101,8 @@ export default function AccountProfileForm({ user, action }: AccountProfileFormP
         </div>
       </div>
 
-      {error ? (
-        <p className="text-sm text-red-500">{error}</p>
-      ) : null}
-      {success ? (
-        <p className="text-sm text-emerald-600">{success}</p>
-      ) : null}
+      {error ? <p className="text-sm text-red-500">{error}</p> : null}
+      {success ? <p className="text-sm text-emerald-600">{success}</p> : null}
 
       <PrimaryButton type="submit" loading={pending} loadingText="保存中...">
         保存修改

@@ -20,7 +20,9 @@ export const createUrl = (
   return `${pathname}${queryString}`;
 };
 
-export function isSafeAppRedirect(value: string | undefined | null): value is string {
+export function isSafeAppRedirect(
+  value: string | undefined | null,
+): value is string {
   if (!value) {
     return false;
   }

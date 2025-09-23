@@ -19,7 +19,9 @@ type NotificationLinkProps = {
 };
 
 export function NotificationLink({ notifications }: NotificationLinkProps) {
-  const [items, setItems] = useState(() => notifications.map((entry) => ({ ...entry })));
+  const [items, setItems] = useState(() =>
+    notifications.map((entry) => ({ ...entry })),
+  );
   const grouped = useMemo(() => groupNotifications(items), [items]);
   const unreadCount = useMemo(
     () => items.filter((entry) => !entry.readAt).length,
@@ -67,7 +69,10 @@ export function NotificationLink({ notifications }: NotificationLinkProps) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Popover.Overlay className="fixed inset-0 z-10 bg-transparent" aria-hidden="true" />
+            <Popover.Overlay
+              className="fixed inset-0 z-10 bg-transparent"
+              aria-hidden="true"
+            />
           </Transition>
           <Transition
             as={Fragment}
@@ -100,7 +105,9 @@ type GroupedNotifications = Array<{
   items: Notification[];
 }>;
 
-function groupNotifications(notifications: Notification[]): GroupedNotifications {
+function groupNotifications(
+  notifications: Notification[],
+): GroupedNotifications {
   return CATEGORY_ORDER.map((category) => ({
     category,
     items: notifications.filter((entry) => entry.category === category),
@@ -179,7 +186,10 @@ function NotificationContent({
                       <p className="mt-1 text-xs leading-relaxed text-neutral-500">
                         {item.description}
                       </p>
-                      <time className="mt-2 block text-[11px] text-neutral-400" dateTime={item.createdAt}>
+                      <time
+                        className="mt-2 block text-[11px] text-neutral-400"
+                        dateTime={item.createdAt}
+                      >
                         {formatTimestamp(item.createdAt)}
                       </time>
                     </button>

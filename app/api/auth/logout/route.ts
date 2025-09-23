@@ -1,9 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import {
-  AUTH_SESSION_COOKIE,
-  invalidateSession,
-} from "@/lib/api/auth-store";
+import { AUTH_SESSION_COOKIE, invalidateSession } from "@/lib/api/auth-store";
 
 export async function POST() {
   const cookieStore = await cookies();

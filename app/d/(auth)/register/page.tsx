@@ -20,7 +20,9 @@ function buildLoginHref(next?: string) {
   return `/login?${search}`;
 }
 
-export default async function RegisterPage({ searchParams }: RegisterPageProps) {
+export default async function RegisterPage({
+  searchParams,
+}: RegisterPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const rawNext = resolvedSearchParams?.next;
   const nextCandidate = Array.isArray(rawNext)

@@ -14,7 +14,9 @@ export async function AccountAddressesPanel() {
     return (
       <section className="rounded-3xl border border-neutral-100 bg-white/80 p-8 text-center shadow-lg shadow-neutral-900/5">
         <h2 className="text-xl font-semibold text-neutral-900">收货地址</h2>
-        <p className="mt-3 text-sm text-neutral-500">暂未获取到账户信息，请稍后再试。</p>
+        <p className="mt-3 text-sm text-neutral-500">
+          暂未获取到账户信息，请稍后再试。
+        </p>
       </section>
     );
   }

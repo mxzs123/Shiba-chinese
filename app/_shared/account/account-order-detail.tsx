@@ -64,25 +64,45 @@ export function AccountOrderDetail({ order }: AccountOrderDetailProps) {
   const fulfilledAt = updatedAt ? formatDate(updatedAt) : "待更新";
   const shippingMethod = order.shippingMethod;
   const trackingNumber = order.tracking?.trackingNumber ?? "待更新";
-  const subtotal = formatMoney(order.subtotalPrice.amount, order.subtotalPrice.currencyCode);
-  const shippingCost = formatMoney(order.totalShipping.amount, order.totalShipping.currencyCode);
-  const taxCost = formatMoney(order.totalTax.amount, order.totalTax.currencyCode);
-  const totalCost = formatMoney(order.totalPrice.amount, order.totalPrice.currencyCode);
-  const couponSavings = order.appliedCoupons?.reduce((total, coupon) => {
-    return total + Number(coupon.amount.amount);
-  }, 0) ?? 0;
-  const couponDisplay = couponSavings > 0
-    ? `-${formatMoney(couponSavings.toFixed(2), order.currencyCode)}`
-    : null;
-  const loyaltyDisplay = typeof order.loyaltyDelta === "number" ? `+${order.loyaltyDelta}` : null;
-  const totalQuantity = order.lineItems.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = formatMoney(
+    order.subtotalPrice.amount,
+    order.subtotalPrice.currencyCode,
+  );
+  const shippingCost = formatMoney(
+    order.totalShipping.amount,
+    order.totalShipping.currencyCode,
+  );
+  const taxCost = formatMoney(
+    order.totalTax.amount,
+    order.totalTax.currencyCode,
+  );
+  const totalCost = formatMoney(
+    order.totalPrice.amount,
+    order.totalPrice.currencyCode,
+  );
+  const couponSavings =
+    order.appliedCoupons?.reduce((total, coupon) => {
+      return total + Number(coupon.amount.amount);
+    }, 0) ?? 0;
+  const couponDisplay =
+    couponSavings > 0
+      ? `-${formatMoney(couponSavings.toFixed(2), order.currencyCode)}`
+      : null;
+  const loyaltyDisplay =
+    typeof order.loyaltyDelta === "number" ? `+${order.loyaltyDelta}` : null;
+  const totalQuantity = order.lineItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  );
 
   return (
     <section className="overflow-hidden rounded-3xl border border-neutral-100 bg-white/90 shadow-lg shadow-neutral-900/5">
       <header className="border-b border-neutral-100 bg-neutral-50/70 px-6 py-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold text-neutral-900">订单详情</h1>
+            <h1 className="text-2xl font-semibold text-neutral-900">
+              订单详情
+            </h1>
             <p className="text-sm text-neutral-500">
               订单编号 {order.number} · 创建于 {createdAt}
             </p>
@@ -124,9 +144,15 @@ export function AccountOrderDetail({ order }: AccountOrderDetailProps) {
           <DetailSection title="收货信息">
             <DetailItem
               label="收货人"
-              value={`${order.shippingAddress.lastName ?? ""}${order.shippingAddress.firstName ?? ""}` || "--"}
+              value={
+                `${order.shippingAddress.lastName ?? ""}${order.shippingAddress.firstName ?? ""}` ||
+                "--"
+              }
             />
-            <DetailItem label="手机号" value={order.shippingAddress.phone ?? "--"} />
+            <DetailItem
+              label="手机号"
+              value={order.shippingAddress.phone ?? "--"}
+            />
             <DetailItem
               label="收货地址"
               value={
@@ -148,15 +174,26 @@ export function AccountOrderDetail({ order }: AccountOrderDetailProps) {
             <DetailItem label="运费" value={shippingCost} />
             <DetailItem label="税费" value={taxCost} />
             {couponDisplay ? (
-              <DetailItem label="优惠减免" value={couponDisplay} tone="positive" />
+              <DetailItem
+                label="优惠减免"
+                value={couponDisplay}
+                tone="positive"
+              />
             ) : null}
             {loyaltyDisplay ? (
-              <DetailItem label="积分奖励" value={loyaltyDisplay} tone="positive" />
+              <DetailItem
+                label="积分奖励"
+                value={loyaltyDisplay}
+                tone="positive"
+              />
             ) : null}
             <DetailItem label="实付金额" value={totalCost} emphasize />
           </DetailSection>
           <DetailSection title="物流信息">
-            <DetailItem label="配送渠道" value={shippingMethod ? shippingMethod.carrier : "待确认"} />
+            <DetailItem
+              label="配送渠道"
+              value={shippingMethod ? shippingMethod.carrier : "待确认"}
+            />
             <DetailItem label="运单号" value={trackingNumber} />
             <DetailItem
               label="提示"
@@ -196,7 +233,13 @@ type DetailItemProps = {
   description?: boolean;
 };
 
-function DetailItem({ label, value, tone, emphasize, description }: DetailItemProps) {
+function DetailItem({
+  label,
+  value,
+  tone,
+  emphasize,
+  description,
+}: DetailItemProps) {
   const valueClasses = emphasize
     ? "text-base font-semibold text-neutral-900"
     : tone === "positive"
@@ -208,7 +251,9 @@ function DetailItem({ label, value, tone, emphasize, description }: DetailItemPr
       <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
         {label}
       </dt>
-      <dd className={description ? "text-xs text-neutral-500" : valueClasses}>{value}</dd>
+      <dd className={description ? "text-xs text-neutral-500" : valueClasses}>
+        {value}
+      </dd>
     </div>
   );
 }
@@ -222,8 +267,16 @@ type DetailMetaProps = {
 function DetailMeta({ label, value, emphasize }: DetailMetaProps) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-[11px] uppercase tracking-[0.18em] text-neutral-300">{label}</span>
-      <span className={emphasize ? "text-sm font-semibold text-neutral-900" : "text-sm text-neutral-600"}>
+      <span className="text-[11px] uppercase tracking-[0.18em] text-neutral-300">
+        {label}
+      </span>
+      <span
+        className={
+          emphasize
+            ? "text-sm font-semibold text-neutral-900"
+            : "text-sm text-neutral-600"
+        }
+      >
         {value}
       </span>
     </div>
@@ -239,11 +292,16 @@ function ItemsSection({ order }: ItemsSectionProps) {
     <section className="px-6 py-8">
       <header className="flex flex-col gap-2 border-b border-neutral-100 pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-400">商品信息</h2>
-          <p className="text-sm text-neutral-500">共 {order.lineItems.length} 项</p>
+          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-400">
+            商品信息
+          </h2>
+          <p className="text-sm text-neutral-500">
+            共 {order.lineItems.length} 项
+          </p>
         </div>
         <p className="text-sm font-semibold text-neutral-900">
-          实付 {formatMoney(order.totalPrice.amount, order.totalPrice.currencyCode)}
+          实付{" "}
+          {formatMoney(order.totalPrice.amount, order.totalPrice.currencyCode)}
         </p>
       </header>
       <div className="-mx-6 mt-4 overflow-x-auto">
@@ -276,26 +334,48 @@ function ItemsSection({ order }: ItemsSectionProps) {
                     </div>
                   )}
                   <div className="space-y-1 text-sm text-neutral-600">
-                    <p className="font-semibold text-neutral-900">{item.productTitle}</p>
+                    <p className="font-semibold text-neutral-900">
+                      {item.productTitle}
+                    </p>
                     {item.variantTitle ? (
-                      <p className="text-xs text-neutral-500">{item.variantTitle}</p>
+                      <p className="text-xs text-neutral-500">
+                        {item.variantTitle}
+                      </p>
                     ) : null}
-                    <p className="text-xs text-neutral-400">数量 × {item.quantity}</p>
+                    <p className="text-xs text-neutral-400">
+                      数量 × {item.quantity}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-sm font-semibold text-neutral-900 lg:hidden">
                   <span>单价</span>
-                  <span>{formatMoney(item.unitPrice.amount, item.unitPrice.currencyCode)}</span>
+                  <span>
+                    {formatMoney(
+                      item.unitPrice.amount,
+                      item.unitPrice.currencyCode,
+                    )}
+                  </span>
                 </div>
                 <div className="hidden text-right text-sm font-semibold text-neutral-900 lg:block">
-                  {formatMoney(item.unitPrice.amount, item.unitPrice.currencyCode)}
+                  {formatMoney(
+                    item.unitPrice.amount,
+                    item.unitPrice.currencyCode,
+                  )}
                 </div>
                 <div className="flex items-center justify-between text-sm font-semibold text-neutral-900 lg:hidden">
                   <span>小计</span>
-                  <span>{formatMoney(item.totalPrice.amount, item.totalPrice.currencyCode)}</span>
+                  <span>
+                    {formatMoney(
+                      item.totalPrice.amount,
+                      item.totalPrice.currencyCode,
+                    )}
+                  </span>
                 </div>
                 <div className="hidden text-right text-sm font-semibold text-neutral-900 lg:block">
-                  {formatMoney(item.totalPrice.amount, item.totalPrice.currencyCode)}
+                  {formatMoney(
+                    item.totalPrice.amount,
+                    item.totalPrice.currencyCode,
+                  )}
                 </div>
               </li>
             ))}

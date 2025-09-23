@@ -1,5 +1,9 @@
 import { getCurrentUser, getUserById } from "@/lib/api";
-import type { Membership, PointAccount, PointTransaction } from "@/lib/api/types";
+import type {
+  Membership,
+  PointAccount,
+  PointTransaction,
+} from "@/lib/api/types";
 
 function formatDate(value: string | undefined) {
   if (!value) {
@@ -28,7 +32,9 @@ export async function AccountMembershipPanel() {
     return (
       <section className="rounded-3xl border border-neutral-100 bg-white/80 p-8 text-center shadow-lg shadow-neutral-900/5">
         <h2 className="text-xl font-semibold text-neutral-900">会员权益</h2>
-        <p className="mt-3 text-sm text-neutral-500">暂未获取到账户信息，请稍后再试。</p>
+        <p className="mt-3 text-sm text-neutral-500">
+          暂未获取到账户信息，请稍后再试。
+        </p>
       </section>
     );
   }
@@ -87,7 +93,9 @@ function MembershipCard({ membership }: MembershipCardProps) {
         <div>
           <dt className="text-xs text-neutral-400">有效期</dt>
           <dd className="mt-1 font-medium text-neutral-900">
-            {membership.expiresAt ? formatDate(membership.expiresAt) : "长期有效"}
+            {membership.expiresAt
+              ? formatDate(membership.expiresAt)
+              : "长期有效"}
           </dd>
         </div>
         {membership.next ? (
@@ -96,7 +104,9 @@ function MembershipCard({ membership }: MembershipCardProps) {
             <dd className="mt-1 font-medium text-neutral-900">
               {membership.next.title}
             </dd>
-            <p className="text-xs text-neutral-500">{membership.next.requirement}</p>
+            <p className="text-xs text-neutral-500">
+              {membership.next.requirement}
+            </p>
           </div>
         ) : null}
       </dl>
@@ -107,7 +117,10 @@ function MembershipCard({ membership }: MembershipCardProps) {
           <ul className="mt-3 grid gap-2 text-sm text-neutral-600 lg:grid-cols-2">
             {membership.benefits.map((benefit) => (
               <li key={benefit} className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#049e6b]" aria-hidden />
+                <span
+                  className="h-2 w-2 rounded-full bg-[#049e6b]"
+                  aria-hidden
+                />
                 {benefit}
               </li>
             ))}
@@ -145,7 +158,9 @@ function LoyaltyCard({ loyalty }: LoyaltyCardProps) {
         </div>
         <div className="text-right">
           <p className="text-xs text-neutral-400">当前积分余额</p>
-          <p className="mt-1 text-3xl font-semibold text-neutral-900">{loyalty.balance}</p>
+          <p className="mt-1 text-3xl font-semibold text-neutral-900">
+            {loyalty.balance}
+          </p>
           <p className="text-xs text-neutral-400">
             更新于 {formatDate(loyalty.updatedAt)}
           </p>
@@ -154,7 +169,9 @@ function LoyaltyCard({ loyalty }: LoyaltyCardProps) {
 
       {recentTransactions.length ? (
         <div className="mt-6">
-          <h3 className="text-sm font-semibold text-neutral-900">近期积分动态</h3>
+          <h3 className="text-sm font-semibold text-neutral-900">
+            近期积分动态
+          </h3>
           <ul className="mt-3 space-y-3 text-sm text-neutral-600">
             {recentTransactions.map((transaction) => (
               <li
@@ -184,7 +201,9 @@ function LoyaltyCard({ loyalty }: LoyaltyCardProps) {
                   ) : null}
                 </div>
                 {transaction.description ? (
-                  <p className="text-xs text-neutral-500">{transaction.description}</p>
+                  <p className="text-xs text-neutral-500">
+                    {transaction.description}
+                  </p>
                 ) : null}
               </li>
             ))}
