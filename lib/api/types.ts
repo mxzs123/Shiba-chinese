@@ -178,6 +178,24 @@ export type Membership = {
   next?: MembershipTierProgress;
 };
 
+export type IdentityDocument = {
+  frontImageUrl: string;
+  backImageUrl: string;
+  uploadedAt: string;
+};
+
+export type IdentityVerificationStatus = "unverified" | "verified";
+
+export type IdentityVerification = {
+  status: IdentityVerificationStatus;
+  document?: IdentityDocument;
+};
+
+export type IdentityDocumentInput = {
+  frontImage: string;
+  backImage: string;
+};
+
 export type User = {
   id: string;
   email: string;
@@ -193,6 +211,7 @@ export type User = {
   loyalty?: PointAccount;
   membership?: Membership;
   coupons?: CustomerCoupon[];
+  identityVerification?: IdentityVerification;
 };
 
 export type UserProfileInput = {

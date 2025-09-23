@@ -22,6 +22,7 @@ import {
 import {
   cloneAddress,
   cloneCustomerCoupon,
+  cloneIdentityVerification,
   clonePointAccount,
   cloneUser,
   createAddressRecord,
@@ -50,6 +51,8 @@ import type {
   Money,
   Notification,
   NotificationCategory,
+  IdentityVerification,
+  IdentityDocumentInput,
 } from "./types";
 import { cookies, headers } from "next/headers";
 import { revalidateTag } from "next/cache";
@@ -270,7 +273,9 @@ export async function upsertCustomerAddress(
     !existing.isDefault
   ) {
     const fallbackCandidate =
-      user.addresses.find((entry) => entry.isDefault && entry.id !== existing.id) ||
+      user.addresses.find(
+        (entry) => entry.isDefault && entry.id !== existing.id,
+      ) ||
       user.addresses.find((entry) => entry.id !== existing.id) ||
       user.addresses[0];
 
@@ -847,6 +852,46 @@ export async function updateUserProfile(
   user.updatedAt = new Date().toISOString();
 
   return cloneUser(user);
+}
+
+export async function getIdentityVerification(
+  userId: string,
+): Promise<IdentityVerification | undefined> {
+  const user = findUserRecord(userId);
+
+  if (!user?.identityVerification) {
+    return undefined;
+  }
+
+  return cloneIdentityVerification(user.identityVerification);
+}
+
+export async function submitIdentityVerification(
+  userId: string,
+  input: IdentityDocumentInput,
+): Promise<IdentityVerification> {
+  const user = findUserRecord(userId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (!input.frontImage || !input.backImage) {
+    throw new Error("身份证正反面均需上传");
+  }
+
+  const uploadedAt = new Date().toISOString();
+  user.identityVerification = {
+    status: "verified",
+    document: {
+      frontImageUrl: input.frontImage,
+      backImageUrl: input.backImage,
+      uploadedAt,
+    },
+  };
+  user.updatedAt = uploadedAt;
+
+  return cloneIdentityVerification(user.identityVerification);
 }
 
 export async function getUserOrders(userId: string): Promise<Order[]> {

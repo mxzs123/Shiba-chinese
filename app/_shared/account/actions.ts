@@ -8,8 +8,16 @@ import {
   setDefaultCustomerAddress,
   upsertCustomerAddress,
   updateUserProfile,
+  submitIdentityVerification,
 } from "@/lib/api";
-import type { Address, AddressInput, CustomerCoupon, User } from "@/lib/api/types";
+import type {
+  Address,
+  AddressInput,
+  CustomerCoupon,
+  IdentityDocumentInput,
+  IdentityVerification,
+  User,
+} from "@/lib/api/types";
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
@@ -171,6 +179,25 @@ export async function redeemCouponAction(
         coupon,
         coupons,
       },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: getErrorMessage(error),
+    };
+  }
+}
+
+export async function submitIdentityVerificationAction(
+  userId: string,
+  payload: IdentityDocumentInput,
+): Promise<ActionResult<IdentityVerification>> {
+  try {
+    const result = await submitIdentityVerification(userId, payload);
+
+    return {
+      success: true,
+      data: result,
     };
   } catch (error) {
     return {

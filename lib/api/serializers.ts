@@ -2,6 +2,8 @@ import type {
   Address,
   AddressInput,
   CustomerCoupon,
+  IdentityDocument,
+  IdentityVerification,
   Membership,
   PointAccount,
   User,
@@ -17,7 +19,9 @@ export function formatAddressLines(address: Address) {
     address.postalCode
       ? `${address.postalCode}${address.countryCode ? ` ${address.countryCode}` : ""}`
       : undefined,
-  ].filter((value): value is string => Boolean(value && value.trim().length > 0));
+  ].filter((value): value is string =>
+    Boolean(value && value.trim().length > 0),
+  );
 
   return lines.length ? lines : undefined;
 }
@@ -53,6 +57,25 @@ export function cloneCustomerCoupon(coupon: CustomerCoupon): CustomerCoupon {
   };
 }
 
+export function cloneIdentityDocument(
+  document: IdentityDocument,
+): IdentityDocument {
+  return {
+    ...document,
+  };
+}
+
+export function cloneIdentityVerification(
+  verification: IdentityVerification,
+): IdentityVerification {
+  return {
+    ...verification,
+    document: verification.document
+      ? cloneIdentityDocument(verification.document)
+      : undefined,
+  };
+}
+
 export function cloneUser(user: User): User {
   return {
     ...user,
@@ -63,6 +86,9 @@ export function cloneUser(user: User): User {
     loyalty: user.loyalty ? clonePointAccount(user.loyalty) : undefined,
     membership: user.membership ? cloneMembership(user.membership) : undefined,
     coupons: user.coupons ? user.coupons.map(cloneCustomerCoupon) : undefined,
+    identityVerification: user.identityVerification
+      ? cloneIdentityVerification(user.identityVerification)
+      : undefined,
   };
 }
 

@@ -79,11 +79,7 @@ const membership: Membership = {
   level: 3,
   since: `${thisYear}-01-05T08:00:00.000Z`,
   expiresAt: `${thisYear}-12-31T23:59:59.000Z`,
-  benefits: [
-    "消费满 ¥199 免运费",
-    "每月 2 张补贴券",
-    "专属客服与线下快线",
-  ],
+  benefits: ["消费满 ¥199 免运费", "每月 2 张补贴券", "专属客服与线下快线"],
   next: {
     title: "升级至铂金会员",
     requirement: "年度消费满 ¥5,000 或积分累计 5,000 以上",
@@ -244,23 +240,30 @@ const loyaltyRules: PointRule[] = [
   },
 ];
 
-export const coupons: Coupon[] = [welcomeCoupon, springCoupon, freeShippingCoupon];
+export const coupons: Coupon[] = [
+  welcomeCoupon,
+  springCoupon,
+  freeShippingCoupon,
+];
 
 export const users: User[] = [
   {
     id: "user-demo",
-  email: "member@shiba-commerce.cn",
-  firstName: "芝园",
-  lastName: "会员",
-  phone: "+86 13800000000",
-  nickname: "芝园会员",
-  createdAt: `${thisYear}-01-05T08:00:00.000Z`,
-  updatedAt: now.toISOString(),
-  defaultAddress: demoAddress,
-  addresses: [demoAddress, officeAddress],
-  loyalty: loyaltyAccount,
-  membership,
-  coupons: customerCoupons,
+    email: "member@shiba-commerce.cn",
+    firstName: "芝园",
+    lastName: "会员",
+    phone: "+86 13800000000",
+    nickname: "芝园会员",
+    createdAt: `${thisYear}-01-05T08:00:00.000Z`,
+    updatedAt: now.toISOString(),
+    defaultAddress: demoAddress,
+    addresses: [demoAddress, officeAddress],
+    loyalty: loyaltyAccount,
+    membership,
+    coupons: customerCoupons,
+    identityVerification: {
+      status: "unverified",
+    },
   },
 ];
 
