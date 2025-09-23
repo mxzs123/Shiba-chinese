@@ -7,6 +7,7 @@ import {
   getCurrentUser,
   getPaymentMethods,
   getShippingMethods,
+  getUserById,
 } from "lib/api";
 
 export const metadata: Metadata = {
@@ -15,14 +16,17 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckoutPage() {
-  const [cart, customer, shippingMethods, paymentMethods, availableCoupons] =
+  const [cart, sessionUser, fallbackUser, shippingMethods, paymentMethods, availableCoupons] =
     await Promise.all([
       getCart(),
       getCurrentUser(),
+      getUserById("user-demo"),
       getShippingMethods(),
       getPaymentMethods(),
       getAvailableCoupons(),
     ]);
+
+  const customer = sessionUser ?? fallbackUser;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 lg:px-0">

@@ -967,12 +967,12 @@ export const menus: Record<string, Menu[]> = {
     { title: "冲泡饮品", path: "/search/beverage" },
     { title: "日常健康", path: "/search/wellness" },
     { title: "生活器具", path: "/search/accessories" },
-    { title: "品牌故事", path: "/page/about" },
+    { title: "品牌故事", path: "/about" },
   ],
   "next-js-frontend-footer-menu": [
-    { title: "配送与退换", path: "/page/faq" },
+    { title: "配送与退换", path: "/faq" },
     { title: "联系我们", path: "mailto:hello@example.com" },
-    { title: "隐私政策", path: "/page/faq" },
+    { title: "隐私政策", path: "/faq" },
   ],
 };
 
