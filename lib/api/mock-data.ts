@@ -13,6 +13,7 @@ import type {
   PointAccount,
   PointRule,
   Product,
+  NewsArticle,
   ShippingMethod,
   SurveyAnswer,
   SurveyAssignment,
@@ -975,6 +976,39 @@ export const menus: Record<string, Menu[]> = {
     { title: "隐私政策", path: "/faq" },
   ],
 };
+
+const newsArticles: NewsArticle[] = [
+  {
+    id: "news-rx-telemedicine",
+    title: "处方复诊全流程上线线上问诊，48 小时内完成审方发药",
+    summary:
+      "芝园联合权威三甲医院医生团队，支持 ADHD、慢病复诊线上问诊，药师复核后优先发货。",
+    href: "/search/pharmacy",
+    tags: ["医疗服务", "处方药"],
+    highlight: true,
+    publishedAt: `${thisYear}-05-28T08:30:00.000Z`,
+  },
+  {
+    id: "news-health-supplement",
+    title: "会员日限定：精选保健食品第 2 件享 8 折",
+    summary:
+      "高人气的维生素与肝脏呵护组合参与活动，加入购物车自动应用优惠，库存有限速抢。",
+    href: "/search?q=%E4%BF%9D%E5%81%A5",
+    tags: ["促销", "会员"],
+    publishedAt: `${thisYear}-05-26T10:00:00.000Z`,
+  },
+  {
+    id: "news-pharmacy-safety",
+    title: "用药提醒：近期高温天气，请按药箱指引存放胰岛素类药物",
+    summary:
+      "药师建议保持 2-8℃ 冷藏，外出配送全程冷链，签收后请尽快放入冷藏包以免失效。",
+    href: "/search?q=%E7%94%9F%E6%B4%BB%E7%94%A8%E5%93%81",
+    tags: ["用药安全"],
+    publishedAt: `${thisYear}-05-24T09:15:00.000Z`,
+  },
+];
+
+export const news = newsArticles;
 
 export const notifications: Notification[] = [
   {

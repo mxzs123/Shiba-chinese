@@ -2,6 +2,7 @@ import Footer from "components/layout/footer";
 
 import { HomeCategoryNavigation } from "./home/HomeCategoryNavigation";
 import { HomeHeroSection } from "./home/HomeHeroSection";
+import { HomeNewsSection } from "./home/HomeNewsSection";
 import { HomeRecommendations } from "./home/HomeRecommendations";
 
 export const metadata = {
@@ -18,6 +19,7 @@ export function HomePage() {
       <div className="flex flex-col gap-12 py-8 md:py-10 lg:py-12">
         <HomeHeroSection />
         <HomeCategoryNavigation />
+        <HomeNewsSection />
         <HomeRecommendations />
       </div>
       <Footer />

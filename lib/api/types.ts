@@ -77,6 +77,16 @@ export type Menu = {
   path: string;
 };
 
+export type NewsArticle = {
+  id: string;
+  title: string;
+  summary: string;
+  href: string;
+  tags?: string[];
+  highlight?: boolean;
+  publishedAt: string;
+};
+
 export type Address = {
   id: string;
   firstName: string;

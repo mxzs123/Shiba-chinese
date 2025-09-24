@@ -10,6 +10,7 @@ import {
   loyaltyAccounts,
   listVisibleCollections,
   menus,
+  news,
   notifications,
   orders,
   paymentMethods,
@@ -61,6 +62,7 @@ import type {
   NotificationCategory,
   IdentityVerification,
   IdentityDocumentInput,
+  NewsArticle,
 } from "./types";
 import { cookies, headers } from "next/headers";
 import { revalidateTag } from "next/cache";
@@ -1046,6 +1048,21 @@ export async function getCollectionProducts({
   const sorted = sortProducts(filtered, sortKey, reverse);
 
   return serializeProducts(sorted);
+}
+
+export async function getLatestNews({
+  limit = 3,
+}: {
+  limit?: number;
+} = {}): Promise<NewsArticle[]> {
+  const sorted = [...news].sort((a, b) =>
+    new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+  );
+
+  return sorted.slice(0, Math.max(limit, 0)).map((article) => ({
+    ...article,
+    tags: article.tags ? [...article.tags] : undefined,
+  }));
 }
 
 export async function getCollections(): Promise<Collection[]> {
