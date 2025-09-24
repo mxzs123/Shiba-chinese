@@ -79,12 +79,16 @@ export type Menu = {
 
 export type NewsArticle = {
   id: string;
+  slug: string;
   title: string;
   summary: string;
   href: string;
   tags?: string[];
   highlight?: boolean;
   publishedAt: string;
+  bodyHtml: string;
+  updatedAt?: string;
+  seo?: SEO;
 };
 
 export type Address = {

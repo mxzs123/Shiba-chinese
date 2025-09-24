@@ -980,31 +980,80 @@ export const menus: Record<string, Menu[]> = {
 const newsArticles: NewsArticle[] = [
   {
     id: "news-rx-telemedicine",
+    slug: "telemedicine-rx-full-workflow",
     title: "处方复诊全流程上线线上问诊，48 小时内完成审方发药",
     summary:
       "芝园联合权威三甲医院医生团队，支持 ADHD、慢病复诊线上问诊，药师复核后优先发货。",
-    href: "/search/pharmacy",
+    href: "/news/telemedicine-rx-full-workflow",
     tags: ["医疗服务", "处方药"],
     highlight: true,
     publishedAt: `${thisYear}-05-28T08:30:00.000Z`,
+    updatedAt: `${thisYear}-05-28T12:00:00.000Z`,
+    seo: {
+      title: "处方复诊支持线上问诊 | 芝园资讯",
+      description: "48 小时内完成审方发药，适配慢病复诊与 ADHD 客户。",
+    },
+    bodyHtml: `
+      <p>芝园药局与上海嘉宁医院达成战略合作，围绕 ADHD 与慢性病复诊场景搭建线上问诊流程。</p>
+      <p>用户可在芝园 App 中提交既往处方与病历，24 小时内由三甲主治医师进行问诊评估，审方完成后由执业药师复核并发货。</p>
+      <ul>
+        <li>支持复诊药品覆盖注意力缺陷、焦虑、部分心血管疾病。</li>
+        <li>全过程支持电子病历与电子处方存档，方便线下复核。</li>
+        <li>48 小时内完成审方发药，核心城区可选择当日速配。</li>
+      </ul>
+      <p>若涉及需进一步线下面诊的情况，医生会提供转诊建议。芝园将持续优化线上问诊体验。</p>
+    `,
   },
   {
     id: "news-health-supplement",
+    slug: "member-day-supplement-offer",
     title: "会员日限定：精选保健食品第 2 件享 8 折",
     summary:
       "高人气的维生素与肝脏呵护组合参与活动，加入购物车自动应用优惠，库存有限速抢。",
-    href: "/search?q=%E4%BF%9D%E5%81%A5",
+    href: "/news/member-day-supplement-offer",
     tags: ["促销", "会员"],
     publishedAt: `${thisYear}-05-26T10:00:00.000Z`,
+    updatedAt: `${thisYear}-05-27T09:20:00.000Z`,
+    seo: {
+      title: "会员日保健食品 8 折活动 | 芝园资讯",
+      description: "热门维生素、肝脏呵护组合参与活动，会员第 2 件享 8 折。",
+    },
+    bodyHtml: `
+      <p>5 月会员日即将开启，芝园准备了丰富的健康补给组合，覆盖免疫调理、肝脏呵护、女性健康等主题。</p>
+      <p>活动期间，会员登录后自动享受“第 2 件 8 折”优惠，无需额外输入优惠码，可与积分抵扣叠加。</p>
+      <p>热门组合包括：</p>
+      <ol>
+        <li>全天然维生素 C + 锌含片，日常免疫守护。</li>
+        <li>护肝营养包：水飞蓟素胶囊搭配高纯度卵磷脂。</li>
+        <li>女性专属：复合维生素 B 群与铁元素补给组合。</li>
+      </ol>
+      <p>活动库存有限，售完即止。如有特殊用药需求，请提前咨询营养师或执业药师。</p>
+    `,
   },
   {
     id: "news-pharmacy-safety",
+    slug: "insulin-storage-summer-tips",
     title: "用药提醒：近期高温天气，请按药箱指引存放胰岛素类药物",
     summary:
       "药师建议保持 2-8℃ 冷藏，外出配送全程冷链，签收后请尽快放入冷藏包以免失效。",
-    href: "/search?q=%E7%94%9F%E6%B4%BB%E7%94%A8%E5%93%81",
+    href: "/news/insulin-storage-summer-tips",
     tags: ["用药安全"],
     publishedAt: `${thisYear}-05-24T09:15:00.000Z`,
+    seo: {
+      title: "高温季胰岛素存放指南 | 芝园资讯",
+      description: "药师提醒：签收后尽快冷藏，外出请使用保温包确保药效。",
+    },
+    bodyHtml: `
+      <p>随着气温持续攀升，芝园药师团队提醒糖尿病客户务必关注胰岛素的存储条件。</p>
+      <p>冷链配送：芝园采用全程冷链，签收时请检查外包装是否完好，若有异样请立即联系客户服务。</p>
+      <p>家庭存放建议：</p>
+      <ul>
+        <li>未开封胰岛素：保持 2-8℃ 冷藏，可使用家用冰箱冷藏层。</li>
+        <li>使用中的胰岛素：可在 25℃ 以下存放 28 天，避免阳光直射。</li>
+        <li>外出携带：请使用附赠的冷藏包或冰袋，确保低温环境。</li>
+      </ul>
+      <p>如遇到胰岛素出现变色、沉淀等异常情况，请立即停止使用并联系在线药师。</p>
+    `,
   },
 ];
 

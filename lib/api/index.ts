@@ -85,6 +85,13 @@ function cloneMoney(money: Money): Money {
   return { ...money };
 }
 
+function cloneNewsArticle(article: NewsArticle): NewsArticle {
+  return {
+    ...article,
+    tags: article.tags ? [...article.tags] : undefined,
+  };
+}
+
 function findUserRecord(userId: string) {
   return users.find((user) => user.id === userId);
 }
@@ -1055,14 +1062,28 @@ export async function getLatestNews({
 }: {
   limit?: number;
 } = {}): Promise<NewsArticle[]> {
+  const items = await getNews();
+  return items.slice(0, Math.max(limit, 0));
+}
+
+export async function getNews(): Promise<NewsArticle[]> {
   const sorted = [...news].sort((a, b) =>
     new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
   );
 
-  return sorted.slice(0, Math.max(limit, 0)).map((article) => ({
-    ...article,
-    tags: article.tags ? [...article.tags] : undefined,
-  }));
+  return sorted.map((article) => cloneNewsArticle(article));
+}
+
+export async function getNewsArticle(
+  slug: string,
+): Promise<NewsArticle | undefined> {
+  const article = news.find((entry) => entry.slug === slug);
+
+  if (!article) {
+    return undefined;
+  }
+
+  return cloneNewsArticle(article);
 }
 
 export async function getCollections(): Promise<Collection[]> {
