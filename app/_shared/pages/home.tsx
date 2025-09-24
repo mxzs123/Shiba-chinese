@@ -5,6 +5,7 @@ import { HomeCategoryNavigation } from "./home/HomeCategoryNavigation";
 import { HomeHeroSection } from "./home/HomeHeroSection";
 import { HomeNewsSection } from "./home/HomeNewsSection";
 import { HomeRecommendations } from "./home/HomeRecommendations";
+import { HomeSupportScheduleSection } from "./home/HomeSupportScheduleSection";
 
 export const metadata = {
   description:
@@ -23,6 +24,7 @@ export function HomePage() {
         <HomeNewsSection />
         <HomeRecommendations />
         <HomeAdvantagesSection />
+        <HomeSupportScheduleSection />
       </div>
       <Footer />
     </>
