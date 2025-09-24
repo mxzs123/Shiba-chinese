@@ -1,6 +1,8 @@
-import { Carousel } from "components/carousel";
-import { ThreeItemGrid } from "components/grid/three-items";
 import Footer from "components/layout/footer";
+
+import { HomeCategoryNavigation } from "./home/HomeCategoryNavigation";
+import { HomeHeroSection } from "./home/HomeHeroSection";
+import { HomeRecommendations } from "./home/HomeRecommendations";
 
 export const metadata = {
   description:
@@ -13,8 +15,11 @@ export const metadata = {
 export function HomePage() {
   return (
     <>
-      <ThreeItemGrid />
-      <Carousel />
+      <div className="flex flex-col gap-12 py-8 md:py-10 lg:py-12">
+        <HomeHeroSection />
+        <HomeCategoryNavigation />
+        <HomeRecommendations />
+      </div>
       <Footer />
     </>
   );
