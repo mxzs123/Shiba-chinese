@@ -1,5 +1,6 @@
 import Footer from "components/layout/footer";
 
+import { HomeAdvantagesSection } from "./home/HomeAdvantagesSection";
 import { HomeCategoryNavigation } from "./home/HomeCategoryNavigation";
 import { HomeHeroSection } from "./home/HomeHeroSection";
 import { HomeNewsSection } from "./home/HomeNewsSection";
@@ -21,6 +22,7 @@ export function HomePage() {
         <HomeCategoryNavigation />
         <HomeNewsSection />
         <HomeRecommendations />
+        <HomeAdvantagesSection />
       </div>
       <Footer />
     </>
