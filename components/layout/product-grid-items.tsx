@@ -1,34 +1,24 @@
+import clsx from "clsx";
 import Grid from "components/grid";
-import { GridTileImage } from "components/grid/tile";
-import { Product } from "lib/api/types";
-import Link from "next/link";
+import type { Product } from "lib/api/types";
+
+import { ProductCard } from "@/app/_shared/ProductCard";
 
 export default function ProductGridItems({
   products,
+  animate = true,
 }: {
   products: Product[];
+  animate?: boolean;
 }) {
   return (
     <>
       {products.map((product) => (
-        <Grid.Item key={product.handle} className="animate-fadeIn">
-          <Link
-            className="relative inline-block h-full w-full"
-            href={`/product/${product.handle}`}
-            prefetch={true}
-          >
-            <GridTileImage
-              alt={product.title}
-              label={{
-                title: product.title,
-                amount: product.priceRange.maxVariantPrice.amount,
-                currencyCode: product.priceRange.maxVariantPrice.currencyCode,
-              }}
-              src={product.featuredImage?.url}
-              fill
-              sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
-            />
-          </Link>
+        <Grid.Item
+          key={product.handle}
+          className={clsx(animate ? "animate-fadeIn" : undefined)}
+        >
+          <ProductCard product={product} />
         </Grid.Item>
       ))}
     </>

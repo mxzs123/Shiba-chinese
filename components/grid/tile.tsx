@@ -27,9 +27,9 @@ export function GridTileImage({
   const resolvedAlt = alt ?? label?.title ?? "";
   const wrapperClassName = clsx(
     "group relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl border bg-white transition-colors",
-    isInteractive && "hover:border-neutral-300",
+    isInteractive && "hover:border-[#049e6b]",
     active
-      ? "border-teal-500 bg-teal-50/60 shadow-[0_0_0_1px_rgba(12,104,96,0.12)]"
+      ? "border-[#049e6b] bg-[#049e6b]/10"
       : "border-neutral-200",
     className,
   );

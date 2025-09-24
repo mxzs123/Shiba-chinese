@@ -23,54 +23,51 @@ export function ProductCard({
   const { featuredImage, priceRange } = product;
 
   return (
-    <article
-      className={cn(
-        "group flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-950",
-        className,
-      )}
+    <Link
+      href={href}
+      aria-label={product.title}
+      className={cn("group block h-full focus:outline-none", className)}
     >
-      <Link
-        href={href}
-        aria-label={product.title}
-        className="relative block aspect-square w-full overflow-hidden"
-      >
-        {featuredImage ? (
-          <Image
-            src={featuredImage.url}
-            alt={featuredImage.altText}
-            fill
-            sizes="(min-width: 1024px) 280px, 50vw"
-            className="object-cover transition duration-500 group-hover:scale-105"
-            priority={false}
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center bg-neutral-100 text-neutral-500">
-            <span className="text-sm">暂无图片</span>
+      <article className="flex h-full flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition dark:border-neutral-800 dark:bg-neutral-950">
+        <div className="relative block aspect-square w-full overflow-hidden">
+          {featuredImage ? (
+            <Image
+              src={featuredImage.url}
+              alt={featuredImage.altText}
+              fill
+              sizes="(min-width: 1024px) 280px, 50vw"
+              className="object-cover"
+              priority={false}
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center bg-neutral-100 text-neutral-500">
+              <span className="text-sm">暂无图片</span>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-1 flex-col gap-2 p-4">
+          <div className="flex-1">
+            <h3 className="text-base font-medium text-neutral-900 line-clamp-2 dark:text-neutral-100">
+              {product.title}
+            </h3>
+            <p className="mt-1 text-sm text-neutral-500 line-clamp-2 dark:text-neutral-400">
+              {product.description}
+            </p>
           </div>
-        )}
-      </Link>
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <div className="flex-1">
-          <h3 className="text-base font-medium text-neutral-900 line-clamp-2 dark:text-neutral-100">
-            {product.title}
-          </h3>
-          <p className="mt-1 text-sm text-neutral-500 line-clamp-2 dark:text-neutral-400">
-            {product.description}
-          </p>
+          <div className="flex items-start justify-between gap-3">
+            <Price
+              value={priceRange.minVariantPrice}
+              className="text-lg font-semibold text-neutral-900 dark:text-neutral-50"
+              currencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400"
+              showConvertedPrice
+              convertedClassName="text-sm font-medium text-neutral-500 dark:text-neutral-400"
+              convertedCurrencyClassName="text-[10px] font-medium uppercase tracking-wide text-neutral-400 dark:text-neutral-500"
+              wrapperClassName="gap-1"
+            />
+            {actionSlot}
+          </div>
         </div>
-        <div className="flex items-start justify-between gap-3">
-          <Price
-            value={priceRange.minVariantPrice}
-            className="text-lg font-semibold text-neutral-900 dark:text-neutral-50"
-            currencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400"
-            showConvertedPrice
-            convertedClassName="text-sm font-medium text-neutral-500 dark:text-neutral-400"
-            convertedCurrencyClassName="text-[10px] font-medium uppercase tracking-wide text-neutral-400 dark:text-neutral-500"
-            wrapperClassName="gap-1"
-          />
-          {actionSlot}
-        </div>
-      </div>
-    </article>
+      </article>
+    </Link>
   );
 }

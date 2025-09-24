@@ -47,4 +47,17 @@
 - `lib/api/`：第三方后端对接与模拟数据。
 - `docs/`：额外的设计与流程文档。
 
+## 桌面搜索外壳（/d/search）
+
+- 搜索页与集合页入口位于 `app/d/search/page.tsx`、`app/d/search/[collection]/page.tsx`，通过 URL 参数 `q`、`sort`、`page` 组合完成筛选、排序与分页，便于未来直接透传后端查询条件。
+- 侧边栏、页壳与分页等复用组件集中在 `app/_shared/search/`：
+  - `config.ts` 维护桌面端的默认品类、分页常量，后续可按业务映射真实集合或关键词；
+  - `DesktopSearchSidebar.tsx` 负责左侧“精选品类 + 智能排序”外壳；
+  - `SearchPageShell.tsx` 组合侧边栏与内容区域；
+  - `SearchResultsGrid.tsx` 与 `SearchPagination.tsx` 封装结果网格与整页分页逻辑；
+  - `loaders.ts` 聚合商品获取与本地分页处理，未来可替换为远端 API 调用。
+- `components/layout/product-grid-items.tsx` 增加 `interactive` 与 `animate` 开关，搜索结果关闭图片旋转/放大动画，保持四列静态栅格展示。
+- 当前 `DESKTOP_SEARCH_CATEGORIES` 中的 6 个品类为静态配置，需要手动更新或改造为动态数据源后才能映射真实后端集合。
+- 如需扩展手机端或其他外壳，可在同目录下新增对应壳体与配置，复用上述 loader 与网格组件。
+
 欢迎根据自身后端协议扩展 `lib/api`，也可继续使用模拟数据完成独立的前端演示。
