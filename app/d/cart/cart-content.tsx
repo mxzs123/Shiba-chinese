@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { PrimaryButton } from "app/_shared";
+import { PRIMARY_BUTTON_COLOR_CLASSES } from "app/_shared/PrimaryButton";
 import { CartSelectionCheckbox } from "components/cart/cart-selection-checkbox";
 import { DeleteItemButton } from "components/cart/delete-item-button";
 import { EditItemQuantityButton } from "components/cart/edit-item-quantity-button";
@@ -16,7 +17,7 @@ import {
 } from "components/cart/constants";
 import Price from "components/price";
 import { DEFAULT_OPTION } from "lib/constants";
-import { createUrl } from "lib/utils";
+import { cn, createUrl } from "lib/utils";
 import { CreditCard } from "lucide-react";
 
 import {
@@ -88,7 +89,10 @@ function EmptyCartState() {
       <Link
         href="/search"
         prefetch
-        className="mt-8 inline-flex items-center rounded-full border border-neutral-800 px-5 py-2 text-sm font-medium text-neutral-900 transition hover:border-neutral-900 hover:bg-neutral-900 hover:text-white"
+        className={cn(
+          "mt-8 inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/60",
+          PRIMARY_BUTTON_COLOR_CLASSES,
+        )}
       >
         浏览商品
       </Link>

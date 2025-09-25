@@ -5,6 +5,12 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 
 import { cn } from "lib/utils";
 
+export const PRIMARY_BUTTON_COLOR_CLASSES =
+  "bg-primary text-primary-foreground transition hover:brightness-105 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500";
+
+const PRIMARY_BUTTON_BASE_CLASSES =
+  "inline-flex h-11 min-w-[2.75rem] items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold";
+
 export type PrimaryButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   leadingIcon?: ReactNode;
   trailingIcon?: ReactNode;
@@ -35,7 +41,8 @@ export const PrimaryButton = forwardRef<HTMLButtonElement, PrimaryButtonProps>(
         ref={ref}
         type={type}
         className={cn(
-          "inline-flex h-11 min-w-[2.75rem] items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:brightness-105 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500",
+          PRIMARY_BUTTON_BASE_CLASSES,
+          PRIMARY_BUTTON_COLOR_CLASSES,
           className,
         )}
         disabled={disabled || isLoading}

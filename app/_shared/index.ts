@@ -12,3 +12,4 @@ export {
   CheckoutResult,
   checkoutResultPlaceholders,
 } from "./checkout/CheckoutResult";
+export { DefaultBadge } from "./account/DefaultBadge";

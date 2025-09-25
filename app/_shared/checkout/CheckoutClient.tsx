@@ -6,6 +6,7 @@ import type { ButtonHTMLAttributes, FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { PrimaryButton } from "app/_shared";
+import { DefaultBadge } from "@/app/_shared/account/DefaultBadge";
 import { CouponRedeemForm } from "app/_shared/coupons";
 import {
   addAddressAction,
@@ -29,7 +30,6 @@ import type {
 import {
   AlertTriangle,
   ArrowRight,
-  Check,
   Loader2,
   Plus,
   Ticket,
@@ -689,9 +689,7 @@ export function CheckoutClient({
                           </div>
                           <div className="flex items-center gap-2">
                             {address.isDefault ? (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-[#049e6b] px-2 py-0.5 text-[11px] font-medium text-white">
-                                <Check className="h-3 w-3" aria-hidden /> 默认
-                              </span>
+                              <DefaultBadge />
                             ) : (
                               <button
                                 type="button"

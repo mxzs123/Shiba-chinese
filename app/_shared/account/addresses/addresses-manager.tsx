@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, Edit, MapPin, Trash2 } from "lucide-react";
+import { DefaultBadge } from "@/app/_shared/account/DefaultBadge";
+import { Edit, MapPin, Trash2 } from "lucide-react";
 
 import type { Address, AddressInput, User } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
@@ -278,9 +279,7 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
                         </div>
                         <div className="flex items-center gap-2">
                           {isDefault ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-neutral-900 px-2 py-0.5 text-[11px] font-medium text-white">
-                              <Check className="h-3 w-3" aria-hidden /> 默认
-                            </span>
+                            <DefaultBadge />
                           ) : (
                             <button
                               type="button"
