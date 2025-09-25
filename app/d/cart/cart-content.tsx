@@ -210,8 +210,13 @@ export function CartContent() {
       calculateTotalsForLines(
         selectedItems,
         cart?.cost.totalAmount.currencyCode,
+        cart?.appliedCoupons,
       ),
-    [selectedItems, cart?.cost.totalAmount.currencyCode],
+    [
+      selectedItems,
+      cart?.cost.totalAmount.currencyCode,
+      cart?.appliedCoupons,
+    ],
   );
 
   const serializedSelection = useMemo(
