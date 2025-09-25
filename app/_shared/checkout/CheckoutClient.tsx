@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ButtonHTMLAttributes, FormEvent } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { PrimaryButton } from "app/_shared";
 import { CouponRedeemForm } from "app/_shared/coupons";
@@ -14,6 +14,7 @@ import {
   setDefaultAddressAction,
   redeemCouponCodeAction,
 } from "./actions";
+import { filterCartBySelectedMerchandise } from "@/components/cart/cart-selection";
 import { cn } from "lib/utils";
 import type {
   Address,
@@ -42,6 +43,7 @@ type CheckoutClientProps = {
   shippingMethods: ShippingMethod[];
   paymentMethods: PaymentMethod[];
   availableCoupons: Coupon[];
+  selectedMerchandiseIds?: string[];
 };
 
 type AddressFormState = Omit<AddressInput, "id">;
@@ -123,6 +125,7 @@ export function CheckoutClient({
   shippingMethods,
   paymentMethods,
   availableCoupons,
+  selectedMerchandiseIds,
 }: CheckoutClientProps) {
   const router = useRouter();
   const initialAddresses = customer?.addresses ?? [];
@@ -139,7 +142,23 @@ export function CheckoutClient({
   const [selectedPaymentId, setSelectedPaymentId] = useState<string>(
     paymentMethods[0]?.id || "",
   );
-  const [currentCart, setCurrentCart] = useState<Cart | undefined>(cart);
+  const selectedMerchandiseIdSet = useMemo(
+    () => new Set(selectedMerchandiseIds?.filter(Boolean) ?? []),
+    [selectedMerchandiseIds],
+  );
+
+  const applySelectionToCart = useCallback(
+    (nextCart?: Cart) =>
+      filterCartBySelectedMerchandise(nextCart, selectedMerchandiseIdSet),
+    [selectedMerchandiseIdSet],
+  );
+
+  const [currentCart, setCurrentCart] = useState<Cart | undefined>(() =>
+    applySelectionToCart(cart),
+  );
+  useEffect(() => {
+    setCurrentCart(applySelectionToCart(cart));
+  }, [applySelectionToCart, cart]);
   const [availableCouponList, setAvailableCouponList] =
     useState<Coupon[]>(availableCoupons);
   const [addressForm, setAddressForm] =
@@ -450,7 +469,7 @@ export function CheckoutClient({
       return;
     }
 
-    setCurrentCart(result.data);
+    setCurrentCart(applySelectionToCart(result.data));
     setCouponProcessingCode(null);
     setCouponSuccess(`已应用优惠券 ${code}`);
   };
@@ -468,7 +487,7 @@ export function CheckoutClient({
       return;
     }
 
-    setCurrentCart(result.data);
+    setCurrentCart(applySelectionToCart(result.data));
     setCouponProcessingCode(null);
     setCouponSuccess(`已移除优惠券 ${code}`);
   };

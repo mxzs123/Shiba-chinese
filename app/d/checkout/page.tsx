@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 
 import { CheckoutClient } from "@/app/_shared";
+import { CART_SELECTED_MERCHANDISE_COOKIE } from "@/components/cart/constants";
+import {
+  filterCartBySelectedMerchandise,
+  parseSelectedMerchandiseIds,
+} from "@/components/cart/cart-selection";
 import {
   getAvailableCoupons,
   getCart,
@@ -16,17 +22,33 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckoutPage() {
-  const [cart, sessionUser, fallbackUser, shippingMethods, paymentMethods, availableCoupons] =
-    await Promise.all([
-      getCart(),
-      getCurrentUser(),
-      getUserById("user-demo"),
-      getShippingMethods(),
-      getPaymentMethods(),
-      getAvailableCoupons(),
-    ]);
+  const cookieStore = await cookies();
+  const [
+    cart,
+    sessionUser,
+    fallbackUser,
+    shippingMethods,
+    paymentMethods,
+    availableCoupons,
+  ] = await Promise.all([
+    getCart(),
+    getCurrentUser(),
+    getUserById("user-demo"),
+    getShippingMethods(),
+    getPaymentMethods(),
+    getAvailableCoupons(),
+  ]);
 
   const customer = sessionUser ?? fallbackUser;
+  const selectedMerchandiseCookie = cookieStore.get(
+    CART_SELECTED_MERCHANDISE_COOKIE,
+  )?.value;
+  const selectedMerchandiseIds = parseSelectedMerchandiseIds(
+    selectedMerchandiseCookie,
+  );
+  const checkoutCart = cart
+    ? filterCartBySelectedMerchandise(cart, selectedMerchandiseIds)
+    : cart;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 lg:px-0">
@@ -37,11 +59,12 @@ export default async function CheckoutPage() {
         </p>
       </header>
       <CheckoutClient
-        cart={cart}
+        cart={checkoutCart}
         customer={customer}
         shippingMethods={shippingMethods}
         paymentMethods={paymentMethods}
         availableCoupons={availableCoupons}
+        selectedMerchandiseIds={selectedMerchandiseIds}
       />
     </div>
   );
