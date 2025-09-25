@@ -3,6 +3,8 @@
 import { TAGS } from "lib/constants";
 import {
   addToCart,
+  CART_COOKIE_OPTIONS,
+  CART_ID_COOKIE,
   createCart,
   getCart,
   removeFromCart,
@@ -20,14 +22,6 @@ import {
   parseSelectedMerchandiseIds,
   serializeSelectedMerchandiseIds,
 } from "./cart-selection";
-
-const CART_ID_COOKIE = "cartId";
-const CART_COOKIE_OPTIONS = {
-  httpOnly: true,
-  sameSite: "lax" as const,
-  path: "/",
-  secure: process.env.NODE_ENV === "production",
-};
 
 const CART_SELECTION_COOKIE_BASE_OPTIONS = {
   sameSite: "lax" as const,
@@ -54,7 +48,9 @@ export async function addItem(
       { merchandiseId: selectedVariantId, quantity: normalizedQuantity },
     ]);
 
-    if (!cookieStore.get(CART_ID_COOKIE)) {
+    const existingCartId = cookieStore.get(CART_ID_COOKIE)?.value;
+
+    if (existingCartId !== cart.id) {
       cookieStore.set({
         name: CART_ID_COOKIE,
         value: cart.id,
@@ -163,6 +159,11 @@ export async function redirectToCheckout(formData: FormData) {
 
   if (!cart) {
     cart = await createCart();
+  }
+
+  const existingCartId = cookieStore.get(CART_ID_COOKIE)?.value;
+
+  if (existingCartId !== cart.id) {
     cookieStore.set({
       name: CART_ID_COOKIE,
       value: cart.id,
@@ -177,9 +178,13 @@ export async function createCartAndSetCookie() {
   const cookieStore = await cookies();
   const cart = await createCart();
 
-  cookieStore.set({
-    name: CART_ID_COOKIE,
-    value: cart.id,
-    ...CART_COOKIE_OPTIONS,
-  });
+  const existingCartId = cookieStore.get(CART_ID_COOKIE)?.value;
+
+  if (existingCartId !== cart.id) {
+    cookieStore.set({
+      name: CART_ID_COOKIE,
+      value: cart.id,
+      ...CART_COOKIE_OPTIONS,
+    });
+  }
 }

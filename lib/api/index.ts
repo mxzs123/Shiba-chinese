@@ -69,7 +69,16 @@ import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromSessionCookie } from "./auth-store";
 
-const CART_ID_COOKIE = "cartId";
+export const CART_ID_COOKIE = "cartId";
+const CART_STATE_COOKIE = "cartState";
+const CART_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
+export const CART_COOKIE_OPTIONS = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  path: "/",
+  secure: process.env.NODE_ENV === "production",
+  maxAge: CART_COOKIE_MAX_AGE,
+};
 
 type CartStore = Map<string, Cart>;
 
@@ -78,6 +87,18 @@ type GlobalCartStore = typeof globalThis & {
 };
 
 const globalCartStore = globalThis as GlobalCartStore;
+
+type CartSnapshotLine = {
+  merchandiseId: string;
+  quantity: number;
+};
+
+type CartSnapshot = {
+  id: string;
+  lines: CartSnapshotLine[];
+  appliedCoupons: string[];
+  updatedAt?: string;
+};
 
 const CHECKOUT_URL = process.env.COMMERCE_CHECKOUT_URL || checkoutFallback;
 
@@ -212,6 +233,71 @@ function calculateCartTotals(
     totalAmount: formatAmount(totalValue),
     currencyCode,
   };
+}
+
+function createCartSnapshot(cart: Cart): CartSnapshot {
+  return {
+    id: cart.id,
+    lines: cart.lines.map((line) => ({
+      merchandiseId: line.merchandise.id,
+      quantity: line.quantity,
+    })),
+    appliedCoupons: (cart.appliedCoupons ?? []).map(
+      (entry) => entry.coupon.code,
+    ),
+    updatedAt: cart.updatedAt ?? new Date().toISOString(),
+  };
+}
+
+function encodeCartSnapshot(snapshot: CartSnapshot): string {
+  return Buffer.from(JSON.stringify(snapshot), "utf-8").toString(
+    "base64url",
+  );
+}
+
+function decodeCartSnapshot(value: string): CartSnapshot | undefined {
+  try {
+    const parsed = JSON.parse(
+      Buffer.from(value, "base64url").toString("utf-8"),
+    ) as CartSnapshot;
+
+    if (!parsed || typeof parsed !== "object") {
+      return undefined;
+    }
+
+    return parsed;
+  } catch (error) {
+    return undefined;
+  }
+}
+
+function hydrateCartFromSnapshot(snapshot: CartSnapshot): Cart {
+  const cart = createEmptyCart(snapshot.id);
+
+  snapshot.lines.forEach((entry) => {
+    const match = findVariantById(entry.merchandiseId);
+
+    if (!match) {
+      return;
+    }
+
+    setCartLine(cart, match.variant, entry.quantity);
+  });
+
+  const appliedCoupons = snapshot.appliedCoupons
+    .map((code) => findCouponByCode(code))
+    .filter((coupon): coupon is Coupon => Boolean(coupon))
+    .map((coupon) => ({
+      coupon,
+      amount: { amount: "0.00", currencyCode: defaultCurrency },
+    }));
+
+  cart.appliedCoupons = appliedCoupons;
+  normalizeCartTotals(cart);
+  const fallbackUpdatedAt = cart.updatedAt ?? new Date().toISOString();
+  cart.updatedAt = snapshot.updatedAt ?? fallbackUpdatedAt;
+
+  return cart;
 }
 
 type GetNotificationsOptions = {
@@ -391,8 +477,8 @@ export async function deleteCustomerAddress(
   return user.addresses.map(cloneAddress);
 }
 
-function createEmptyCart(): Cart {
-  const id = crypto.randomUUID();
+function createEmptyCart(initialId?: string): Cart {
+  const id = initialId ?? crypto.randomUUID();
 
   return {
     id,
@@ -418,10 +504,30 @@ function getCartStore(): CartStore {
   return globalCartStore.__COMMERCE_CART_STORE__;
 }
 
-function saveCart(cart: Cart) {
+async function saveCart(cart: Cart) {
   cart.updatedAt = new Date().toISOString();
   const store = getCartStore();
   store.set(cart.id, cart);
+
+  try {
+    const cookieStore = await cookies();
+    const snapshot = createCartSnapshot(cart);
+    const encoded = encodeCartSnapshot(snapshot);
+
+    cookieStore.set({
+      name: CART_STATE_COOKIE,
+      value: encoded,
+      ...CART_COOKIE_OPTIONS,
+    });
+
+    cookieStore.set({
+      name: CART_ID_COOKIE,
+      value: cart.id,
+      ...CART_COOKIE_OPTIONS,
+    });
+  } catch (error) {
+    // Best-effort persistence: environments without writable cookies can ignore failures.
+  }
 }
 
 async function loadCart(): Promise<Cart | undefined> {
@@ -432,7 +538,29 @@ async function loadCart(): Promise<Cart | undefined> {
     return undefined;
   }
 
-  return getCartStore().get(cartId);
+  const store = getCartStore();
+  const existing = store.get(cartId);
+
+  if (existing) {
+    return existing;
+  }
+
+  const encodedSnapshot = cookieStore.get(CART_STATE_COOKIE)?.value;
+
+  if (!encodedSnapshot) {
+    return undefined;
+  }
+
+  const snapshot = decodeCartSnapshot(encodedSnapshot);
+
+  if (!snapshot || snapshot.id !== cartId) {
+    return undefined;
+  }
+
+  const cart = hydrateCartFromSnapshot(snapshot);
+  store.set(cart.id, cart);
+
+  return cart;
 }
 
 async function ensureCartInstance(): Promise<Cart> {
@@ -630,7 +758,7 @@ function sortProducts(
 
 export async function createCart(): Promise<Cart> {
   const cart = createEmptyCart();
-  saveCart(cart);
+  await saveCart(cart);
 
   return cart;
 }
@@ -651,7 +779,7 @@ export async function addToCart(
   }
 
   normalizeCartTotals(cart);
-  saveCart(cart);
+  await saveCart(cart);
 
   return cart;
 }
@@ -663,7 +791,7 @@ export async function removeFromCart(lineIds: string[]): Promise<Cart> {
     line.id ? !lineIds.includes(line.id) : true,
   );
   normalizeCartTotals(cart);
-  saveCart(cart);
+  await saveCart(cart);
 
   return cart;
 }
@@ -684,7 +812,7 @@ export async function updateCart(
   }
 
   normalizeCartTotals(cart);
-  saveCart(cart);
+  await saveCart(cart);
 
   return cart;
 }
@@ -733,7 +861,7 @@ export async function applyCouponToCart(code: string): Promise<Cart> {
   }
 
   normalizeCartTotals(cart);
-  saveCart(cart);
+  await saveCart(cart);
 
   return cart;
 }
@@ -746,7 +874,7 @@ export async function removeCouponFromCart(code: string): Promise<Cart> {
   );
 
   normalizeCartTotals(cart);
-  saveCart(cart);
+  await saveCart(cart);
 
   return cart;
 }
