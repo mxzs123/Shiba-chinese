@@ -39,18 +39,18 @@ export function AccountOrdersView({
   );
 
   const stageCounts = useMemo(() => {
-    const counts: Record<OrderStage, number> = {
-      created: 0,
-      pending: 0,
-      paid: 0,
-      fulfilled: 0,
-    };
+    const initialCounts = ORDER_STAGES.reduce<Record<OrderStage, number>>(
+      (acc, stage) => {
+        acc[stage.key] = 0;
+        return acc;
+      },
+      {} as Record<OrderStage, number>,
+    );
 
-    entries.forEach((entry) => {
-      counts[entry.stage] += 1;
-    });
-
-    return counts;
+    return entries.reduce((acc, entry) => {
+      acc[entry.stage] += 1;
+      return acc;
+    }, initialCounts);
   }, [entries]);
 
   const initialStage = useMemo<OrderStage>(() => {

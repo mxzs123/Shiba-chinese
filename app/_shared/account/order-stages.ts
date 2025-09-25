@@ -1,7 +1,6 @@
 import type { Order } from "@/lib/api/types";
 
 export const ORDER_STAGES = [
-  { key: "created", label: "创建" },
   { key: "pending", label: "待支付" },
   { key: "paid", label: "已支付待确认" },
   { key: "fulfilled", label: "已发货" },
@@ -27,7 +26,7 @@ export function resolveOrderStage(order: Order): OrderStage {
     return "pending";
   }
 
-  return "created";
+  return "pending";
 }
 
 export function getStageLabel(stage: OrderStage) {
