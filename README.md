@@ -32,6 +32,14 @@
 - 若需要改用真实后端，可在这些函数中调用内部网关或 GraphQL，并移除 `mock-data` 中的演示内容。
 - 购物车实现基于服务端 Cookie 存储，方便与现有会话体系对接，可在 `addToCart`、`updateCart` 等方法内替换为实际 API。
 
+## 关于页面接入指引
+
+- 页面实现位于 `app/_shared/pages/about.tsx`，桌面壳入口是 `app/d/about/page.tsx`，后续新增移动壳只需在 `app/m/about/page.tsx` 复用该组件。
+- `companyInfo`、`complianceItems`、`faqItems` 数组是示例数据，未来若接 CMS/后端可改为 `props` 或 Server Action 提供的字段；建议后端返回结构与类型定义保持一致：`label`、`value`、`helperText`、`title`、`status` 等属性。
+- 经营许可证区域的上传按钮目前为占位，待接入真实接口后，可将 `PrimaryButton` 换成 `form` 或触发客户端上传逻辑，并提供文件名称、有效期与下载链接。
+- 若由 CMS 渲染，可在 `generateMetadata` 中读取远端 SEO 信息，并在组件内使用请求结果替换静态数组；无数据时仍会回退到当前展示。
+- 更新 README 中的说明或在 PR 描述里标注页面字段变化，便于后端和合规团队同步信息。
+
 ## 常用脚本
 
 - `npm run dev`：启动 Turbopack 开发模式。
