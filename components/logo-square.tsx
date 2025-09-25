@@ -5,15 +5,18 @@ const SITE_NAME = process.env.SITE_NAME ?? "Logo";
 
 export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
   const isSmall = size === "sm";
-  const dimension = isSmall ? 30 : 40;
+  const ratio = 25 / 6;
+  const height = isSmall ? 30 : 40;
+  const width = height * ratio;
+  const widthHint = Math.round(width);
 
   return (
     <div
       className={clsx(
-        "flex flex-none items-center justify-center border border-neutral-200 bg-white",
+        "flex flex-none items-center justify-center border border-neutral-200 bg-white aspect-[25/6]",
         {
-          "h-[40px] w-[40px] rounded-xl": !size,
-          "h-[30px] w-[30px] rounded-lg": isSmall,
+          "h-[40px] rounded-xl": !isSmall,
+          "h-[30px] rounded-lg": isSmall,
         },
       )}
     >
@@ -22,7 +25,7 @@ export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
           src="/LOGO.svg"
           alt={SITE_NAME}
           fill
-          sizes={`${dimension}px`}
+          sizes={`${widthHint}px`}
           className="object-contain"
           priority={!isSmall}
         />

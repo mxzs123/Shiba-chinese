@@ -1,6 +1,12 @@
 import clsx from "clsx";
 
-function Grid(props: React.ComponentProps<"ul">) {
+type GridProps = React.ComponentProps<"ul">;
+
+type GridItemProps = React.ComponentProps<"li"> & {
+  aspect?: "auto" | "square";
+};
+
+function Grid(props: GridProps) {
   return (
     <ul
       {...props}
@@ -11,11 +17,15 @@ function Grid(props: React.ComponentProps<"ul">) {
   );
 }
 
-function GridItem(props: React.ComponentProps<"li">) {
+function GridItem({ aspect = "auto", className, ...props }: GridItemProps) {
   return (
     <li
       {...props}
-      className={clsx("aspect-square transition-opacity", props.className)}
+      className={clsx(
+        "transition-opacity",
+        aspect === "square" ? "aspect-square" : undefined,
+        className,
+      )}
     >
       {props.children}
     </li>
