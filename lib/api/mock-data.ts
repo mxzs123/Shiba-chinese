@@ -951,14 +951,14 @@ export const pages: Page[] = [
     id: "page-faq",
     title: "常见问题",
     handle: "faq",
-    body: "# 常见问题\n\n配送时效、退换货政策与客服联系方式。",
-    bodySummary: "售后与咨询说明。",
+    body: `# 常见问题\n\n涵盖下单支付、配送签收、售后退换以及会员积分等高频问题。页面将根据客服反馈定期更新。`,
+    bodySummary: "了解下单、配送、售后与会员权益的常见问题。",
     seo: {
       title: "常见问题",
-      description: "了解配送、售后与客服信息",
+      description: "了解芝园药局的下单流程、配送时效、退货规则与客服支持渠道",
     },
     createdAt: `${thisYear}-01-15T00:00:00.000Z`,
-    updatedAt: `${thisYear}-02-20T08:00:00.000Z`,
+    updatedAt: `${thisYear}-02-12T08:00:00.000Z`,
   },
 ];
 
