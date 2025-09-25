@@ -964,11 +964,10 @@ export const pages: Page[] = [
 
 export const menus: Record<string, Menu[]> = {
   "next-js-frontend-header-menu": [
-    { title: "全部商品", path: "/search" },
-    { title: "冲泡饮品", path: "/search/beverage" },
-    { title: "日常健康", path: "/search/wellness" },
-    { title: "生活器具", path: "/search/accessories" },
-    { title: "品牌故事", path: "/about" },
+    { title: "商品一览", path: "/search" },
+    { title: "常见疑问", path: "/faq" },
+    { title: "会员中心", path: "/account/membership" },
+    { title: "关于我们", path: "/about" },
   ],
   "next-js-frontend-footer-menu": [
     { title: "配送与退换", path: "/faq" },

@@ -4,6 +4,7 @@ const DEVICE_COOKIE_NAME = "device";
 const DEVICE_QUERY_KEY = "device";
 const DEVICE_HEADER_KEY = "x-device";
 const INTERNAL_PREFIXES = ["/d", "/m"];
+const PUBLIC_FILE_PATTERN = /\.(.*)$/;
 const MOBILE_DEVICE_VALUE = "m";
 const DESKTOP_DEVICE_VALUE = "d";
 
@@ -52,12 +53,23 @@ export function middleware(req: NextRequest) {
     device === MOBILE_DEVICE_VALUE ? DESKTOP_DEVICE_VALUE : device;
   const { pathname } = req.nextUrl;
 
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set(DEVICE_HEADER_KEY, device);
+
   const isInternalPath = INTERNAL_PREFIXES.some((prefix) =>
     pathname.startsWith(prefix),
   );
 
-  const requestHeaders = new Headers(req.headers);
-  requestHeaders.set(DEVICE_HEADER_KEY, device);
+  if (PUBLIC_FILE_PATTERN.test(pathname)) {
+    const response = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+    response.headers.set(DEVICE_HEADER_KEY, device);
+    applyVaryHeader(response, DEVICE_HEADER_KEY);
+    return response;
+  }
 
   if (isInternalPath) {
     const response = NextResponse.next({

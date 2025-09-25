@@ -1,23 +1,32 @@
 import clsx from "clsx";
-import LogoIcon from "./icons/logo";
+import Image from "next/image";
+
+const SITE_NAME = process.env.SITE_NAME ?? "Logo";
 
 export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
+  const isSmall = size === "sm";
+  const dimension = isSmall ? 30 : 40;
+
   return (
     <div
       className={clsx(
         "flex flex-none items-center justify-center border border-neutral-200 bg-white",
         {
           "h-[40px] w-[40px] rounded-xl": !size,
-          "h-[30px] w-[30px] rounded-lg": size === "sm",
+          "h-[30px] w-[30px] rounded-lg": isSmall,
         },
       )}
     >
-      <LogoIcon
-        className={clsx({
-          "h-[16px] w-[16px]": !size,
-          "h-[10px] w-[10px]": size === "sm",
-        })}
-      />
+      <div className="relative h-full w-full">
+        <Image
+          src="/LOGO.svg"
+          alt={SITE_NAME}
+          fill
+          sizes={`${dimension}px`}
+          className="object-contain"
+          priority={!isSmall}
+        />
+      </div>
     </div>
   );
 }
