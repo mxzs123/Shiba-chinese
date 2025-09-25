@@ -3,7 +3,6 @@ import { Toaster } from "sonner";
 
 import { CartProvider } from "components/cart/cart-context";
 import { Navbar } from "components/layout/navbar";
-import { WelcomeToast } from "components/welcome-toast";
 import { getCart } from "lib/api";
 
 export async function DesktopAppLayout({ children }: { children: ReactNode }) {
@@ -15,7 +14,6 @@ export async function DesktopAppLayout({ children }: { children: ReactNode }) {
       <main>
         {children}
         <Toaster closeButton />
-        <WelcomeToast />
       </main>
     </CartProvider>
   );
