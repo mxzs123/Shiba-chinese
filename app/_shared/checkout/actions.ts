@@ -8,8 +8,9 @@ import {
   getCustomerAddresses,
   removeCouponFromCart,
   setDefaultCustomerAddress,
+  redeemCouponForUser,
 } from "lib/api";
-import type { Address, AddressInput, Cart } from "lib/api/types";
+import type { Address, AddressInput, Cart, Coupon, CustomerCoupon } from "lib/api/types";
 import { revalidateTag } from "next/cache";
 
 type ActionSuccess<T> = {
@@ -105,6 +106,42 @@ export async function removeCouponAction(
     return {
       success: true,
       data: cart,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: getErrorMessage(error),
+    };
+  }
+}
+
+export async function redeemCouponCodeAction(
+  userId: string,
+  code: string,
+): Promise<
+  ActionResult<{
+    coupon: Coupon;
+    customerCoupon: CustomerCoupon;
+  }>
+> {
+  const trimmed = code.trim();
+
+  if (!trimmed) {
+    return {
+      success: false,
+      error: "请输入优惠券兑换码",
+    };
+  }
+
+  try {
+    const customerCoupon = await redeemCouponForUser(userId, trimmed);
+
+    return {
+      success: true,
+      data: {
+        coupon: customerCoupon.coupon,
+        customerCoupon,
+      },
     };
   } catch (error) {
     return {

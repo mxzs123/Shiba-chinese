@@ -1,20 +1,13 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-  type ComponentType,
-  type FormEvent,
-} from "react";
+import { useEffect, useMemo, useState, useTransition, type ComponentType } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { BadgeCheck, Clock, Gift, PartyPopper } from "lucide-react";
 
 import type { CustomerCoupon, CustomerCouponState } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
-import { PrimaryButton } from "@/app/_shared";
+import { CouponRedeemForm } from "@/app/_shared/coupons";
 import { redeemCouponAction } from "../actions";
 import { useAuthStore } from "@/hooks/useAuthStore";
 
@@ -43,10 +36,8 @@ export default function CouponsManager({
   const router = useRouter();
   const updateUser = useAuthStore((state) => state.updateUser);
   const [items, setItems] = useState(coupons);
-  const [code, setCode] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
-  const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
     setItems(coupons);
@@ -59,62 +50,38 @@ export default function CouponsManager({
     return items.filter((entry) => entry.state === filter);
   }, [items, filter]);
 
-  const handleRedeem = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError(null);
+  const handleRedeem = (code: string) => {
+    return new Promise<{ success: true } | { success: false; error?: string }>((resolve) => {
+      startTransition(async () => {
+        const result = await redeemCouponAction(userId, code);
 
-    startTransition(async () => {
-      const result = await redeemCouponAction(userId, code);
+        if (!result.success) {
+          toast.error(result.error);
+          resolve({ success: false, error: result.error });
+          return;
+        }
 
-      if (!result.success) {
-        setError(result.error);
-        toast.error(result.error);
-        return;
-      }
-
-      const nextCoupons = result.data.coupons;
-      setItems(nextCoupons);
-      setCode("");
-      toast.success("兑换成功，优惠券已添加到账户");
-      updateUser((current) => ({
-        ...current,
-        coupons: nextCoupons,
-      }));
-      router.refresh();
+        const nextCoupons = result.data.coupons;
+        setItems(nextCoupons);
+        toast.success("兑换成功，优惠券已添加到账户");
+        updateUser((current) => ({
+          ...current,
+          coupons: nextCoupons,
+        }));
+        router.refresh();
+        resolve({ success: true });
+      });
     });
   };
 
   return (
     <div className="space-y-6">
-      <form
-        onSubmit={handleRedeem}
-        className="rounded-2xl border border-neutral-200 bg-white/95 p-5 shadow-sm shadow-black/[0.02]"
-      >
-        <h3 className="text-sm font-semibold text-neutral-700">
-          手动兑换优惠券
-        </h3>
-        <p className="mt-1 text-xs text-neutral-500">
-          输入活动或客服提供的兑换码，成功后可在下方列表查看。
-        </p>
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-          <input
-            value={code}
-            onChange={(event) => setCode(event.target.value)}
-            placeholder="请输入兑换码"
-            className="h-11 flex-1 rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-[#049e6b] focus:outline-none focus:ring-2 focus:ring-[#049e6b]/20 disabled:bg-neutral-100"
-            disabled={pending}
-          />
-          <PrimaryButton
-            type="submit"
-            loading={pending}
-            loadingText="兑换中..."
-            className="sm:w-auto"
-          >
-            立即兑换
-          </PrimaryButton>
-        </div>
-        {error ? <p className="mt-2 text-sm text-red-500">{error}</p> : null}
-      </form>
+      <CouponRedeemForm
+        onRedeem={handleRedeem}
+        pendingLabel="兑换中..."
+        submitLabel="立即兑换"
+        description="输入活动或客服提供的兑换码，成功后可在下方列表查看。"
+      />
 
       <div className="flex w-full items-center rounded-full border border-neutral-200 bg-neutral-100 p-1 text-sm">
         {FILTERS.map((option) => {

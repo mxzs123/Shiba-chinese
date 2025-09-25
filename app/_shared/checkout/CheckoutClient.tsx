@@ -6,11 +6,13 @@ import type { ButtonHTMLAttributes, FormEvent } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { PrimaryButton } from "app/_shared";
+import { CouponRedeemForm } from "app/_shared/coupons";
 import {
   addAddressAction,
   applyCouponAction,
   removeCouponAction,
   setDefaultAddressAction,
+  redeemCouponCodeAction,
 } from "./actions";
 import { cn } from "lib/utils";
 import type {
@@ -88,7 +90,7 @@ function CheckoutActionButton({
 
   const variantClasses =
     variant === "primary"
-      ? "bg-neutral-900 text-white hover:bg-neutral-800 disabled:bg-neutral-300 disabled:text-neutral-500"
+      ? "bg-[#049e6b] text-white hover:brightness-105 disabled:bg-[#049e6b]/40 disabled:text-white/80"
       : variant === "secondary"
         ? "border border-neutral-200 text-neutral-600 hover:border-neutral-400 hover:text-neutral-900 disabled:border-neutral-200 disabled:text-neutral-300"
         : variant === "accent"
@@ -110,6 +112,10 @@ function CheckoutActionButton({
     />
   );
 }
+
+const SELECTABLE_CARD_SELECTED_CLASSES = "border-[#049e6b] bg-[#049e6b]/10";
+const SELECTABLE_CARD_UNSELECTED_CLASSES =
+  "border-neutral-200 hover:border-[#049e6b]/60 hover:bg-[#049e6b]/5 focus-within:border-[#049e6b]/60 focus-within:bg-[#049e6b]/5";
 
 export function CheckoutClient({
   cart,
@@ -134,6 +140,8 @@ export function CheckoutClient({
     paymentMethods[0]?.id || "",
   );
   const [currentCart, setCurrentCart] = useState<Cart | undefined>(cart);
+  const [availableCouponList, setAvailableCouponList] =
+    useState<Coupon[]>(availableCoupons);
   const [addressForm, setAddressForm] =
     useState<AddressFormState>(DEFAULT_ADDRESS_FORM);
   const [addressError, setAddressError] = useState<string | null>(null);
@@ -465,6 +473,42 @@ export function CheckoutClient({
     setCouponSuccess(`已移除优惠券 ${code}`);
   };
 
+  const handleRedeemCoupon = async (
+    code: string,
+  ): Promise<{ success: true } | { success: false; error?: string }> => {
+    setCouponError(null);
+    setCouponSuccess(null);
+
+    if (!customer?.id) {
+      const message = "请登录后再兑换优惠券。";
+      return { success: false, error: message };
+    }
+
+    const result = await redeemCouponCodeAction(customer.id, code);
+
+    if (!result.success) {
+      return { success: false, error: result.error };
+    }
+
+    const redeemedCoupon = result.data.coupon;
+
+    setAvailableCouponList((prev) => {
+      const exists = prev.some(
+        (entry) =>
+          entry.code.toLowerCase() === redeemedCoupon.code.toLowerCase(),
+      );
+      if (exists) {
+        return prev;
+      }
+      return [redeemedCoupon, ...prev];
+    });
+
+    const displayName = redeemedCoupon.title || redeemedCoupon.code;
+    setCouponSuccess(`已兑换优惠券 ${displayName}`);
+
+    return { success: true };
+  };
+
   const appliedCouponCodes = useMemo(() => {
     return new Set(
       (currentCart?.appliedCoupons || []).map((entry) =>
@@ -599,8 +643,8 @@ export function CheckoutClient({
                         className={cn(
                           "flex cursor-pointer flex-col gap-3 rounded-2xl border p-4 transition",
                           isSelected
-                            ? "border-neutral-900 bg-neutral-900/5"
-                            : "border-neutral-200 hover:border-neutral-400",
+                            ? SELECTABLE_CARD_SELECTED_CLASSES
+                            : SELECTABLE_CARD_UNSELECTED_CLASSES,
                         )}
                       >
                         <div className="flex items-start justify-between gap-4">
@@ -626,7 +670,7 @@ export function CheckoutClient({
                           </div>
                           <div className="flex items-center gap-2">
                             {address.isDefault ? (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-neutral-900 px-2 py-0.5 text-[11px] font-medium text-white">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-[#049e6b] px-2 py-0.5 text-[11px] font-medium text-white">
                                 <Check className="h-3 w-3" aria-hidden /> 默认
                               </span>
                             ) : (
@@ -864,8 +908,8 @@ export function CheckoutClient({
                   className={cn(
                     "flex cursor-pointer items-start justify-between gap-4 rounded-2xl border p-4 transition",
                     isSelected
-                      ? "border-neutral-900 bg-neutral-900/5"
-                      : "border-neutral-200 hover:border-neutral-400",
+                      ? SELECTABLE_CARD_SELECTED_CLASSES
+                      : SELECTABLE_CARD_UNSELECTED_CLASSES,
                   )}
                 >
                   <div className="flex flex-col gap-1">
@@ -916,13 +960,19 @@ export function CheckoutClient({
           <p className="mt-1 text-sm text-neutral-500">
             选择可用优惠券，金额与规则均可在后端配置。
           </p>
+          <CouponRedeemForm
+            className="mt-4"
+            onRedeem={handleRedeemCoupon}
+            submitLabel="立即兑换"
+            pendingLabel="兑换中..."
+          />
           <div className="mt-4 space-y-3">
-            {availableCoupons.length === 0 ? (
+            {availableCouponList.length === 0 ? (
               <p className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-6 text-sm text-neutral-500">
                 当前无可用优惠券。
               </p>
             ) : (
-              availableCoupons.map((coupon) => {
+              availableCouponList.map((coupon) => {
                 const isApplied = appliedCouponCodes.has(
                   coupon.code.toLowerCase(),
                 );
@@ -1102,8 +1152,8 @@ export function CheckoutClient({
                   className={cn(
                     "flex cursor-pointer items-start justify-between gap-4 rounded-2xl border p-4 transition",
                     isSelected
-                      ? "border-neutral-900 bg-neutral-900/5"
-                      : "border-neutral-200 hover:border-neutral-400",
+                      ? SELECTABLE_CARD_SELECTED_CLASSES
+                      : SELECTABLE_CARD_UNSELECTED_CLASSES,
                     method.disabled && "opacity-50",
                   )}
                 >
