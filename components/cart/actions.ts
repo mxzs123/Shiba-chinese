@@ -11,10 +11,25 @@ import {
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  CART_SELECTED_MERCHANDISE_COOKIE,
+  CART_SELECTED_MERCHANDISE_FORM_FIELD,
+  CART_SELECTED_MERCHANDISE_MAX_AGE,
+} from "./constants";
+import {
+  parseSelectedMerchandiseIds,
+  serializeSelectedMerchandiseIds,
+} from "./cart-selection";
 
 const CART_ID_COOKIE = "cartId";
 const CART_COOKIE_OPTIONS = {
   httpOnly: true,
+  sameSite: "lax" as const,
+  path: "/",
+  secure: process.env.NODE_ENV === "production",
+};
+
+const CART_SELECTION_COOKIE_BASE_OPTIONS = {
   sameSite: "lax" as const,
   path: "/",
   secure: process.env.NODE_ENV === "production",
@@ -120,8 +135,30 @@ export async function updateItemQuantity(
   }
 }
 
-export async function redirectToCheckout() {
+export async function redirectToCheckout(formData: FormData) {
   const cookieStore = await cookies();
+  const selectionField = formData.get(CART_SELECTED_MERCHANDISE_FORM_FIELD);
+
+  if (typeof selectionField === "string") {
+    const parsedSelection = parseSelectedMerchandiseIds(selectionField);
+
+    if (parsedSelection.length > 0) {
+      cookieStore.set({
+        name: CART_SELECTED_MERCHANDISE_COOKIE,
+        value: serializeSelectedMerchandiseIds(parsedSelection),
+        ...CART_SELECTION_COOKIE_BASE_OPTIONS,
+        maxAge: CART_SELECTED_MERCHANDISE_MAX_AGE,
+      });
+    } else {
+      cookieStore.set({
+        name: CART_SELECTED_MERCHANDISE_COOKIE,
+        value: "",
+        ...CART_SELECTION_COOKIE_BASE_OPTIONS,
+        maxAge: 0,
+      });
+    }
+  }
+
   let cart = await getCart();
 
   if (!cart) {
@@ -133,7 +170,7 @@ export async function redirectToCheckout() {
     });
   }
 
-  redirect(cart.checkoutUrl);
+  redirect("/checkout");
 }
 
 export async function createCartAndSetCookie() {
