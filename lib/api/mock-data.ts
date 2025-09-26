@@ -1002,9 +1002,11 @@ export const pages: Page[] = [
 export const menus: Record<string, Menu[]> = {
   "next-js-frontend-header-menu": [
     { title: "商品一览", path: "/search" },
+    { title: "关于药局", path: "/about" },
+    { title: "最新资讯", path: "/news" },
+    { title: "远程问诊", path: "/news/telemedicine-rx-full-workflow" },
+    { title: "赴日就诊", path: "/news/japan-medical-support" },
     { title: "常见疑问", path: "/faq" },
-    { title: "会员中心", path: "/account/membership" },
-    { title: "关于我们", path: "/about" },
   ],
   "next-js-frontend-footer-menu": [
     { title: "配送与退换", path: "/faq" },
@@ -1038,6 +1040,32 @@ const newsArticles: NewsArticle[] = [
         <li>48 小时内完成审方发药，核心城区可选择当日速配。</li>
       </ul>
       <p>若涉及需进一步线下面诊的情况，医生会提供转诊建议。芝园将持续优化线上问诊体验。</p>
+    `,
+  },
+  {
+    id: "news-japan-medical-support",
+    slug: "japan-medical-support",
+    title: "赴日就诊服务上线：专科预约、签证资料与陪诊全程协同",
+    summary:
+      "新增赴日就诊顾问团队，协助完成医院对接、就诊翻译与术后远程随访，保障跨境治疗顺畅进行。",
+    href: "/news/japan-medical-support",
+    tags: ["医疗服务", "赴日就诊"],
+    publishedAt: `${thisYear}-05-27T11:00:00.000Z`,
+    updatedAt: `${thisYear}-05-27T11:00:00.000Z`,
+    seo: {
+      title: "赴日就诊一站式服务上线 | 芝园资讯",
+      description:
+        "提供赴日就诊专科预约、签证材料准备、落地陪诊与术后随访服务，助力患者安心就医。",
+    },
+    bodyHtml: `
+      <p>芝园赴日就诊顾问团队正式上线，为有跨境治疗需求的客户提供覆盖出行、就诊与回国恢复的一站式协助。</p>
+      <p>服务内容包括预约日本权威专科医院、整理签证与病历材料、安排医疗口译随行以及术后远程复诊跟进。</p>
+      <ul>
+        <li>根据诊疗诉求匹配合适的日本医疗机构与专家门诊。</li>
+        <li>全程提供日中双语支持，确保病情沟通与知情同意清晰无误。</li>
+        <li>回国后由芝园药师团队持续跟进用药与康复需求。</li>
+      </ul>
+      <p>如需了解更多赴日就诊方案，可通过芝园客服留下联系方式，顾问会在 1 个工作日内回应。</p>
     `,
   },
   {
