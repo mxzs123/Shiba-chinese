@@ -1,4 +1,4 @@
-import { ProductCard, ProductCardQuickAdd } from "@/app/_shared";
+import { ProductCard } from "@/app/_shared/ProductCard";
 import { getCollectionProducts } from "lib/api";
 
 type HomeRecommendationsProps = {
@@ -48,7 +48,6 @@ export async function HomeRecommendations({
             key={product.handle}
             product={product}
             className="h-full"
-            actionSlot={<ProductCardQuickAdd product={product} />}
           />
         ))}
       </div>

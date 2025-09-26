@@ -2,7 +2,7 @@ import clsx from "clsx";
 import Grid from "components/grid";
 import type { Product } from "lib/api/types";
 
-import { ProductCard, ProductCardQuickAdd } from "@/app/_shared";
+import { ProductCard } from "@/app/_shared/ProductCard";
 
 export default function ProductGridItems({
   products,
@@ -18,10 +18,7 @@ export default function ProductGridItems({
           key={product.handle}
           className={clsx(animate ? "animate-fadeIn" : undefined)}
         >
-          <ProductCard
-            product={product}
-            actionSlot={<ProductCardQuickAdd product={product} />}
-          />
+          <ProductCard product={product} />
         </Grid.Item>
       ))}
     </>
