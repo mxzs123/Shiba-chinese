@@ -2,19 +2,20 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 
 import { PrimaryButton } from "app/_shared";
 import { PRIMARY_BUTTON_COLOR_CLASSES } from "app/_shared/PrimaryButton";
 import { CartSelectionCheckbox } from "components/cart/cart-selection-checkbox";
 import { DeleteItemButton } from "components/cart/delete-item-button";
-import { EditItemQuantityButton } from "components/cart/edit-item-quantity-button";
+import { updateItemQuantity } from "components/cart/actions";
 import {
   CART_SELECTED_MERCHANDISE_COOKIE,
   CART_SELECTED_MERCHANDISE_MAX_AGE,
   CART_SELECTED_MERCHANDISE_FORM_FIELD,
 } from "components/cart/constants";
+import { QuantityInput } from "components/quantity-input";
 import Price from "components/price";
 import { DEFAULT_OPTION } from "lib/constants";
 import { cn, createUrl } from "lib/utils";
@@ -97,6 +98,60 @@ function EmptyCartState() {
         浏览商品
       </Link>
     </div>
+  );
+}
+
+type UpdateCartItemFn = ReturnType<typeof useCart>["updateCartItem"];
+
+function CartItemQuantityControl({
+  merchandiseId,
+  productTitle,
+  quantity,
+  optimisticUpdate,
+}: {
+  merchandiseId: string;
+  productTitle: string;
+  quantity: number;
+  optimisticUpdate: UpdateCartItemFn;
+}) {
+  const [, startTransition] = useTransition();
+
+  const handleQuantityChange = useCallback(
+    (nextQuantity: number) => {
+      if (nextQuantity === quantity) {
+        return;
+      }
+
+      optimisticUpdate(merchandiseId, "set", nextQuantity);
+
+      startTransition(() => {
+        updateItemQuantity(null, {
+          merchandiseId,
+          quantity: nextQuantity,
+        })
+          .then((result) => {
+            if (typeof result === "string") {
+              console.error(result);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      });
+    },
+    [merchandiseId, optimisticUpdate, quantity],
+  );
+
+  return (
+    <QuantityInput
+      value={quantity}
+      onChange={handleQuantityChange}
+      min={1}
+      max={99}
+      decrementAriaLabel={`减少 ${productTitle} 数量`}
+      incrementAriaLabel={`增加 ${productTitle} 数量`}
+      inputAriaLabel={`${productTitle} 数量输入`}
+    />
   );
 }
 
@@ -357,21 +412,12 @@ export function CartContent() {
                   ) : null}
                 </div>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="inline-flex items-center rounded-full border border-neutral-200 bg-white">
-                    <EditItemQuantityButton
-                      item={item}
-                      type="minus"
-                      optimisticUpdate={updateCartItem}
-                    />
-                    <span className="min-w-[44px] text-center text-sm font-medium">
-                      {item.quantity}
-                    </span>
-                    <EditItemQuantityButton
-                      item={item}
-                      type="plus"
-                      optimisticUpdate={updateCartItem}
-                    />
-                  </div>
+                  <CartItemQuantityControl
+                    merchandiseId={item.merchandise.id}
+                    productTitle={item.merchandise.product.title}
+                    quantity={item.quantity}
+                    optimisticUpdate={updateCartItem}
+                  />
                   <Price
                     amount={item.cost.totalAmount.amount}
                     currencyCode={item.cost.totalAmount.currencyCode}

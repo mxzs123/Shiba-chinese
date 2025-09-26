@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { AddToCartButton } from "app/_shared";
 import { addItem } from "components/cart/actions";
 import { useCart } from "components/cart/cart-context";
+import { QuantityInput } from "components/quantity-input";
 import type { Product, ProductVariant } from "lib/api/types";
 
 function getPrimaryVariant(product: Product): ProductVariant | undefined {
@@ -21,21 +22,8 @@ export function AddToCartForm({ product }: { product: Product }) {
   const primaryVariant = getPrimaryVariant(product);
   const [quantity, setQuantity] = useState(1);
 
-  const increment = useCallback(() => {
-    setQuantity((prev) => Math.min(99, prev + 1));
-  }, []);
-
-  const decrement = useCallback(() => {
-    setQuantity((prev) => Math.max(1, prev - 1));
-  }, []);
-
-  const handleManualInput = useCallback((value: string) => {
-    const parsed = Number(value.replace(/[^0-9]/g, ""));
-    if (Number.isNaN(parsed)) {
-      setQuantity(1);
-      return;
-    }
-    setQuantity(Math.min(99, Math.max(1, parsed)));
+  const handleQuantityChange = useCallback((value: number) => {
+    setQuantity(value);
   }, []);
 
   const handleAdd = useCallback(async () => {
@@ -75,33 +63,15 @@ export function AddToCartForm({ product }: { product: Product }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
         <span className="text-sm font-medium text-neutral-800">购买数量</span>
-        <div className="inline-flex items-center rounded-lg border border-neutral-200 bg-white">
-          <button
-            type="button"
-            onClick={decrement}
-            className="px-3 py-2 text-sm font-medium text-neutral-600 transition hover:text-neutral-900"
-            aria-label="减少数量"
-          >
-            −
-          </button>
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            value={quantity}
-            onChange={(event) => handleManualInput(event.target.value)}
-            className="w-12 border-x border-neutral-200 bg-transparent py-2 text-center text-sm font-medium text-neutral-800 focus:outline-none"
-            aria-label="购买数量输入"
-          />
-          <button
-            type="button"
-            onClick={increment}
-            className="px-3 py-2 text-sm font-medium text-neutral-600 transition hover:text-neutral-900"
-            aria-label="增加数量"
-          >
-            ＋
-          </button>
-        </div>
+        <QuantityInput
+          value={quantity}
+          onChange={handleQuantityChange}
+          min={1}
+          max={99}
+          decrementAriaLabel="减少数量"
+          incrementAriaLabel="增加数量"
+          inputAriaLabel="购买数量输入"
+        />
       </div>
       <AddToCartButton
         onAdd={handleAdd}

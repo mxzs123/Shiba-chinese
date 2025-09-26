@@ -10,12 +10,16 @@ import React, {
   useOptimistic,
 } from "react";
 
-type UpdateType = "plus" | "minus" | "delete";
+type UpdateType = "plus" | "minus" | "delete" | "set";
 
 type CartAction =
   | {
       type: "UPDATE_ITEM";
-      payload: { merchandiseId: string; updateType: UpdateType };
+      payload: {
+        merchandiseId: string;
+        updateType: UpdateType;
+        quantity?: number;
+      };
     }
   | {
       type: "ADD_ITEM";
@@ -35,12 +39,31 @@ function calculateItemCost(quantity: number, price: string): string {
 function updateCartItem(
   item: CartItem,
   updateType: UpdateType,
+  quantity?: number,
 ): CartItem | null {
   if (updateType === "delete") return null;
 
-  const newQuantity =
-    updateType === "plus" ? item.quantity + 1 : item.quantity - 1;
-  if (newQuantity === 0) return null;
+  let newQuantity = item.quantity;
+
+  switch (updateType) {
+    case "plus":
+      newQuantity = item.quantity + 1;
+      break;
+    case "minus":
+      newQuantity = item.quantity - 1;
+      break;
+    case "set": {
+      const parsedQuantity = Math.round(quantity ?? item.quantity);
+      newQuantity = Number.isFinite(parsedQuantity)
+        ? Math.max(0, parsedQuantity)
+        : item.quantity;
+      break;
+    }
+    default:
+      break;
+  }
+
+  if (newQuantity <= 0) return null;
 
   const singleItemAmount = Number(item.cost.totalAmount.amount) / item.quantity;
   const newTotalAmount = calculateItemCost(
@@ -134,11 +157,11 @@ function cartReducer(state: Cart | undefined, action: CartAction): Cart {
 
   switch (action.type) {
     case "UPDATE_ITEM": {
-      const { merchandiseId, updateType } = action.payload;
+      const { merchandiseId, updateType, quantity } = action.payload;
       const updatedLines = currentCart.lines
         .map((item) =>
           item.merchandise.id === merchandiseId
-            ? updateCartItem(item, updateType)
+            ? updateCartItem(item, updateType, quantity)
             : item,
         )
         .filter(Boolean) as CartItem[];
@@ -218,10 +241,14 @@ export function useCart() {
   );
 
   const updateCartItem = useCallback(
-    (merchandiseId: string, updateType: UpdateType) => {
+    (
+      merchandiseId: string,
+      updateType: UpdateType,
+      quantity?: number,
+    ) => {
       updateOptimisticCart({
         type: "UPDATE_ITEM",
-        payload: { merchandiseId, updateType },
+        payload: { merchandiseId, updateType, quantity },
       });
     },
     [updateOptimisticCart],
