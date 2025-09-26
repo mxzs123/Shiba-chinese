@@ -1,12 +1,7 @@
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Circle,
-  CircleAlert,
-} from "lucide-react";
+import { CheckCircle2, Circle, CircleAlert } from "lucide-react";
 
 type PrescriptionComplianceStepsProps = {
   identityCompleted: boolean;
@@ -81,34 +76,31 @@ export function PrescriptionComplianceSteps({
         {steps.map((step, index) => (
           <li
             key={step.key}
-            className="flex flex-col gap-4 rounded-2xl border border-white/60 bg-white/90 p-5 shadow-sm shadow-amber-200/30 sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-4 rounded-2xl border border-white/60 bg-white/90 p-5 shadow-sm shadow-amber-200/30 sm:grid sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center"
           >
-            <div className="flex items-start gap-4">
-              <span
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-200 bg-amber-50 text-sm font-semibold text-amber-700"
-              >
-                {index + 1}
-              </span>
-              <div>
-                <p className="flex items-center gap-2 text-base font-semibold text-neutral-900">
-                  {step.title}
-                  <StatusBadge completed={step.completed} label={step.statusLabel} />
-                </p>
-                <p className="mt-2 text-sm text-neutral-600">{step.description}</p>
-              </div>
+            <span
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-amber-200 bg-amber-50 text-sm font-semibold text-amber-700"
+            >
+              {index + 1}
+            </span>
+            <div className="min-w-0">
+              <p className="flex items-center gap-2 whitespace-nowrap text-base font-semibold text-neutral-900">
+                {step.title}
+                <StatusBadge completed={step.completed} label={step.statusLabel} />
+              </p>
+              <p className="mt-2 text-sm text-neutral-600">{step.description}</p>
             </div>
             <Link
               href={step.href}
               prefetch
               className={cn(
-                "inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-semibold transition",
+                "inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-4 text-sm font-semibold transition sm:justify-self-end",
                 step.completed
                   ? "border border-neutral-200 text-neutral-600 hover:border-neutral-400 hover:text-neutral-900"
                   : "bg-amber-500 text-white shadow-sm hover:brightness-105",
               )}
             >
               {step.actionLabel}
-              <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
             </Link>
           </li>
         ))}

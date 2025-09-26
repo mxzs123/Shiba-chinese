@@ -43,7 +43,7 @@ export default async function PrescriptionReviewPage() {
     <CheckoutResult
       variant="success"
       title="支付已收到，待完成处方审核"
-      description="为符合合规要求，请先完成实名认证与处方问卷确认，我们会在审核通过后尽快出库。"
+      description={`订单 ${order.number} 含处方药，请先完成实名认证与问卷确认，我们会在审核通过后尽快出库。`}
       primaryAction={{
         label: "返回订单管理",
         href: "/account/orders",
@@ -56,7 +56,6 @@ export default async function PrescriptionReviewPage() {
           label: "继续浏览药品",
         },
       ]}
-      order={order}
       tips={[
         {
           title: "审核时效",
