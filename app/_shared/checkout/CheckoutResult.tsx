@@ -363,8 +363,15 @@ function getFormattedAddressLines(address: Address) {
     return address.formatted;
   }
 
+  const primaryLines = address.address1
+    ? address.address1
+        .split(/\n+/)
+        .map((entry) => entry.trim())
+        .filter((entry) => entry.length > 0)
+    : [];
+
   const computed = [
-    address.address1,
+    ...primaryLines,
     address.address2,
     [address.city, address.district].filter(Boolean).join(", "),
     [address.province, address.postalCode].filter(Boolean).join(" "),

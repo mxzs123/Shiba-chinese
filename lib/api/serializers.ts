@@ -14,9 +14,12 @@ import type {
 } from "./types";
 
 export function formatAddressLines(address: Address) {
-  const primaryLine = [address.address1, address.address2]
-    .filter((value) => Boolean(value && value.trim().length > 0))
-    .join(", ");
+  const detailedLines = address.address1
+    ? address.address1
+        .split(/\n+/)
+        .map((entry) => entry.trim())
+        .filter((entry) => entry.length > 0)
+    : [];
 
   const localityLine = [address.city, address.district]
     .filter((value) => Boolean(value && value.trim().length > 0))
@@ -33,9 +36,13 @@ export function formatAddressLines(address: Address) {
     .filter((value) => Boolean(value && value.trim().length > 0))
     .join(" ");
 
-  const lines = [primaryLine, localityLine, regionLine, countryLine].filter(
-    (value): value is string => Boolean(value && value.trim().length > 0),
-  );
+  const lines = [
+    ...detailedLines,
+    address.address2,
+    localityLine,
+    regionLine,
+    countryLine,
+  ].filter((value): value is string => Boolean(value && value.trim().length > 0));
 
   return lines.length ? lines : undefined;
 }

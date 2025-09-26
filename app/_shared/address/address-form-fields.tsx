@@ -27,11 +27,19 @@ export function AddressFormFields({
 }: AddressFormFieldsProps) {
   const idPrefix = useId();
 
+  const applyChange = (partial: Partial<AddressFormValue>) => {
+    onChange(partial);
+  };
+
   const handleChange = (field: keyof AddressFormValue, next: string | boolean) => {
-    onChange({
+    applyChange({
       [field]: typeof next === "string" ? next : next,
     } as Partial<AddressFormValue>);
   };
+
+  const detailedAddressValue = value.address2
+    ? `${value.address1}${value.address1 ? "\n" : ""}${value.address2}`
+    : value.address1;
 
   return (
     <div className="space-y-4">
@@ -85,67 +93,37 @@ export function AddressFormFields({
         <TextField
           id={buildFieldId(idPrefix, "countryCode")}
           label="国家代码 (ISO)"
-          placeholder="例如：US"
+          placeholder="例如：CN"
           value={value.countryCode ?? ""}
           onChange={(next) => handleChange("countryCode", next.toUpperCase())}
           disabled={disabled}
         />
         <TextField
           id={buildFieldId(idPrefix, "postalCode")}
-          label="邮政编码"
-          placeholder="例如：94107"
+          label="邮政编码 (选填)"
+          placeholder="例如：100000"
           value={value.postalCode ?? ""}
           onChange={(next) => handleChange("postalCode", next)}
           disabled={disabled}
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <TextField
-          id={buildFieldId(idPrefix, "province")}
-          label="州 / 省 / 地区"
-          placeholder="例如：California"
-          value={value.province ?? ""}
-          onChange={(next) => handleChange("province", next)}
-          disabled={disabled}
-        />
-        <TextField
-          id={buildFieldId(idPrefix, "city")}
-          label="城市"
-          placeholder="例如：San Francisco"
-          value={value.city}
-          onChange={(next) => handleChange("city", next)}
-          disabled={disabled}
-          required
-        />
-      </div>
-
-      <TextField
-        id={buildFieldId(idPrefix, "district")}
-        label="区 / 县 / 行政区 (选填)"
-        placeholder="例如：Mission District"
-        value={value.district ?? ""}
-        onChange={(next) => handleChange("district", next)}
-        disabled={disabled}
-      />
-
-      <TextField
+      <TextAreaField
         id={buildFieldId(idPrefix, "address1")}
-        label="街道地址"
-        placeholder="例如：1355 Market Street"
-        value={value.address1}
-        onChange={(next) => handleChange("address1", next)}
+        label="详细地址"
+        placeholder="例如：北京市海淀区中关村大街 1 号 科技大厦 A 座 302"
+        value={detailedAddressValue}
+        onChange={(next) =>
+          applyChange({
+            address1: next,
+            address2: "",
+            province: "",
+            city: "",
+            district: "",
+          })
+        }
         disabled={disabled}
         required
-      />
-
-      <TextField
-        id={buildFieldId(idPrefix, "address2")}
-        label="楼层 / 单元 / 其他 (选填)"
-        placeholder="例如：Suite 900"
-        value={value.address2 ?? ""}
-        onChange={(next) => handleChange("address2", next)}
-        disabled={disabled}
       />
 
       {showDefaultToggle ? (
@@ -195,6 +173,44 @@ function TextField({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-[#049e6b] focus:outline-none focus:ring-2 focus:ring-[#049e6b]/20 disabled:bg-neutral-50 disabled:text-neutral-400"
+        disabled={disabled}
+        required={required}
+      />
+    </div>
+  );
+}
+
+type TextAreaFieldProps = {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
+  required?: boolean;
+};
+
+function TextAreaField({
+  id,
+  label,
+  value,
+  onChange,
+  placeholder,
+  disabled,
+  required,
+}: TextAreaFieldProps) {
+  return (
+    <div className="space-y-2">
+      <label className="text-sm font-medium text-neutral-700" htmlFor={id}>
+        {label}
+        {required ? <span className="ml-1 text-red-500">*</span> : null}
+      </label>
+      <textarea
+        id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        className="min-h-[120px] w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-700 transition focus:border-[#049e6b] focus:outline-none focus:ring-2 focus:ring-[#049e6b]/20 disabled:bg-neutral-50 disabled:text-neutral-400"
         disabled={disabled}
         required={required}
       />

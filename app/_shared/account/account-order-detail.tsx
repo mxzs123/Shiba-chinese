@@ -38,7 +38,12 @@ function getFormattedAddressLines(order: Order) {
   }
 
   const computed = [
-    address.address1,
+    ...(address.address1
+      ? address.address1
+          .split(/\n+/)
+          .map((entry) => entry.trim())
+          .filter((entry) => entry.length > 0)
+      : []),
     address.address2,
     [address.city, address.district].filter(Boolean).join(", "),
     [address.province, address.postalCode].filter(Boolean).join(" "),

@@ -79,12 +79,8 @@ function validateAddress(form: AddressFormState) {
     return "请填写国家或地区";
   }
 
-  if (!form.city.trim()) {
-    return "请填写城市";
-  }
-
   if (!form.address1.trim()) {
-    return "请填写街道地址";
+    return "请填写详细地址";
   }
 
   return null;
@@ -103,8 +99,15 @@ function buildAddressLines(address: Address) {
     return address.formatted;
   }
 
+  const primaryLines = address.address1
+    ? address.address1
+        .split(/\n+/)
+        .map((entry) => entry.trim())
+        .filter((entry) => entry.length > 0)
+    : [];
+
   const lines = [
-    address.address1,
+    ...primaryLines,
     address.address2,
     [address.city, address.district].filter(Boolean).join(", "),
     [address.province, address.postalCode].filter(Boolean).join(" "),
