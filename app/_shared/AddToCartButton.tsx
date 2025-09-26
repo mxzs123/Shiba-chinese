@@ -1,7 +1,11 @@
 "use client";
 
 import { ShoppingCart } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import {
+  useState,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 
 import { PrimaryButton } from "./PrimaryButton";
 
@@ -22,7 +26,10 @@ export function AddToCartButton({
 }: AddToCartButtonProps) {
   const [loading, setLoading] = useState(false);
 
-  const handleClick = async () => {
+  const handleClick = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     if (!onAdd || loading) {
       return;
     }
