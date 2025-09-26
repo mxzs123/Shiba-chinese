@@ -6,7 +6,11 @@ import { useEffect, useMemo, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import type { Order } from "@/lib/api/types";
-import { ArrowRight, PackageCheck } from "lucide-react";
+import type {
+  PrescriptionComplianceByOrder,
+  PrescriptionOrderCompliance,
+} from "@/lib/prescription";
+import { AlertCircle, ArrowRight, PackageCheck } from "lucide-react";
 
 import {
   ORDER_STAGES,
@@ -18,24 +22,30 @@ import {
 type OrderEntry = {
   order: Order;
   stage: OrderStage;
+  compliance?: PrescriptionOrderCompliance;
 };
 
 type AccountOrdersViewProps = {
   orders: Order[];
   customerName?: string;
+  prescriptionCompliance?: PrescriptionComplianceByOrder;
 };
 
 export function AccountOrdersView({
   orders,
   customerName,
+  prescriptionCompliance,
 }: AccountOrdersViewProps) {
   const entries = useMemo<OrderEntry[]>(
     () =>
       orders.map((order) => ({
         order,
-        stage: resolveOrderStage(order),
+        compliance: prescriptionCompliance?.[order.id],
+        stage: prescriptionCompliance?.[order.id]
+          ? "pending"
+          : resolveOrderStage(order),
       })),
-    [orders],
+    [orders, prescriptionCompliance],
   );
 
   const stageCounts = useMemo(() => {
@@ -111,8 +121,13 @@ export function AccountOrdersView({
         <StageEmptyState stage={activeStage} />
       ) : (
         <div className="space-y-4">
-          {filteredEntries.map(({ order, stage }) => (
-            <OrderCard key={order.id} order={order} stage={stage} />
+          {filteredEntries.map(({ order, stage, compliance }) => (
+            <OrderCard
+              key={order.id}
+              order={order}
+              stage={stage}
+              compliance={compliance}
+            />
           ))}
         </div>
       )}
@@ -123,9 +138,10 @@ export function AccountOrdersView({
 type OrderCardProps = {
   order: Order;
   stage: OrderStage;
+  compliance?: PrescriptionOrderCompliance;
 };
 
-function OrderCard({ order, stage }: OrderCardProps) {
+function OrderCard({ order, stage, compliance }: OrderCardProps) {
   const createdAt = formatDate(order.createdAt);
   const totalAmount = formatMoney(
     order.totalPrice.amount,
@@ -140,6 +156,9 @@ function OrderCard({ order, stage }: OrderCardProps) {
   const summaryTitle = firstItem
     ? `${firstItem.productTitle}${extraItems > 0 ? ` 等 ${order.lineItems.length} 款` : ""}`
     : "商品信息待确认";
+  const complianceMeta = compliance
+    ? resolveComplianceMeta(compliance)
+    : null;
 
   return (
     <Link
@@ -154,10 +173,13 @@ function OrderCard({ order, stage }: OrderCardProps) {
             </p>
             <p className="text-xs text-neutral-400">创建于 {createdAt}</p>
           </div>
-          <span className="inline-flex items-center gap-1 self-start rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
-            <PackageCheck className="h-4 w-4" aria-hidden />
-            {getStageLabel(stage)}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            {complianceMeta ? <ComplianceBadge meta={complianceMeta} /> : null}
+            <span className="inline-flex items-center gap-1 self-start rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
+              <PackageCheck className="h-4 w-4" aria-hidden />
+              {getStageLabel(stage)}
+            </span>
+          </div>
         </header>
 
         <div className="flex gap-4">
@@ -189,6 +211,8 @@ function OrderCard({ order, stage }: OrderCardProps) {
           </div>
         </div>
 
+        {complianceMeta ? <ComplianceNotice meta={complianceMeta} /> : null}
+
         <footer className="flex items-center justify-between text-xs text-neutral-400">
           <span>点击查看订单详情</span>
           <span className="inline-flex items-center gap-1 text-[#049e6b]">
@@ -199,6 +223,69 @@ function OrderCard({ order, stage }: OrderCardProps) {
       </div>
     </Link>
   );
+}
+
+type ComplianceMeta = {
+  productLabel: string;
+  description: string;
+  details: string;
+};
+
+type ComplianceBadgeProps = {
+  meta: ComplianceMeta;
+};
+
+function ComplianceBadge({ meta }: ComplianceBadgeProps) {
+  return (
+    <span
+      className="inline-flex items-center gap-1 self-start rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700"
+      title={`处方审核未完成：${meta.details}`}
+    >
+      <AlertCircle className="h-4 w-4" aria-hidden />
+      <span className="flex items-center gap-1">
+        订单异常
+        <span className="hidden sm:inline">· {meta.productLabel}</span>
+      </span>
+      <span className="sr-only">{meta.description}</span>
+    </span>
+  );
+}
+
+type ComplianceNoticeProps = {
+  meta: ComplianceMeta;
+};
+
+function ComplianceNotice({ meta }: ComplianceNoticeProps) {
+  return (
+    <div className="rounded-xl border border-amber-100 bg-amber-50/70 px-3 py-2 text-xs text-amber-700">
+      <p className="font-semibold">处方审核未完成，暂无法发货</p>
+      <p className="mt-1 text-[11px] text-amber-600">{meta.details}</p>
+    </div>
+  );
+}
+
+function resolveComplianceMeta(
+  compliance: PrescriptionOrderCompliance,
+): ComplianceMeta {
+  const needsIdentity = !compliance.identityCompleted;
+  const needsSurvey = compliance.pendingSurveyCount > 0;
+
+  const descriptionParts = [
+    needsIdentity ? "身份证待上传" : null,
+    needsSurvey
+      ? `${compliance.pendingSurveyCount} 份问卷待确认`
+      : null,
+  ].filter(Boolean);
+
+  const description = descriptionParts.join(" · ") || "处方审核未完成";
+
+  const productLabel = compliance.productTitles[0] ?? "处方药";
+
+  return {
+    productLabel,
+    description,
+    details: `${productLabel}：${description}`,
+  };
 }
 
 function EmptyState() {

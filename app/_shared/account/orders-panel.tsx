@@ -1,5 +1,6 @@
 import { AccountOrdersView } from "./account-orders-view";
-import { getCurrentUser, getUserById, getUserOrders } from "@/lib/api";
+import { getCurrentUser, getUserById } from "@/lib/api";
+import { loadPrescriptionComplianceOverview } from "@/lib/prescription";
 
 function buildDisplayName(
   user: Awaited<ReturnType<typeof getCurrentUser>>,
@@ -39,7 +40,8 @@ export async function AccountOrdersPanel() {
     );
   }
 
-  const orders = await getUserOrders(user.id);
+  const { orders, byOrder: prescriptionCompliance } =
+    await loadPrescriptionComplianceOverview(user);
   const sortedOrders = [...orders].sort((first, second) => {
     const firstDate = new Date(first.createdAt).getTime();
     const secondDate = new Date(second.createdAt).getTime();
@@ -61,7 +63,11 @@ export async function AccountOrdersPanel() {
           共 {sortedOrders.length} 笔订单
         </div>
       </header>
-      <AccountOrdersView orders={sortedOrders} customerName={displayName} />
+      <AccountOrdersView
+        orders={sortedOrders}
+        customerName={displayName}
+        prescriptionCompliance={prescriptionCompliance}
+      />
     </section>
   );
 }
