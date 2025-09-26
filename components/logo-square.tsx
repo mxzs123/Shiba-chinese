@@ -13,7 +13,7 @@ export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
   return (
     <div
       className={clsx(
-        "flex flex-none items-center justify-center border border-neutral-200 bg-white aspect-[25/6]",
+        "flex flex-none items-center justify-center aspect-[25/6]",
         {
           "h-[40px] rounded-xl": !isSmall,
           "h-[30px] rounded-lg": isSmall,
