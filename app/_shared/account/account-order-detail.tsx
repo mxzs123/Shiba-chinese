@@ -38,17 +38,27 @@ function getFormattedAddressLines(order: Order) {
   }
 
   const computed = [
-    [address.province, address.city, address.district, address.address1]
+    address.address1,
+    address.address2,
+    [address.city, address.district].filter(Boolean).join(", "),
+    [address.province, address.postalCode].filter(Boolean).join(" "),
+    [
+      address.country,
+      address.countryCode ? `(${address.countryCode.toUpperCase()})` : undefined,
+    ]
       .filter(Boolean)
       .join(" "),
-    address.address2,
-    [address.city, address.country].filter(Boolean).join(" "),
-    address.postalCode
-      ? `${address.postalCode}${address.countryCode ? ` ${address.countryCode}` : ""}`
-      : undefined,
   ].filter((entry): entry is string => Boolean(entry && entry.trim()));
 
   return computed.length ? computed : ["地址信息待完善"];
+}
+
+function formatAddressPhone(address: Order["shippingAddress"]) {
+  const parts = [address.phoneCountryCode, address.phone]
+    .map((value) => value?.trim())
+    .filter((value): value is string => Boolean(value && value.length > 0));
+
+  return parts.length ? parts.join(" ") : "--";
 }
 
 type AccountOrderDetailProps = {
@@ -141,7 +151,7 @@ export function AccountOrderDetail({ order }: AccountOrderDetailProps) {
             />
             <DetailItem
               label="手机号"
-              value={order.shippingAddress.phone ?? "--"}
+              value={formatAddressPhone(order.shippingAddress)}
             />
             <DetailItem
               label="收货地址"

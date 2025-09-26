@@ -8,7 +8,7 @@ import { Edit, MapPin, Trash2 } from "lucide-react";
 
 import type { Address, AddressInput, User } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
-import { PrimaryButton } from "@/app/_shared";
+import { AddressFormFields, PrimaryButton } from "@/app/_shared";
 import { useAuthStore } from "@/hooks/useAuthStore";
 import {
   removeAddressAction,
@@ -29,6 +29,7 @@ const EMPTY_FORM: AddressFormState = {
   firstName: "",
   lastName: "",
   phone: "",
+  phoneCountryCode: "+86",
   company: "",
   country: "中国",
   countryCode: "CN",
@@ -47,6 +48,7 @@ function toFormState(address: Address): AddressFormState {
     firstName: address.firstName ?? "",
     lastName: address.lastName ?? "",
     phone: address.phone ?? "",
+    phoneCountryCode: address.phoneCountryCode ?? "+86",
     company: address.company ?? "",
     country: address.country ?? "中国",
     countryCode: address.countryCode ?? "CN",
@@ -65,15 +67,56 @@ function validateAddress(form: AddressFormState) {
     return "请填写收件人的姓与名";
   }
 
-  if (!form.phone?.trim()) {
-    return "请填写联系手机号";
+  if (!form.phoneCountryCode?.trim()) {
+    return "请选择国际区号";
   }
 
-  if (!form.city.trim() || !form.address1.trim()) {
-    return "请完善城市与详细地址";
+  if (!form.phone?.trim()) {
+    return "请填写联系电话";
+  }
+
+  if (!form.country.trim()) {
+    return "请填写国家或地区";
+  }
+
+  if (!form.city.trim()) {
+    return "请填写城市";
+  }
+
+  if (!form.address1.trim()) {
+    return "请填写街道地址";
   }
 
   return null;
+}
+
+function formatDisplayPhone(address: Address) {
+  const parts = [address.phoneCountryCode, address.phone]
+    .map((part) => part?.trim())
+    .filter((part): part is string => Boolean(part && part.length > 0));
+
+  return parts.join(" ");
+}
+
+function buildAddressLines(address: Address) {
+  if (address.formatted && address.formatted.length > 0) {
+    return address.formatted;
+  }
+
+  const lines = [
+    address.address1,
+    address.address2,
+    [address.city, address.district].filter(Boolean).join(", "),
+    [address.province, address.postalCode].filter(Boolean).join(" "),
+    [
+      address.country,
+      address.countryCode ? `(${address.countryCode.toUpperCase()})` : undefined,
+    ]
+      .filter(Boolean)
+      .join(" "),
+  ].filter((value) => Boolean(value && value.trim().length > 0));
+
+  return lines;
 }
 
 export default function AddressesManager({ user }: AddressesManagerProps) {
@@ -261,6 +304,8 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
                 const isDefault = address.id === defaultAddressId;
                 const isPending = listPendingId === address.id;
                 const pendingType = listPendingType;
+                const displayPhone = formatDisplayPhone(address);
+                const addressLines = buildAddressLines(address);
 
                 return (
                   <li key={address.id}>
@@ -271,9 +316,9 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
                             {`${address.lastName ?? ""}${address.firstName ?? ""}` ||
                               "--"}
                           </p>
-                          {address.phone ? (
+                          {displayPhone ? (
                             <p className="mt-1 text-xs text-neutral-500">
-                              {address.phone}
+                              {displayPhone}
                             </p>
                           ) : null}
                         </div>
@@ -304,27 +349,12 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
                             className="mt-0.5 h-4 w-4 flex-none text-neutral-400"
                             aria-hidden
                           />
-                          <span>
-                            {[
-                              address.province,
-                              address.city,
-                              address.district,
-                              address.address1,
-                            ]
-                              .filter(Boolean)
-                              .join(" ")}
-                          </span>
+                          <div className="space-y-1">
+                            {addressLines.map((line) => (
+                              <p key={line}>{line}</p>
+                            ))}
+                          </div>
                         </div>
-                        {address.address2 ? (
-                          <p className="text-xs text-neutral-500">
-                            {address.address2}
-                          </p>
-                        ) : null}
-                        {address.postalCode ? (
-                          <p className="text-xs text-neutral-400">
-                            邮编 {address.postalCode}
-                          </p>
-                        ) : null}
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-500">
@@ -390,16 +420,10 @@ function AddressForm({
   onSubmit,
   onCancel,
 }: AddressFormProps) {
-  const defaultFieldId = formState.id
-    ? `account-address-default-${formState.id}`
-    : "account-address-default-new";
-  const handleChange = (
-    field: keyof AddressFormState,
-    value: string | boolean,
-  ) => {
+  const handlePartialChange = (partial: Partial<AddressFormState>) => {
     setFormState((prev) => ({
       ...prev,
-      [field]: typeof value === "string" ? value : value,
+      ...partial,
     }));
   };
 
@@ -412,106 +436,16 @@ function AddressForm({
         </p>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field
-          label="姓"
-          value={formState.lastName}
-          onChange={(value) => handleChange("lastName", value)}
-          placeholder="例如：张"
-          disabled={pending}
-        />
-        <Field
-          label="名"
-          value={formState.firstName}
-          onChange={(value) => handleChange("firstName", value)}
-          placeholder="例如：三"
-          disabled={pending}
-        />
-      </div>
-
-      <Field
-        label="联系电话"
-        value={formState.phone ?? ""}
-        onChange={(value) => handleChange("phone", value)}
-        placeholder="请输入常用手机号"
+      <AddressFormFields
+        value={formState}
+        onChange={handlePartialChange}
         disabled={pending}
+        showDefaultToggle
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field
-          label="所在省份"
-          value={formState.province ?? ""}
-          onChange={(value) => handleChange("province", value)}
-          placeholder="例如：上海市"
-          disabled={pending}
-        />
-        <Field
-          label="城市"
-          value={formState.city ?? ""}
-          onChange={(value) => handleChange("city", value)}
-          placeholder="例如：上海"
-          disabled={pending}
-        />
-      </div>
-
-      <Field
-        label="区县 / 街道"
-        value={formState.district ?? ""}
-        onChange={(value) => handleChange("district", value)}
-        placeholder="例如：浦东新区"
-        disabled={pending}
-      />
-
-      <Field
-        label="详细地址"
-        value={formState.address1 ?? ""}
-        onChange={(value) => handleChange("address1", value)}
-        placeholder="例如：世纪大道 100 号"
-        disabled={pending}
-      />
-
-      <Field
-        label="楼层 / 门牌号 (选填)"
-        value={formState.address2 ?? ""}
-        onChange={(value) => handleChange("address2", value)}
-        placeholder="例如：A 座 302"
-        disabled={pending}
-      />
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field
-          label="邮编 (选填)"
-          value={formState.postalCode ?? ""}
-          onChange={(value) => handleChange("postalCode", value)}
-          placeholder="例如：200000"
-          disabled={pending}
-        />
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-neutral-700">
-            设为默认地址
-          </label>
-          <div className="flex h-11 items-center rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-600">
-            <input
-              id={defaultFieldId}
-              type="checkbox"
-              className="h-4 w-4 border-neutral-300 text-neutral-900 focus:ring-neutral-900"
-              checked={Boolean(formState.isDefault)}
-              onChange={(event) =>
-                handleChange("isDefault", event.target.checked)
-              }
-              disabled={pending}
-            />
-            <label
-              htmlFor={defaultFieldId}
-              className="ml-2 text-sm text-neutral-600"
-            >
-              同步设为默认地址
-            </label>
-          </div>
-        </div>
-      </div>
-
-      {error ? <p className="text-sm text-red-500">{error}</p> : null}
+      {error ? (
+        <p className="text-sm text-red-500">{error}</p>
+      ) : null}
 
       <div className="flex flex-wrap items-center gap-3">
         <PrimaryButton
@@ -531,29 +465,6 @@ function AddressForm({
           取消
         </button>
       </div>
-    </div>
-  );
-}
-
-type FieldProps = {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  disabled?: boolean;
-};
-
-function Field({ label, value, onChange, placeholder, disabled }: FieldProps) {
-  return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium text-neutral-700">{label}</label>
-      <input
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-[#049e6b] focus:outline-none focus:ring-2 focus:ring-[#049e6b]/20 disabled:bg-neutral-50"
-        disabled={disabled}
-      />
     </div>
   );
 }

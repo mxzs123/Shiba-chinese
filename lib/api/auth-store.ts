@@ -171,6 +171,19 @@ function normaliseEmail(value: string | undefined | null) {
   return trimmed && trimmed.length > 0 ? trimmed : undefined;
 }
 
+function normaliseDialCode(value: string | undefined | null) {
+  if (!value) {
+    return undefined;
+  }
+
+  const trimmed = value.replace(/\s+/g, "").replace(/^\+/, "");
+  if (!trimmed) {
+    return undefined;
+  }
+
+  return `+${trimmed}`;
+}
+
 function normalisePhone(value: string | undefined | null) {
   if (!value) {
     return undefined;
@@ -558,6 +571,7 @@ export function upsertCustomerAddress(
     firstName: (input.firstName || "").trim(),
     lastName: (input.lastName || "").trim(),
     phone: input.phone?.trim() || undefined,
+    phoneCountryCode: normaliseDialCode(input.phoneCountryCode),
     company: input.company?.trim() || undefined,
     country: input.country?.trim() || "中国",
     countryCode: input.countryCode?.trim().toUpperCase() || "CN",

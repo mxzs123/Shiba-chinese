@@ -319,6 +319,7 @@ function OrderSummary({ order }: { order: Order }) {
 
 function AddressBlock({ address }: { address: Address }) {
   const lines = getFormattedAddressLines(address);
+  const phone = formatAddressPhone(address);
 
   return (
     <div className="mt-4 space-y-1 text-sm text-neutral-600">
@@ -326,7 +327,7 @@ function AddressBlock({ address }: { address: Address }) {
         {address.lastName}
         {address.firstName}
       </p>
-      {address.phone ? <p>{address.phone}</p> : null}
+      {phone ? <p>{phone}</p> : null}
       {lines.map((line) => (
         <p key={line}>{line}</p>
       ))}
@@ -363,17 +364,27 @@ function getFormattedAddressLines(address: Address) {
   }
 
   const computed = [
-    [address.province, address.city, address.district, address.address1]
+    address.address1,
+    address.address2,
+    [address.city, address.district].filter(Boolean).join(", "),
+    [address.province, address.postalCode].filter(Boolean).join(" "),
+    [
+      address.country,
+      address.countryCode ? `(${address.countryCode.toUpperCase()})` : undefined,
+    ]
       .filter(Boolean)
       .join(" "),
-    address.address2,
-    [address.city, address.country].filter(Boolean).join(" "),
-    address.postalCode
-      ? `${address.postalCode}${address.countryCode ? ` ${address.countryCode}` : ""}`
-      : undefined,
   ].filter((entry): entry is string => Boolean(entry && entry.trim()));
 
   return computed.length ? computed : ["地址信息待完善"];
+}
+
+function formatAddressPhone(address: Address) {
+  const parts = [address.phoneCountryCode, address.phone]
+    .map((value) => value?.trim())
+    .filter((value): value is string => Boolean(value && value.length > 0));
+
+  return parts.join(" ");
 }
 
 export const checkoutResultPlaceholders = {

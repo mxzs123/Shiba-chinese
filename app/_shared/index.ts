@@ -13,3 +13,4 @@ export {
   checkoutResultPlaceholders,
 } from "./checkout/CheckoutResult";
 export { DefaultBadge } from "./account/DefaultBadge";
+export { AddressFormFields } from "./address";

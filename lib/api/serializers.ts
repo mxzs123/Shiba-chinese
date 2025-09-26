@@ -14,20 +14,43 @@ import type {
 } from "./types";
 
 export function formatAddressLines(address: Address) {
-  const lines = [
-    [address.province, address.city, address.district, address.address1]
-      .filter(Boolean)
-      .join(" "),
-    address.address2,
-    [address.city, address.country].filter(Boolean).join(" "),
-    address.postalCode
-      ? `${address.postalCode}${address.countryCode ? ` ${address.countryCode}` : ""}`
-      : undefined,
-  ].filter((value): value is string =>
-    Boolean(value && value.trim().length > 0),
+  const primaryLine = [address.address1, address.address2]
+    .filter((value) => Boolean(value && value.trim().length > 0))
+    .join(", ");
+
+  const localityLine = [address.city, address.district]
+    .filter((value) => Boolean(value && value.trim().length > 0))
+    .join(", ");
+
+  const regionLine = [address.province, address.postalCode]
+    .filter((value) => Boolean(value && value.trim().length > 0))
+    .join(" ");
+
+  const countryLine = [
+    address.country,
+    address.countryCode ? `(${address.countryCode.toUpperCase()})` : undefined,
+  ]
+    .filter((value) => Boolean(value && value.trim().length > 0))
+    .join(" ");
+
+  const lines = [primaryLine, localityLine, regionLine, countryLine].filter(
+    (value): value is string => Boolean(value && value.trim().length > 0),
   );
 
   return lines.length ? lines : undefined;
+}
+
+function normaliseDialCode(value: string | undefined) {
+  if (!value) {
+    return undefined;
+  }
+
+  const trimmed = value.replace(/\s+/g, "").replace(/^\+/, "");
+  if (!trimmed) {
+    return undefined;
+  }
+
+  return `+${trimmed}`;
 }
 
 export function cloneAddress(address: Address): Address {
@@ -161,6 +184,7 @@ export function createAddressRecord(input: AddressInput): Address {
     firstName: (input.firstName || "").trim(),
     lastName: (input.lastName || "").trim(),
     phone: input.phone?.trim() || undefined,
+    phoneCountryCode: normaliseDialCode(input.phoneCountryCode),
     company: input.company?.trim() || undefined,
     country: input.country?.trim() || "中国",
     countryCode: input.countryCode?.trim().toUpperCase() || "CN",

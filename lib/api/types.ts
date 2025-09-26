@@ -99,6 +99,7 @@ export type Address = {
   firstName: string;
   lastName: string;
   phone?: string;
+  phoneCountryCode?: string;
   company?: string;
   country: string;
   countryCode: string;
@@ -117,6 +118,7 @@ export type AddressInput = {
   firstName: string;
   lastName: string;
   phone?: string;
+  phoneCountryCode?: string;
   company?: string;
   country: string;
   countryCode: string;

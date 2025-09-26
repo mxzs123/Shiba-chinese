@@ -6,6 +6,7 @@ import type { ButtonHTMLAttributes, FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { PrimaryButton } from "app/_shared";
+import { AddressFormFields } from "@/app/_shared/address";
 import { DefaultBadge } from "@/app/_shared/account/DefaultBadge";
 import { CouponRedeemForm } from "app/_shared/coupons";
 import {
@@ -53,6 +54,7 @@ const DEFAULT_ADDRESS_FORM: AddressFormState = {
   firstName: "",
   lastName: "",
   phone: "",
+  phoneCountryCode: "+86",
   company: "",
   country: "中国",
   countryCode: "CN",
@@ -75,6 +77,35 @@ function formatCurrency(amount: number, currencyCode: string) {
     currency: currencyCode,
     currencyDisplay: "narrowSymbol",
   }).format(amount);
+}
+
+function formatAddressLines(address: Address) {
+  if (address.formatted && address.formatted.length > 0) {
+    return address.formatted;
+  }
+
+  const lines = [
+    address.address1,
+    address.address2,
+    [address.city, address.district].filter(Boolean).join(", "),
+    [address.province, address.postalCode].filter(Boolean).join(" "),
+    [
+      address.country,
+      address.countryCode ? `(${address.countryCode.toUpperCase()})` : undefined,
+    ]
+      .filter(Boolean)
+      .join(" "),
+  ].filter((value) => Boolean(value && value.trim().length > 0));
+
+  return lines;
+}
+
+function formatAddressPhone(address: Address) {
+  const parts = [address.phoneCountryCode, address.phone]
+    .map((value) => value?.trim())
+    .filter((value): value is string => Boolean(value && value.length > 0));
+
+  return parts.join(" ");
 }
 
 type CheckoutActionButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -372,13 +403,10 @@ export function CheckoutClient({
     setPointsSuccess(null);
   };
 
-  const handleAddressFieldChange = (
-    field: keyof AddressFormState,
-    value: string | boolean,
-  ) => {
+  const updateAddressForm = (partial: Partial<AddressFormState>) => {
     setAddressForm((prev) => ({
       ...prev,
-      [field]: typeof value === "string" ? value : value,
+      ...partial,
     }));
   };
 
@@ -392,12 +420,24 @@ export function CheckoutClient({
       return "请填写收件人的姓与名";
     }
 
+    if (!addressForm.phoneCountryCode?.trim()) {
+      return "请选择国际区号";
+    }
+
     if (!addressForm.phone?.trim()) {
       return "请填写联系方式";
     }
 
-    if (!addressForm.city.trim() || !addressForm.address1.trim()) {
-      return "请完善城市与详细地址";
+    if (!addressForm.country.trim()) {
+      return "请填写国家或地区";
+    }
+
+    if (!addressForm.city.trim()) {
+      return "请填写城市";
+    }
+
+    if (!addressForm.address1.trim()) {
+      return "请填写街道地址";
     }
 
     return null;
@@ -662,6 +702,8 @@ export function CheckoutClient({
                 {addresses.map((address) => {
                   const isSelected = address.id === selectedAddressId;
                   const isUpdating = defaultUpdatingId === address.id;
+                  const displayPhone = formatAddressPhone(address);
+                  const addressLines = formatAddressLines(address);
                   return (
                     <li key={address.id}>
                       <label
@@ -686,9 +728,9 @@ export function CheckoutClient({
                               <p className="text-sm font-semibold text-neutral-900">
                                 {`${address.lastName}${address.firstName}`}
                               </p>
-                              {address.phone ? (
+                              {displayPhone ? (
                                 <p className="text-xs text-neutral-500">
-                                  {address.phone}
+                                  {displayPhone}
                                 </p>
                               ) : null}
                             </div>
@@ -714,22 +756,11 @@ export function CheckoutClient({
                           </div>
                         </div>
                         <div className="text-xs text-neutral-500">
-                          {(address.formatted && address.formatted.length > 0
-                            ? address.formatted
-                            : [
-                                address.country,
-                                address.province,
-                                address.city,
-                                address.district,
-                                address.address1,
-                                address.address2,
-                                address.postalCode,
-                              ]
-                          )
-                            .filter(Boolean)
-                            .map((line, index) => (
-                              <p key={index}>{line}</p>
-                            ))}
+                          {addressLines.length === 0
+                            ? null
+                            : addressLines.map((line) => (
+                                <p key={line}>{line}</p>
+                              ))}
                         </div>
                       </label>
                     </li>
@@ -751,145 +782,13 @@ export function CheckoutClient({
               <h3 className="text-sm font-semibold text-neutral-800">
                 新增收货地址
               </h3>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-1 text-xs font-medium text-neutral-600">
-                  <span>姓</span>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
-                    value={addressForm.lastName}
-                    onChange={(event) =>
-                      handleAddressFieldChange("lastName", event.target.value)
-                    }
-                    required
-                  />
-                </label>
-                <label className="space-y-1 text-xs font-medium text-neutral-600">
-                  <span>名</span>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
-                    value={addressForm.firstName}
-                    onChange={(event) =>
-                      handleAddressFieldChange("firstName", event.target.value)
-                    }
-                    required
-                  />
-                </label>
-              </div>
-              <label className="space-y-1 text-xs font-medium text-neutral-600">
-                <span>手机号</span>
-                <input
-                  type="tel"
-                  className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
-                  value={addressForm.phone}
-                  onChange={(event) =>
-                    handleAddressFieldChange("phone", event.target.value)
-                  }
-                  required
-                />
-              </label>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-1 text-xs font-medium text-neutral-600">
-                  <span>国家 / 地区</span>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
-                    value={addressForm.country}
-                    onChange={(event) =>
-                      handleAddressFieldChange("country", event.target.value)
-                    }
-                    required
-                  />
-                </label>
-                <label className="space-y-1 text-xs font-medium text-neutral-600">
-                  <span>省份</span>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
-                    value={addressForm.province}
-                    onChange={(event) =>
-                      handleAddressFieldChange("province", event.target.value)
-                    }
-                  />
-                </label>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-1 text-xs font-medium text-neutral-600">
-                  <span>城市</span>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
-                    value={addressForm.city}
-                    onChange={(event) =>
-                      handleAddressFieldChange("city", event.target.value)
-                    }
-                    required
-                  />
-                </label>
-                <label className="space-y-1 text-xs font-medium text-neutral-600">
-                  <span>区 / 县</span>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
-                    value={addressForm.district}
-                    onChange={(event) =>
-                      handleAddressFieldChange("district", event.target.value)
-                    }
-                  />
-                </label>
-              </div>
-              <label className="space-y-1 text-xs font-medium text-neutral-600">
-                <span>详细地址</span>
-                <input
-                  type="text"
-                  className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
-                  value={addressForm.address1}
-                  onChange={(event) =>
-                    handleAddressFieldChange("address1", event.target.value)
-                  }
-                  required
-                />
-              </label>
-              <label className="space-y-1 text-xs font-medium text-neutral-600">
-                <span>楼栋 / 房间号（可选）</span>
-                <input
-                  type="text"
-                  className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
-                  value={addressForm.address2}
-                  onChange={(event) =>
-                    handleAddressFieldChange("address2", event.target.value)
-                  }
-                />
-              </label>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-1 text-xs font-medium text-neutral-600">
-                  <span>邮编（可选）</span>
-                  <input
-                    type="text"
-                    className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-900 focus:border-neutral-900 focus:outline-none"
-                    value={addressForm.postalCode}
-                    onChange={(event) =>
-                      handleAddressFieldChange("postalCode", event.target.value)
-                    }
-                  />
-                </label>
-                <label className="flex items-center gap-2 text-xs font-medium text-neutral-600">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900"
-                    checked={addressForm.isDefault}
-                    onChange={(event) =>
-                      handleAddressFieldChange(
-                        "isDefault",
-                        event.target.checked,
-                      )
-                    }
-                  />
-                  设为默认地址
-                </label>
-              </div>
-              <div className="flex gap-3">
+              <AddressFormFields
+                value={addressForm}
+                onChange={updateAddressForm}
+                disabled={addressSubmitting}
+                showDefaultToggle
+              />
+              <div className="flex gap-3 pt-2">
                 <PrimaryButton
                   type="submit"
                   className="w-full justify-center"
