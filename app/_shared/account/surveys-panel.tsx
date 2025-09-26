@@ -6,51 +6,10 @@ import {
   getUserById,
 } from "@/lib/api";
 import type { SurveyAssignment } from "@/lib/api/types";
-import { cn } from "@/lib/utils";
 
-const DATE_TIME_FORMAT = new Intl.DateTimeFormat("zh-CN", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
-
-function formatDateTime(value?: string) {
-  if (!value) {
-    return "--";
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "--";
-  }
-
-  return DATE_TIME_FORMAT.format(date);
-}
-
-function getAssignmentTitle(assignment: SurveyAssignment) {
-  if (assignment.productTitles.length === 1) {
-    return assignment.productTitles[0] ?? "处方药问卷";
-  }
-
-  return `${assignment.productTitles[0] ?? "处方药问卷"} 等`;
-}
-
-function getAssignmentSubtitle(assignment: SurveyAssignment) {
-  return `关联订单 ${assignment.orderNumber}`;
-}
-
-function getStatusText(assignment: SurveyAssignment) {
-  return assignment.status === "submitted"
-    ? `提交于 ${formatDateTime(assignment.submittedAt)}`
-    : `最后更新 ${formatDateTime(assignment.updatedAt)}`;
-}
-
-function sortAssignments(assignments: SurveyAssignment[]) {
-  return assignments.slice().sort((first, second) => {
-    const firstDate = new Date(first.updatedAt).getTime();
-    const secondDate = new Date(second.updatedAt).getTime();
-    return secondDate - firstDate;
-  });
-}
+import { SurveyAssignmentItem } from "./survey-assignment-item";
+import { SurveyBulkSubmit } from "./survey-bulk-submit";
+import { sortAssignments } from "./survey-utils";
 
 type AccountSurveysPanelProps = {
   highlightPending?: boolean;
@@ -106,55 +65,13 @@ export async function AccountSurveysPanel({
     return (
       <ul className="space-y-4">
         {items.map((assignment, index) => {
-          const href = `/account/surveys/${assignment.id}`;
-          const isPending = assignment.status !== "submitted";
-          const shouldHighlight =
-            highlightPending && type === "pending" && index === 0;
-
           return (
-            <li
+            <SurveyAssignmentItem
               key={assignment.id}
-              className={cn(
-                "rounded-2xl border border-neutral-200 bg-white/95 p-5 shadow-sm shadow-neutral-900/5",
-                shouldHighlight &&
-                  "border-amber-400 shadow-amber-200/60 ring-2 ring-amber-200 motion-safe:animate-[pulse_1.6s_ease-in-out_2]",
-              )}
-            >
-              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                <div className="space-y-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
-                      {isPending ? "待填写" : "已提交"}
-                    </span>
-                    <span className="text-xs text-neutral-400">
-                      {getStatusText(assignment)}
-                    </span>
-                  </div>
-                  <h3 className="text-base font-semibold text-neutral-900">
-                    {getAssignmentTitle(assignment)}
-                  </h3>
-                  <p className="text-sm text-neutral-500">
-                    {getAssignmentSubtitle(assignment)}
-                  </p>
-                </div>
-                <div className="flex flex-col items-start gap-3 md:items-end">
-                  <Link
-                    href={href}
-                    prefetch
-                    className={`inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-semibold transition ${
-                      isPending
-                        ? "bg-primary text-primary-foreground hover:brightness-105"
-                        : "border border-neutral-200 text-neutral-600 hover:border-neutral-900 hover:text-neutral-900"
-                    }`}
-                  >
-                    {isPending ? "继续填写" : "查看记录"}
-                  </Link>
-                  <span className="text-xs text-neutral-400">
-                    适用药品：{assignment.productTitles.join("、")}
-                  </span>
-                </div>
-              </div>
-            </li>
+              assignment={assignment}
+              variant={type}
+              highlight={highlightPending && type === "pending" && index === 0}
+            />
           );
         })}
       </ul>
@@ -195,7 +112,14 @@ export async function AccountSurveysPanel({
             包含最近未提交的问卷与需要补充证明材料的记录。
           </p>
           <div className="mt-3" id="pending">
-            {renderAssignments(pendingAssignments, "pending")}
+            {pendingAssignments.length ? (
+              <div className="space-y-4">
+                <SurveyBulkSubmit assignments={pendingAssignments} />
+                {renderAssignments(pendingAssignments, "pending")}
+              </div>
+            ) : (
+              renderAssignments(pendingAssignments, "pending")
+            )}
           </div>
         </div>
         <div>
