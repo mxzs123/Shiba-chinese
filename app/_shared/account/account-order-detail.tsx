@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
 import Image from "next/image";
-import Link from "next/link";
 import { PackageCheck } from "lucide-react";
 
 import type { Order } from "@/lib/api/types";
@@ -94,26 +93,17 @@ export function AccountOrderDetail({ order }: AccountOrderDetailProps) {
     (sum, item) => sum + item.quantity,
     0,
   );
-
   return (
     <section className="overflow-hidden rounded-3xl border border-neutral-100 bg-white/90 shadow-lg shadow-neutral-900/5">
       <header className="border-b border-neutral-100 bg-neutral-50/70 px-6 py-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold text-neutral-900">
-              订单详情
-            </h1>
+            <h1 className="text-2xl font-semibold text-neutral-900">订单详情</h1>
             <p className="text-sm text-neutral-500">
               订单编号 {order.number} · 创建于 {createdAt}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href="/account"
-              className="inline-flex items-center gap-1 text-xs font-medium text-neutral-400 transition hover:text-neutral-600"
-            >
-              返回订单列表
-            </Link>
             <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-600">
               <PackageCheck className="h-4 w-4" aria-hidden />
               {stageLabel}

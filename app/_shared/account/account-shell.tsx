@@ -16,6 +16,7 @@ type AccountShellProps = {
   navItems: readonly AccountNavItem[];
   activeItem: string;
   children: ReactNode;
+  breadcrumbs?: ReactNode;
 };
 
 export function AccountShell({
@@ -24,6 +25,7 @@ export function AccountShell({
   navItems,
   activeItem,
   children,
+  breadcrumbs,
 }: AccountShellProps) {
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 lg:px-0">
@@ -33,6 +35,9 @@ export function AccountShell({
           <p className="mt-2 text-sm text-neutral-500">{description}</p>
         ) : null}
       </header>
+      {breadcrumbs ? (
+        <div className="mb-4">{breadcrumbs}</div>
+      ) : null}
       <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
         <aside>
           <nav aria-label="个人中心导航" className="space-y-2">

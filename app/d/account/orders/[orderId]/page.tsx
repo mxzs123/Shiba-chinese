@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import {
@@ -46,6 +47,16 @@ export default async function OrderDetailPage({
       description="集中管理订单、收货信息与账户偏好。"
       navItems={ACCOUNT_NAV_ITEMS}
       activeItem="orders"
+      breadcrumbs={
+        <nav aria-label="订单面包屑" className="flex">
+          <Link
+            href="/d/account/orders"
+            className="inline-flex items-center gap-1 text-xs font-medium text-neutral-400 transition hover:text-neutral-600"
+          >
+            返回订单列表
+          </Link>
+        </nav>
+      }
     >
       <AccountOrderDetail order={order} />
     </AccountShell>

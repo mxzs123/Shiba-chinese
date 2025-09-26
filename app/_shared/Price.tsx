@@ -89,7 +89,7 @@ export function Price({
     : undefined;
   const convertedOriginalPrefix = originalConvertedPrefix ?? convertedPrefix;
 
-  const resolvedBadge = hasOriginalPrice ? badge ?? "优惠价" : undefined;
+  const resolvedBadge = hasOriginalPrice ? badge ?? "芝园价" : undefined;
 
   if (hasOriginalPrice) {
     return (
