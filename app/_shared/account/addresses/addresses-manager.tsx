@@ -79,6 +79,10 @@ function validateAddress(form: AddressFormState) {
     return "请填写国家或地区";
   }
 
+  if (!form.city.trim()) {
+    return "请填写城市";
+  }
+
   if (!form.address1.trim()) {
     return "请填写详细地址";
   }

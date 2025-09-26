@@ -3,6 +3,7 @@
 import { useId } from "react";
 
 import type { AddressInput } from "@/lib/api/types";
+import { cn } from "@/lib/utils";
 
 import { PhoneInput } from "./phone-input";
 
@@ -42,88 +43,100 @@ export function AddressFormFields({
     : value.address1;
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2">
-        <TextField
-          id={buildFieldId(idPrefix, "lastName")}
-          label="姓"
-          placeholder="例如：Smith"
-          value={value.lastName}
-          onChange={(next) => handleChange("lastName", next)}
-          disabled={disabled}
-          required
-        />
-        <TextField
-          id={buildFieldId(idPrefix, "firstName")}
-          label="名"
-          placeholder="例如：Jane"
-          value={value.firstName}
-          onChange={(next) => handleChange("firstName", next)}
-          disabled={disabled}
-          required
-        />
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-[170px_1fr]">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-neutral-700" htmlFor={buildFieldId(idPrefix, "phone")}>
-            联系电话
-          </label>
-          <PhoneInput
-            dialCode={value.phoneCountryCode || "+"}
-            number={value.phone ?? ""}
-            onDialCodeChange={(next) => handleChange("phoneCountryCode", next)}
-            onNumberChange={(next) => handleChange("phone", next)}
-            disabled={disabled}
-          />
-        </div>
-      </div>
-
+    <div className="grid gap-6 md:grid-cols-2">
       <TextField
-        id={buildFieldId(idPrefix, "country")}
-        label="国家 / 地区"
-        placeholder="例如：United States"
-        value={value.country}
-        onChange={(next) => handleChange("country", next)}
+        id={buildFieldId(idPrefix, "lastName")}
+        label="姓"
+        placeholder="例如：Chen"
+        value={value.lastName}
+        onChange={(next) => handleChange("lastName", next)}
         disabled={disabled}
         required
+        className="md:col-span-1"
+      />
+      <TextField
+        id={buildFieldId(idPrefix, "firstName")}
+        label="名"
+        placeholder="例如：Li"
+        value={value.firstName}
+        onChange={(next) => handleChange("firstName", next)}
+        disabled={disabled}
+        required
+        className="md:col-span-1"
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="space-y-2 md:col-span-2">
+        <label
+          className="text-sm font-medium text-neutral-700"
+          htmlFor={buildFieldId(idPrefix, "phone")}
+        >
+          联系电话
+        </label>
+        <PhoneInput
+          dialCode={value.phoneCountryCode || "+"}
+          number={value.phone ?? ""}
+          onDialCodeChange={(next) => handleChange("phoneCountryCode", next)}
+          onNumberChange={(next) => handleChange("phone", next)}
+          disabled={disabled}
+        />
+      </div>
+
+      <div className="grid gap-4 md:col-span-2 sm:grid-cols-[minmax(0,1fr)_140px] lg:grid-cols-[minmax(0,1fr)_160px]">
+        <TextField
+          id={buildFieldId(idPrefix, "country")}
+          label="国家/地区"
+          placeholder="例如：中国"
+          value={value.country}
+          onChange={(next) => handleChange("country", next)}
+          disabled={disabled}
+          required
+        />
         <TextField
           id={buildFieldId(idPrefix, "countryCode")}
-          label="国家代码 (ISO)"
-          placeholder="例如：CN"
+          label="ISO 代码"
+          placeholder="CN"
           value={value.countryCode ?? ""}
           onChange={(next) => handleChange("countryCode", next.toUpperCase())}
           disabled={disabled}
-        />
-        <TextField
-          id={buildFieldId(idPrefix, "postalCode")}
-          label="邮政编码 (选填)"
-          placeholder="例如：100000"
-          value={value.postalCode ?? ""}
-          onChange={(next) => handleChange("postalCode", next)}
-          disabled={disabled}
+          className="sm:max-w-[160px]"
+          inputClassName="uppercase text-center tracking-wide"
         />
       </div>
+
+      <TextField
+        id={buildFieldId(idPrefix, "city")}
+        label="城市"
+        placeholder="例如：上海市"
+        value={value.city ?? ""}
+        onChange={(next) => handleChange("city", next)}
+        disabled={disabled}
+        required
+        className="md:col-span-1"
+      />
+      <TextField
+        id={buildFieldId(idPrefix, "postalCode")}
+        label="邮政编码 (选填)"
+        placeholder="例如：200000"
+        value={value.postalCode ?? ""}
+        onChange={(next) => handleChange("postalCode", next)}
+        disabled={disabled}
+        className="md:col-span-1"
+      />
 
       <TextAreaField
         id={buildFieldId(idPrefix, "address1")}
         label="详细地址"
-        placeholder="例如：北京市海淀区中关村大街 1 号 科技大厦 A 座 302"
+        placeholder="例如：浦东新区张江路 888 号 3 号楼"
         value={detailedAddressValue}
         onChange={(next) =>
           applyChange({
             address1: next,
             address2: "",
-            province: "",
-            city: "",
-            district: "",
           })
         }
         disabled={disabled}
         required
+        className="md:col-span-2"
       />
 
       {showDefaultToggle ? (
@@ -133,6 +146,7 @@ export function AddressFormFields({
           checked={Boolean(value.isDefault)}
           onChange={(checked) => handleChange("isDefault", checked)}
           disabled={disabled}
+          className="md:col-span-2"
         />
       ) : null}
     </div>
@@ -147,6 +161,8 @@ type TextFieldProps = {
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;
+  className?: string;
+  inputClassName?: string;
 };
 
 function TextField({
@@ -157,9 +173,11 @@ function TextField({
   placeholder,
   disabled,
   required,
+  className,
+  inputClassName,
 }: TextFieldProps) {
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-2", className)}>
       <label
         className="text-sm font-medium text-neutral-700"
         htmlFor={id}
@@ -172,7 +190,10 @@ function TextField({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-[#049e6b] focus:outline-none focus:ring-2 focus:ring-[#049e6b]/20 disabled:bg-neutral-50 disabled:text-neutral-400"
+        className={cn(
+          "h-11 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-[#049e6b] focus:outline-none focus:ring-2 focus:ring-[#049e6b]/20 disabled:bg-neutral-50 disabled:text-neutral-400",
+          inputClassName,
+        )}
         disabled={disabled}
         required={required}
       />
@@ -188,6 +209,7 @@ type TextAreaFieldProps = {
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;
+  className?: string;
 };
 
 function TextAreaField({
@@ -198,9 +220,10 @@ function TextAreaField({
   placeholder,
   disabled,
   required,
+  className,
 }: TextAreaFieldProps) {
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-2", className)}>
       <label className="text-sm font-medium text-neutral-700" htmlFor={id}>
         {label}
         {required ? <span className="ml-1 text-red-500">*</span> : null}
@@ -224,11 +247,19 @@ type ToggleFieldProps = {
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;
+  className?: string;
 };
 
-function ToggleField({ id, label, checked, onChange, disabled }: ToggleFieldProps) {
+function ToggleField({
+  id,
+  label,
+  checked,
+  onChange,
+  disabled,
+  className,
+}: ToggleFieldProps) {
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-2", className)}>
       <span className="text-sm font-medium text-neutral-700">{label}</span>
       <label
         htmlFor={id}
@@ -242,7 +273,9 @@ function ToggleField({ id, label, checked, onChange, disabled }: ToggleFieldProp
           onChange={(event) => onChange(event.target.checked)}
           disabled={disabled}
         />
-        <span className="ml-2">{label}</span>
+        <span className="ml-2 text-sm text-neutral-600">
+          将此地址设为默认
+        </span>
       </label>
     </div>
   );

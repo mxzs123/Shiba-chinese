@@ -439,6 +439,10 @@ export function CheckoutClient({
       return "请填写国家或地区";
     }
 
+    if (!addressForm.city.trim()) {
+      return "请填写城市";
+    }
+
     if (!addressForm.address1.trim()) {
       return "请填写详细地址";
     }

@@ -73,8 +73,8 @@ export function PhoneInput({
   }, [query]);
 
   return (
-    <div ref={containerRef} className="relative">
-      <div className="flex h-11 items-center rounded-xl border border-neutral-200 bg-white px-3 text-sm text-neutral-700 focus-within:border-[#049e6b] focus-within:ring-2 focus-within:ring-[#049e6b]/20">
+    <div ref={containerRef} className="relative w-full">
+      <div className="flex h-11 w-full items-center rounded-xl border border-neutral-200 bg-white px-3 text-sm text-neutral-700 focus-within:border-[#049e6b] focus-within:ring-2 focus-within:ring-[#049e6b]/20">
         <button
           type="button"
           className="flex items-center gap-2 text-neutral-700"
