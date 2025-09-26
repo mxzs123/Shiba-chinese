@@ -13,6 +13,8 @@ import { AddToCartForm } from "@/app/_shared/pages/product/AddToCartForm";
 import { ReassuranceNotice } from "@/app/_shared/pages/product/ReassuranceNotice";
 import { getCart, getProduct, getProductRecommendations } from "lib/api";
 import type { Image, Product, ProductVariant } from "lib/api/types";
+import { isDiscountedPrice } from "lib/pricing";
+import { cn } from "lib/utils";
 import { Building2, Globe2, ShieldCheck, Stethoscope } from "lucide-react";
 
 type PageParams = {
@@ -241,6 +243,9 @@ function ProductHero({
 }) {
   const variant = selectPrimaryVariant(product);
   const price = variant?.price || product.priceRange.minVariantPrice;
+  const originalPrice =
+    variant?.compareAtPrice || product.priceRange.minCompareAtPrice;
+  const hasDiscount = isDiscountedPrice(price, originalPrice);
 
   return (
     <section className="rounded-3xl border border-neutral-200 bg-white p-6 sm:p-8 lg:p-12">
@@ -263,12 +268,27 @@ function ProductHero({
           <div className="space-y-6 rounded-2xl border border-neutral-100 bg-neutral-50/80 p-6">
             <Price
               value={price}
-              className="text-4xl font-semibold text-neutral-900"
-              currencyClassName="text-lg font-medium text-neutral-500"
+              originalValue={originalPrice}
+              className={cn(
+                "text-4xl font-semibold",
+                hasDiscount
+                  ? "text-emerald-600 dark:text-emerald-300"
+                  : "text-neutral-900 dark:text-neutral-50",
+              )}
+              currencyClassName={cn(
+                "text-lg font-medium",
+                hasDiscount
+                  ? "text-emerald-600/80 dark:text-emerald-300/80"
+                  : "text-neutral-500",
+              )}
               showConvertedPrice
               convertedClassName="text-base font-medium text-neutral-500"
-              convertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400"
-              wrapperClassName="gap-1"
+              convertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400 dark:text-neutral-500"
+              originalClassName="text-xl font-medium text-neutral-400 line-through dark:text-neutral-500"
+              originalCurrencyClassName="text-sm font-medium uppercase tracking-wide text-neutral-400/80 dark:text-neutral-500/80"
+              originalConvertedClassName="text-sm font-medium text-neutral-400 dark:text-neutral-500"
+              originalConvertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400/60 dark:text-neutral-500/60"
+              badgeClassName="px-2 py-0.5 text-sm font-semibold text-emerald-600 dark:text-emerald-200 bg-emerald-500/10 dark:bg-emerald-400/20"
             />
             <AddToCartForm product={product} />
           </div>

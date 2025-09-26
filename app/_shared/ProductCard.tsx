@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ReactNode } from "react";
 
 import type { Product } from "lib/api/types";
+import { isDiscountedPrice } from "lib/pricing";
 import { cn } from "lib/utils";
 
 import { Price } from "./Price";
@@ -21,6 +22,9 @@ export function ProductCard({
   actionSlot,
 }: ProductCardProps) {
   const { featuredImage, priceRange } = product;
+  const currentPrice = priceRange.minVariantPrice;
+  const originalPrice = priceRange.minCompareAtPrice;
+  const hasDiscount = isDiscountedPrice(currentPrice, originalPrice);
 
   return (
     <Link
@@ -56,13 +60,28 @@ export function ProductCard({
           </div>
           <div className="flex items-start justify-between gap-3">
             <Price
-              value={priceRange.minVariantPrice}
-              className="text-lg font-semibold text-neutral-900 dark:text-neutral-50"
-              currencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400"
+              value={currentPrice}
+              originalValue={originalPrice}
+              className={cn(
+                "text-xl font-semibold",
+                hasDiscount
+                  ? "text-emerald-600 dark:text-emerald-300"
+                  : "text-neutral-900 dark:text-neutral-50",
+              )}
+              currencyClassName={cn(
+                "text-xs font-medium uppercase tracking-wide",
+                hasDiscount
+                  ? "text-emerald-600/80 dark:text-emerald-300/80"
+                  : "text-neutral-400",
+              )}
               showConvertedPrice
-              convertedClassName="text-sm font-medium text-neutral-500 dark:text-neutral-400"
+              convertedClassName="text-xs font-medium text-neutral-500 dark:text-neutral-400"
               convertedCurrencyClassName="text-[10px] font-medium uppercase tracking-wide text-neutral-400 dark:text-neutral-500"
-              wrapperClassName="gap-1"
+              originalClassName="text-sm font-medium text-neutral-400 line-through dark:text-neutral-500"
+              originalCurrencyClassName="text-[11px] font-medium uppercase tracking-wide text-neutral-400/80 dark:text-neutral-500/80"
+              originalConvertedClassName="text-xs font-medium text-neutral-400 dark:text-neutral-500"
+              originalConvertedCurrencyClassName="text-[10px] font-medium uppercase tracking-wide text-neutral-400/60 dark:text-neutral-500/60"
+              badgeClassName="dark:bg-emerald-400/20 dark:text-emerald-100"
             />
             {actionSlot}
           </div>

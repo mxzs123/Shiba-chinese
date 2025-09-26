@@ -30,6 +30,7 @@ export type ProductVariant = {
     value: string;
   }[];
   price: Money;
+  compareAtPrice?: Money | null;
 };
 
 export type Product = {
@@ -43,6 +44,8 @@ export type Product = {
   priceRange: {
     maxVariantPrice: Money;
     minVariantPrice: Money;
+    maxCompareAtPrice?: Money | null;
+    minCompareAtPrice?: Money | null;
   };
   variants: ProductVariant[];
   featuredImage: Image;

@@ -2,15 +2,28 @@
 
 ## 项目结构与模块组织
 
-本仓库基于 Next.js App Router。页面与路由集中在 `app/`，其中 `/product`、`/search`、`/[page]` 等目录映射核心业务流；`app/api/revalidate` 提供后端通知后的增量刷新入口。UI 组件位于 `components/`，按功能域拆分到 `cart/`、`layout/`、`product/` 等子目录，方便逐层替换，公共布局相关的图片与 SVG 可集中在 `components/icons/` 便于复用。数据访问封装在 `lib/api/`：`index.ts` 负责第三方后端交互或模拟数据拼装，`mock-data.ts` 保存演示商品、集合与页面内容，`types.ts` 统一接口契约，同时导出辅助查找函数。字体资源放在 `fonts/`，公共文档记录在 `docs/`。
+本仓库基于 Next.js App Router。页面与路由集中在 `app/`，其中 `/product`、`/search`、`/[page]` 等目录映射核心业务流；`app/api/revalidate` 提供后端通知后的增量刷新入口。UI 组件位于 `components/`，按功能域拆分到 `cart/`、`layout/`、`product/` 等子目录，方便逐层替换，公共布局相关的图片与 SVG 可集中在 `components/icons/` 便于复用。跨外壳可复用的页面壳、表单与业务组件集中在 `app/_shared/`：`index.ts` 汇总出口，子目录按照领域划分（如 `account/`、`checkout/`、`coupons/`、`layouts/`、`pages/`），既服务 `/d` 桌面壳，也为未来 `/m` 提供同构实现。数据访问封装在 `lib/api/`：`index.ts` 负责第三方后端交互或模拟数据拼装，`mock-data.ts` 保存演示商品、集合与页面内容，`types.ts` 统一接口契约，同时导出辅助查找函数。字体资源放在 `fonts/`，公共文档记录在 `docs/`。
 
 ## shadcn/ui 集成
 
 新增组件：`npx shadcn@latest add <component>`（生成到 `components/ui/` 并复用 `@/lib/utils` 的 `cn`）。主题变量入口：`app/globals.css`。
 
+## 共享页面壳与组件复用
+
+- `_shared` 目录是跨 `/d`、`/m` 外壳的单一事实来源：
+  - `layouts/` 暴露 `DesktopAppLayout`、`CmsLayout` 等框架组件；
+  - `pages/` 以领域视角拆分（`home/`、`news/`、`product/`、`search/`），确保多壳体共享一套内容结构；
+  - `account/` 聚合个人中心面板、导航与 Server Action（地址、优惠券、身份认证、问卷）；
+  - `checkout/` 提供 `CheckoutClient`、`CheckoutResult`、`PrescriptionComplianceSteps` 以及配套的 server action；
+  - `coupons/`、`auth/`、`search/` 等子模块都通过 `index.ts` 导出单一入口便于重用。
+- 所有新页面在 `/d` 仅负责引入 `_shared` 页面壳并传参，避免在壳体内复制业务逻辑；后续若新增 `/m` 外壳，可直接在 `app/m/...` 复用同一 `_shared` 页面。
+- 复用按钮/输入时优先调用 `_shared/PrimaryButton` 或 `_shared` 内已定义的变体（例如 `CheckoutClient` 内使用的 `CheckoutActionButton` 变体）；特殊样式先评估是否可抽象为 `_shared` 层级的可配置 props，再决定是否新增组件。
+- 账户侧默认 badge、订单阶段、调查问卷等语义化 UI 均在 `_shared/account/` 内实现；新增字段或交互请在该目录扩展，避免散落在 `/d/account`。
+- 优惠券兑换、地址管理等交互已经以 Server Action 封装在 `_shared` 内；如果业务需要额外 API 调用，请在对应 action 内扩展并保持返回结构稳定，便于客户端复用。
+
 ## 动画、图标与状态管理
 
-图标体系统一使用 `lucide-react`，新增图标时优先通过 `components/icons/` 封装再分发，保持语义化命名。交互动效采用 Framer Motion，请以驱动组件或 hooks 的方式集中声明动画变体，便于横向复用与调优。全局及局部状态管理基于 Zustand，可在 `hooks/` 下维护 store 定义，并结合 selector 减少无关重渲染，持久化需求可搭配 `zustand/middleware`。
+图标体系统一使用 `lucide-react`，新增图标时优先通过 `components/icons/` 封装再分发，保持语义化命名。交互动效采用 Framer Motion，请以驱动组件或 hooks 的方式集中声明动画变体，便于横向复用与调优。全局及局部状态管理基于 Zustand，可在 `hooks/` 下维护 store 定义，并结合 selector 减少无关重渲染，持久化需求可搭配 `zustand/middleware`。登录态由 `hooks/useAuthStore.ts` 与 `lib/api/auth-store.ts` 协同：Server Action 写入 `auth_session` cookie，客户端通过 `useAuthStore` 统一读取/更新，新增认证相关组件需复用 `_shared/auth` 的 `AuthPageShell` 与现有事件流。
 
 ## 字体策略
 
@@ -29,22 +42,39 @@
 - 移动端断点与导航交互。
 - 深/浅色主题切换与样式一致性。
 - 重要文案的多语言展示。
+- 个人中心：资料更新、地址增删改、默认地址切换、优惠券兑换、问卷保存/提交。
+- 结算页：选中商品同步、优惠券应用/移除、处方药提醒、下单结果页。
 
 ## 环境与配置提示
 
-敏感变量写入 `.env.local`：`COMMERCE_API_URL`（第三方后端地址，缺省则使用 mock 数据）、`COMMERCE_CHECKOUT_URL`、`REVALIDATION_SECRET`。新增变量请同步更新 `.env.example` 与文档，并在 PR 描述中提示。静态资源使用远程图时别忘在 `next.config.ts` 中维护 `images.remotePatterns` 白名单，避免构建时报错；若依赖外部 API，还需在部署平台配置同名环境变量。
+敏感变量写入 `.env.local`：`COMMERCE_API_URL`（第三方后端地址，缺省则使用 mock 数据）、`COMMERCE_CHECKOUT_URL`、`REVALIDATION_SECRET`。汇率等展示型变量通过 `NEXT_PUBLIC_JPY_TO_CNY_RATE` 暴露给前端，更新时需同步 README 与演示数据。新增变量请同步更新 `.env.example` 与文档，并在 PR 描述中提示。静态资源使用远程图时别忘在 `next.config.ts` 中维护 `images.remotePatterns` 白名单，避免构建时报错；若依赖外部 API，还需在部署平台配置同名环境变量。
 
 ## 数据与后端协作
 
 默认逻辑通过 `lib/api/index.ts` 读取本地模拟数据并写入服务端 Cookie 维护轻量购物车，Cookie 名称为 `cartId`，可无缝映射到会话或 Redis。接入真实服务时，在对应函数内调用后端 API 并移除或替换 `mock-data.ts`，确保返回值仍满足 `types.ts` 定义；需要分页或排序时，可在函数签名内扩展参数并同步更新前端筛选项。若后端提供 Webhook，可对 `/api/revalidate` 增补通知逻辑，并使用 `REVALIDATION_SECRET` 进行校验，必要时针对产品与集合分别触发 `revalidateTag`。
 
+## 购物车、结算与优惠券
+
+- `components/cart/` 负责购物车入口、上下文与条目操作；若页面需要复用选中态，请直接使用 `cart-selection` 内的工具函数与 `CART_SELECTED_MERCHANDISE_COOKIE`（存储逗号分隔的条目 ID）。
+- `app/_shared/checkout/CheckoutClient` 聚合地址、配送、支付、优惠券与处方提示；页面层负责准备 `cart`、`shippingMethods`、`paymentMethods`、`availableCoupons` 等数据。新增结算模块时先评估能否扩展该客户端组件或其 props，而不是在页面内新增平行实现。
+- 结算相关 Server Action 存放在 `_shared/checkout/actions.ts`，包含地址维护、优惠券应用、购物车刷新等流程；所有操作返回统一的 `success/data` 结构，复用时请保留该约定。
+- 优惠券兑换 UI 由 `_shared/coupons/CouponRedeemForm` 提供，同时在 `_shared/account/actions.ts` 与 `_shared/checkout/actions.ts` 中提供兑换与绑定逻辑。拓展优惠券类型时需同步更新 mock 数据、兑换校验与客户端提示文案。
+- 处方药合规入口分布在 `components/prescription/PrescriptionComplianceReminder.tsx` 与 `_shared/checkout/PrescriptionComplianceSteps.tsx`；判定逻辑由 `CheckoutPage` 的 `cartNeedsPrescriptionReview` 负责，根据商品 `tags` 中的 `prescription` 字段触发。
+
+## 账户中心与合规模块
+
+- `_shared/account/AccountShell` 是个人中心导航与响应式框架，所有 `/d/account/*` 页面都通过传入 `ACCOUNT_NAV_ITEMS` 与对应面板组件复用该壳体。
+- 账户 Server Action 统一放在 `_shared/account/actions.ts`：涵盖资料更新、地址增删改查、默认地址切换、优惠券兑换、身份认证上传以及问卷保存/提交。新增业务字段时，应先扩展这些 action 并复用现有 `ActionResult` 模式，保持客户端调用一致。
+- 问卷与健康评估由 `_shared/account/surveys-*` 模块提供组件与工具函数，依赖 `lib/api` 中的 `surveyAssignments` 与 `surveyTemplates` 模拟数据；切换到真实后端时需要保持 assignment/template ID 映射。
+- 会员权益、优惠券列表、订单详情等面板均在 `_shared/account` 下维护，桌面壳仅负责引入。若新增 tab，请在 `nav-items.ts` 维护导航枚举并保证 `/d/account/[tab]/page.tsx` 仅做壳层转发。
+
 ## 使用 MOCK 数据
 
-仅负责前端占位时，可直接扩展 `mock-data.ts` 中的集合、商品与页面；提交前确保注释清晰，便于后端联调时定位并替换为真实接口，同时在 PR 中说明哪些字段仍为模拟值，避免误判上线数据。若 mock 数据覆盖了重要业务流程，请在测试计划中明确哪些结果来自静态数据，以免 QA 误判。
+仅负责前端占位时，可直接扩展 `mock-data.ts` 中的集合、商品、优惠券、会员积分、问卷模板与通知；提交前确保注释清晰，便于后端联调时定位并替换为真实接口，同时在 PR 中说明哪些字段仍为模拟值，避免误判上线数据。若 mock 数据覆盖了重要业务流程（如地址簿、问卷、身份认证），请在测试计划中明确哪些结果来自静态数据，以免 QA 误判。
 
 ## 安全与发布提示
 
-勿将 `.env.local`、模拟账号或后端凭证提交到仓库；如需共享测试口令，请通过内部密钥管理平台。上线前在部署环境补齐 `COMMERCE_API_URL` 等变量，并根据第三方后端的安全策略配置允许的域名或 IP 白名单，必要时向运维申请限流策略。若引入埋点或第三方脚本，请在 PR 说明中声明用途与数据去向，方便安全审核并加速合规评估，必要时与合规团队同步评估。
+勿将 `.env.local`、模拟账号或后端凭证提交到仓库；如需共享测试口令，请通过内部密钥管理平台。身份认证/证件上传目前只保留占位数据，请勿在 mock 中写入真实证件号或照片。上线前在部署环境补齐 `COMMERCE_API_URL` 等变量，并根据第三方后端的安全策略配置允许的域名或 IP 白名单，必要时向运维申请限流策略。若引入埋点或第三方脚本，请在 PR 说明中声明用途与数据去向，方便安全审核并加速合规评估，必要时与合规团队同步评估。
 
 ## 单 URL · 双外壳 · Middleware 重写
 

@@ -343,6 +343,8 @@ export const products: ProductRecord[] = [
     priceRange: {
       minVariantPrice: { amount: "68", currencyCode: CURRENCY },
       maxVariantPrice: { amount: "96", currencyCode: CURRENCY },
+      minCompareAtPrice: { amount: "88", currencyCode: CURRENCY },
+      maxCompareAtPrice: { amount: "128", currencyCode: CURRENCY },
     },
     variants: [
       {
@@ -351,6 +353,7 @@ export const products: ProductRecord[] = [
         availableForSale: true,
         selectedOptions: [{ name: "规格", value: "2 杯装" }],
         price: { amount: "68", currencyCode: CURRENCY },
+        compareAtPrice: { amount: "88", currencyCode: CURRENCY },
       },
       {
         id: "var-matcha-4",
@@ -358,6 +361,7 @@ export const products: ProductRecord[] = [
         availableForSale: true,
         selectedOptions: [{ name: "规格", value: "4 杯装" }],
         price: { amount: "96", currencyCode: CURRENCY },
+        compareAtPrice: { amount: "128", currencyCode: CURRENCY },
       },
     ],
     featuredImage: featuredImage(
