@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import {
+  useEffect,
+  useRef,
   useState,
   useTransition,
   type ChangeEvent,
@@ -17,6 +19,7 @@ import type {
 } from "@/lib/api/types";
 import type { submitIdentityVerificationAction } from "../actions";
 import { useAuthStore } from "@/hooks/useAuthStore";
+import { cn } from "@/lib/utils";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE_IN_MB = 5;
@@ -26,6 +29,7 @@ type IdentityVerificationCardProps = {
   userId: string;
   verification?: IdentityVerification;
   action: typeof submitIdentityVerificationAction;
+  highlighted?: boolean;
 };
 
 type LocalDocumentState = {
@@ -58,18 +62,28 @@ export function IdentityVerificationCard({
   userId,
   verification,
   action,
+  highlighted = false,
 }: IdentityVerificationCardProps) {
   const router = useRouter();
   const updateUser = useAuthStore((state) => state.updateUser);
   const identityFromStore = useAuthStore(
     (state) => state.user?.identityVerification,
   );
+  const cardRef = useRef<HTMLElement | null>(null);
   const [document, setDocument] = useState<LocalDocumentState>({});
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   const effectiveVerification = verification ?? identityFromStore;
   const status = effectiveVerification?.status ?? "unverified";
+
+  useEffect(() => {
+    if (!highlighted) {
+      return;
+    }
+
+    cardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlighted]);
 
   const handleFileChange = async (
     event: ChangeEvent<HTMLInputElement>,
@@ -199,7 +213,15 @@ export function IdentityVerificationCard({
   };
 
   return (
-    <section className="rounded-3xl border border-neutral-100 bg-white/90 p-8 shadow-lg shadow-neutral-900/5">
+    <section
+      id="identity-verification"
+      ref={cardRef}
+      className={cn(
+        "rounded-3xl border border-neutral-100 bg-white/90 p-8 shadow-lg shadow-neutral-900/5",
+        highlighted &&
+          "border-amber-400 shadow-amber-200/60 ring-2 ring-amber-200 motion-safe:animate-[pulse_1.6s_ease-in-out_2]",
+      )}
+    >
       <header className="mb-4 space-y-1">
         <h3 className="text-lg font-semibold text-neutral-900">身份证上传</h3>
         <p className="text-sm text-neutral-500">

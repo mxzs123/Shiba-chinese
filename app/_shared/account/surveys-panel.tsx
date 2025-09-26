@@ -6,6 +6,7 @@ import {
   getUserById,
 } from "@/lib/api";
 import type { SurveyAssignment } from "@/lib/api/types";
+import { cn } from "@/lib/utils";
 
 const DATE_TIME_FORMAT = new Intl.DateTimeFormat("zh-CN", {
   dateStyle: "medium",
@@ -51,7 +52,13 @@ function sortAssignments(assignments: SurveyAssignment[]) {
   });
 }
 
-export async function AccountSurveysPanel() {
+type AccountSurveysPanelProps = {
+  highlightPending?: boolean;
+};
+
+export async function AccountSurveysPanel({
+  highlightPending = false,
+}: AccountSurveysPanelProps) {
   const [sessionUser, fallbackUser] = await Promise.all([
     getCurrentUser(),
     getUserById("user-demo"),
@@ -98,14 +105,20 @@ export async function AccountSurveysPanel() {
 
     return (
       <ul className="space-y-4">
-        {items.map((assignment) => {
+        {items.map((assignment, index) => {
           const href = `/account/surveys/${assignment.id}`;
           const isPending = assignment.status !== "submitted";
+          const shouldHighlight =
+            highlightPending && type === "pending" && index === 0;
 
           return (
             <li
               key={assignment.id}
-              className="rounded-2xl border border-neutral-200 bg-white/95 p-5 shadow-sm shadow-neutral-900/5"
+              className={cn(
+                "rounded-2xl border border-neutral-200 bg-white/95 p-5 shadow-sm shadow-neutral-900/5",
+                shouldHighlight &&
+                  "border-amber-400 shadow-amber-200/60 ring-2 ring-amber-200 motion-safe:animate-[pulse_1.6s_ease-in-out_2]",
+              )}
             >
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="space-y-1">
@@ -181,7 +194,7 @@ export async function AccountSurveysPanel() {
           <p className="text-xs text-neutral-500">
             包含最近未提交的问卷与需要补充证明材料的记录。
           </p>
-          <div className="mt-3">
+          <div className="mt-3" id="pending">
             {renderAssignments(pendingAssignments, "pending")}
           </div>
         </div>

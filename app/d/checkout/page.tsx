@@ -12,9 +12,11 @@ import {
   getCart,
   getCurrentUser,
   getPaymentMethods,
+  getProductById,
   getShippingMethods,
   getUserById,
 } from "lib/api";
+import type { Cart } from "lib/api/types";
 
 export const metadata: Metadata = {
   title: "结算",
@@ -50,6 +52,10 @@ export default async function CheckoutPage() {
     ? filterCartBySelectedMerchandise(cart, selectedMerchandiseIds)
     : cart;
 
+  const requiresPrescriptionReview = await cartNeedsPrescriptionReview(
+    checkoutCart,
+  );
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 lg:px-0">
       <header className="mb-8">
@@ -65,7 +71,32 @@ export default async function CheckoutPage() {
         paymentMethods={paymentMethods}
         availableCoupons={availableCoupons}
         selectedMerchandiseIds={selectedMerchandiseIds}
+        requiresPrescriptionReview={requiresPrescriptionReview}
       />
     </div>
   );
+}
+
+async function cartNeedsPrescriptionReview(cart: Cart | undefined) {
+  if (!cart || cart.lines.length === 0) {
+    return false;
+  }
+
+  const productIds = Array.from(
+    new Set(
+      cart.lines
+        .map((line) => line.merchandise.product.id)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  );
+
+  if (!productIds.length) {
+    return false;
+  }
+
+  const products = await Promise.all(
+    productIds.map(async (productId) => getProductById(productId)),
+  );
+
+  return products.some((product) => product?.tags.includes("prescription"));
 }

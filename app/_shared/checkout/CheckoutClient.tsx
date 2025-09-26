@@ -44,6 +44,7 @@ type CheckoutClientProps = {
   paymentMethods: PaymentMethod[];
   availableCoupons: Coupon[];
   selectedMerchandiseIds?: string[];
+  requiresPrescriptionReview?: boolean;
 };
 
 type AddressFormState = Omit<AddressInput, "id">;
@@ -126,6 +127,7 @@ export function CheckoutClient({
   paymentMethods,
   availableCoupons,
   selectedMerchandiseIds,
+  requiresPrescriptionReview = false,
 }: CheckoutClientProps) {
   const router = useRouter();
   const initialAddresses = customer?.addresses ?? [];
@@ -567,7 +569,11 @@ export function CheckoutClient({
     clearRedirectTimer();
     setPaymentModalOpen(false);
     setPaymentStep("idle");
-    router.push("/checkout/success");
+    router.push(
+      requiresPrescriptionReview
+        ? "/checkout/prescription-review"
+        : "/checkout/success",
+    );
   };
 
   const handleMockPaymentComplete = () => {

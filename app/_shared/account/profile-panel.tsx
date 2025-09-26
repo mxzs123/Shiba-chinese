@@ -7,7 +7,13 @@ import {
 import AccountProfileForm from "./profile/profile-form";
 import { IdentityVerificationCard } from "./profile/identity-verification-card";
 
-export async function AccountProfilePanel() {
+type AccountProfilePanelProps = {
+  highlightIdentity?: boolean;
+};
+
+export async function AccountProfilePanel({
+  highlightIdentity = false,
+}: AccountProfilePanelProps) {
   const [sessionUser, fallbackUser] = await Promise.all([
     getCurrentUser(),
     getUserById("user-demo"),
@@ -41,6 +47,7 @@ export async function AccountProfilePanel() {
         userId={user.id}
         verification={user.identityVerification}
         action={submitIdentityVerificationAction}
+        highlighted={highlightIdentity}
       />
     </div>
   );

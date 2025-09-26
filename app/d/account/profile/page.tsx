@@ -11,7 +11,19 @@ export const metadata: Metadata = {
   description: "更新姓名与联系方式，保持账户资料最新。",
 };
 
-export default function AccountProfilePage() {
+type AccountProfilePageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function AccountProfilePage({
+  searchParams,
+}: AccountProfilePageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const highlightParam = resolvedSearchParams?.highlight;
+  const highlightIdentity = Array.isArray(highlightParam)
+    ? highlightParam.includes("identity")
+    : highlightParam === "identity";
+
   return (
     <AccountShell
       title="个人中心"
@@ -19,7 +31,7 @@ export default function AccountProfilePage() {
       navItems={ACCOUNT_NAV_ITEMS}
       activeItem="profile"
     >
-      <AccountProfilePanel />
+      <AccountProfilePanel highlightIdentity={highlightIdentity} />
     </AccountShell>
   );
 }

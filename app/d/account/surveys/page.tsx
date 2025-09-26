@@ -11,7 +11,19 @@ export const metadata: Metadata = {
   description: "查看处方药问卷的待办与历史记录。",
 };
 
-export default function AccountSurveysPage() {
+type AccountSurveysPageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function AccountSurveysPage({
+  searchParams,
+}: AccountSurveysPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const highlightParam = resolvedSearchParams?.highlight;
+  const highlightPending = Array.isArray(highlightParam)
+    ? highlightParam.includes("pending")
+    : highlightParam === "pending";
+
   return (
     <AccountShell
       title="个人中心"
@@ -19,7 +31,7 @@ export default function AccountSurveysPage() {
       navItems={ACCOUNT_NAV_ITEMS}
       activeItem="surveys"
     >
-      <AccountSurveysPanel />
+      <AccountSurveysPanel highlightPending={highlightPending} />
     </AccountShell>
   );
 }
