@@ -11,6 +11,7 @@ import { HeroGallery } from "components/product/hero-gallery";
 import { ProductDetailTabs } from "components/product/product-detail-tabs";
 import { AddToCartForm } from "@/app/_shared/pages/product/AddToCartForm";
 import { ReassuranceNotice } from "@/app/_shared/pages/product/ReassuranceNotice";
+import { HomeQuickCategoryShortcuts } from "@/app/_shared/pages/home/HomeQuickCategoryShortcuts";
 import { getCart, getProduct, getProductRecommendations } from "lib/api";
 import type { Image, Product, ProductVariant } from "lib/api/types";
 import { isDiscountedPrice } from "lib/pricing";
@@ -422,6 +423,7 @@ export default async function DesktopProductPage(props: PageProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
         />
+        <HomeQuickCategoryShortcuts className="pb-6" />
         <div className="mx-auto w-full max-w-(--breakpoint-2xl) px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-12">
             <Breadcrumbs title={product.title} />
