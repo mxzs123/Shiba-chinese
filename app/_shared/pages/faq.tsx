@@ -1,5 +1,8 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+
+import { cn } from "lib/utils";
 
 export const metadata: Metadata = {
   title: "常见问题 | 芝园药局",
@@ -250,27 +253,91 @@ function FaqItem({ item }: { item: FaqItem }) {
   );
 }
 
-function FaqSection({ section }: { section: FaqSection }) {
+function FaqSectionCard({ section }: { section: FaqSection }) {
   return (
     <section
       id={section.id}
       aria-labelledby={`${section.id}-title`}
-      className="space-y-5"
+      className="scroll-mt-32"
+    >
+      <div className="space-y-6 rounded-3xl border border-neutral-200 bg-white p-8 shadow-sm">
+        <div className="space-y-3">
+          <h2
+            id={`${section.id}-title`}
+            className="text-2xl font-semibold text-neutral-900"
+          >
+            {section.title}
+          </h2>
+          {section.description ? (
+            <p className="text-sm text-neutral-600">{section.description}</p>
+          ) : null}
+        </div>
+        <div className="space-y-4">
+          {section.items.map((item) => (
+            <FaqItem key={item.id} item={item} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FaqSectionList({ sections }: { sections: FaqSection[] }) {
+  return (
+    <div className="space-y-10 lg:space-y-12">
+      {sections.map((section) => (
+        <FaqSectionCard key={section.id} section={section} />
+      ))}
+    </div>
+  );
+}
+
+function FaqOverviewCard({
+  sections,
+  className,
+}: {
+  sections: FaqSection[];
+  className?: string;
+}) {
+  return (
+    <section
+      className={cn(
+        "space-y-8 rounded-3xl border border-neutral-200 bg-white p-10 shadow-sm",
+        className,
+      )}
     >
       <div className="space-y-3">
-        <h2
-          id={`${section.id}-title`}
-          className="text-2xl font-semibold text-neutral-900"
-        >
-          {section.title}
-        </h2>
-        {section.description ? (
-          <p className="text-sm text-neutral-600">{section.description}</p>
-        ) : null}
+        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">
+          常见问题
+        </p>
+        <h1 className="text-4xl font-bold text-neutral-900">
+          解答购买与售后最常见的疑问
+        </h1>
+        <p className="text-base text-neutral-600">
+          我们整理下单、配送、售后与会员服务中的高频问题，帮助你快速定位需要的帮助信息。
+          数据来自真实客服反馈与用户留言，并会定期复核更新。
+        </p>
       </div>
-      <div className="space-y-4">
-        {section.items.map((item) => (
-          <FaqItem key={item.id} item={item} />
+
+      <div className="grid gap-3 md:grid-cols-2">
+        {sections.map((section) => (
+          <Link
+            key={section.id}
+            href={`#${section.id}`}
+            className="group flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-left transition hover:border-teal-500 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
+          >
+            <div className="flex flex-col gap-1">
+              <span className="text-lg font-semibold text-neutral-900">
+                {section.title}
+              </span>
+              {section.description ? (
+                <span className="text-sm text-neutral-500">
+                  {section.description}
+                </span>
+              ) : null}
+            </div>
+            <span className="text-teal-600 transition group-hover:translate-x-1">→</span>
+          </Link>
         ))}
       </div>
     </section>
@@ -281,26 +348,9 @@ export function FaqPage() {
   return (
     <div className="bg-neutral-50">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-6 py-12 md:px-8">
-        <section className="space-y-6 rounded-3xl border border-neutral-200 bg-white p-10 shadow-sm">
-          <div className="space-y-3">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">
-              常见问题
-            </p>
-            <h1 className="text-4xl font-bold text-neutral-900">
-              解答购买与售后最常见的疑问
-            </h1>
-            <p className="text-base text-neutral-600">
-              我们汇总了用户最关心的流程细节，帮助你快速了解芝园药局的下单、配送、售后与会员服务。
-              页面会根据真实客服反馈定期更新。
-            </p>
-          </div>
-        </section>
+        <FaqOverviewCard sections={faqSections} />
 
-        <div className="space-y-12">
-          {faqSections.map((section) => (
-            <FaqSection key={section.id} section={section} />
-          ))}
-        </div>
+        <FaqSectionList sections={faqSections} />
       </div>
     </div>
   );
