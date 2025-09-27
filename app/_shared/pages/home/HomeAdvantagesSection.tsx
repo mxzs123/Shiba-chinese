@@ -35,6 +35,7 @@ const DEFAULT_ITEMS: AdvantageItem[] = [
 ];
 
 type HomeAdvantagesSectionProps = {
+  eyebrow?: string;
   heading?: string;
   subheading?: string;
   items?: AdvantageItem[];
@@ -42,7 +43,8 @@ type HomeAdvantagesSectionProps = {
 };
 
 export function HomeAdvantagesSection({
-  heading = "芝園薬局  Shiba Park Pharmacy",
+  eyebrow = "芝園薬局 Shiba Park Pharmacy",
+  heading = "品质承诺",
   subheading =
     "以日本药事标准为底，结合跨境配送与专业药师服务，为全球用户打造值得信赖的购药体验。",
   items = DEFAULT_ITEMS,
@@ -56,34 +58,37 @@ export function HomeAdvantagesSection({
         className,
       )}
     >
-      <div className="rounded-3xl border border-[#049e6b]/20 bg-white p-8 shadow-sm dark:border-[#049e6b]/25 dark:bg-neutral-950 md:p-12">
-        <header className="flex flex-col gap-3 text-neutral-900 dark:text-neutral-50 md:max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#049e6b]">
-            品质承诺
-          </p>
-          <h2 className="text-3xl font-bold leading-snug md:text-4xl">{heading}</h2>
-          <p className="text-base text-neutral-600 dark:text-neutral-300">{subheading}</p>
+      <div className="rounded-3xl border border-[#049e6b]/20 bg-white/95 p-8 shadow-sm backdrop-blur-sm dark:border-[#049e6b]/25 dark:bg-neutral-950/95 md:p-12">
+        <header className="flex flex-col gap-5 text-neutral-900 dark:text-neutral-50 md:max-w-3xl">
+          <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-[#049e6b]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#049e6b]/10 px-3 py-1 tracking-[0.25em] text-xs md:text-sm">
+              <span className="size-1.5 rounded-full bg-[#049e6b]" aria-hidden="true" />
+              {eyebrow}
+            </span>
+          </div>
+          <h2 className="text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">{heading}</h2>
+          <p className="text-base text-neutral-600 dark:text-neutral-300 md:text-lg">{subheading}</p>
         </header>
 
-        <div className="mt-8 grid gap-4 md:mt-10 md:grid-cols-2">
+        <div className="mt-10 grid gap-4 md:grid-cols-2 xl:mt-12 xl:grid-cols-4">
           {items.map((item, index) => {
             const Icon = item.icon;
             return (
               <article
                 key={`${item.title}-${index}`}
-                className="overflow-hidden rounded-2xl border border-[#049e6b]/30 bg-white p-6 shadow-sm dark:border-[#049e6b]/40 dark:bg-neutral-900"
+                className="group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-[#049e6b]/15 bg-white/90 p-6 shadow-[0_16px_40px_-24px_rgba(4,158,107,0.45)] transition-all duration-200 hover:-translate-y-1 hover:border-[#049e6b]/40 hover:shadow-[0_20px_45px_-20px_rgba(4,158,107,0.55)] dark:border-[#049e6b]/20 dark:bg-neutral-900/90 dark:shadow-none"
               >
-                <div className="flex items-center gap-4">
-                  <span className="flex size-12 items-center justify-center rounded-2xl bg-[#049e6b] text-white">
-                    <Icon className="size-6" aria-hidden="true" />
-                  </span>
-                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-[#049e6b]/15 text-[#049e6b] ring-8 ring-[#049e6b]/8">
+                  <Icon className="size-6" aria-hidden="true" />
+                </span>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-neutral-900 transition-colors duration-150 group-hover:text-[#049e6b] dark:text-neutral-50">
                     {item.title}
                   </h3>
+                  <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-300">
+                    {item.description}
+                  </p>
                 </div>
-                <p className="mt-4 text-sm leading-6 text-neutral-600 dark:text-neutral-300">
-                  {item.description}
-                </p>
               </article>
             );
           })}
