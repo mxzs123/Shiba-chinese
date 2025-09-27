@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { ProductCard, Price } from "app/_shared";
+import { ProductCard, ProductCardQuickAdd, Price } from "app/_shared";
 import { CartProvider } from "components/cart/cart-context";
 import { ProductProvider } from "components/product/product-context";
 import { HeroGallery } from "components/product/hero-gallery";
@@ -384,7 +384,11 @@ function RelatedProducts({ products }: { products: Product[] }) {
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              actionSlot={<ProductCardQuickAdd product={product} />}
+            />
           ))}
         </div>
       </div>

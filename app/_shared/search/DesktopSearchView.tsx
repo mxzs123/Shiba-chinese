@@ -6,7 +6,7 @@ import type { Product } from "lib/api/types";
 import { defaultSort, sorting } from "lib/constants";
 import { cn } from "lib/utils";
 
-import { ProductCard } from "app/_shared";
+import { ProductCard, ProductCardQuickAdd } from "app/_shared";
 
 const DEFAULT_PAGE_SIZE = 12;
 
@@ -364,7 +364,11 @@ export function DesktopSearchView({
           <div className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {paginatedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  actionSlot={<ProductCardQuickAdd product={product} />}
+                />
               ))}
             </div>
             {totalPages > 1 ? (

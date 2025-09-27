@@ -21,7 +21,11 @@ export function SearchResultsGrid({
 
   return (
     <Grid className="grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <ProductGridItems products={products} animate={false} />
+      <ProductGridItems
+        products={products}
+        animate={false}
+        showQuickAdd
+      />
     </Grid>
   );
 }
