@@ -17,4 +17,3 @@ export function isDiscountedPrice(
 
   return originalAmount > currentAmount;
 }
-

@@ -1,7 +1,4 @@
-import {
-  getSurveyAssignmentsByUser,
-  getUserOrders,
-} from "@/lib/api";
+import { getSurveyAssignmentsByUser, getUserOrders } from "@/lib/api";
 import type { Order, SurveyAssignment, User } from "@/lib/api/types";
 
 const PRESCRIPTION_CATEGORY_PREFIX = "rx:";
@@ -66,24 +63,23 @@ function sortAssignmentsByRecency(assignments: SurveyAssignment[]) {
   });
 }
 
-function collectProductTitles(
-  order: Order,
-  assignments: SurveyAssignment[],
-) {
-  const fromAssignments = assignments.flatMap((assignment) =>
-    assignment.productTitles ?? [],
+function collectProductTitles(order: Order, assignments: SurveyAssignment[]) {
+  const fromAssignments = assignments.flatMap(
+    (assignment) => assignment.productTitles ?? [],
   );
   const fromOrder = order.lineItems.map((item) => item.productTitle);
   return Array.from(
     new Set(
-      [...fromAssignments, ...fromOrder].filter(
-        (title): title is string => Boolean(title && title.trim()),
+      [...fromAssignments, ...fromOrder].filter((title): title is string =>
+        Boolean(title && title.trim()),
       ),
     ),
   );
 }
 
-function collectPendingPrescriptionAssignments(assignments: SurveyAssignment[]) {
+function collectPendingPrescriptionAssignments(
+  assignments: SurveyAssignment[],
+) {
   return assignments.filter(
     (assignment) =>
       isPendingAssignment(assignment) && isPrescriptionAssignment(assignment),
@@ -91,12 +87,15 @@ function collectPendingPrescriptionAssignments(assignments: SurveyAssignment[]) 
 }
 
 function groupAssignmentsByOrder(assignments: SurveyAssignment[]) {
-  return assignments.reduce<Map<string, SurveyAssignment[]>>((acc, assignment) => {
-    const list = acc.get(assignment.orderId) ?? [];
-    list.push(assignment);
-    acc.set(assignment.orderId, list);
-    return acc;
-  }, new Map());
+  return assignments.reduce<Map<string, SurveyAssignment[]>>(
+    (acc, assignment) => {
+      const list = acc.get(assignment.orderId) ?? [];
+      list.push(assignment);
+      acc.set(assignment.orderId, list);
+      return acc;
+    },
+    new Map(),
+  );
 }
 
 function createComplianceMap(
@@ -140,7 +139,9 @@ function deriveReviewState(
   }
 
   const primaryAssignment = sortedAssignments[0]!;
-  const primaryOrder = orders.find((order) => order.id === primaryAssignment.orderId);
+  const primaryOrder = orders.find(
+    (order) => order.id === primaryAssignment.orderId,
+  );
 
   if (!primaryOrder || !isPendingOrder(primaryOrder)) {
     return null;
@@ -177,7 +178,8 @@ export async function loadPrescriptionComplianceOverview(
     getSurveyAssignmentsByUser(user.id),
   ]);
 
-  const relevantAssignments = collectPendingPrescriptionAssignments(assignments);
+  const relevantAssignments =
+    collectPendingPrescriptionAssignments(assignments);
   const sortedAssignments = sortAssignmentsByRecency(relevantAssignments);
   const assignmentsByOrder = groupAssignmentsByOrder(relevantAssignments);
 

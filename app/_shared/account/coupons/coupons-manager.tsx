@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition, type ComponentType } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+  type ComponentType,
+} from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { BadgeCheck, Clock, Gift, PartyPopper } from "lucide-react";
@@ -51,27 +57,29 @@ export default function CouponsManager({
   }, [items, filter]);
 
   const handleRedeem = (code: string) => {
-    return new Promise<{ success: true } | { success: false; error?: string }>((resolve) => {
-      startTransition(async () => {
-        const result = await redeemCouponAction(userId, code);
+    return new Promise<{ success: true } | { success: false; error?: string }>(
+      (resolve) => {
+        startTransition(async () => {
+          const result = await redeemCouponAction(userId, code);
 
-        if (!result.success) {
-          toast.error(result.error);
-          resolve({ success: false, error: result.error });
-          return;
-        }
+          if (!result.success) {
+            toast.error(result.error);
+            resolve({ success: false, error: result.error });
+            return;
+          }
 
-        const nextCoupons = result.data.coupons;
-        setItems(nextCoupons);
-        toast.success("兑换成功，优惠券已添加到账户");
-        updateUser((current) => ({
-          ...current,
-          coupons: nextCoupons,
-        }));
-        router.refresh();
-        resolve({ success: true });
-      });
-    });
+          const nextCoupons = result.data.coupons;
+          setItems(nextCoupons);
+          toast.success("兑换成功，优惠券已添加到账户");
+          updateUser((current) => ({
+            ...current,
+            coupons: nextCoupons,
+          }));
+          router.refresh();
+          resolve({ success: true });
+        });
+      },
+    );
   };
 
   return (

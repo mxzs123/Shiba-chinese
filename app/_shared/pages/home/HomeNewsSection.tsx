@@ -12,7 +12,8 @@ type HomeNewsSectionProps = {
 };
 
 const DEFAULT_TITLE = "最新资讯与优惠";
-const DEFAULT_SUBTITLE = "关注医师提醒、促销活动与会员权益更新，跟进最新健康资讯";
+const DEFAULT_SUBTITLE =
+  "关注医师提醒、促销活动与会员权益更新，跟进最新健康资讯";
 const DEFAULT_LIMIT = 3;
 const DEFAULT_VIEW_ALL = "/news";
 
@@ -54,7 +55,11 @@ export async function HomeNewsSection({
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {items.map((article) => (
-          <NewsArticleCard key={article.id} article={article} summaryClamp={3} />
+          <NewsArticleCard
+            key={article.id}
+            article={article}
+            summaryClamp={3}
+          />
         ))}
       </div>
 

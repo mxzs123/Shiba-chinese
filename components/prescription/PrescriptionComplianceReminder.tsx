@@ -3,12 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-import {
-  AlertCircle,
-  ArrowUpRight,
-  ChevronUp,
-  X,
-} from "lucide-react";
+import { AlertCircle, ArrowUpRight, ChevronUp, X } from "lucide-react";
 
 type PrescriptionComplianceReminderProps = {
   orderId: string;
@@ -103,9 +98,7 @@ export function PrescriptionComplianceReminder({
                 <h2 className="text-base font-semibold text-neutral-900">
                   订单 {orderNumber} 正在等待审核
                 </h2>
-                <p className="text-xs text-neutral-500">
-                  {productLabel}
-                </p>
+                <p className="text-xs text-neutral-500">{productLabel}</p>
               </div>
               <button
                 type="button"
@@ -116,13 +109,10 @@ export function PrescriptionComplianceReminder({
                 <X className="h-5 w-5" aria-hidden />
               </button>
             </header>
-            <div className="px-5 pb-5">
-              {children}
-            </div>
+            <div className="px-5 pb-5">{children}</div>
             <footer className="flex items-center justify-between gap-4 border-t border-amber-100 px-5 py-4 text-xs text-neutral-500">
               <span>
-                {identityCompleted ? "身份证已通过" : "身份证待上传"} ·
-                {" "}
+                {identityCompleted ? "身份证已通过" : "身份证待上传"} ·{" "}
                 {pendingSurveyCount > 0
                   ? `${pendingSurveyCount} 份问卷待确认`
                   : "问卷已确认"}

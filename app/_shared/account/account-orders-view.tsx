@@ -156,9 +156,7 @@ function OrderCard({ order, stage, compliance }: OrderCardProps) {
   const summaryTitle = firstItem
     ? `${firstItem.productTitle}${extraItems > 0 ? ` 等 ${order.lineItems.length} 款` : ""}`
     : "商品信息待确认";
-  const complianceMeta = compliance
-    ? resolveComplianceMeta(compliance)
-    : null;
+  const complianceMeta = compliance ? resolveComplianceMeta(compliance) : null;
 
   return (
     <Link
@@ -272,9 +270,7 @@ function resolveComplianceMeta(
 
   const descriptionParts = [
     needsIdentity ? "身份证待上传" : null,
-    needsSurvey
-      ? `${compliance.pendingSurveyCount} 份问卷待确认`
-      : null,
+    needsSurvey ? `${compliance.pendingSurveyCount} 份问卷待确认` : null,
   ].filter(Boolean);
 
   const description = descriptionParts.join(" · ") || "处方审核未完成";

@@ -250,9 +250,7 @@ function createCartSnapshot(cart: Cart): CartSnapshot {
 }
 
 function encodeCartSnapshot(snapshot: CartSnapshot): string {
-  return Buffer.from(JSON.stringify(snapshot), "utf-8").toString(
-    "base64url",
-  );
+  return Buffer.from(JSON.stringify(snapshot), "utf-8").toString("base64url");
 }
 
 function decodeCartSnapshot(value: string): CartSnapshot | undefined {
@@ -1194,7 +1192,9 @@ export async function getLatestNews({
   return items.slice(0, Math.max(limit, 0));
 }
 
-export async function getHighlightedNewsArticle(): Promise<NewsArticle | undefined> {
+export async function getHighlightedNewsArticle(): Promise<
+  NewsArticle | undefined
+> {
   const highlighted = news
     .filter((article) => article.highlight)
     .sort(
@@ -1212,8 +1212,9 @@ export async function getHighlightedNewsArticle(): Promise<NewsArticle | undefin
 }
 
 export async function getNews(): Promise<NewsArticle[]> {
-  const sorted = [...news].sort((a, b) =>
-    new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+  const sorted = [...news].sort(
+    (a, b) =>
+      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
   );
 
   return sorted.map((article) => cloneNewsArticle(article));

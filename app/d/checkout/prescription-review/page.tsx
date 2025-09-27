@@ -1,10 +1,7 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 
-import {
-  CheckoutResult,
-  checkoutResultPlaceholders,
-} from "@/app/_shared";
+import { CheckoutResult, checkoutResultPlaceholders } from "@/app/_shared";
 import { PrescriptionComplianceSteps } from "@/app/_shared/checkout/PrescriptionComplianceSteps";
 import { getCurrentUser, getUserById } from "@/lib/api";
 import {
@@ -63,7 +60,8 @@ export default async function PrescriptionReviewPage() {
         },
         {
           title: "客服协助",
-          description: "如需帮助，请联系 support@example.com 或拨打 400-000-0000。",
+          description:
+            "如需帮助，请联系 support@example.com 或拨打 400-000-0000。",
         },
       ]}
     >

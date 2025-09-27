@@ -35,9 +35,7 @@ export function AccountShell({
           <p className="mt-2 text-sm text-neutral-500">{description}</p>
         ) : null}
       </header>
-      {breadcrumbs ? (
-        <div className="mb-4">{breadcrumbs}</div>
-      ) : null}
+      {breadcrumbs ? <div className="mb-4">{breadcrumbs}</div> : null}
       <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
         <aside>
           <nav aria-label="个人中心导航" className="space-y-2">

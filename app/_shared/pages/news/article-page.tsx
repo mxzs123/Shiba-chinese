@@ -77,7 +77,9 @@ export async function NewsArticlePage(props: { params: PageParams }) {
       <Prose className="mb-12" html={article.bodyHtml} />
 
       <footer className="mt-12 flex flex-col gap-4 rounded-2xl border border-[#049e6b]/20 bg-[#049e6b]/5 px-6 py-5 text-sm text-neutral-700 dark:text-neutral-200">
-        <span>如需进一步了解药品信息或个性化方案，可联系执业药师获取建议。</span>
+        <span>
+          如需进一步了解药品信息或个性化方案，可联系执业药师获取建议。
+        </span>
         <span>
           返回
           <Link

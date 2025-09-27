@@ -9,7 +9,11 @@ export type DefaultBadgeProps = HTMLAttributes<HTMLSpanElement> & {
   label?: string;
 };
 
-export function DefaultBadge({ label = "默认", className, ...props }: DefaultBadgeProps) {
+export function DefaultBadge({
+  label = "默认",
+  className,
+  ...props
+}: DefaultBadgeProps) {
   return (
     <span
       className={cn(

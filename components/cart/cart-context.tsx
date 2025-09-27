@@ -241,11 +241,7 @@ export function useCart() {
   );
 
   const updateCartItem = useCallback(
-    (
-      merchandiseId: string,
-      updateType: UpdateType,
-      quantity?: number,
-    ) => {
+    (merchandiseId: string, updateType: UpdateType, quantity?: number) => {
       updateOptimisticCart({
         type: "UPDATE_ITEM",
         payload: { merchandiseId, updateType, quantity },

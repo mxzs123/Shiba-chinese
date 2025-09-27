@@ -99,10 +99,7 @@ function recalculateAppliedCoupons(
 
     return {
       ...entry,
-      amount: createMoney(
-        discount,
-        entry.amount.currencyCode || currencyCode,
-      ),
+      amount: createMoney(discount, entry.amount.currencyCode || currencyCode),
     };
   });
 

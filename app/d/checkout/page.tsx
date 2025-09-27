@@ -52,9 +52,8 @@ export default async function CheckoutPage() {
     ? filterCartBySelectedMerchandise(cart, selectedMerchandiseIds)
     : cart;
 
-  const requiresPrescriptionReview = await cartNeedsPrescriptionReview(
-    checkoutCart,
-  );
+  const requiresPrescriptionReview =
+    await cartNeedsPrescriptionReview(checkoutCart);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 lg:px-0">

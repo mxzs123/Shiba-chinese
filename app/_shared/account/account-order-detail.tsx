@@ -49,7 +49,9 @@ function getFormattedAddressLines(order: Order) {
     [address.province, address.postalCode].filter(Boolean).join(" "),
     [
       address.country,
-      address.countryCode ? `(${address.countryCode.toUpperCase()})` : undefined,
+      address.countryCode
+        ? `(${address.countryCode.toUpperCase()})`
+        : undefined,
     ]
       .filter(Boolean)
       .join(" "),
@@ -113,7 +115,9 @@ export function AccountOrderDetail({ order }: AccountOrderDetailProps) {
       <header className="border-b border-neutral-100 bg-neutral-50/70 px-6 py-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-1">
-            <h1 className="text-2xl font-semibold text-neutral-900">订单详情</h1>
+            <h1 className="text-2xl font-semibold text-neutral-900">
+              订单详情
+            </h1>
             <p className="text-sm text-neutral-500">
               订单编号 {order.number} · 创建于 {createdAt}
             </p>

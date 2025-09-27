@@ -59,7 +59,7 @@ export function SupportHoursCalendar({
           日本工作日 {workingHours}
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-300">
-          服务时段基于东京时间（JST），周末与日本祝日休息。
+          服务时段基于东京时间（JST），卡片已标注营业或休息状态，周末与日本节假日休息。
         </p>
       </div>
 
@@ -101,6 +101,16 @@ export function SupportHoursCalendar({
               <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
                 {dayLabel}
               </p>
+              <span
+                className={cn(
+                  "inline-flex w-fit items-center rounded-full px-2.5 py-1 text-xs font-semibold",
+                  day.isWorkingDay
+                    ? "bg-[#049e6b] text-white"
+                    : "bg-neutral-200 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-200",
+                )}
+              >
+                {day.isWorkingDay ? "营业日" : "休息日"}
+              </span>
             </article>
           );
         })}

@@ -26,7 +26,11 @@ export async function NewsIndexPage() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {articles.map((article) => (
-          <NewsArticleCard key={article.id} article={article} summaryClamp={4} />
+          <NewsArticleCard
+            key={article.id}
+            article={article}
+            summaryClamp={4}
+          />
         ))}
       </div>
 

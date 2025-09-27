@@ -52,7 +52,7 @@ export function PrescriptionComplianceSteps({
     isMinimal
       ? "space-y-6 text-left"
       : "rounded-3xl border border-amber-200/60 bg-amber-50/80 p-8 text-left",
-    isMinimal ? className : className ?? "mt-12",
+    isMinimal ? className : (className ?? "mt-12"),
   );
 
   return (
@@ -78,17 +78,20 @@ export function PrescriptionComplianceSteps({
             key={step.key}
             className="flex flex-col gap-4 rounded-2xl border border-white/60 bg-white/90 p-5 shadow-sm shadow-amber-200/30 sm:grid sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center"
           >
-            <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-amber-200 bg-amber-50 text-sm font-semibold text-amber-700"
-            >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-amber-200 bg-amber-50 text-sm font-semibold text-amber-700">
               {index + 1}
             </span>
             <div className="min-w-0">
               <p className="flex items-center gap-2 whitespace-nowrap text-base font-semibold text-neutral-900">
                 {step.title}
-                <StatusBadge completed={step.completed} label={step.statusLabel} />
+                <StatusBadge
+                  completed={step.completed}
+                  label={step.statusLabel}
+                />
               </p>
-              <p className="mt-2 text-sm text-neutral-600">{step.description}</p>
+              <p className="mt-2 text-sm text-neutral-600">
+                {step.description}
+              </p>
             </div>
             <Link
               href={step.href}
@@ -117,9 +120,7 @@ function StatusBadge({
   label: string;
 }) {
   const Icon = completed ? CheckCircle2 : Circle;
-  const colorClasses = completed
-    ? "text-emerald-600"
-    : "text-amber-600";
+  const colorClasses = completed ? "text-emerald-600" : "text-amber-600";
 
   return (
     <span

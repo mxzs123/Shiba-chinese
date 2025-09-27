@@ -12,14 +12,12 @@ type AdvantageItem = {
 const DEFAULT_ITEMS: AdvantageItem[] = [
   {
     title: "全球直送",
-    description:
-      "无论您身在何处，都能轻松收到来自日本的药品与健康产品。",
+    description: "无论您身在何处，都能轻松收到来自日本的药品与健康产品。",
     icon: Globe2,
   },
   {
     title: "日本正规药局",
-    description:
-      "持有日本官方许可，严格遵守药事法规与专业标准。",
+    description: "持有日本官方许可，严格遵守药事法规与专业标准。",
     icon: ShieldCheck,
   },
   {
@@ -45,8 +43,7 @@ type HomeAdvantagesSectionProps = {
 export function HomeAdvantagesSection({
   eyebrow = "芝園薬局 Shiba Park Pharmacy",
   heading = "品质承诺",
-  subheading =
-    "以日本药事标准为底，结合跨境配送与专业药师服务，为全球用户打造值得信赖的购药体验。",
+  subheading = "以日本药事标准为底，结合跨境配送与专业药师服务，为全球用户打造值得信赖的购药体验。",
   items = DEFAULT_ITEMS,
   className,
 }: HomeAdvantagesSectionProps) {
@@ -62,12 +59,19 @@ export function HomeAdvantagesSection({
         <header className="flex flex-col gap-5 text-neutral-900 dark:text-neutral-50 md:max-w-3xl">
           <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-[#049e6b]">
             <span className="inline-flex items-center gap-2 rounded-full bg-[#049e6b]/10 px-3 py-1 tracking-[0.25em] text-xs md:text-sm">
-              <span className="size-1.5 rounded-full bg-[#049e6b]" aria-hidden="true" />
+              <span
+                className="size-1.5 rounded-full bg-[#049e6b]"
+                aria-hidden="true"
+              />
               {eyebrow}
             </span>
           </div>
-          <h2 className="text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">{heading}</h2>
-          <p className="text-base text-neutral-600 dark:text-neutral-300 md:text-lg">{subheading}</p>
+          <h2 className="text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">
+            {heading}
+          </h2>
+          <p className="text-base text-neutral-600 dark:text-neutral-300 md:text-lg">
+            {subheading}
+          </p>
         </header>
 
         <div className="mt-10 grid gap-4 md:grid-cols-2 xl:mt-12 xl:grid-cols-4">

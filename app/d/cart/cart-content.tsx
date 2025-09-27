@@ -2,7 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useFormStatus } from "react-dom";
 
 import { PrimaryButton } from "app/_shared";
@@ -271,11 +278,7 @@ export function CartContent() {
         cart?.cost.totalAmount.currencyCode,
         cart?.appliedCoupons,
       ),
-    [
-      selectedItems,
-      cart?.cost.totalAmount.currencyCode,
-      cart?.appliedCoupons,
-    ],
+    [selectedItems, cart?.cost.totalAmount.currencyCode, cart?.appliedCoupons],
   );
 
   const serializedSelection = useMemo(

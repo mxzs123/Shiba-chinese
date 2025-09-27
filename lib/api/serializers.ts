@@ -42,7 +42,9 @@ export function formatAddressLines(address: Address) {
     localityLine,
     regionLine,
     countryLine,
-  ].filter((value): value is string => Boolean(value && value.trim().length > 0));
+  ].filter((value): value is string =>
+    Boolean(value && value.trim().length > 0),
+  );
 
   return lines.length ? lines : undefined;
 }

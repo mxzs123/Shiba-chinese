@@ -19,7 +19,9 @@ export async function HomeRecommendations({
   subtitle = DEFAULT_SUBTITLE,
   limit = DEFAULT_LIMIT,
 }: HomeRecommendationsProps) {
-  const products = await getCollectionProducts({ collection: collectionHandle });
+  const products = await getCollectionProducts({
+    collection: collectionHandle,
+  });
   const items = products.slice(0, limit);
 
   if (!items.length) {
@@ -49,10 +51,7 @@ export async function HomeRecommendations({
             product={product}
             className="h-full"
             actionSlot={
-              <ProductCardQuickAdd
-                product={product}
-                className="mt-2"
-              />
+              <ProductCardQuickAdd product={product} className="mt-2" />
             }
           />
         ))}

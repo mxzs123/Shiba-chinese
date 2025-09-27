@@ -23,7 +23,9 @@ export default function ProductGridItems({
           <ProductCard
             product={product}
             actionSlot={
-              showQuickAdd ? <ProductCardQuickAdd product={product} /> : undefined
+              showQuickAdd ? (
+                <ProductCardQuickAdd product={product} />
+              ) : undefined
             }
           />
         </Grid.Item>

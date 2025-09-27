@@ -117,7 +117,9 @@ function buildAddressLines(address: Address) {
     [address.province, address.postalCode].filter(Boolean).join(" "),
     [
       address.country,
-      address.countryCode ? `(${address.countryCode.toUpperCase()})` : undefined,
+      address.countryCode
+        ? `(${address.countryCode.toUpperCase()})`
+        : undefined,
     ]
       .filter(Boolean)
       .join(" "),
@@ -450,9 +452,7 @@ function AddressForm({
         showDefaultToggle
       />
 
-      {error ? (
-        <p className="text-sm text-red-500">{error}</p>
-      ) : null}
+      {error ? <p className="text-sm text-red-500">{error}</p> : null}
 
       <div className="flex flex-wrap items-center gap-3">
         <PrimaryButton

@@ -32,7 +32,10 @@ export function AddressFormFields({
     onChange(partial);
   };
 
-  const handleChange = (field: keyof AddressFormValue, next: string | boolean) => {
+  const handleChange = (
+    field: keyof AddressFormValue,
+    next: string | boolean,
+  ) => {
     applyChange({
       [field]: typeof next === "string" ? next : next,
     } as Partial<AddressFormValue>);
@@ -178,10 +181,7 @@ function TextField({
 }: TextFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
-      <label
-        className="text-sm font-medium text-neutral-700"
-        htmlFor={id}
-      >
+      <label className="text-sm font-medium text-neutral-700" htmlFor={id}>
         {label}
         {required ? <span className="ml-1 text-red-500">*</span> : null}
       </label>
@@ -273,9 +273,7 @@ function ToggleField({
           onChange={(event) => onChange(event.target.checked)}
           disabled={disabled}
         />
-        <span className="ml-2 text-sm text-neutral-600">
-          将此地址设为默认
-        </span>
+        <span className="ml-2 text-sm text-neutral-600">将此地址设为默认</span>
       </label>
     </div>
   );

@@ -23,12 +23,7 @@ export function HomeQuickCategoryShortcuts({
   }
 
   return (
-    <section
-      className={cn(
-        "border-b border-neutral-200 bg-white",
-        className,
-      )}
-    >
+    <section className={cn("border-b border-neutral-200 bg-white", className)}>
       <div className="mx-auto w-full max-w-(--breakpoint-2xl) px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#049e6b]">

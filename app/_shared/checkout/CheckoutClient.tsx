@@ -98,7 +98,9 @@ function formatAddressLines(address: Address) {
     [address.province, address.postalCode].filter(Boolean).join(" "),
     [
       address.country,
-      address.countryCode ? `(${address.countryCode.toUpperCase()})` : undefined,
+      address.countryCode
+        ? `(${address.countryCode.toUpperCase()})`
+        : undefined,
     ]
       .filter(Boolean)
       .join(" "),

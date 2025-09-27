@@ -12,7 +12,9 @@ export type CouponRedeemFormProps = {
   submitLabel?: string;
   pendingLabel?: string;
   defaultErrorMessage?: string;
-  onRedeem: (code: string) => Promise<{ success: true } | { success: false; error?: string }>;
+  onRedeem: (
+    code: string,
+  ) => Promise<{ success: true } | { success: false; error?: string }>;
   className?: string;
 };
 

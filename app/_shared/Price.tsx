@@ -76,9 +76,7 @@ export function Price({
       )
     : undefined;
   const convertedOriginal =
-    showConvertedPrice && originalValue
-      ? convertJpyToCny(originalValue)
-      : null;
+    showConvertedPrice && originalValue ? convertJpyToCny(originalValue) : null;
   const convertedOriginalClasses = convertedOriginal
     ? cn(
         showCurrencyCode ? undefined : "sr-only",
@@ -89,16 +87,11 @@ export function Price({
     : undefined;
   const convertedOriginalPrefix = originalConvertedPrefix ?? convertedPrefix;
 
-  const resolvedBadge = hasOriginalPrice ? badge ?? "芝园价" : undefined;
+  const resolvedBadge = hasOriginalPrice ? (badge ?? "芝园价") : undefined;
 
   if (hasOriginalPrice) {
     return (
-      <div
-        className={cn(
-          "flex w-full items-stretch gap-4",
-          wrapperClassName,
-        )}
-      >
+      <div className={cn("flex w-full items-stretch gap-4", wrapperClassName)}>
         <div className="flex flex-col justify-center gap-1 text-left">
           <BasePrice
             amount={originalValue!.amount}
