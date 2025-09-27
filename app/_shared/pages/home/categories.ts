@@ -41,3 +41,7 @@ export const POPULAR_CATEGORY_LINKS: HomeCategoryLink[] = [
     description: "更多精选好物一站购齐",
   },
 ];
+
+export const HOME_CATEGORY_GRID_LINKS: HomeCategoryLink[] = POPULAR_CATEGORY_LINKS.filter(
+  (category) => category.label !== "其他",
+);

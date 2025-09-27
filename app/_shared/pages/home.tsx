@@ -1,9 +1,11 @@
 import Footer from "components/layout/footer";
 
+import { HomeActivityNotice } from "./home/HomeActivityNotice";
 import { HomeAdvantagesSection } from "./home/HomeAdvantagesSection";
 import { HomeCategoryNavigation } from "./home/HomeCategoryNavigation";
 import { HomeHeroSection } from "./home/HomeHeroSection";
 import { HomeNewsSection } from "./home/HomeNewsSection";
+import { HomeQuickCategoryShortcuts } from "./home/HomeQuickCategoryShortcuts";
 import { HomeRecommendations } from "./home/HomeRecommendations";
 import { HomeSupportScheduleSection } from "./home/HomeSupportScheduleSection";
 
@@ -18,7 +20,9 @@ export const metadata = {
 export function HomePage() {
   return (
     <>
-      <div className="flex flex-col gap-12 py-8 md:py-10 lg:py-12">
+      <HomeQuickCategoryShortcuts />
+      <HomeActivityNotice />
+      <div className="flex flex-col gap-12 pt-2 pb-4 md:pt-3 md:pb-6 lg:pt-4 lg:pb-8">
         <HomeHeroSection />
         <HomeCategoryNavigation />
         <HomeNewsSection />

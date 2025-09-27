@@ -3,26 +3,16 @@ import Link from "next/link";
 
 import { cn } from "lib/utils";
 
-type Category = {
-  label: string;
-  href: string;
-  description?: string;
-};
+import type { HomeCategoryLink } from "./categories";
+import { HOME_CATEGORY_GRID_LINKS } from "./categories";
 
 type HomeCategoryNavigationProps = {
-  categories?: Category[];
+  categories?: HomeCategoryLink[];
   viewAllHref?: string;
   className?: string;
 };
 
-const DEFAULT_CATEGORIES: Category[] = [
-  { label: "处方药品", href: "/search/pharmacy" },
-  { label: "非处方药品", href: "/search?q=非处方" },
-  { label: "健康保健食品", href: "/search?q=保健" },
-  { label: "院内制剂", href: "/search?q=院内制剂" },
-  { label: "美妆护肤", href: "/search?q=美妆护肤" },
-  { label: "生活用品", href: "/search?q=生活用品" },
-];
+const DEFAULT_CATEGORIES: HomeCategoryLink[] = HOME_CATEGORY_GRID_LINKS;
 
 const DEFAULT_VIEW_ALL = "/search";
 
