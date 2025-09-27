@@ -1,148 +1,163 @@
 # Repository Guidelines
 
-## 项目结构与模块组织
+## 快速参考
+- 新页面或路由必须复用 `app/_shared` 页面壳；`app/d`、`app/m` 只承载外壳差异。
+- 所有改动提交前运行 `npm run lint` 与 `npm run prettier:check`，保持 2 空格缩进与命名规范。
+- 中央化数据访问在 `lib/api`，扩展后同步更新 `types.ts`、`mock-data.ts` 与相关文档。
+- 设备分流依赖 `middleware.ts`：遵循 query → cookie → UA 的判定顺序，并设置 `x-device` 与 `Vary` 头。
+- 图标统一通过 `lucide-react` + `components/icons/`；动画由 Framer Motion 驱动，避免分散实现。
+- 环境变量写入 `.env.local`，新增字段务必同步 `.env.example` 与 README/Docs，勿提交敏感值。
+- 账户、结算等 Server Action 已在 `_shared` 内封装；新增能力时直接扩展现有 action，保持 `success/data` 结构。
+- 手动验证覆盖搜索→商品→购物车、结算流程、账户操作、主题切换与多语言展示。
 
-本仓库基于 Next.js App Router。页面与路由集中在 `app/`，其中 `/product`、`/search`、`/[page]` 等目录映射核心业务流；`app/api/revalidate` 提供后端通知后的增量刷新入口。UI 组件位于 `components/`，按功能域拆分到 `cart/`、`layout/`、`product/` 等子目录，方便逐层替换，公共布局相关的图片与 SVG 可集中在 `components/icons/` 便于复用。跨外壳可复用的页面壳、表单与业务组件集中在 `app/_shared/`：`index.ts` 汇总出口，子目录按照领域划分（如 `account/`、`checkout/`、`coupons/`、`layouts/`、`pages/`），既服务 `/d` 桌面壳，也为未来 `/m` 提供同构实现。数据访问封装在 `lib/api/`：`index.ts` 负责第三方后端交互或模拟数据拼装，`mock-data.ts` 保存演示商品、集合与页面内容，`types.ts` 统一接口契约，同时导出辅助查找函数。字体资源放在 `fonts/`，公共文档记录在 `docs/`。
+## 目录
+1. [项目结构与模块组织](#项目结构与模块组织)
+2. [shadcn/ui 集成](#shadcnui-集成)
+3. [共享页面壳与组件复用](#共享页面壳与组件复用)
+4. [动画、图标与状态管理](#动画图标与状态管理)
+5. [字体策略](#字体策略)
+6. [代码风格与命名规范](#代码风格与命名规范)
+7. [测试指引](#测试指引)
+8. [环境与配置提示](#环境与配置提示)
+9. [数据与后端协作](#数据与后端协作)
+10. [购物车、结算与优惠券](#购物车结算与优惠券)
+11. [账户中心与合规模块](#账户中心与合规模块)
+12. [使用 MOCK 数据](#使用-mock-数据)
+13. [安全与发布提示](#安全与发布提示)
+14. [单 URL · 双外壳 · Middleware 重写](#单-url--双外壳--middleware-重写)
+
+## 项目结构与模块组织
+- 页面采用 Next.js App Router，核心业务路径位于 `app/`（如 `/product`、`/search`、`/[page]`）。`app/api/revalidate` 负责后端通知后的增量刷新。
+- UI 组件按功能域划分在 `components/`，如 `cart/`、`layout/`、`product/`。公共图标集中在 `components/icons/`。
+- `app/_shared/` 是跨外壳的领域层：`index.ts` 提供统一出口，子目录按领域（`account/`、`checkout/`、`coupons/`、`layouts/`、`pages/` 等）组织，可同时服务 `/d` 与 `/m`。
+- 数据访问封装在 `lib/api/`：`index.ts` 处理实际或模拟 API 交互，`mock-data.ts` 存放演示数据，`types.ts` 维护接口契约与查找函数。
+- 字体资源放在 `fonts/`，公共文档统一放在 `docs/` 便于查阅。
 
 ## shadcn/ui 集成
-
-新增组件：`npx shadcn@latest add <component>`（生成到 `components/ui/` 并复用 `@/lib/utils` 的 `cn`）。主题变量入口：`app/globals.css`。
+- 新增组件请运行 `npx shadcn@latest add <component>`，生成的文件位于 `components/ui/` 并复用 `@/lib/utils` 的 `cn` 工具。
+- 主题变量入口为 `app/globals.css`；全局主题调整集中在该文件维护。
 
 ## 共享页面壳与组件复用
 
-- `_shared` 目录是跨 `/d`、`/m` 外壳的单一事实来源：
-  - `layouts/` 暴露 `DesktopAppLayout`、`CmsLayout` 等框架组件；
-  - `pages/` 以领域视角拆分（`home/`、`news/`、`product/`、`search/`），确保多壳体共享一套内容结构；
-  - `account/` 聚合个人中心面板、导航与 Server Action（地址、优惠券、身份认证、问卷）；
-  - `checkout/` 提供 `CheckoutClient`、`CheckoutResult`、`PrescriptionComplianceSteps` 以及配套的 server action；
-  - `coupons/`、`auth/`、`search/` 等子模块都通过 `index.ts` 导出单一入口便于重用。
-- 所有新页面在 `/d` 仅负责引入 `_shared` 页面壳并传参，避免在壳体内复制业务逻辑；后续若新增 `/m` 外壳，可直接在 `app/m/...` 复用同一 `_shared` 页面。
-- 复用按钮/输入时优先调用 `_shared/PrimaryButton` 或 `_shared` 内已定义的变体（例如 `CheckoutClient` 内使用的 `CheckoutActionButton` 变体）；特殊样式先评估是否可抽象为 `_shared` 层级的可配置 props，再决定是否新增组件。
-- 账户侧默认 badge、订单阶段、调查问卷等语义化 UI 均在 `_shared/account/` 内实现；新增字段或交互请在该目录扩展，避免散落在 `/d/account`。
-- 优惠券兑换、地址管理等交互已经以 Server Action 封装在 `_shared` 内；如果业务需要额外 API 调用，请在对应 action 内扩展并保持返回结构稳定，便于客户端复用。
+### `_shared` 目录职责
+- `_shared/layouts/`：暴露 `DesktopAppLayout`、`CmsLayout` 等外壳框架。
+- `_shared/pages/`：按业务领域（`home/`、`news/`、`product/`、`search/` 等）组合页面模块，供 `/d` 与 `/m` 共享。
+- `_shared/account/`、`_shared/checkout/`、`_shared/coupons/`、`_shared/auth/` 等聚合领域组件、表单及 Server Action，保持单一事实来源。
+
+### 页面引用规范
+- `/d` 与未来的 `/m` 页面只负责引入 `_shared` 页面壳并传参，不在外壳里落业务逻辑。
+- 复用按钮/表单优先使用 `_shared` 已定义的组件（如 `PrimaryButton`、`CheckoutActionButton`）；若需要新样式，先评估是否可通过 props 扩展。
+- 账户侧 badge、订单阶段、问卷等 UI 必须在 `_shared/account/` 扩展，避免散落在 `/d/account`。
+- 优惠券兑换、地址管理等交互已经在 `_shared` Server Action 内实现，新的 API 能力直接在对应 action 扩展并保持返回结构。
 
 ## 动画、图标与状态管理
-
-图标体系统一使用 `lucide-react`，新增图标时优先通过 `components/icons/` 封装再分发，保持语义化命名。交互动效采用 Framer Motion，请以驱动组件或 hooks 的方式集中声明动画变体，便于横向复用与调优。全局及局部状态管理基于 Zustand，可在 `hooks/` 下维护 store 定义，并结合 selector 减少无关重渲染，持久化需求可搭配 `zustand/middleware`。登录态由 `hooks/useAuthStore.ts` 与 `lib/api/auth-store.ts` 协同：Server Action 写入 `auth_session` cookie，客户端通过 `useAuthStore` 统一读取/更新，新增认证相关组件需复用 `_shared/auth` 的 `AuthPageShell` 与现有事件流。
+- 图标统一使用 `lucide-react`，新增图标通过 `components/icons/` 封装并语义化命名。
+- 动画采用 Framer Motion，集中在驱动组件或 hooks 中声明动画变体，便于复用与调优。
+- 状态管理基于 Zustand，store 统一放在 `hooks/`，使用 selector 减少无关渲染；若需持久化可结合 `zustand/middleware`。
+- 登录态通过 `hooks/useAuthStore.ts` 与 `lib/api/auth-store.ts` 协同，Server Action 写入 `auth_session` cookie，客户端统一从 `useAuthStore` 读取。
 
 ## 字体策略
-
-默认字体切换为 Inter，并在 `app/layout.tsx` 暴露 `--font-inter` 变量；`app/globals.css` 内的 `--font-sans` 将 Inter 与系统中文字体（`PingFang SC`、`Microsoft YaHei`、`Noto Sans SC` 等）组合，确保中英混排一致性。新增组件请避免手动覆盖 `font-family`，如需定制请基于 `--font-sans` 或 `--font-inter` 扩展。
+- 默认字体为 Inter，在 `app/layout.tsx` 暴露 `--font-inter` 变量。
+- `app/globals.css` 的 `--font-sans` 将 Inter 与系统中文字体（`PingFang SC`、`Microsoft YaHei`、`Noto Sans SC` 等）组合，确保中英混排一致。
+- 新增组件避免手动覆盖 `font-family`，如需特例请基于 `--font-sans` 或 `--font-inter` 扩展。
 
 ## 代码风格与命名规范
-
-全部使用 TypeScript 函数组件，两空格缩进。导入顺序推荐：第三方包 → `lib/` → 相对路径，命名导出优先。组件文件、导出保持 PascalCase，hooks 用 camelCase，常量使用 SCREAMING_SNAKE_CASE。Tailwind v4 原子类建议按布局 → 间距 → 视觉顺序书写，复用场景可抽提成子组件或工具函数；涉及复杂交互时，为关键容器添加注释说明设计意图。已启用 ESLint（`next/core-web-vitals` + `prettier`），提交前务必运行 `npm run lint` 与 `npm run prettier:check`。
+- 全部使用 TypeScript 函数组件，保持 2 空格缩进。
+- 导入顺序：第三方包 → `lib/` → 相对路径；优先使用命名导出。
+- 组件文件与导出采用 PascalCase，hooks 用 camelCase，常量用 SCREAMING_SNAKE_CASE。
+- Tailwind v4 原子类按布局 → 间距 → 视觉顺序书写；复用场景可抽提子组件或工具函数。
+- 复杂交互需在关键容器添加注释说明设计意图。
+- 提交前必须运行 `npm run lint` 与 `npm run prettier:check`。
 
 ## 测试指引
-
-当前阶段手动验证清单：
-
-- 运行 `npm run prettier:check` 保持格式一致。
-- 关键购买流程：搜索 → 商品详情 → 加入购物车。
-- 移动端断点与导航交互。
-- 深/浅色主题切换与样式一致性。
-- 重要文案的多语言展示。
+- `npm run prettier:check`，确保格式一致。
+- 购物流程：搜索 → 商品详情 → 加入购物车。
+- 移动端断点、导航交互、深浅色主题切换及样式一致性。
+- 多语言文案展示。
 - 个人中心：资料更新、地址增删改、默认地址切换、优惠券兑换、问卷保存/提交。
 - 结算页：选中商品同步、优惠券应用/移除、处方药提醒、下单结果页。
 
 ## 环境与配置提示
-
-敏感变量写入 `.env.local`：`COMMERCE_API_URL`（第三方后端地址，缺省则使用 mock 数据）、`COMMERCE_CHECKOUT_URL`、`REVALIDATION_SECRET`。汇率等展示型变量通过 `NEXT_PUBLIC_JPY_TO_CNY_RATE` 暴露给前端，更新时需同步 README 与演示数据。新增变量请同步更新 `.env.example` 与文档，并在 PR 描述中提示。静态资源使用远程图时别忘在 `next.config.ts` 中维护 `images.remotePatterns` 白名单，避免构建时报错；若依赖外部 API，还需在部署平台配置同名环境变量。
+- `.env.local` 存放敏感变量：`COMMERCE_API_URL`（缺省使用 mock 数据）、`COMMERCE_CHECKOUT_URL`、`REVALIDATION_SECRET`。
+- 展示型变量通过 `NEXT_PUBLIC_*` 暴露，如汇率 `NEXT_PUBLIC_JPY_TO_CNY_RATE`；更新时同步 README 与演示数据。
+- 新增环境变量需同步 `.env.example` 与文档，并在 PR 描述提醒。
+- 使用远程图片时在 `next.config.ts` 中维护 `images.remotePatterns`；依赖外部 API 要在部署环境配置同名变量。
 
 ## 数据与后端协作
-
-默认逻辑通过 `lib/api/index.ts` 读取本地模拟数据并写入服务端 Cookie 维护轻量购物车，Cookie 名称为 `cartId`，可无缝映射到会话或 Redis。接入真实服务时，在对应函数内调用后端 API 并移除或替换 `mock-data.ts`，确保返回值仍满足 `types.ts` 定义；需要分页或排序时，可在函数签名内扩展参数并同步更新前端筛选项。若后端提供 Webhook，可对 `/api/revalidate` 增补通知逻辑，并使用 `REVALIDATION_SECRET` 进行校验，必要时针对产品与集合分别触发 `revalidateTag`。
+- 默认逻辑使用 `lib/api/index.ts` 读取 mock 数据并写入 `cartId` cookie 管理购物车，可无缝切换到会话或 Redis。
+- 对接真实服务时替换 `mock-data.ts` 相关实现，但保持 `types.ts` 定义不变；扩展分页或排序需同步前端筛选项。
+- 后端 Webhook 可调用 `/api/revalidate`，配合 `REVALIDATION_SECRET` 校验；必要时对产品、集合分别触发 `revalidateTag`。
 
 ## 购物车、结算与优惠券
-
-- `components/cart/` 负责购物车入口、上下文与条目操作；若页面需要复用选中态，请直接使用 `cart-selection` 内的工具函数与 `CART_SELECTED_MERCHANDISE_COOKIE`（存储逗号分隔的条目 ID）。
-- `app/_shared/checkout/CheckoutClient` 聚合地址、配送、支付、优惠券与处方提示；页面层负责准备 `cart`、`shippingMethods`、`paymentMethods`、`availableCoupons` 等数据。新增结算模块时先评估能否扩展该客户端组件或其 props，而不是在页面内新增平行实现。
-- 结算相关 Server Action 存放在 `_shared/checkout/actions.ts`，包含地址维护、优惠券应用、购物车刷新等流程；所有操作返回统一的 `success/data` 结构，复用时请保留该约定。
-- 优惠券兑换 UI 由 `_shared/coupons/CouponRedeemForm` 提供，同时在 `_shared/account/actions.ts` 与 `_shared/checkout/actions.ts` 中提供兑换与绑定逻辑。拓展优惠券类型时需同步更新 mock 数据、兑换校验与客户端提示文案。
-- 处方药合规入口分布在 `components/prescription/PrescriptionComplianceReminder.tsx` 与 `_shared/checkout/PrescriptionComplianceSteps.tsx`；判定逻辑由 `CheckoutPage` 的 `cartNeedsPrescriptionReview` 负责，根据商品 `tags` 中的 `prescription` 字段触发。
+- `components/cart/` 管理购物车入口、上下文与条目操作；选中态使用 `cart-selection` 工具与 `CART_SELECTED_MERCHANDISE_COOKIE`。
+- `_shared/checkout/CheckoutClient` 聚合地址、配送、支付、优惠券、处方提示；页面层负责准备 `cart`、`shippingMethods`、`paymentMethods`、`availableCoupons` 等数据。
+- 结算相关 Server Action 位于 `_shared/checkout/actions.ts`，统一返回 `success/data` 结构；扩展时遵守该约定。
+- 优惠券兑换 UI 由 `_shared/coupons/CouponRedeemForm` 提供，配套逻辑位于 `_shared/account/actions.ts` 与 `_shared/checkout/actions.ts`。
+- 处方药合规入口：`components/prescription/PrescriptionComplianceReminder.tsx` 与 `_shared/checkout/PrescriptionComplianceSteps.tsx`；判定逻辑在 `CheckoutPage` 的 `cartNeedsPrescriptionReview` 中基于商品 `tags.prescription`。
 
 ## 账户中心与合规模块
-
-- `_shared/account/AccountShell` 是个人中心导航与响应式框架，所有 `/d/account/*` 页面都通过传入 `ACCOUNT_NAV_ITEMS` 与对应面板组件复用该壳体。
-- 账户 Server Action 统一放在 `_shared/account/actions.ts`：涵盖资料更新、地址增删改查、默认地址切换、优惠券兑换、身份认证上传以及问卷保存/提交。新增业务字段时，应先扩展这些 action 并复用现有 `ActionResult` 模式，保持客户端调用一致。
-- 问卷与健康评估由 `_shared/account/surveys-*` 模块提供组件与工具函数，依赖 `lib/api` 中的 `surveyAssignments` 与 `surveyTemplates` 模拟数据；切换到真实后端时需要保持 assignment/template ID 映射。
-- 会员权益、优惠券列表、订单详情等面板均在 `_shared/account` 下维护，桌面壳仅负责引入。若新增 tab，请在 `nav-items.ts` 维护导航枚举并保证 `/d/account/[tab]/page.tsx` 仅做壳层转发。
+- `_shared/account/AccountShell` 提供个人中心导航与响应式框架，`/d/account/*` 页面仅传入 `ACCOUNT_NAV_ITEMS` 与对应面板组件。
+- Server Action 集中在 `_shared/account/actions.ts`，覆盖资料更新、地址维护、默认地址切换、优惠券兑换、身份认证、问卷保存/提交；扩展字段需复用统一 `ActionResult`。
+- 问卷/健康评估由 `_shared/account/surveys-*` 提供，依赖 `lib/api` 的 `surveyAssignments` 与 `surveyTemplates`；切换后端时保持 assignment/template ID 映射。
+- 会员权益、优惠券列表、订单详情等面板全部在 `_shared/account` 维护，新增 tab 时更新 `nav-items.ts` 并确保 `/d/account/[tab]/page.tsx` 只做壳层转发。
 
 ## 使用 MOCK 数据
-
-仅负责前端占位时，可直接扩展 `mock-data.ts` 中的集合、商品、优惠券、会员积分、问卷模板与通知；提交前确保注释清晰，便于后端联调时定位并替换为真实接口，同时在 PR 中说明哪些字段仍为模拟值，避免误判上线数据。若 mock 数据覆盖了重要业务流程（如地址簿、问卷、身份认证），请在测试计划中明确哪些结果来自静态数据，以免 QA 误判。
+- 仅需前端占位时可在 `mock-data.ts` 扩展集合、商品、优惠券、积分、问卷模板与通知，但要附带清晰注释。
+- 如果 mock 数据覆盖关键流程（地址簿、问卷、身份认证等），在测试计划中明确哪些结果来自静态数据，防止 QA 误判。
+- 准备接入真实服务时，在 PR 中说明哪些字段仍为模拟值，方便后续替换。
 
 ## 安全与发布提示
-
-勿将 `.env.local`、模拟账号或后端凭证提交到仓库；如需共享测试口令，请通过内部密钥管理平台。身份认证/证件上传目前只保留占位数据，请勿在 mock 中写入真实证件号或照片。上线前在部署环境补齐 `COMMERCE_API_URL` 等变量，并根据第三方后端的安全策略配置允许的域名或 IP 白名单，必要时向运维申请限流策略。若引入埋点或第三方脚本，请在 PR 说明中声明用途与数据去向，方便安全审核并加速合规评估，必要时与合规团队同步评估。
+- 禁止提交 `.env.local`、模拟账号或后端凭证；敏感口令通过内部分发。
+- 身份认证/证件上传仅保留占位数据，勿使用真实证件号或照片。
+- 上线前补齐 `COMMERCE_API_URL` 等变量，并根据后端安全策略配置允许域名或 IP 白名单。
+- 引入埋点或第三方脚本时在 PR 中说明用途与数据流向，必要时同步合规团队。
 
 ## 单 URL · 双外壳 · Middleware 重写
 
-目标：在保持单一用户 URL 的前提下，提供桌面与移动两套“外壳”（布局/导航/交互），通过 Middleware 在服务端选择外壳并重写到内部路径（/d 或 /m），实现 SSR 首屏无水合错位。
-
-### 关键原则
-
-- 内部真实渲染路径使用 `app/d` 与 `app/m`（用户不可见），由 Middleware 进行重写。
-- 避免在 `app/(desktop)` 与 `app/(mobile)` 下放置同名路由页面，防止“不同组下的路径冲突”。
-- 纯领域/展示组件集中于 `app/_shared`，外壳差异聚焦 `(shell)/layout.tsx` 与少量外壳专属组件。
-- 重写应附带 `x-device` 并设置 `Vary: x-device`，确保缓存隔离与可观测性。
-- 设备分流放在 Middleware，根布局不做两套 DOM 的客户端条件切换，避免水合错位。
-
-> 重要澄清（经官方文档验证）：不要在 `app/(desktop)` / `app/(mobile)` 路由组下维护两套同名页面。路由组不改变真实路径，既无法作为重写锚点，也容易造成同路径缓存/预取串包与水合告警。请使用真实内部子路径 `/d`、`/m` 并通过 Middleware 重写。
+### 核心原则
+- 对用户暴露单一 URL，真实渲染路径分别位于 `app/d`（桌面）与 `app/m`（移动）。
+- middleware 负责设备分流，根布局不进行客户端条件切换，以避免水合错位。
+- `_shared` 保持业务逻辑的单一事实来源，外壳差异限定在 `(shell)/layout.tsx`。
 
 ### 目录组织
-
-- `app/d`：桌面外壳（真实渲染路径）。
-- `app/m`：移动外壳（真实渲染路径）。
-- `app/_shared`：复用的领域组件与纯展示逻辑（如 ProductCard、Price、Rating、SkuSelector；以及 format/currency 等工具）。
-- `app/page.tsx`：可选兜底或静态说明。
-- `middleware.ts`：UA 判定、query/cookie 覆盖与重写；设置 `x-device` 与 `Vary: x-device`。
+- `app/d`：桌面外壳及布局。
+- `app/m`：移动外壳及布局。
+- `app/_shared`：领域组件与展示逻辑（如 ProductCard、Price、SkuSelector、格式化工具）。
+- `app/page.tsx`：可作为兜底或说明页面。
 
 ### Middleware 策略
-
-- 判定：以 UA 为主，支持 query（`?device=d|m`）与 cookie 覆盖以便调试。
-- 重写：将用户 URL 映射到内部 `/${device}${pathname}`，地址栏保持不变。
-- 忽略：静态资源与通用文件（`/_next/*`、`favicon.ico`、`robots.txt`、`sitemap.xml` 等）。
-- 头与缓存：设置 `x-device` 与 `Vary: x-device`，必要时持久化 `device` 覆盖到 cookie。
-- 匹配：限定 Middleware 仅作用于应用路由，排除静态资源路径。
-
-#### 实施要点（落地规范）
-
-- Cookie 与头部：
-  - 覆盖用 `device` Cookie（取值 `d|m`），不要把 Cookie 命名为 `x-device`。
-  - 在请求/响应头使用 `x-device` 标记设备，并设置响应头 `Vary: x-device` 做缓存隔离。
-- UA 识别：`userAgent(req)`（`next/server`）读取 `device.type`，将 `mobile`、`tablet` 归为 `m`，其余归为 `d`。
-- 头部透传：在 `rewrite` 调用中通过 `request.headers` 透传 `x-device`，使其参与上游（RSC/预取）缓存键。
-- 覆盖优先级：`?device` > `device` Cookie > UA 推断；当存在 `?device` 且与 Cookie 不一致时，写回 Cookie。
-- 匹配范围：建议排除 `api`、`/_next/static`、`/_next/image`、`favicon.ico`、`robots.txt`、`sitemap.xml` 等路径。
-
-#### `middleware.ts` 示例（精简）
+- 判定顺序：query `?device=d|m` → `device` cookie → `userAgent` 推断（mobile/tablet → `m`，其余 → `d`）。
+- 重写路径：将请求重写到 `/${device}${pathname}`，并透传原始地址栏。
+- 头部：请求与响应设置 `x-device`，响应附带 `Vary: x-device` 以隔离缓存。
+- Cookie：当 query 覆盖与 cookie 不一致时写回 `device` cookie。
+- 匹配范围排除静态资源及通用文件（`/_next/*`、`favicon.ico`、`robots.txt`、`sitemap.xml` 等）。
 
 ```ts
 import { NextRequest, NextResponse, userAgent } from "next/server";
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl;
-  const q = url.searchParams.get("device"); // query 覆盖
-  const c = req.cookies.get("device")?.value; // cookie 覆盖
-  const { device } = userAgent(req); // UA 推断
+  const queryOverride = url.searchParams.get("device");
+  const cookieOverride = req.cookies.get("device")?.value;
+  const ua = userAgent(req);
   const inferred =
-    device.type === "mobile" || device.type === "tablet" ? "m" : "d";
-  const dev = (q || c || inferred) === "m" ? "m" : "d";
+    ua.device.type === "mobile" || ua.device.type === "tablet" ? "m" : "d";
+  const override = queryOverride || cookieOverride;
+  const device = override === "m" ? "m" : override === "d" ? "d" : inferred;
 
-  // 目标内部路径（地址栏保持原始 URL）
-  const dest = url.clone();
-  dest.pathname = `/${dev}${url.pathname}`;
+  const target = url.clone();
+  target.pathname = `/${device}${url.pathname}`;
 
-  // 将 x-device 透传到上游请求头，参与缓存键
   const headers = new Headers(req.headers);
-  headers.set("x-device", dev);
+  headers.set("x-device", device);
 
-  const res = NextResponse.rewrite(dest, { request: { headers } });
-  res.headers.set("x-device", dev);
-  res.headers.set("Vary", "x-device");
-  if (q && q !== c) res.cookies.set("device", dev, { path: "/" });
-  return res;
+  const response = NextResponse.rewrite(target, { request: { headers } });
+  response.headers.set("x-device", device);
+  response.headers.set("Vary", "x-device");
+  if (queryOverride && queryOverride !== cookieOverride) {
+    response.cookies.set("device", device, { path: "/" });
+  }
+  return response;
 }
 
 export const config = {
@@ -152,34 +167,24 @@ export const config = {
 };
 ```
 
-### 路由形状与实现约束
-
-- `app/d` 与 `app/m` 路由形状需一致（如都具备 `product/[slug]/page.tsx`）。
-- 业务组件尽量放入 `app/_shared`，减少重复与发散。
-- 链接/跳转（`next/link`）始终使用用户 URL（不含 `/d`、`/m`），由 Middleware 负责分流。
-
-#### 开发 Checklist（桌面/移动外壳）
-
-- `app/d` 与 `app/m` 路由树一致，页面主体复用 `app/_shared` 组合。
-- 各自 `(shell)/layout.tsx` 承载导航/页眉/页脚等外壳差异；尽量保持骨架 DOM 结构一致，减少水合差异。
-- 组件内的 `<Link>` 和编程式跳转统一指向用户 URL，不携带 `/d`、`/m` 前缀。
-- 若必须读取窗口尺寸，仅做微交互，不改变关键节点顺序与数量。
+### 路由实现与开发清单
+- `app/d` 与 `app/m` 路由树保持一致（例如都实现 `product/[slug]/page.tsx`）。
+- 外壳 `(shell)/layout.tsx` 承载导航、页眉、页脚等差异，同时尽量保持骨架 DOM 结构一致。
+- 组件内 `<Link>` 与编程式跳转始终使用用户 URL，不加 `/d`、`/m` 前缀。
+- 需要窗口尺寸时仅用于微交互，严禁改变关键节点的顺序与数量。
 
 ### SSR 与水合一致性
-
-- 服务端完成设备分流，客户端仅做微交互差异，不更换关键 DOM 结构。
-- 响应式优先使用 CSS/Tailwind；若必须读取窗口尺寸，确保不更改骨架与节点顺序。
+- 设备分流在服务端完成，客户端仅处理细节交互，不替换核心 DOM。
+- 优先使用 CSS/Tailwind 做响应式；必须读取窗口尺寸时确保不会引发骨架差异。
 
 ### 渐进迁移步骤
+- 建立并完善 `app/_shared`，将领域组件抽离到该目录。
+- 在 `app/d` 与 `app/m` 复制现有页面，主体复用 `_shared` 组合。
+- 实现 `middleware.ts` 的 UA 判定、query/cookie 覆盖与重写逻辑。
+- 自测确认 SSR、导航预取、缓存及水合均按设备分流。
 
-- 建立 `app/_shared`，将领域组件抽离到共享目录。
-- 在 `app/d` 与 `app/m` 复制现有页面，主体复用 `_shared` 组合，外壳差异放入各自 `(shell)/layout.tsx`。
-- 新增 `middleware.ts`，实现 UA 判定、query/cookie 覆盖与重写。
-- 联调自测：确认两端 SSR 首屏无水合告警，导航/预取/缓存按设备分流。
-
-### 测试清单
-
-- 桌面 UA 命中 `/d`，移动/平板 UA 命中 `/m`；地址栏不出现内部路径。
-- 首屏无水合错位与 Hydration 警告。
-- 返回/前进、`next/link` 预取、RSC 缓存正常；无跨设备缓存串包（`x-device` 与 `Vary` 生效）。
-- 手动覆盖：通过 `?device=m|d` 或 `device` cookie 可稳定切换外壳。
+### 核心验证
+- 桌面 UA 命中 `/d`，移动/平板 UA 命中 `/m`，地址栏保持用户 URL。
+- 首屏无水合错位或 Hydration 警告。
+- `next/link` 预取、浏览器前进/返回、RSC 缓存在设备间相互隔离（检查 `x-device` 与 `Vary`）。
+- `?device=m|d` 与 `device` cookie 能稳定切换外壳。
