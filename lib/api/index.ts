@@ -1194,6 +1194,23 @@ export async function getLatestNews({
   return items.slice(0, Math.max(limit, 0));
 }
 
+export async function getHighlightedNewsArticle(): Promise<NewsArticle | undefined> {
+  const highlighted = news
+    .filter((article) => article.highlight)
+    .sort(
+      (a, b) =>
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+    );
+
+  const [first] = highlighted;
+
+  if (!first) {
+    return undefined;
+  }
+
+  return cloneNewsArticle(first);
+}
+
 export async function getNews(): Promise<NewsArticle[]> {
   const sorted = [...news].sort((a, b) =>
     new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
