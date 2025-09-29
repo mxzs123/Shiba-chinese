@@ -19,8 +19,8 @@ export const ACCOUNT_NAV_ITEMS = [
   },
   {
     key: "surveys",
-    label: "我的问卷",
-    description: "查看处方药问卷的待办与历史记录。",
+    label: "我的审核",
+    description: "管理身份认证与处方药问卷的待办与历史记录。",
     href: "/account/surveys",
   },
   {
