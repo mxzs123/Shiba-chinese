@@ -97,7 +97,7 @@ export function Price({
             amount={originalValue!.amount}
             currencyCode={originalValue!.currencyCode}
             className={cn(
-              "inline-flex items-baseline gap-1 text-sm font-medium text-neutral-400 line-through dark:text-neutral-500",
+              "inline-flex items-baseline gap-1 text-sm font-medium text-neutral-400 line-through",
               originalClassName,
             )}
             currencyCodeClassName={originalClasses}
@@ -117,7 +117,7 @@ export function Price({
         </div>
         <div
           aria-hidden
-          className="w-px self-stretch bg-neutral-200 dark:bg-neutral-700"
+          className="w-px self-stretch bg-neutral-200"
         />
         <div className="flex flex-col gap-1 text-left">
           <div className="flex items-center gap-2">

@@ -26,7 +26,7 @@ export function SkuSelector({
     <div className={cn("flex flex-col gap-4", className)}>
       {options.map((option) => (
         <fieldset key={option.id} className="flex flex-col gap-2">
-          <legend className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+          <legend className="text-sm font-medium text-neutral-900">
             {option.name}
           </legend>
           <div className="flex flex-wrap gap-2">
@@ -43,8 +43,8 @@ export function SkuSelector({
                   className={cn(
                     "rounded-full border px-4 py-1 text-sm transition",
                     selected
-                      ? "border-teal-500 bg-teal-50 text-teal-700 dark:border-teal-400 dark:bg-teal-950 dark:text-teal-200"
-                      : "border-neutral-200 text-neutral-600 hover:border-neutral-400 dark:border-neutral-700 dark:text-neutral-300",
+                      ? "border-teal-500 bg-teal-50 text-teal-700"
+                      : "border-neutral-200 text-neutral-600 hover:border-neutral-400",
                     disabled &&
                       "cursor-not-allowed border-dashed text-neutral-400 opacity-60",
                   )}

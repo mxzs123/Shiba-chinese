@@ -16,7 +16,7 @@ export function HomeSupportScheduleSection({
         className,
       )}
     >
-      <div className="rounded-3xl border border-[#049e6b]/20 bg-white p-8 shadow-sm dark:border-[#049e6b]/25 dark:bg-neutral-950 md:p-12">
+      <div className="rounded-3xl border border-[#049e6b]/20 bg-white p-8 shadow-sm md:p-12">
         <SupportHoursCalendar />
       </div>
     </section>

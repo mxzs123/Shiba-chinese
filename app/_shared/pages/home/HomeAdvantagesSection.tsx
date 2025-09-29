@@ -55,8 +55,8 @@ export function HomeAdvantagesSection({
         className,
       )}
     >
-      <div className="rounded-3xl border border-[#049e6b]/20 bg-white/95 p-8 shadow-sm backdrop-blur-sm dark:border-[#049e6b]/25 dark:bg-neutral-950/95 md:p-12">
-        <header className="flex flex-col gap-5 text-neutral-900 dark:text-neutral-50 md:max-w-3xl">
+      <div className="rounded-3xl border border-[#049e6b]/20 bg-white/95 p-8 shadow-sm backdrop-blur-sm md:p-12">
+        <header className="flex flex-col gap-5 text-neutral-900 md:max-w-3xl">
           <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-[#049e6b]">
             <span className="inline-flex items-center gap-2 rounded-full bg-[#049e6b]/10 px-3 py-1 tracking-[0.25em] text-xs md:text-sm">
               <span
@@ -69,7 +69,7 @@ export function HomeAdvantagesSection({
           <h2 className="text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">
             {heading}
           </h2>
-          <p className="text-base text-neutral-600 dark:text-neutral-300 md:text-lg">
+          <p className="text-base text-neutral-600 md:text-lg">
             {subheading}
           </p>
         </header>
@@ -80,16 +80,16 @@ export function HomeAdvantagesSection({
             return (
               <article
                 key={`${item.title}-${index}`}
-                className="group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-[#049e6b]/15 bg-white/90 p-6 shadow-[0_16px_40px_-24px_rgba(4,158,107,0.45)] transition-all duration-200 hover:-translate-y-1 hover:border-[#049e6b]/40 hover:shadow-[0_20px_45px_-20px_rgba(4,158,107,0.55)] dark:border-[#049e6b]/20 dark:bg-neutral-900/90 dark:shadow-none"
+                className="group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-[#049e6b]/15 bg-white/90 p-6 shadow-[0_16px_40px_-24px_rgba(4,158,107,0.45)] transition-all duration-200 hover:-translate-y-1 hover:border-[#049e6b]/40 hover:shadow-[0_20px_45px_-20px_rgba(4,158,107,0.55)]"
               >
                 <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-[#049e6b]/15 text-[#049e6b] ring-8 ring-[#049e6b]/8">
                   <Icon className="size-6" aria-hidden="true" />
                 </span>
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-neutral-900 transition-colors duration-150 group-hover:text-[#049e6b] dark:text-neutral-50">
+                  <h3 className="text-lg font-semibold text-neutral-900 transition-colors duration-150 group-hover:text-[#049e6b]">
                     {item.title}
                   </h3>
-                  <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-300">
+                  <p className="text-sm leading-6 text-neutral-600">
                     {item.description}
                   </p>
                 </div>

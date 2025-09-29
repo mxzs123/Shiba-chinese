@@ -17,12 +17,12 @@ export async function NewsIndexPage() {
     <>
       <HomeQuickCategoryShortcuts className="pb-6" />
       <section className="mx-auto flex w-full max-w-(--breakpoint-2xl) flex-col gap-8 px-4 pt-8 pb-10 sm:px-6 lg:px-8">
-        <header className="flex flex-col gap-3 text-neutral-900 dark:text-neutral-50">
+        <header className="flex flex-col gap-3 text-neutral-900">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#049e6b]">
             资讯中心
           </p>
           <h1 className="text-3xl font-bold md:text-4xl">芝园新闻与健康指南</h1>
-          <p className="max-w-3xl text-sm text-neutral-600 dark:text-neutral-300">
+          <p className="max-w-3xl text-sm text-neutral-600">
             关注最新的用药提醒、专家解读与会员专属优惠，了解芝园药局的动态与服务升级。
           </p>
         </header>
@@ -37,7 +37,7 @@ export async function NewsIndexPage() {
           ))}
         </div>
 
-        <footer className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#049e6b]/20 bg-[#049e6b]/5 px-6 py-4 text-sm text-neutral-700 dark:text-neutral-200">
+        <footer className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#049e6b]/20 bg-[#049e6b]/5 px-6 py-4 text-sm text-neutral-700">
           <span>
             想获取更多专业内容？欢迎关注我们的
             <span className="font-semibold"> 健康研究院专栏</span>。

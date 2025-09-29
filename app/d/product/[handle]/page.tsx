@@ -273,23 +273,23 @@ function ProductHero({
               className={cn(
                 "text-4xl font-semibold",
                 hasDiscount
-                  ? "text-emerald-600 dark:text-emerald-300"
-                  : "text-neutral-900 dark:text-neutral-50",
+                  ? "text-emerald-600"
+                  : "text-neutral-900",
               )}
               currencyClassName={cn(
                 "text-lg font-medium",
                 hasDiscount
-                  ? "text-emerald-600/80 dark:text-emerald-300/80"
+                  ? "text-emerald-600/80"
                   : "text-neutral-500",
               )}
               showConvertedPrice
               convertedClassName="text-base font-medium text-neutral-500"
-              convertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400 dark:text-neutral-500"
-              originalClassName="text-xl font-medium text-neutral-400 line-through dark:text-neutral-500"
-              originalCurrencyClassName="text-sm font-medium uppercase tracking-wide text-neutral-400/80 dark:text-neutral-500/80"
-              originalConvertedClassName="text-sm font-medium text-neutral-400 dark:text-neutral-500"
-              originalConvertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400/60 dark:text-neutral-500/60"
-              badgeClassName="px-2 py-0.5 text-sm font-semibold text-emerald-600 dark:text-emerald-200 bg-emerald-500/10 dark:bg-emerald-400/20"
+              convertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400"
+              originalClassName="text-xl font-medium text-neutral-400 line-through"
+              originalCurrencyClassName="text-sm font-medium uppercase tracking-wide text-neutral-400/80"
+              originalConvertedClassName="text-sm font-medium text-neutral-400"
+              originalConvertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400/60"
+              badgeClassName="px-2 py-0.5 text-sm font-semibold text-emerald-600 bg-emerald-500/10"
             />
             <AddToCartForm product={product} />
           </div>

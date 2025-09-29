@@ -34,7 +34,7 @@ export function HomeCategoryNavigation({
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#049e6b]">
             品类导航
           </p>
-          <h2 className="mt-2 text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+          <h2 className="mt-2 text-2xl font-bold text-neutral-900">
             常见需求一站式直达
           </h2>
         </div>
@@ -51,14 +51,14 @@ export function HomeCategoryNavigation({
           <Link
             key={category.label}
             href={category.href}
-            className="group flex h-full items-center justify-between gap-4 rounded-2xl border border-neutral-200 bg-white p-5 text-left shadow-sm transition hover:border-[#049e6b] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#049e6b] focus-visible:ring-offset-2 dark:border-neutral-800 dark:bg-neutral-950"
+            className="group flex h-full items-center justify-between gap-4 rounded-2xl border border-neutral-200 bg-white p-5 text-left shadow-sm transition hover:border-[#049e6b] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#049e6b] focus-visible:ring-offset-2"
           >
             <div className="flex flex-col gap-1">
-              <span className="text-base font-medium text-neutral-900 transition-colors group-hover:text-[#049e6b] dark:text-neutral-100">
+              <span className="text-base font-medium text-neutral-900 transition-colors group-hover:text-[#049e6b]">
                 {category.label}
               </span>
               {category.description ? (
-                <span className="text-sm text-neutral-500 line-clamp-2 dark:text-neutral-400">
+                <span className="text-sm text-neutral-500 line-clamp-2">
                   {category.description}
                 </span>
               ) : null}

@@ -58,17 +58,17 @@ export async function NewsArticlePage(props: { params: PageParams }) {
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#049e6b]">
             芝园资讯
           </p>
-          <h1 className="text-3xl font-bold text-neutral-900 md:text-4xl dark:text-neutral-50">
+          <h1 className="text-3xl font-bold text-neutral-900 md:text-4xl">
             {article.title}
           </h1>
-          <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-500 dark:text-neutral-400">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-500">
             <time>{publishedAt}</time>
             {article.tags?.length ? (
               <span className="flex flex-wrap gap-2">
                 {article.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full bg-neutral-100 px-2 py-1 text-[11px] font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                    className="rounded-full bg-neutral-100 px-2 py-1 text-[11px] font-medium text-neutral-600"
                   >
                     #{tag}
                   </span>
@@ -80,7 +80,7 @@ export async function NewsArticlePage(props: { params: PageParams }) {
 
         <Prose className="mb-12" html={article.bodyHtml} />
 
-        <footer className="mt-12 flex flex-col gap-4 rounded-2xl border border-[#049e6b]/20 bg-[#049e6b]/5 px-6 py-5 text-sm text-neutral-700 dark:text-neutral-200">
+        <footer className="mt-12 flex flex-col gap-4 rounded-2xl border border-[#049e6b]/20 bg-[#049e6b]/5 px-6 py-5 text-sm text-neutral-700">
           <span>
             如需进一步了解药品信息或个性化方案，可联系执业药师获取建议。
           </span>

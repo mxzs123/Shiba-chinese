@@ -35,12 +35,12 @@ export function NewsArticleCard({
     <Link
       href={article.href}
       className={cn(
-        "group flex h-full flex-col gap-3 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm transition hover:border-[#049e6b] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#049e6b] focus-visible:ring-offset-2 dark:border-neutral-800 dark:bg-neutral-950",
+        "group flex h-full flex-col gap-3 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm transition hover:border-[#049e6b] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#049e6b] focus-visible:ring-offset-2",
         className,
       )}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <time className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+        <time className="text-xs font-medium uppercase tracking-wide text-neutral-500">
           {publishedAt}
         </time>
         {article.highlight ? (
@@ -49,12 +49,12 @@ export function NewsArticleCard({
           </span>
         ) : null}
       </div>
-      <h3 className="text-lg font-semibold text-neutral-900 transition-colors group-hover:text-[#049e6b] dark:text-neutral-100">
+      <h3 className="text-lg font-semibold text-neutral-900 transition-colors group-hover:text-[#049e6b]">
         {article.title}
       </h3>
       <p
         className={cn(
-          "flex-1 text-sm text-neutral-600 dark:text-neutral-300",
+          "flex-1 text-sm text-neutral-600",
           clampClass,
         )}
       >
@@ -65,7 +65,7 @@ export function NewsArticleCard({
           {article.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-600 transition group-hover:bg-[#049e6b]/10 group-hover:text-[#049e6b] dark:bg-neutral-800 dark:text-neutral-300"
+              className="rounded-full bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-600 transition group-hover:bg-[#049e6b]/10 group-hover:text-[#049e6b]"
             >
               #{tag}
             </span>

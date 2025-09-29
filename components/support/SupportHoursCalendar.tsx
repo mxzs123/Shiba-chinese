@@ -50,15 +50,15 @@ export function SupportHoursCalendar({
             客服时间
           </p>
           {monthRangeLabel ? (
-            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+            <span className="text-xs font-medium text-neutral-500">
               {monthRangeLabel}
             </span>
           ) : null}
         </div>
-        <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+        <h3 className="text-2xl font-bold text-neutral-900">
           日本工作日 {workingHours}
         </h3>
-        <p className="text-sm text-neutral-600 dark:text-neutral-300">
+        <p className="text-sm text-neutral-600">
           服务时段基于东京时间（JST），卡片已标注营业或休息状态，周末与日本节假日休息。
         </p>
       </div>
@@ -75,10 +75,10 @@ export function SupportHoursCalendar({
           const baseClasses =
             "flex flex-col gap-3 rounded-2xl border p-4 transition-colors duration-200";
           const stateClasses = day.isWorkingDay
-            ? "border-[#049e6b]/40 bg-[#049e6b]/5 text-neutral-900 dark:border-[#049e6b]/40 dark:bg-[#049e6b]/15"
-            : "border-neutral-200 bg-white text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300";
+            ? "border-[#049e6b]/40 bg-[#049e6b]/5 text-neutral-900"
+            : "border-neutral-200 bg-white text-neutral-600";
           const todayClasses = day.isToday
-            ? "ring-2 ring-[#049e6b] ring-offset-2 ring-offset-white dark:ring-offset-neutral-950"
+            ? "ring-2 ring-[#049e6b] ring-offset-2 ring-offset-white"
             : "";
 
           return (
@@ -88,7 +88,7 @@ export function SupportHoursCalendar({
               className={cn(baseClasses, stateClasses, todayClasses)}
             >
               <header className="flex items-center justify-between text-sm font-medium">
-                <span className="text-neutral-500 dark:text-neutral-400">
+                <span className="text-neutral-500">
                   {weekdayLabel}
                 </span>
                 {day.isToday ? (
@@ -98,7 +98,7 @@ export function SupportHoursCalendar({
                 ) : null}
               </header>
 
-              <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
+              <p className="text-2xl font-semibold text-neutral-900">
                 {dayLabel}
               </p>
               <span
@@ -106,7 +106,7 @@ export function SupportHoursCalendar({
                   "inline-flex w-fit items-center rounded-full px-2.5 py-1 text-xs font-semibold",
                   day.isWorkingDay
                     ? "bg-[#049e6b] text-white"
-                    : "bg-neutral-200 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-200",
+                    : "bg-neutral-200 text-neutral-600",
                 )}
               >
                 {day.isWorkingDay ? "营业日" : "休息日"}
