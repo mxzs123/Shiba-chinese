@@ -4,7 +4,6 @@ import { Toaster } from "sonner";
 import { CartProvider } from "components/cart/cart-context";
 import { Navbar } from "components/layout/navbar";
 import { PrescriptionComplianceReminder } from "components/prescription/PrescriptionComplianceReminder";
-import { PrescriptionComplianceSteps } from "@/app/_shared/checkout/PrescriptionComplianceSteps";
 import { getCart, getCurrentUser, getUserById } from "lib/api";
 import {
   IDENTITY_HIGHLIGHT_HREF,
@@ -22,7 +21,6 @@ export async function DesktopAppLayout({ children }: { children: ReactNode }) {
   const user = sessionUser ?? fallbackUser;
   const reviewState = user ? await loadPrescriptionReviewState(user) : null;
   const pendingSurveyCount = reviewState?.pendingAssignments.length ?? 0;
-  const surveyCompleted = pendingSurveyCount === 0;
 
   return (
     <CartProvider cartPromise={cart}>
@@ -36,16 +34,10 @@ export async function DesktopAppLayout({ children }: { children: ReactNode }) {
             productTitles={reviewState.productTitles}
             pendingSurveyCount={pendingSurveyCount}
             identityCompleted={reviewState.identityCompleted}
-          >
-            <PrescriptionComplianceSteps
-              identityCompleted={reviewState.identityCompleted}
-              identityHref={IDENTITY_HIGHLIGHT_HREF}
-              surveyCompleted={surveyCompleted}
-              surveyHref={SURVEY_HIGHLIGHT_HREF}
-              pendingSurveyCount={pendingSurveyCount}
-              variant="minimal"
-            />
-          </PrescriptionComplianceReminder>
+            identityHref={IDENTITY_HIGHLIGHT_HREF}
+            surveyHref={SURVEY_HIGHLIGHT_HREF}
+            type="prescription"
+          />
         ) : null}
         <Toaster closeButton />
       </main>
