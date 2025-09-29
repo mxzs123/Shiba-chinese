@@ -23,6 +23,9 @@ export default async function AccountSurveysPage({
   const highlightPending = Array.isArray(highlightParam)
     ? highlightParam.includes("pending")
     : highlightParam === "pending";
+  const highlightIdentity = Array.isArray(highlightParam)
+    ? highlightParam.includes("identity")
+    : highlightParam === "identity";
 
   return (
     <AccountShell
@@ -31,7 +34,10 @@ export default async function AccountSurveysPage({
       navItems={ACCOUNT_NAV_ITEMS}
       activeItem="surveys"
     >
-      <AccountSurveysPanel highlightPending={highlightPending} />
+      <AccountSurveysPanel
+        highlightPending={highlightPending}
+        highlightIdentity={highlightIdentity}
+      />
     </AccountShell>
   );
 }

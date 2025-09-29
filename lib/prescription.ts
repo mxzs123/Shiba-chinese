@@ -5,7 +5,7 @@ const PRESCRIPTION_CATEGORY_PREFIX = "rx:";
 const ORDER_COMPLETED_STATUSES = new Set(["fulfilled", "cancelled"]);
 
 export const IDENTITY_HIGHLIGHT_HREF =
-  "/account/profile?highlight=identity#identity-verification";
+  "/account/surveys?highlight=identity#identity-verification";
 export const SURVEY_HIGHLIGHT_HREF =
   "/account/surveys?highlight=pending#pending";
 

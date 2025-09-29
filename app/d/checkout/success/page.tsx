@@ -79,7 +79,7 @@ function buildSurveyReminder(
         </Link>
         {needsIdentityVerification ? (
           <Link
-            href="/account/profile"
+            href="/account/surveys?highlight=identity#identity-verification"
             prefetch
             className="inline-flex h-10 items-center justify-center rounded-xl border border-amber-300 px-4 font-semibold text-amber-700 transition hover:border-amber-500 hover:text-amber-800"
           >

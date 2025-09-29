@@ -212,6 +212,30 @@ export function IdentityVerificationCard({
     );
   };
 
+  if (status === "verified") {
+    return (
+      <section
+        id="identity-verification"
+        ref={cardRef}
+        className="flex items-center justify-between rounded-2xl border border-green-100 bg-green-50/50 px-4 py-3"
+      >
+        <div className="flex flex-col gap-0.5">
+          <span className="text-sm font-medium text-green-700">
+            ✓ 当前状态：{formatStatusLabel(status)}
+          </span>
+          <span className="text-xs text-green-600/60">如需修改请联系客服</span>
+        </div>
+        {effectiveVerification?.document?.uploadedAt ? (
+          <span className="text-xs text-green-600/70">
+            {new Date(
+              effectiveVerification.document.uploadedAt,
+            ).toLocaleDateString()}
+          </span>
+        ) : null}
+      </section>
+    );
+  }
+
   return (
     <section
       id="identity-verification"
@@ -233,72 +257,53 @@ export function IdentityVerificationCard({
         <span className="text-sm font-medium text-neutral-700">
           当前状态：{formatStatusLabel(status)}
         </span>
-        {effectiveVerification?.document?.uploadedAt ? (
-          <span className="text-xs text-neutral-400">
-            上传时间：
-            {new Date(
-              effectiveVerification.document.uploadedAt,
-            ).toLocaleString()}
-          </span>
-        ) : null}
       </div>
 
-      {status === "verified" ? (
-        <div className="space-y-4">
-          <p className="text-sm text-neutral-500">
-            您已完成实名认证，如需更新请联系客服。
-          </p>
-          {renderVerifiedPreview()}
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {(["front", "back"] as const).map((side) => (
+            <label
+              key={side}
+              className="flex h-48 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 transition hover:border-[#049e6b]"
+            >
+              {renderPreview(side)}
+              <input
+                type="file"
+                accept={ACCEPTED_TYPES.join(",")}
+                className="sr-only"
+                onChange={(event) => void handleFileChange(event, side)}
+                disabled={pending}
+              />
+            </label>
+          ))}
         </div>
-      ) : (
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {(["front", "back"] as const).map((side) => (
-              <label
-                key={side}
-                className="flex h-48 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 transition hover:border-[#049e6b]"
-              >
-                {renderPreview(side)}
-                <input
-                  type="file"
-                  accept={ACCEPTED_TYPES.join(",")}
-                  className="sr-only"
-                  onChange={(event) => void handleFileChange(event, side)}
-                  disabled={pending}
-                />
-              </label>
-            ))}
-          </div>
 
-          <ul className="space-y-1 text-xs text-neutral-400">
-            <li>
-              • 仅支持 JPG、PNG、WebP 格式，大小不超过 {MAX_SIZE_IN_MB}MB。
-            </li>
-            <li>• 信息仅用于完成实名认证，不会用于其他用途。</li>
-          </ul>
+        <ul className="space-y-1 text-xs text-neutral-400">
+          <li>• 仅支持 JPG、PNG、WebP 格式，大小不超过 {MAX_SIZE_IN_MB}MB。</li>
+          <li>• 信息仅用于完成实名认证，不会用于其他用途。</li>
+        </ul>
 
-          {error ? <p className="text-sm text-red-500">{error}</p> : null}
+        {error ? <p className="text-sm text-red-500">{error}</p> : null}
 
-          <div className="flex items-center gap-3">
-            <PrimaryButton
-              type="submit"
-              loading={pending}
-              loadingText="上传中..."
-              disabled={pending}
-            >
-              确认上传
-            </PrimaryButton>
-            <button
-              type="button"
-              className="text-sm text-neutral-500 underline-offset-4 hover:underline"
-              onClick={() => setDocument({})}
-              disabled={pending}
-            >
-              清除已选文件
-            </button>
-          </div>
-        </form>
-      )}
+        <div className="flex items-center gap-3">
+          <PrimaryButton
+            type="submit"
+            loading={pending}
+            loadingText="上传中..."
+            disabled={pending}
+          >
+            确认上传
+          </PrimaryButton>
+          <button
+            type="button"
+            className="text-sm text-neutral-500 underline-offset-4 hover:underline"
+            onClick={() => setDocument({})}
+            disabled={pending}
+          >
+            清除已选文件
+          </button>
+        </div>
+      </form>
     </section>
   );
 }

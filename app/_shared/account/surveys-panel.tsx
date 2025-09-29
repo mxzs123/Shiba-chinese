@@ -13,10 +13,12 @@ import { submitIdentityVerificationAction } from "./actions";
 
 type AccountSurveysPanelProps = {
   highlightPending?: boolean;
+  highlightIdentity?: boolean;
 };
 
 export async function AccountSurveysPanel({
   highlightPending = false,
+  highlightIdentity = false,
 }: AccountSurveysPanelProps) {
   const [sessionUser, fallbackUser] = await Promise.all([
     getCurrentUser(),
@@ -80,6 +82,7 @@ export async function AccountSurveysPanel({
         userId={user.id}
         verification={user.identityVerification}
         action={submitIdentityVerificationAction}
+        highlighted={highlightIdentity}
       />
 
       <section className="space-y-6 rounded-3xl border border-neutral-100 bg-white/80 p-8 shadow-lg shadow-neutral-900/5">
