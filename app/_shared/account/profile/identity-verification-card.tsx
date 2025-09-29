@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 import { PrimaryButton } from "@/app/_shared";
 import type {
@@ -73,6 +74,7 @@ export function IdentityVerificationCard({
   const [document, setDocument] = useState<LocalDocumentState>({});
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [expanded, setExpanded] = useState(false);
 
   const effectiveVerification = verification ?? identityFromStore;
   const status = effectiveVerification?.status ?? "unverified";
@@ -83,7 +85,12 @@ export function IdentityVerificationCard({
     }
 
     cardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [highlighted]);
+
+    // 如果是已验证状态且高亮，自动展开
+    if (status === "verified") {
+      setExpanded(true);
+    }
+  }, [highlighted, status]);
 
   const handleFileChange = async (
     event: ChangeEvent<HTMLInputElement>,
@@ -217,21 +224,52 @@ export function IdentityVerificationCard({
       <section
         id="identity-verification"
         ref={cardRef}
-        className="flex items-center justify-between rounded-2xl border border-green-100 bg-green-50/50 px-4 py-3"
+        className={cn(
+          "overflow-hidden rounded-3xl border bg-white/90 shadow-lg shadow-neutral-900/5 transition-all",
+          highlighted
+            ? "border-green-400 shadow-green-200/60 ring-2 ring-green-200"
+            : "border-green-100",
+        )}
       >
-        <div className="flex flex-col gap-0.5">
-          <span className="text-sm font-medium text-green-700">
-            ✓ 当前状态：{formatStatusLabel(status)}
-          </span>
-          <span className="text-xs text-green-600/60">如需修改请联系客服</span>
-        </div>
-        {effectiveVerification?.document?.uploadedAt ? (
-          <span className="text-xs text-green-600/70">
-            {new Date(
-              effectiveVerification.document.uploadedAt,
-            ).toLocaleDateString()}
-          </span>
-        ) : null}
+        {/* 折叠状态的横幅 */}
+        <button
+          type="button"
+          onClick={() => setExpanded(!expanded)}
+          className="flex w-full items-center justify-between bg-green-50/50 px-4 py-3 text-left transition hover:bg-green-50"
+        >
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium text-green-700">
+              ✓ 当前状态：{formatStatusLabel(status)}
+            </span>
+            <span className="text-xs text-green-600/60">
+              如需修改请联系客服
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            {effectiveVerification?.document?.uploadedAt ? (
+              <span className="text-xs text-green-600/70">
+                {new Date(
+                  effectiveVerification.document.uploadedAt,
+                ).toLocaleDateString()}
+              </span>
+            ) : null}
+            {expanded ? (
+              <ChevronUp className="h-5 w-5 text-green-600" aria-hidden />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-green-600" aria-hidden />
+            )}
+          </div>
+        </button>
+
+        {/* 展开状态显示身份证图片 */}
+        {expanded && (
+          <div className="space-y-4 p-6">
+            <p className="text-sm text-neutral-600">
+              您已完成实名认证，以下是您上传的身份证信息。
+            </p>
+            {renderVerifiedPreview()}
+          </div>
+        )}
       </section>
     );
   }
