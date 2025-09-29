@@ -1,162 +1,76 @@
-# TODO · 错峰并行开发路线（建议）
+# 移动端外壳 TODO
 
-目标：以“单 URL · 双外壳（/d、/m）+ Middleware 重写”为长期形态，先纵向打通桌面端核心交易链路，再并行补齐移动外壳与增量能力，确保每一阶段都可演示与验收。
+## 阶段 0 · 现状盘点
 
-—
+### `/d` → `/m` 路由映射
+- `/` → `app/d/page.tsx` → 建议：`app/m/page.tsx`
+- `/login` → `app/d/(auth)/login/page.tsx` → 建议：`app/m/(auth)/login/page.tsx`
+- `/register` → `app/d/(auth)/register/page.tsx` → 建议：`app/m/(auth)/register/page.tsx`
+- `/<page>` → `app/d/[page]/page.tsx` → 建议：`app/m/[page]/page.tsx`
+- `/about` → `app/d/about/page.tsx` → 建议：`app/m/about/page.tsx`
+- `/account` → `app/d/account/page.tsx` → 建议：`app/m/account/page.tsx`
+- `/account/profile` → `app/d/account/profile/page.tsx` → 建议：`app/m/account/profile/page.tsx`
+- `/account/addresses` → `app/d/account/addresses/page.tsx` → 建议：`app/m/account/addresses/page.tsx`
+- `/account/coupons` → `app/d/account/coupons/page.tsx` → 建议：`app/m/account/coupons/page.tsx`
+- `/account/membership` → `app/d/account/membership/page.tsx` → 建议：`app/m/account/membership/page.tsx`
+- `/account/orders` → `app/d/account/orders/page.tsx` → 建议：`app/m/account/orders/page.tsx`
+- `/account/orders/[orderId]` → `app/d/account/orders/[orderId]/page.tsx` → 建议：`app/m/account/orders/[orderId]/page.tsx`
+- `/account/surveys` → `app/d/account/surveys/page.tsx` → 建议：`app/m/account/surveys/page.tsx`
+- `/account/surveys/[assignmentId]` → `app/d/account/surveys/[assignmentId]/page.tsx` → 建议：`app/m/account/surveys/[assignmentId]/page.tsx`
+- `/cart` → `app/d/cart/page.tsx` → 建议：`app/m/cart/page.tsx`
+- `/checkout` → `app/d/checkout/page.tsx` → 建议：`app/m/checkout/page.tsx`
+- `/checkout/success` → `app/d/checkout/success/page.tsx` → 建议：`app/m/checkout/success/page.tsx`
+- `/checkout/failed` → `app/d/checkout/failed/page.tsx` → 建议：`app/m/checkout/failed/page.tsx`
+- `/checkout/prescription-review` → `app/d/checkout/prescription-review/page.tsx` → 建议：`app/m/checkout/prescription-review/page.tsx`
+- `/faq` → `app/d/faq/page.tsx` → 建议：`app/m/faq/page.tsx`
+- `/news` → `app/d/news/page.tsx` → 建议：`app/m/news/page.tsx`
+- `/news/[slug]` → `app/d/news/[slug]/page.tsx` → 建议：`app/m/news/[slug]/page.tsx`
+- `/product/[handle]` → `app/d/product/[handle]/page.tsx` → 建议：`app/m/product/[handle]/page.tsx`
+- `/search` → `app/d/search/page.tsx` → 建议：`app/m/search/page.tsx`
+- `/search/[collection]` → `app/d/search/[collection]/page.tsx` → 建议：`app/m/search/[collection]/page.tsx`
 
-## 总体原则
+- [ ] 生成当前 `/d` 路由清单（例如 `find app/d -name 'page.tsx'`），与团队确认 `/m` 的一一对应目标。
+- [ ] 审阅 `_shared/layouts/desktop-app-layout.tsx`，标记必须在移动外壳复用的 provider 与 hook。
+- [ ] 整理 `components/layout`、`components/cart` 中已有的移动端变体（如 `navbar/mobile-menu.tsx`），并列出缺失的实现。
+- [ ] 收集移动端特有的交互诉求（导航层级、底部标签、购物车入口等），记录 `_shared` 数据契约是否需要补充。
 
-- 路径形态：真实渲染路径为 `app/d` 和 `app/m`；组件内链接使用用户 URL（不含 `/d`、`/m`），分流由 `middleware.ts` 完成。
-- 共享抽象：领域/展示组件优先放入 `app/_shared`，减少重复开发与样式偏差。
-- 数据层：以 `lib/api` 为唯一数据入口；缺省用 `mock-data.ts`，对接真实后端时保持 `types.ts` 契约不变。
-- 缓存与可观测：Middleware 设置 `x-device` 与 `Vary: x-device`，避免跨设备缓存串包。
-- 体验一致：两端外壳骨架 DOM 尽可能一致，响应式交给 CSS，避免水合错位。
+## 阶段 1 · `app/m` 脚手架
+- [ ] 新建 `app/m/layout.tsx`，复用桌面外壳的调用方式但切换为 `MobileAppLayout`。
+- [ ] 在 `app/_shared/layouts/mobile-app-layout.tsx` 中实现移动外壳，接入共享 provider（`CartProvider`、`Toaster`、处方提醒）并先放置临时导航框架。
+- [ ] 在 `app/m/page.tsx` 引用 `_shared/pages/home` 作为冒烟测试，确认布局可渲染且无运行时错误。
+- [ ] 更新 `app/_shared/layouts/index.ts` 暴露新的移动外壳导出，与桌面保持一致的调用习惯。
 
-—
+## 阶段 2 · 导航与框架
+- [ ] 设计移动端头部与导航（顶栏、汉堡菜单、搜索入口），在可能的情况下复用 `components/layout/navbar` 的现有组件。
+- [ ] 实现常驻的移动端购物车入口（悬浮按钮或底部栏），串联 `CartSheet`。
+- [ ] 补齐底部导航或页脚元素，确保在展示处方合规提示时布局能优雅降级。
+- [ ] 检查移动端导航与购物车浮层的焦点状态、滚动锁定与关闭交互。
 
-## 阶段 0 · 基线搭建（1–2 天）
+## 阶段 3 · 路由对齐
+- [ ] 为每个 `/d` 路由（`page.tsx`、动态段、嵌套路由）在 `app/m/` 下创建对应文件，直接引用 `_shared` 页面模块。
+- [ ] 特别关注 `(auth)` 与 `[page]` 等嵌套结构，确认共享参数（如 `ACCOUNT_NAV_ITEMS`）满足移动端需求。
+- [ ] 仅在桌面已有差异的场景补充移动端特有的 loading/error 状态，其他逻辑继续在 `_shared` 维护。
+- [ ] 对需要后续动画或手势优化的移动包装组件添加 TODO 备注，方便迭代。
 
-- [ ] 建立 `app/_shared` 目录：ProductCard、Price、Rating、SkuSelector、AddToCartButton、CartSheet/Badge 等占位组件。
-- [ ] 明确 `lib/api/types.ts` 契约，补齐核心类型：User、Product、Cart、Order、Address、Coupon、Point 等。
-- [ ] 在 `lib/api/index.ts` 补全/整理核心方法签名（可先返回 mock）。
-- [ ] 全局样式与字体确认：`app/globals.css`、Inter 与 `--font-sans`。
-- [ ] 确认必需环境变量并同步 `.env.example`：`COMMERCE_API_URL`、`COMMERCE_CHECKOUT_URL`、`REVALIDATION_SECRET`。
+## 阶段 4 · 共享组件适配
+- [ ] 审核 `_shared` 组件是否存在固定列数、大间距等宽度假设，并通过新增 props 支持双外壳安全切换。
+- [ ] 为 `ProductCard`、`SkuSelector` 等组件扩展移动友好配置，同时保持桌面端兼容。
+- [ ] 验证认证、地址、结算等表单在小屏上的可访问性（键盘避让、输入分组、按钮尺寸）。
+- [ ] 如需新增移动端间距或字号变量，更新 Tailwind token 或 CSS 变量，并在 `docs/` 记录。
 
-验收
+## 阶段 5 · 中间件与分流
+- [ ] 在关键 `/m` 路由可用后，更新 `middleware.ts` 移除临时桌面回退逻辑，真正将移动 UA 重写到 `/m`。
+- [ ] 为 `resolveDevice` 增加覆盖 query、cookie、UA 多分支的回归测试（单测或集成测试）。
+- [ ] 对比移动端上线前后的首屏指标（TTFB、水合告警），确认无明显回退。
 
-- [ ] 可以 import 并在 Story/临时页渲染 `_shared` 组件骨架。
-- [ ] `npm run build` 与 `npm run prettier:check` 通过。
+## 阶段 6 · QA 与加固
+- [ ] 运行 `npm run lint` 与 `npm run prettier:check`，保持基础质量阈值。
+- [ ] 在移动宽度下手动走查：主页 → 商品 → 购物车 → 结算、账号页签、问卷、优惠券兑换、处方提示等全流程。
+- [ ] 验证 `next/link` 预取、浏览器前进后退与 `x-device` 响应头在设备切换时表现正常。
+- [ ] 整理已知问题或暂缓打磨项，在正式发布前创建后续跟进任务。
 
-—
-
-## 阶段 1 · 打通桌面核心链路（/d）
-
-范围：首页 → 列表/搜索 → 详情 → 加购 → 结算/支付（可占位）
-
-- 路由与外壳
-  - [ ] `app/d/(shell)/layout.tsx`：桌面导航/页脚/购物车入口，SEO 基础元信息。
-  - [ ] `app/d/page.tsx`：首页（品类入口、推荐区块、营销 Banner）。
-  - [ ] `app/d/search/page.tsx`、`app/d/search/[collection]/page.tsx`：筛选、排序、分页（先本地状态，后端参数化预留）。
-  - [ ] `app/d/product/[handle]/page.tsx`：SKU/规格选择、库存/价格、加购交互（Server Action 写 Cookie 购物车）。
-- 购物车与下单
-  - [ ] `AddToCart` Server Action：基于服务端 Cookie（`commerce-cart`）。
-  - [ ] `app/d/cart/page.tsx`：购物车管理（增删改、合计、去结算）。
-  - [ ] `app/d/checkout/page.tsx`：收货地址选择/新增、配送方式、确认订单。
-  - [ ] `app/d/checkout/confirm/page.tsx`：提交订单→跳转 `COMMERCE_CHECKOUT_URL` 或支付占位。
-  - [ ] `app/d/checkout/success|failed/page.tsx`：结果页与回跳处理。
-- 账户最小闭环（可选）
-  - [ ] 先支持“游客下单”，登录/注册放到阶段 1.5。
-
-验收
-
-- [ ] 通过 `/d/...` 内部路径可完整演示“浏览→加购→结算→结果页”。
-- [ ] `_shared` 组件被首页/列表/详情三处复用，视觉与交互一致。
-
-—
-
-## 阶段 1.5 · 基础认证与地址（支撑结算）
-
-- [ ] 用户注册/登录（邮箱/手机号其一即可，后续再扩展双因子）。
-- [ ] 个人信息最小集（昵称、头像占位）。
-- [ ] 收货地址管理（新增/修改/默认地址）。
-- [ ] 订单创建时绑定用户（若游客则按匿名 ID 关联）。
-
-验收
-
-- [ ] 登录后可在结算页选择地址并下单；登出后可游客下单。
-
-—
-
-## 阶段 2 · 接入分流与移动外壳（/m）
-
-- [ ] 新增 `middleware.ts`（UA/query/cookie → `x-device`，响应头 `Vary: x-device` → rewrite 到 `/${device}${pathname}`）。
-- [ ] 镜像 `app/m` 路由形状，复用 `_shared`，仅调整 `(shell)/layout.tsx` 与移动导航。
-- [ ] 自测：预取/返回前进正常、无水合警告、无跨设备缓存串包。
-
-验收
-
-- [ ] 桌面 UA 命中 `/d`，移动/平板 UA 命中 `/m`；地址栏保持用户 URL。
-
-—
-
-## 阶段 3 · 订单管理与个人中心
-
-- 订单管理
-  - [ ] 订单列表、详情、状态流转（创建→待支付→已支付→发货→签收）。
-  - [ ] 取消订单、确认收货、物流信息展示。
-- 个人中心
-  - [ ] 个人信息管理、设置管理。
-  - [ ] 收货地址管理（完善校验与联动）。
-  - [ ] 优惠券管理（可先支持手动绑定/模拟发放）。
-  - [ ] 积分查看与兑换（占位接口 + 规则配置）。
-  - [ ] 会员等级查看（按累计消费/积分计算，先本地规则）。
-  - [ ] 消息中心（系统通知/订单通知列表）。
-
-验收
-
-- [ ] 登录用户可完整查看/管理其订单、地址、优惠券、积分与会员信息。
-
-—
-
-## 阶段 4 · 医药合规能力（准入与风控）
-
-- [ ] 健康问卷：在商品详情或结算前触发（按商品属性）并存档。
-  - [x] 个人中心新增“我的问卷”，支持按订单分类查看、填写与存档。
-  - [x] 支付成功页针对处方药订单弹出提醒，并引导上传身份证与前往问卷。
-  - [ ] 接入真实后端问卷配置与下单前校验逻辑。
-- [ ] 身份证上传认证：合规字段与留存周期提示。
-- [ ] 用药资质审核：前端状态提示与拦截策略（不满足则限制下单/提示线下咨询）。
-- [ ] 敏感数据保护：脱敏展示、最小化存储、与后端约定加密/有效期/清理流程。
-
-验收
-
-- [ ] 对受限商品，流程中明确提示并正确拦截或放行；合规材料在订单维度可追溯（仅元信息）。
-
-—
-
-## 阶段 5 · 资讯与企业信息
-
-- [ ] 健康资讯：列表/详情（可使用静态 MDX 或后端 CMS）。
-- [ ] 公司信息与使用帮助：静态内容页（可缓存为 `force-static`）。
-- [ ] SEO：sitemap、robots、OG/Twitter 元数据。
-
-—
-
-## 阶段 6 · 打磨与稳定性
-
-- [ ] 可访问性（键盘导航、对比度、语义标签）。
-- [ ] 性能：图片策略、PPR/缓存策略、RSC 数据缓存与 `revalidateTag`。
-- [ ] 错误处理与空状态（全链路）。
-- [ ] 埋点与可观测（PV/转化、关键交互、设备维度）。
-- [ ] 渐进接入自动化测试（Jest + RTL），从 `_shared` 组件开始。
-
-—
-
-## 依赖后端/第三方的里程碑（可并行推进）
-
-- 在线支付（对接网关/聚合支付，前端先保留结果页回跳与签名校验占位）。
-- 实名与资质审核（上传/审核/回调的接口契约）。
-- 物流轨迹查询（快递/聚合物流接口）。
-
-—
-
-## 风险与边界
-
-- 合规类表单与证照数据敏感，前后端需明确数据存储位置、加密与清理策略；本仓库默认仅存储最小必要信息并以占位实现演示流程。
-- 移动/桌面外壳需保持骨架一致，避免水合错位；必要差异通过 CSS 处理。
-
-—
-
-## 默认开发顺序（速记）
-
-1. 阶段0：抽象 `_shared` + 类型契约 → 2) 阶段1：/d 核心交易 → 3) 阶段1.5：认证+地址 → 4) 阶段2：Middleware 分流 + /m → 5) 阶段3：订单/个人中心 → 6) 阶段4：合规 → 7) 阶段5：资讯 → 8) 阶段6：打磨与测试。
-
-—
-
-## 验收清单（跨阶段总览）
-
-- [ ] /d 端到端交易链路可演示（无 mock 也不影响交互演示）。
-- [ ] Middleware 生效，`x-device` 与 `Vary: x-device` 正确；地址栏无内部路径泄露。
-- [ ] /m 形态可用，导航/预取/缓存正常，无水合警告。
-- [ ] 订单与个人中心闭环；合规流程在受限场景有明确提示与拦截。
-- [ ] 构建通过、主要路由首屏体验流畅，核心错误与空状态已覆盖。
+## 阶段 7 · 上线准备
+- [ ] 更新 README 与相关文档，加入移动外壳的使用说明与界面截图。
+- [ ] 与设计/QA 对齐验收标准，记录设备矩阵（iOS/Android、Safari/Chrome 等）。
+- [ ] 上线后监控日志，关注 `middleware` 分流异常或移动端触发的 API 报错。
+- [ ] 准备回滚方案（特性开关或强制设定 `device` cookie），以备发布后出现严重问题时快速切换。

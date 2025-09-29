@@ -1,15 +1,34 @@
 # Repository Guidelines
 
+这是 Next.js 15 电商前端项目的开发规范文档，提供完整的架构说明、开发指引和协作规范。
+
+## 当前开发状态
+
+- ✅ **桌面端外壳** (`app/d/`) - 已完成所有核心业务流程
+- 🚧 **移动端外壳** (`app/m/`) - 尚未实现，当前移动设备访问会自动回退到桌面版本
+- 📋 **共享业务层** (`app/_shared/`) - 已完整实现，为移动端开发预留了复用基础
+
+## 常用命令
+
+```bash
+npm run dev              # 启动开发服务器 (Turbopack)
+npm run build            # 生产构建
+npm run start            # 预览生产构建
+npm run lint             # ESLint 代码检查
+npm run prettier         # 格式化代码
+npm run prettier:check   # 格式检查 (CI 使用)
+npm run test             # 运行测试 (当前为 prettier:check)
+```
+
 ## 快速参考
 
-- 新页面或路由必须复用 `app/_shared` 页面壳；`app/d`、`app/m` 只承载外壳差异。
-- 所有改动提交前运行 `npm run lint` 与 `npm run prettier:check`，保持 2 空格缩进与命名规范。
-- 中央化数据访问在 `lib/api`，扩展后同步更新 `types.ts`、`mock-data.ts` 与相关文档。
-- 设备分流依赖 `middleware.ts`：遵循 query → cookie → UA 的判定顺序，并设置 `x-device` 与 `Vary` 头。
-- 图标统一通过 `lucide-react` + `components/icons/`；动画由 Framer Motion 驱动，避免分散实现。
-- 环境变量写入 `.env.local`，新增字段务必同步 `.env.example` 与 README/Docs，勿提交敏感值。
-- 账户、结算等 Server Action 已在 `_shared` 内封装；新增能力时直接扩展现有 action，保持 `success/data` 结构。
-- 手动验证覆盖搜索→商品→购物车、结算流程、账户操作、主题切换与多语言展示。
+核心开发规范：
+
+- **页面复用**：新页面必须在 `app/_shared` 实现业务逻辑，`app/d` 只做外壳引用
+- **代码质量**：提交前必须运行 `npm run lint` 和 `npm run prettier:check`
+- **数据访问**：统一通过 `lib/api`，扩展时同步更新 `types.ts`、`mock-data.ts`
+- **设备分流**：由 `middleware.ts` 处理，遵循 query → cookie → UA 判定顺序
+- **Server Actions**：集中在 `_shared/*/actions.ts`，统一返回 `{ success, data, error }` 结构
 
 ## 目录
 
@@ -32,7 +51,7 @@
 
 - 页面采用 Next.js App Router，核心业务路径位于 `app/`（如 `/product`、`/search`、`/[page]`）。`app/api/revalidate` 负责后端通知后的增量刷新。
 - UI 组件按功能域划分在 `components/`，如 `cart/`、`layout/`、`product/`。公共图标集中在 `components/icons/`。
-- `app/_shared/` 是跨外壳的领域层：`index.ts` 提供统一出口，子目录按领域（`account/`、`checkout/`、`coupons/`、`layouts/`、`pages/` 等）组织，可同时服务 `/d` 与 `/m`。
+- `app/_shared/` 是跨外壳的领域层：`index.ts` 提供统一出口，子目录按领域（`account/`、`checkout/`、`coupons/`、`layouts/`、`pages/` 等）组织，为桌面和移动端提供可复用的业务逻辑。
 - 数据访问封装在 `lib/api/`：`index.ts` 处理实际或模拟 API 交互，`mock-data.ts` 存放演示数据，`types.ts` 维护接口契约与查找函数。
 - 字体资源放在 `fonts/`，公共文档统一放在 `docs/` 便于查阅。
 
@@ -45,16 +64,17 @@
 
 ### `_shared` 目录职责
 
-- `_shared/layouts/`：暴露 `DesktopAppLayout`、`CmsLayout` 等外壳框架。
-- `_shared/pages/`：按业务领域（`home/`、`news/`、`product/`、`search/` 等）组合页面模块，供 `/d` 与 `/m` 共享。
-- `_shared/account/`、`_shared/checkout/`、`_shared/coupons/`、`_shared/auth/` 等聚合领域组件、表单及 Server Action，保持单一事实来源。
+- `_shared/layouts/`：暴露 `DesktopAppLayout`、`CmsLayout` 等外壳框架
+- `_shared/pages/`：按业务领域（`home/`、`news/`、`product/`、`search/` 等）组合页面模块，供桌面和移动端共享
+- `_shared/account/`、`_shared/checkout/`、`_shared/coupons/`、`_shared/auth/` 等聚合领域组件、表单及 Server Action，保持单一事实来源
 
 ### 页面引用规范
 
-- `/d` 与未来的 `/m` 页面只负责引入 `_shared` 页面壳并传参，不在外壳里落业务逻辑。
-- 复用按钮/表单优先使用 `_shared` 已定义的组件（如 `PrimaryButton`、`CheckoutActionButton`）；若需要新样式，先评估是否可通过 props 扩展。
-- 账户侧 badge、订单阶段、问卷等 UI 必须在 `_shared/account/` 扩展，避免散落在 `/d/account`。
-- 优惠券兑换、地址管理等交互已经在 `_shared` Server Action 内实现，新的 API 能力直接在对应 action 扩展并保持返回结构。
+- **当前**：`/d` 页面引入 `_shared` 页面壳并传参，不包含业务逻辑
+- **未来**：`/m` 将采用相同模式，复用 `_shared` 中的所有业务逻辑
+- 复用按钮/表单优先使用 `_shared` 已定义的组件（如 `PrimaryButton`、`CheckoutActionButton`）
+- 账户侧 badge、订单阶段、问卷等 UI 必须在 `_shared/account/` 扩展，避免散落在外壳目录
+- 优惠券兑换、地址管理等交互已在 `_shared` Server Action 内实现，扩展时保持统一返回结构
 
 ## 动画、图标与状态管理
 
@@ -138,76 +158,84 @@
 
 ### 目录组织
 
-- `app/d`：桌面外壳及布局。
-- `app/m`：移动外壳及布局。
-- `app/_shared`：领域组件与展示逻辑（如 ProductCard、Price、SkuSelector、格式化工具）。
-- `app/page.tsx`：可作为兜底或说明页面。
+- `app/d`：桌面外壳及布局（已完成）
+- `app/m`：移动外壳及布局（待开发，当前自动回退到 `/d`）
+- `app/_shared`：领域组件与展示逻辑（如 ProductCard、Price、SkuSelector、格式化工具）
+- `app/page.tsx`：根页面，可作为兜底或说明页面
 
 ### Middleware 策略
 
-- 判定顺序：query `?device=d|m` → `device` cookie → `userAgent` 推断（mobile/tablet → `m`，其余 → `d`）。
-- 重写路径：将请求重写到 `/${device}${pathname}`，并透传原始地址栏。
-- 头部：请求与响应设置 `x-device`，响应附带 `Vary: x-device` 以隔离缓存。
-- Cookie：当 query 覆盖与 cookie 不一致时写回 `device` cookie。
-- 匹配范围排除静态资源及通用文件（`/_next/*`、`favicon.ico`、`robots.txt`、`sitemap.xml` 等）。
+设备分流逻辑：
+
+- **判定顺序**：query `?device=d|m` → `device` cookie → `userAgent` 推断（mobile/tablet → `m`，其余 → `d`）
+- **路径重写**：将请求重写到 `/${device}${pathname}`，地址栏保持用户 URL
+- **响应头部**：设置 `x-device` 和 `Vary: x-device` 以隔离设备缓存
+- **Cookie 同步**：query 参数覆盖时自动写回 `device` cookie
+- **匹配范围**：排除 `/_next/*`、`favicon.ico`、`robots.txt`、`sitemap.xml` 等静态资源
+
+**重要**：当前移动端外壳 (`/m`) 尚未实现，middleware 会将所有移动设备流量临时回退到桌面外壳 (`/d`)。
+
+参考 `middleware.ts` 的完整实现，关键代码片段：
 
 ```ts
-import { NextRequest, NextResponse, userAgent } from "next/server";
-
 export function middleware(req: NextRequest) {
-  const url = req.nextUrl;
-  const queryOverride = url.searchParams.get("device");
-  const cookieOverride = req.cookies.get("device")?.value;
-  const ua = userAgent(req);
-  const inferred =
-    ua.device.type === "mobile" || ua.device.type === "tablet" ? "m" : "d";
-  const override = queryOverride || cookieOverride;
-  const device = override === "m" ? "m" : override === "d" ? "d" : inferred;
+  const device = resolveDevice(req); // query → cookie → UA
 
-  const target = url.clone();
-  target.pathname = `/${device}${url.pathname}`;
+  // TEMPORARY: Mobile shell (/m) is not yet implemented.
+  // Currently, all mobile traffic falls back to the desktop shell (/d).
+  // TODO: Remove this fallback once app/m directory structure is complete.
+  const rewriteTargetDevice =
+    device === MOBILE_DEVICE_VALUE ? DESKTOP_DEVICE_VALUE : device;
 
-  const headers = new Headers(req.headers);
-  headers.set("x-device", device);
+  const destination = req.nextUrl.clone();
+  destination.pathname = `/${rewriteTargetDevice}${pathname}`;
 
-  const response = NextResponse.rewrite(target, { request: { headers } });
+  const response = NextResponse.rewrite(destination, {
+    request: { headers: requestHeaders },
+  });
+
   response.headers.set("x-device", device);
   response.headers.set("Vary", "x-device");
-  if (queryOverride && queryOverride !== cookieOverride) {
-    response.cookies.set("device", device, { path: "/" });
-  }
-  return response;
+  // ... cookie 同步逻辑
 }
-
-export const config = {
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml).*)",
-  ],
-};
 ```
 
 ### 路由实现与开发清单
 
-- `app/d` 与 `app/m` 路由树保持一致（例如都实现 `product/[slug]/page.tsx`）。
-- 外壳 `(shell)/layout.tsx` 承载导航、页眉、页脚等差异，同时尽量保持骨架 DOM 结构一致。
-- 组件内 `<Link>` 与编程式跳转始终使用用户 URL，不加 `/d`、`/m` 前缀。
-- 需要窗口尺寸时仅用于微交互，严禁改变关键节点的顺序与数量。
+- **设计目标**：`app/d` 与 `app/m` 路由树应保持一致（例如都实现 `product/[handle]/page.tsx`）
+- **当前状态**：仅 `app/d` 已完成，`app/m` 待开发时可参考 `/d` 的结构
+- 外壳 `(shell)/layout.tsx` 承载导航、页眉、页脚等差异，同时尽量保持骨架 DOM 结构一致
+- 组件内 `<Link>` 与编程式跳转始终使用用户 URL，不加 `/d`、`/m` 前缀
+- 需要窗口尺寸时仅用于微交互，严禁改变关键节点的顺序与数量
 
 ### SSR 与水合一致性
 
 - 设备分流在服务端完成，客户端仅处理细节交互，不替换核心 DOM。
 - 优先使用 CSS/Tailwind 做响应式；必须读取窗口尺寸时确保不会引发骨架差异。
 
-### 渐进迁移步骤
+### 移动端开发步骤（待实施）
 
-- 建立并完善 `app/_shared`，将领域组件抽离到该目录。
-- 在 `app/d` 与 `app/m` 复制现有页面，主体复用 `_shared` 组合。
-- 实现 `middleware.ts` 的 UA 判定、query/cookie 覆盖与重写逻辑。
-- 自测确认 SSR、导航预取、缓存及水合均按设备分流。
+当开始开发 `app/m` 时，按以下步骤进行：
 
-### 核心验证
+1. 复制 `app/d` 的路由结构到 `app/m`，保持路径一致
+2. 创建移动端专用的 `layout.tsx`，实现移动端导航和页眉页脚
+3. 页面文件引用 `_shared` 中相同的业务组件，只传递不同的布局参数
+4. 更新 `middleware.ts`，移除临时的桌面回退逻辑
+5. 测试 SSR、导航预取、缓存及水合在移动端的表现
 
-- 桌面 UA 命中 `/d`，移动/平板 UA 命中 `/m`，地址栏保持用户 URL。
-- 首屏无水合错位或 Hydration 警告。
-- `next/link` 预取、浏览器前进/返回、RSC 缓存在设备间相互隔离（检查 `x-device` 与 `Vary`）。
-- `?device=m|d` 与 `device` cookie 能稳定切换外壳。
+### 核心验证清单
+
+**当前（桌面端）**：
+
+- ✅ 桌面 UA 正确命中 `/d`
+- ✅ 移动/平板 UA 临时回退到 `/d`
+- ✅ `?device=d` 参数可强制使用桌面版
+- ✅ 地址栏保持用户 URL，无 `/d` 前缀
+- ✅ 首屏无水合错位或 Hydration 警告
+
+**未来（移动端开发后）**：
+
+- 移动/平板 UA 应命中 `/m`
+- `?device=m` 参数可强制使用移动版
+- `next/link` 预取、浏览器前进/返回、RSC 缓存在设备间相互隔离（检查 `x-device` 与 `Vary`）
+- `device` cookie 能稳定在 `m` 和 `d` 之间切换

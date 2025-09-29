@@ -42,6 +42,5 @@ export const POPULAR_CATEGORY_LINKS: HomeCategoryLink[] = [
   },
 ];
 
-export const HOME_CATEGORY_GRID_LINKS: HomeCategoryLink[] = POPULAR_CATEGORY_LINKS.filter(
-  (category) => category.label !== "其他",
-);
+export const HOME_CATEGORY_GRID_LINKS: HomeCategoryLink[] =
+  POPULAR_CATEGORY_LINKS.filter((category) => category.label !== "其他");
