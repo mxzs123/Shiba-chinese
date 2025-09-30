@@ -74,28 +74,25 @@ export function PrescriptionComplianceReminder({
   const allCompleted =
     identityCompleted && (isPrescription ? surveyCompleted : true);
 
-  const clampOffset = useCallback(
-    (x: number, y: number) => {
-      if (typeof window === "undefined") {
-        return { x, y };
-      }
+  const clampOffset = useCallback((x: number, y: number) => {
+    if (typeof window === "undefined") {
+      return { x, y };
+    }
 
-      const rect = containerRef.current?.getBoundingClientRect();
-      const width = rect?.width ?? 0;
-      const height = rect?.height ?? 0;
+    const rect = containerRef.current?.getBoundingClientRect();
+    const width = rect?.width ?? 0;
+    const height = rect?.height ?? 0;
 
-      const maxX = 0;
-      const maxY = 0;
-      const minX = -Math.max(0, window.innerWidth - width - DRAG_MARGIN);
-      const minY = -Math.max(0, window.innerHeight - height - DRAG_MARGIN);
+    const maxX = 0;
+    const maxY = 0;
+    const minX = -Math.max(0, window.innerWidth - width - DRAG_MARGIN);
+    const minY = -Math.max(0, window.innerHeight - height - DRAG_MARGIN);
 
-      return {
-        x: Math.min(Math.max(x, minX), maxX),
-        y: Math.min(Math.max(y, minY), maxY),
-      };
-    },
-    [],
-  );
+    return {
+      x: Math.min(Math.max(x, minX), maxX),
+      y: Math.min(Math.max(y, minY), maxY),
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") {

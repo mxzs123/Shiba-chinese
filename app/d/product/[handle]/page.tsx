@@ -4,18 +4,22 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { ProductCard, ProductCardQuickAdd, Price } from "app/_shared";
-import { CartProvider } from "components/cart/cart-context";
-import { ProductProvider } from "components/product/product-context";
-import { HeroGallery } from "components/product/hero-gallery";
-import { ProductDetailTabs } from "components/product/product-detail-tabs";
+import { ProductCard, ProductCardQuickAdd, Price } from "@/app/_shared";
 import { AddToCartForm } from "@/app/_shared/pages/product/AddToCartForm";
 import { ReassuranceNotice } from "@/app/_shared/pages/product/ReassuranceNotice";
 import { HomeQuickCategoryShortcuts } from "@/app/_shared/pages/home/HomeQuickCategoryShortcuts";
-import { getCart, getProduct, getProductRecommendations } from "lib/api";
-import type { Image, Product, ProductVariant } from "lib/api/types";
-import { isDiscountedPrice } from "lib/pricing";
-import { cn } from "lib/utils";
+import {
+  loadProductPageData,
+  selectPrimaryVariant,
+  type GalleryImage,
+} from "@/app/_shared/pages/product/shared";
+import { CartProvider } from "@/components/cart/cart-context";
+import { ProductProvider } from "@/components/product/product-context";
+import { HeroGallery } from "@/components/product/hero-gallery";
+import { ProductDetailTabs } from "@/components/product/product-detail-tabs";
+import type { Product } from "@/lib/api/types";
+import { isDiscountedPrice } from "@/lib/pricing";
+import { cn } from "@/lib/utils";
 import { Building2, Globe2, ShieldCheck, Stethoscope } from "lucide-react";
 
 type PageParams = {
@@ -26,156 +30,16 @@ type PageProps = {
   params: Promise<PageParams>;
 };
 
-type ProductDetailRow = {
-  label: string;
-  value: string;
+type ProductHeroProps = {
+  product: Product;
+  images: GalleryImage[];
 };
 
-type GuidelineSection = {
+type FeatureHighlight = {
   title: string;
-  body: string;
+  description: string;
+  icon: typeof Globe2;
 };
-
-type GalleryImage = {
-  src: string;
-  altText: string;
-};
-
-function selectPrimaryVariant(product: Product): ProductVariant | undefined {
-  if (!product.variants.length) {
-    return undefined;
-  }
-
-  return product.variants[0];
-}
-
-function buildProductJsonLd(product: Product) {
-  const variant = selectPrimaryVariant(product);
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.title,
-    description: product.description,
-    image: product.featuredImage?.url,
-    offers: {
-      "@type": "Offer",
-      availability: product.availableForSale
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      priceCurrency:
-        variant?.price.currencyCode ||
-        product.priceRange.minVariantPrice.currencyCode,
-      price: variant?.price.amount || product.priceRange.minVariantPrice.amount,
-    },
-  };
-}
-
-function parseTaggedData(tags: string[], prefix: string) {
-  return tags.reduce<Record<string, string>>((acc, tag) => {
-    if (!tag.startsWith(prefix)) {
-      return acc;
-    }
-
-    const raw = tag.slice(prefix.length);
-    const [key, ...rest] = raw.split("=");
-    const value = rest.join("=").trim();
-
-    if (key && value) {
-      acc[key.trim()] = value;
-    }
-
-    return acc;
-  }, {});
-}
-
-function getProductDetailRows(product: Product): ProductDetailRow[] {
-  const detailMap = parseTaggedData(product.tags, "detail:");
-  const optionSummary = product.options
-    .map((option) => `${option.name}：${option.values.join(" / ")}`)
-    .join("；");
-  const defaults: Array<{
-    key: string;
-    label: string;
-    fallback?: string;
-  }> = [
-    {
-      key: "jp_name",
-      label: "日语商品名",
-      fallback: product.title,
-    },
-    {
-      key: "manufacturer",
-      label: "制造商",
-    },
-    {
-      key: "seller",
-      label: "销售商",
-    },
-    {
-      key: "content_volume",
-      label: "内容量",
-      fallback: optionSummary || "以实际包装为准",
-    },
-  ];
-
-  const rows = defaults.map(({ key, label, fallback }) => ({
-    label,
-    value: detailMap[key] || fallback || "资料更新中",
-  }));
-
-  const extraRows = Object.entries(detailMap).filter(
-    ([key]) => !defaults.some((detail) => detail.key === key),
-  );
-
-  return [
-    ...rows,
-    ...extraRows.map(([key, value]) => ({
-      label: key,
-      value,
-    })),
-  ];
-}
-
-function getUsageGuidelines(product: Product): GuidelineSection[] {
-  const guidelineMap = parseTaggedData(product.tags, "guideline:");
-  const defaults: Array<{
-    key: string;
-    title: string;
-    fallback: string;
-  }> = [
-    {
-      key: "usage",
-      title: "用法用量",
-      fallback: "请遵照包装说明书或专业药剂师指导使用，切勿超量服用。",
-    },
-    {
-      key: "caution",
-      title: "注意事项",
-      fallback: "如您正处于孕期、哺乳期或有基础疾病，请先咨询医生再行使用。",
-    },
-    {
-      key: "storage",
-      title: "存储建议",
-      fallback: "置于阴凉干燥处保存，避免阳光直射，并远离儿童可触及的位置。",
-    },
-  ];
-  const usedKeys = new Set(defaults.map((item) => item.key));
-
-  const sections = defaults.map(({ key, title, fallback }) => ({
-    title,
-    body: guidelineMap[key] || fallback,
-  }));
-
-  const extraSections = Object.entries(guidelineMap)
-    .filter(([key]) => !usedKeys.has(key))
-    .map(([key, body]) => ({
-      title: key,
-      body,
-    }));
-
-  return [...sections, ...extraSections];
-}
 
 function ProductHeroGalleryFallback() {
   return (
@@ -196,8 +60,8 @@ function AvailabilityBadge({ available }: { available: boolean }) {
       role="status"
     >
       <span
-        aria-hidden
         className={`mr-2 inline-block h-2 w-2 rounded-full ${indicatorClass}`}
+        aria-hidden
       />
       {label}
     </span>
@@ -235,13 +99,7 @@ function Breadcrumbs({ title }: { title: string }) {
   );
 }
 
-function ProductHero({
-  product,
-  images,
-}: {
-  product: Product;
-  images: GalleryImage[];
-}) {
+function ProductHero({ product, images }: ProductHeroProps) {
   const variant = selectPrimaryVariant(product);
   const price = variant?.price || product.priceRange.minVariantPrice;
   const originalPrice =
@@ -286,6 +144,8 @@ function ProductHero({
               originalConvertedClassName="text-sm font-medium text-neutral-400"
               originalConvertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400/60"
               badgeClassName="px-2 py-0.5 text-sm font-semibold text-emerald-600 bg-emerald-500/10"
+              originalColumnAlign="start"
+              discountLayout="start"
             />
             <AddToCartForm product={product} />
           </div>
@@ -297,7 +157,7 @@ function ProductHero({
 }
 
 function FeatureHighlights() {
-  const features = [
+  const features: FeatureHighlight[] = [
     {
       title: "全球直送",
       description:
@@ -395,21 +255,21 @@ function RelatedProducts({ products }: { products: Product[] }) {
 
 export default async function DesktopProductPage(props: PageProps) {
   const params = await props.params;
-  const product = await getProduct(params.handle);
+  const data = await loadProductPageData(params.handle);
 
-  if (!product) {
+  if (!data) {
     return notFound();
   }
 
-  const productJsonLd = buildProductJsonLd(product);
-  const images = product.images.slice(0, 6).map((image: Image) => ({
-    src: image.url,
-    altText: image.altText,
-  }));
-  const cartPromise = getCart();
-  const recommended = await getProductRecommendations(product.id);
-  const detailRows = getProductDetailRows(product);
-  const usageSections = getUsageGuidelines(product);
+  const {
+    product,
+    cartPromise,
+    productJsonLd,
+    images,
+    recommended,
+    detailRows,
+    guidelineSections,
+  } = data;
 
   return (
     <CartProvider cartPromise={cartPromise}>
@@ -430,7 +290,7 @@ export default async function DesktopProductPage(props: PageProps) {
               descriptionFallback={
                 product.description || "商品说明将于后端接入后同步展示。"
               }
-              guidelineSections={usageSections}
+              guidelineSections={guidelineSections}
             />
             <FeatureHighlights />
             <RelatedProducts products={recommended} />

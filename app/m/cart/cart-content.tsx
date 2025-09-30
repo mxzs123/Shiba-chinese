@@ -414,9 +414,7 @@ export function MobileCartContent() {
       </div>
 
       {/* 底部固定栏 */}
-      <div
-        className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 border-t border-neutral-200 bg-white px-4 py-4 shadow-[0_-2px_8px_rgba(0,0,0,0.08)]"
-      >
+      <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 border-t border-neutral-200 bg-white px-4 py-4 shadow-[0_-2px_8px_rgba(0,0,0,0.08)]">
         <div className="flex items-center justify-between gap-4">
           <button
             type="button"

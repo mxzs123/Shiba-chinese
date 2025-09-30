@@ -43,7 +43,9 @@ export function AddToCartButton({
       className={className}
       loading={loading}
       loadingText={loadingText}
-      leadingIcon={<ShoppingCart className="h-3.5 w-3.5 xl:h-4 xl:w-4" aria-hidden />}
+      leadingIcon={
+        <ShoppingCart className="h-3.5 w-3.5 xl:h-4 xl:w-4" aria-hidden />
+      }
     >
       {children ?? "加入购物车"}
     </PrimaryButton>

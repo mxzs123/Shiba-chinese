@@ -3,18 +3,23 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-import { ProductCard, ProductCardQuickAdd, Price } from "app/_shared";
-import { CartProvider } from "components/cart/cart-context";
-import { ProductProvider } from "components/product/product-context";
-import { Gallery } from "components/product/gallery";
-import Prose from "components/prose";
-import { getCart, getProduct, getProductRecommendations } from "lib/api";
-import type { Image, Product, ProductVariant } from "lib/api/types";
-import { HIDDEN_PRODUCT_TAG } from "lib/constants";
-import { isDiscountedPrice } from "lib/pricing";
-import { cn } from "lib/utils";
+import { ProductCard, ProductCardQuickAdd, Price } from "@/app/_shared";
+import { CartProvider } from "@/components/cart/cart-context";
+import { ProductProvider } from "@/components/product/product-context";
+import { Gallery } from "@/components/product/gallery";
+import Prose from "@/components/prose";
+import { getProduct } from "@/lib/api";
+import type { Product } from "@/lib/api/types";
+import { HIDDEN_PRODUCT_TAG } from "@/lib/constants";
+import { isDiscountedPrice } from "@/lib/pricing";
+import { cn } from "@/lib/utils";
 
 import { AddToCartForm } from "./AddToCartForm";
+import {
+  loadProductPageData,
+  selectPrimaryVariant,
+  type GalleryImage,
+} from "./shared";
 
 type PageParams = {
   handle: string;
@@ -23,36 +28,6 @@ type PageParams = {
 type PageProps = {
   params: Promise<PageParams>;
 };
-
-function selectPrimaryVariant(product: Product): ProductVariant | undefined {
-  if (!product.variants.length) {
-    return undefined;
-  }
-
-  return product.variants[0];
-}
-
-function buildProductJsonLd(product: Product) {
-  const variant = selectPrimaryVariant(product);
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.title,
-    description: product.description,
-    image: product.featuredImage?.url,
-    offers: {
-      "@type": "Offer",
-      availability: product.availableForSale
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-      priceCurrency:
-        variant?.price.currencyCode ||
-        product.priceRange.minVariantPrice.currencyCode,
-      price: variant?.price.amount || product.priceRange.minVariantPrice.amount,
-    },
-  };
-}
 
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const params = await props.params;
@@ -156,6 +131,8 @@ function ProductHighlights({ product }: { product: Product }) {
           originalConvertedClassName="text-xs font-medium text-neutral-400"
           originalConvertedCurrencyClassName="text-[11px] font-medium uppercase tracking-wide text-neutral-400/60"
           badgeClassName="px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-500/10"
+          originalColumnAlign="start"
+          discountLayout="start"
         />
         <span className="text-xs text-neutral-500">
           含税价 · 下单后 24 小时内出库
@@ -218,21 +195,26 @@ function RelatedProducts({ products }: { products: Product[] }) {
   );
 }
 
+function ProductGallery({ images }: { images: GalleryImage[] }) {
+  return (
+    <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
+      <Suspense fallback={<GalleryFallback />}>
+        <Gallery images={images} />
+      </Suspense>
+    </div>
+  );
+}
+
 export async function ProductPage(props: PageProps) {
   const params = await props.params;
-  const product = await getProduct(params.handle);
+  const data = await loadProductPageData(params.handle);
 
-  if (!product) {
+  if (!data) {
     return notFound();
   }
 
-  const productJsonLd = buildProductJsonLd(product);
-  const images = product.images.slice(0, 6).map((image: Image) => ({
-    src: image.url,
-    altText: image.altText,
-  }));
-  const cartPromise = getCart();
-  const recommended = await getProductRecommendations(product.id);
+  const { product, cartPromise, productJsonLd, images, recommended } = data;
+
   const showDetails = Boolean(product.descriptionHtml);
   const showRecommendations = recommended.length > 0;
   const showSecondarySections = showDetails || showRecommendations;
@@ -247,11 +229,7 @@ export async function ProductPage(props: PageProps) {
         />
         <div className="mx-auto flex w-full max-w-(--breakpoint-2xl) flex-col gap-12 px-4 py-12">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-            <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
-              <Suspense fallback={<GalleryFallback />}>
-                <Gallery images={images} />
-              </Suspense>
-            </div>
+            <ProductGallery images={images} />
             <ProductHighlights product={product} />
           </div>
           {showSecondarySections ? (

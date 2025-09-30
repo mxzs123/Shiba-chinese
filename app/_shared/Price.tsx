@@ -24,6 +24,8 @@ export type PriceProps = {
   originalConvertedPrefix?: string;
   badge?: string;
   badgeClassName?: string;
+  originalColumnAlign?: "center" | "start" | "end";
+  discountLayout?: "balanced" | "start";
 };
 
 export function Price({
@@ -44,6 +46,8 @@ export function Price({
   originalConvertedPrefix,
   badge,
   badgeClassName,
+  originalColumnAlign = "center",
+  discountLayout = "balanced",
 }: PriceProps) {
   const currencyClasses = cn(
     showCurrencyCode ? undefined : "sr-only",
@@ -90,38 +94,76 @@ export function Price({
   const resolvedBadge = hasOriginalPrice ? (badge ?? "芝园价") : undefined;
 
   if (hasOriginalPrice) {
+    const alignDiscountStart = discountLayout === "start";
+    const alignOriginalEnd = originalColumnAlign === "end";
+    const alignOriginalStart = originalColumnAlign === "start";
+    const originalColumnClasses = cn(
+      "flex min-w-0 flex-col justify-end gap-0.5",
+      alignOriginalEnd
+        ? "items-end pr-1 text-right"
+        : alignOriginalStart
+          ? "items-start text-left"
+          : "items-center text-center",
+    );
+    const originalPriceClasses = cn(
+      "inline-flex items-baseline gap-0.5 text-xs font-medium text-neutral-400 line-through",
+      alignOriginalEnd
+        ? "justify-end"
+        : alignOriginalStart
+          ? "justify-start"
+          : "justify-center",
+      originalClassName,
+    );
+    const originalConvertedClasses = cn(
+      "inline-flex items-baseline gap-0.5 text-[10px] font-medium text-neutral-400",
+      alignOriginalEnd
+        ? "justify-end"
+        : alignOriginalStart
+          ? "justify-start"
+          : "justify-center",
+      originalConvertedClassName,
+    );
+
     return (
       <div
         className={cn(
-          "grid w-full grid-cols-[1fr_auto_1fr] items-stretch gap-2",
+          "grid w-full items-stretch gap-2",
+          alignDiscountStart
+            ? "justify-start grid-cols-[auto_auto_auto]"
+            : "grid-cols-[1fr_auto_1fr]",
           wrapperClassName,
         )}
       >
-        <div className="flex min-w-0 flex-col items-center justify-end gap-0.5 text-center">
+        <div className={originalColumnClasses}>
           <BasePrice
             amount={originalValue!.amount}
             currencyCode={originalValue!.currencyCode}
-            className={cn(
-              "inline-flex items-baseline justify-center gap-0.5 text-xs font-medium text-neutral-400 line-through",
-              originalClassName,
-            )}
+            className={originalPriceClasses}
             currencyCodeClassName={originalClasses}
           />
           {convertedOriginal ? (
             <BasePrice
               amount={convertedOriginal.amount}
               currencyCode={convertedOriginal.currencyCode}
-              className={cn(
-                "inline-flex items-baseline justify-center gap-0.5 text-[10px] font-medium text-neutral-400",
-                originalConvertedClassName,
-              )}
+              className={originalConvertedClasses}
               currencyCodeClassName={convertedOriginalClasses}
               prefix={convertedOriginalPrefix}
             />
           ) : null}
         </div>
-        <div aria-hidden className="mx-auto h-full w-px rounded-full bg-neutral-200" />
-        <div className="flex min-w-0 flex-col gap-0.5 text-left">
+        <div
+          aria-hidden
+          className={cn(
+            "h-full w-px rounded-full bg-neutral-200",
+            alignDiscountStart ? "" : "mx-auto",
+          )}
+        />
+        <div
+          className={cn(
+            "flex min-w-0 flex-col gap-0.5 text-left",
+            alignDiscountStart ? "items-start" : undefined,
+          )}
+        >
           <div className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-0.5">
             <BasePrice
               amount={value.amount}
