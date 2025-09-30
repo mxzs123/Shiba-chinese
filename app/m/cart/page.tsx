@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function MobileCartPage() {
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex min-h-screen flex-col">
       <header className="border-b border-neutral-200 bg-white px-4 py-4">
         <h1 className="text-lg font-semibold text-neutral-900">购物车</h1>
       </header>
