@@ -91,13 +91,18 @@ export function Price({
 
   if (hasOriginalPrice) {
     return (
-      <div className={cn("flex w-full items-stretch gap-2", wrapperClassName)}>
-        <div className="flex flex-col justify-center gap-0.5 text-left">
+      <div
+        className={cn(
+          "grid w-full grid-cols-[1fr_auto_1fr] items-stretch gap-2",
+          wrapperClassName,
+        )}
+      >
+        <div className="flex min-w-0 flex-col items-center justify-end gap-0.5 text-center">
           <BasePrice
             amount={originalValue!.amount}
             currencyCode={originalValue!.currencyCode}
             className={cn(
-              "inline-flex items-baseline gap-0.5 text-xs font-medium text-neutral-400 line-through",
+              "inline-flex items-baseline justify-center gap-0.5 text-xs font-medium text-neutral-400 line-through",
               originalClassName,
             )}
             currencyCodeClassName={originalClasses}
@@ -107,7 +112,7 @@ export function Price({
               amount={convertedOriginal.amount}
               currencyCode={convertedOriginal.currencyCode}
               className={cn(
-                "inline-flex items-baseline gap-0.5 text-[10px] font-medium text-neutral-400",
+                "inline-flex items-baseline justify-center gap-0.5 text-[10px] font-medium text-neutral-400",
                 originalConvertedClassName,
               )}
               currencyCodeClassName={convertedOriginalClasses}
@@ -115,8 +120,8 @@ export function Price({
             />
           ) : null}
         </div>
-        <div aria-hidden className="w-px self-stretch bg-neutral-200" />
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5 text-left">
+        <div aria-hidden className="mx-auto h-full w-px rounded-full bg-neutral-200" />
+        <div className="flex min-w-0 flex-col gap-0.5 text-left">
           <div className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-0.5">
             <BasePrice
               amount={value.amount}
