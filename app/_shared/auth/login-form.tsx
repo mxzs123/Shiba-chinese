@@ -186,20 +186,20 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
 
   return (
     <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-      <div className="flex items-center gap-3 rounded-xl bg-neutral-100 p-1">
+      <div className="flex items-center gap-2 rounded-xl border border-neutral-200 bg-neutral-50 p-1">
         {(["email", "phone"] as IdentifierType[]).map((type) => (
           <button
             key={type}
             type="button"
             onClick={() => setIdentifierType(type)}
-            className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${identifierType === type ? "bg-white text-neutral-900 shadow" : "text-neutral-500 hover:text-neutral-900"}`}
+            className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${identifierType === type ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}
           >
             使用{IDENTIFIER_LABEL[type]}
           </button>
         ))}
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-neutral-700">
+        <label className="text-sm font-semibold text-neutral-800">
           {IDENTIFIER_LABEL[identifierType]}
         </label>
         <input
@@ -212,22 +212,22 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
               : setPhone(event.target.value)
           }
           placeholder={`请输入${IDENTIFIER_LABEL[identifierType]}`}
-          className="h-11 rounded-lg border border-neutral-200 bg-white px-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200"
+          className="h-12 rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-900 outline-none transition focus:border-[#049d6a]"
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-neutral-700">密码</label>
+        <label className="text-sm font-semibold text-neutral-800">密码</label>
         <input
           type="password"
           autoComplete="current-password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           placeholder="请输入密码"
-          className="h-11 rounded-lg border border-neutral-200 bg-white px-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200"
+          className="h-12 rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-900 outline-none transition focus:border-[#049d6a]"
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-neutral-700">验证码</label>
+        <label className="text-sm font-semibold text-neutral-800">验证码</label>
         <div className="flex items-center gap-3">
           <input
             type="text"
@@ -238,19 +238,19 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
               setCaptchaCode(event.target.value.toUpperCase())
             }
             placeholder="请输入图形验证码"
-            className="h-11 flex-1 rounded-lg border border-neutral-200 bg-white px-3 text-sm uppercase tracking-[0.3em] text-neutral-900 outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200"
+            className="h-12 flex-1 rounded-xl border border-neutral-200 bg-white px-4 text-sm uppercase tracking-[0.3em] text-neutral-900 outline-none transition focus:border-[#049d6a]"
           />
           <button
             type="button"
             onClick={() => void loadCaptcha()}
             disabled={captchaLoading}
-            className="flex h-11 w-32 items-center justify-center rounded-lg border border-neutral-200 bg-white text-xs font-medium text-neutral-600 transition hover:border-neutral-300 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex h-12 w-28 items-center justify-center rounded-xl border border-neutral-200 bg-white text-xs font-medium text-neutral-600 transition hover:border-[#049d6a] hover:bg-[#049d6a]/5 hover:text-[#049d6a] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {captchaLoading ? "刷新中" : "换一张"}
           </button>
         </div>
         {captchaSrc ? (
-          <div className="mt-2 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
+          <div className="mt-2 rounded-xl border border-neutral-200 bg-neutral-50 p-3">
             <Image
               src={captchaSrc}
               alt="图形验证码"
@@ -258,18 +258,20 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
               height={52}
               unoptimized
               draggable={false}
-              className="h-14 w-full select-none rounded-md object-contain"
+              className="h-14 w-full select-none rounded-lg object-contain"
             />
           </div>
         ) : null}
       </div>
       {errorMessage ? (
-        <p className="text-sm text-red-500">{errorMessage}</p>
+        <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+          {errorMessage}
+        </div>
       ) : null}
       <button
         type="submit"
         disabled={submitting}
-        className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-neutral-900 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-2 inline-flex h-12 w-full items-center justify-center rounded-xl bg-[#049d6a] text-sm font-semibold text-white shadow-[0_4px_14px_rgba(4,157,106,0.25)] transition-all hover:bg-[#037d54] hover:shadow-[0_6px_20px_rgba(4,157,106,0.35)] disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none"
       >
         {submitting ? "登录中..." : "登录"}
       </button>
