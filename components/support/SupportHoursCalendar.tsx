@@ -88,9 +88,7 @@ export function SupportHoursCalendar({
               className={cn(baseClasses, stateClasses, todayClasses)}
             >
               <header className="flex items-center justify-between text-sm font-medium">
-                <span className="text-neutral-500">
-                  {weekdayLabel}
-                </span>
+                <span className="text-neutral-500">{weekdayLabel}</span>
                 {day.isToday ? (
                   <span className="rounded-full bg-[#049e6b] px-2 py-0.5 text-xs font-semibold text-white">
                     今天

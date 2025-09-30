@@ -52,9 +52,7 @@ export function CartSheet({
         aria-label={title}
       >
         <header className="flex items-center justify-between border-b px-6 py-4">
-          <h2 className="text-lg font-semibold text-neutral-900">
-            {title}
-          </h2>
+          <h2 className="text-lg font-semibold text-neutral-900">{title}</h2>
           <button
             type="button"
             onClick={() => onOpenChange?.(false)}

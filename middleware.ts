@@ -50,12 +50,6 @@ function applyVaryHeader(response: NextResponse, header: string) {
 export function middleware(req: NextRequest) {
   const device = resolveDevice(req);
 
-  // TEMPORARY: Mobile shell (/m) is not yet implemented.
-  // Currently, all mobile traffic falls back to the desktop shell (/d).
-  // TODO: Remove this fallback once app/m directory structure is complete.
-  const rewriteTargetDevice =
-    device === MOBILE_DEVICE_VALUE ? DESKTOP_DEVICE_VALUE : device;
-
   const { pathname } = req.nextUrl;
 
   const requestHeaders = new Headers(req.headers);
@@ -88,7 +82,7 @@ export function middleware(req: NextRequest) {
   }
 
   const destination = req.nextUrl.clone();
-  destination.pathname = `/${rewriteTargetDevice}${pathname}`;
+  destination.pathname = `/${device}${pathname}`;
 
   const response = NextResponse.rewrite(destination, {
     request: {

@@ -142,15 +142,11 @@ function ProductHighlights({ product }: { product: Product }) {
           originalValue={originalPrice}
           className={cn(
             "text-3xl font-semibold",
-            hasDiscount
-              ? "text-emerald-600"
-              : "text-neutral-900",
+            hasDiscount ? "text-emerald-600" : "text-neutral-900",
           )}
           currencyClassName={cn(
             "text-base font-medium",
-            hasDiscount
-              ? "text-emerald-600/80"
-              : "text-neutral-500",
+            hasDiscount ? "text-emerald-600/80" : "text-neutral-500",
           )}
           showConvertedPrice
           convertedClassName="text-sm font-medium text-neutral-500"

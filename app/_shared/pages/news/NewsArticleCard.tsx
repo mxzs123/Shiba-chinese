@@ -52,12 +52,7 @@ export function NewsArticleCard({
       <h3 className="text-lg font-semibold text-neutral-900 transition-colors group-hover:text-[#049e6b]">
         {article.title}
       </h3>
-      <p
-        className={cn(
-          "flex-1 text-sm text-neutral-600",
-          clampClass,
-        )}
-      >
+      <p className={cn("flex-1 text-sm text-neutral-600", clampClass)}>
         {article.summary}
       </p>
       {article.tags?.length ? (

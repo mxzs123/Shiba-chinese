@@ -34,13 +34,9 @@ export async function HomeRecommendations({
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#049e6b]">
           热门药品
         </p>
-        <h2 className="text-2xl font-bold text-neutral-900">
-          {title}
-        </h2>
+        <h2 className="text-2xl font-bold text-neutral-900">{title}</h2>
         {subtitle ? (
-          <p className="max-w-3xl text-sm text-neutral-600">
-            {subtitle}
-          </p>
+          <p className="max-w-3xl text-sm text-neutral-600">{subtitle}</p>
         ) : null}
       </header>
 

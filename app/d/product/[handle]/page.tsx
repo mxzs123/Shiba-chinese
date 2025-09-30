@@ -272,15 +272,11 @@ function ProductHero({
               originalValue={originalPrice}
               className={cn(
                 "text-4xl font-semibold",
-                hasDiscount
-                  ? "text-emerald-600"
-                  : "text-neutral-900",
+                hasDiscount ? "text-emerald-600" : "text-neutral-900",
               )}
               currencyClassName={cn(
                 "text-lg font-medium",
-                hasDiscount
-                  ? "text-emerald-600/80"
-                  : "text-neutral-500",
+                hasDiscount ? "text-emerald-600/80" : "text-neutral-500",
               )}
               showConvertedPrice
               convertedClassName="text-base font-medium text-neutral-500"

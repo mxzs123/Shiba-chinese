@@ -71,15 +71,11 @@ export function ProductCard({
           originalValue={originalPrice}
           className={cn(
             "text-xl font-semibold",
-            hasDiscount
-              ? "text-emerald-600"
-              : "text-neutral-900",
+            hasDiscount ? "text-emerald-600" : "text-neutral-900",
           )}
           currencyClassName={cn(
             "text-xs font-medium uppercase tracking-wide",
-            hasDiscount
-              ? "text-emerald-600/80"
-              : "text-neutral-400",
+            hasDiscount ? "text-emerald-600/80" : "text-neutral-400",
           )}
           showConvertedPrice
           convertedClassName="text-xs font-medium text-neutral-500"

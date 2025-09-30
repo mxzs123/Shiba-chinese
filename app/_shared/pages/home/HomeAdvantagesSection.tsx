@@ -69,9 +69,7 @@ export function HomeAdvantagesSection({
           <h2 className="text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">
             {heading}
           </h2>
-          <p className="text-base text-neutral-600 md:text-lg">
-            {subheading}
-          </p>
+          <p className="text-base text-neutral-600 md:text-lg">{subheading}</p>
         </header>
 
         <div className="mt-10 grid gap-4 md:grid-cols-2 xl:mt-12 xl:grid-cols-4">

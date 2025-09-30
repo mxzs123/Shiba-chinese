@@ -115,10 +115,7 @@ export function Price({
             />
           ) : null}
         </div>
-        <div
-          aria-hidden
-          className="w-px self-stretch bg-neutral-200"
-        />
+        <div aria-hidden className="w-px self-stretch bg-neutral-200" />
         <div className="flex flex-col gap-1 text-left">
           <div className="flex items-center gap-2">
             <BasePrice
