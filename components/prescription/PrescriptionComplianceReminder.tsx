@@ -1,14 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 
 import {
   AlertCircle,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +32,23 @@ type PrescriptionComplianceReminderProps = {
 };
 
 const STORAGE_PREFIX = "compliance-reminder";
+const POSITION_STORAGE_KEY = `${STORAGE_PREFIX}:position`;
+const DRAG_MARGIN = 24;
+const DRAG_THRESHOLD_PX = 4;
+
+type Offset = {
+  x: number;
+  y: number;
+};
+
+type DragState = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  initialX: number;
+  initialY: number;
+  dragging: boolean;
+};
 
 export function PrescriptionComplianceReminder({
   orderId,
@@ -39,11 +62,40 @@ export function PrescriptionComplianceReminder({
 }: PrescriptionComplianceReminderProps) {
   const storageKey = `${STORAGE_PREFIX}:${orderId}`;
   const [collapsed, setCollapsed] = useState(false);
+  const [offset, setOffset] = useState<Offset>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragStateRef = useRef<DragState | null>(null);
+  const suppressClickRef = useRef(false);
+  const resetSuppressTimeoutRef = useRef<number | null>(null);
 
   const isPrescription = type === "prescription";
   const surveyCompleted = pendingSurveyCount === 0;
   const allCompleted =
     identityCompleted && (isPrescription ? surveyCompleted : true);
+
+  const clampOffset = useCallback(
+    (x: number, y: number) => {
+      if (typeof window === "undefined") {
+        return { x, y };
+      }
+
+      const rect = containerRef.current?.getBoundingClientRect();
+      const width = rect?.width ?? 0;
+      const height = rect?.height ?? 0;
+
+      const maxX = 0;
+      const maxY = 0;
+      const minX = -Math.max(0, window.innerWidth - width - DRAG_MARGIN);
+      const minY = -Math.max(0, window.innerHeight - height - DRAG_MARGIN);
+
+      return {
+        x: Math.min(Math.max(x, minX), maxX),
+        y: Math.min(Math.max(y, minY), maxY),
+      };
+    },
+    [],
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -56,6 +108,80 @@ export function PrescriptionComplianceReminder({
       setCollapsed(true);
     }
   }, [storageKey]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      const stored = window.localStorage.getItem(POSITION_STORAGE_KEY);
+
+      if (stored) {
+        const parsed = JSON.parse(stored) as Partial<Offset>;
+
+        if (typeof parsed?.x === "number" && typeof parsed?.y === "number") {
+          const clamped = clampOffset(parsed.x, parsed.y);
+          setOffset(clamped);
+        }
+      }
+    } catch {
+      /* ignore storage fallback */
+    }
+  }, [clampOffset]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const handleResize = () => {
+      setOffset((prev) => clampOffset(prev.x, prev.y));
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [clampOffset]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(
+        POSITION_STORAGE_KEY,
+        JSON.stringify({ x: offset.x, y: offset.y }),
+      );
+    } catch {
+      /* ignore storage fallback */
+    }
+  }, [offset]);
+
+  useEffect(() => {
+    setOffset((prev) => {
+      const adjusted = clampOffset(prev.x, prev.y);
+
+      if (adjusted.x === prev.x && adjusted.y === prev.y) {
+        return prev;
+      }
+
+      return adjusted;
+    });
+  }, [collapsed, clampOffset]);
+
+  useEffect(() => {
+    return () => {
+      if (resetSuppressTimeoutRef.current !== null) {
+        if (typeof window !== "undefined") {
+          window.clearTimeout(resetSuppressTimeoutRef.current);
+        }
+      }
+    };
+  }, []);
 
   const handleCollapse = () => {
     setCollapsed(true);
@@ -70,6 +196,102 @@ export function PrescriptionComplianceReminder({
 
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(storageKey);
+    }
+  };
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.button !== 0) {
+      return;
+    }
+
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      initialX: offset.x,
+      initialY: offset.y,
+      dragging: false,
+    };
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+
+    if (!state || state.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const deltaX = event.clientX - state.startX;
+    const deltaY = event.clientY - state.startY;
+
+    if (!state.dragging) {
+      const distance = Math.hypot(deltaX, deltaY);
+
+      if (distance < DRAG_THRESHOLD_PX) {
+        return;
+      }
+
+      state.dragging = true;
+      setIsDragging(true);
+      event.currentTarget.setPointerCapture(state.pointerId);
+    }
+
+    const next = clampOffset(state.initialX + deltaX, state.initialY + deltaY);
+
+    setOffset((prev) => {
+      if (prev.x === next.x && prev.y === next.y) {
+        return prev;
+      }
+      return next;
+    });
+
+    event.preventDefault();
+  };
+
+  const finishDragging = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+
+    if (!state || state.pointerId !== event.pointerId) {
+      return;
+    }
+
+    if (state.dragging) {
+      const target = event.currentTarget;
+
+      if (target.hasPointerCapture(state.pointerId)) {
+        target.releasePointerCapture(state.pointerId);
+      }
+
+      setIsDragging(false);
+      suppressClickRef.current = true;
+
+      if (typeof window !== "undefined") {
+        if (resetSuppressTimeoutRef.current !== null) {
+          window.clearTimeout(resetSuppressTimeoutRef.current);
+        }
+
+        resetSuppressTimeoutRef.current = window.setTimeout(() => {
+          suppressClickRef.current = false;
+          resetSuppressTimeoutRef.current = null;
+        }, 0);
+      } else {
+        suppressClickRef.current = false;
+        resetSuppressTimeoutRef.current = null;
+      }
+    }
+
+    dragStateRef.current = null;
+  };
+
+  const handlePointerCancel = (event: ReactPointerEvent<HTMLDivElement>) => {
+    finishDragging(event);
+  };
+
+  const handleClickCapture = (event: ReactMouseEvent<HTMLDivElement>) => {
+    if (suppressClickRef.current) {
+      event.stopPropagation();
+      event.preventDefault();
+      suppressClickRef.current = false;
     }
   };
 
@@ -123,8 +345,23 @@ export function PrescriptionComplianceReminder({
   };
 
   return (
-    <div className="pointer-events-none fixed bottom-6 right-6 z-[70] flex flex-col items-end gap-3">
-      <div className="pointer-events-auto w-full max-w-md">
+    <div
+      ref={containerRef}
+      className="pointer-events-none fixed bottom-6 right-6 z-[70] flex flex-col items-end gap-3"
+      style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
+    >
+      <div
+        className={cn(
+          "pointer-events-auto w-full max-w-md",
+          isDragging ? "cursor-grabbing select-none" : "cursor-grab",
+        )}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={finishDragging}
+        onPointerCancel={handlePointerCancel}
+        onClickCapture={handleClickCapture}
+        style={{ touchAction: "none" }}
+      >
         {collapsed ? (
           renderCollapsedBadge()
         ) : (
