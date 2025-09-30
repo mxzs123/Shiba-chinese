@@ -13,6 +13,7 @@ export type ProductCardProps = {
   href?: string;
   className?: string;
   actionSlot?: ReactNode;
+  hideDescription?: boolean;
 };
 
 export function ProductCard({
@@ -20,6 +21,7 @@ export function ProductCard({
   href = `/product/${product.handle}`,
   className,
   actionSlot,
+  hideDescription = false,
 }: ProductCardProps) {
   const { featuredImage, priceRange } = product;
   const currentPrice = priceRange.minVariantPrice;
@@ -39,6 +41,11 @@ export function ProductCard({
         className="group flex flex-1 flex-col focus:outline-none"
       >
         <div className="relative block aspect-square w-full overflow-hidden">
+          {hasDiscount ? (
+            <span className="absolute left-3 top-3 z-10 inline-flex items-center rounded-full bg-emerald-500/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">
+              芝园价
+            </span>
+          ) : null}
           {featuredImage ? (
             <Image
               src={featuredImage.url}
@@ -54,36 +61,41 @@ export function ProductCard({
             </div>
           )}
         </div>
-        <div className="flex flex-1 flex-col gap-3 p-4 pb-0">
-          <div className="flex-1 space-y-2">
+        <div className="flex flex-1 flex-col gap-2.5 p-4 pb-0">
+          <div className="flex-1 space-y-1.5">
             <h3 className="text-base font-medium text-neutral-900 line-clamp-2">
               {product.title}
             </h3>
-            <p className="mt-1 text-sm text-neutral-500 line-clamp-2">
-              {product.description}
-            </p>
+            {!hideDescription && (
+              <p className="mt-0.5 text-sm text-neutral-500 line-clamp-2">
+                {product.description}
+              </p>
+            )}
           </div>
         </div>
       </Link>
-      <div className="flex flex-col gap-3 p-4 pt-3">
+      <div className="flex flex-col gap-2.5 p-4 pt-2">
         <Price
           value={currentPrice}
           originalValue={originalPrice}
           className={cn(
-            "text-xl font-semibold",
+            "text-base font-semibold",
             hasDiscount ? "text-emerald-600" : "text-neutral-900",
           )}
           currencyClassName={cn(
-            "text-xs font-medium uppercase tracking-wide",
+            "text-[10px] font-medium uppercase",
             hasDiscount ? "text-emerald-600/80" : "text-neutral-400",
           )}
           showConvertedPrice
-          convertedClassName="text-xs font-medium text-neutral-500"
-          convertedCurrencyClassName="text-[10px] font-medium uppercase tracking-wide text-neutral-400"
-          originalClassName="text-sm font-medium text-neutral-400 line-through"
-          originalCurrencyClassName="text-[11px] font-medium uppercase tracking-wide text-neutral-400/80"
-          originalConvertedClassName="text-xs font-medium text-neutral-400"
-          originalConvertedCurrencyClassName="text-[10px] font-medium uppercase tracking-wide text-neutral-400/60"
+          badge=""
+          convertedPrefix=""
+          convertedClassName="text-[11px] font-medium text-neutral-500"
+          convertedCurrencyClassName="text-[9px] font-medium uppercase text-neutral-400"
+          originalClassName="text-xs font-medium text-neutral-400 line-through"
+          originalCurrencyClassName="text-[10px] font-medium uppercase text-neutral-400/80"
+          originalConvertedPrefix=""
+          originalConvertedClassName="text-[11px] font-medium text-neutral-400"
+          originalConvertedCurrencyClassName="text-[9px] font-medium uppercase text-neutral-400/60"
           badgeClassName=""
         />
         {actionSlot ? actionSlot : null}

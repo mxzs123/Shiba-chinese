@@ -11,7 +11,7 @@ type HomeRecommendationsProps = {
 const DEFAULT_TITLE = "热门药品推荐";
 const DEFAULT_SUBTITLE = "基于近期热销与药师咨询趋势，为你精选高关注度药品";
 const DEFAULT_COLLECTION_HANDLE = "pharmacy";
-const DEFAULT_LIMIT = 4;
+const DEFAULT_LIMIT = 6;
 
 export async function HomeRecommendations({
   collectionHandle = DEFAULT_COLLECTION_HANDLE,
@@ -40,12 +40,13 @@ export async function HomeRecommendations({
         ) : null}
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 xl:grid-cols-6">
         {items.map((product) => (
           <ProductCard
             key={product.handle}
             product={product}
             className="h-full"
+            hideDescription
             actionSlot={
               <ProductCardQuickAdd product={product} className="mt-2" />
             }

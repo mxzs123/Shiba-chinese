@@ -9,7 +9,7 @@ export const PRIMARY_BUTTON_COLOR_CLASSES =
   "bg-primary text-primary-foreground transition hover:brightness-105 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500";
 
 const PRIMARY_BUTTON_BASE_CLASSES =
-  "inline-flex h-11 min-w-[2.75rem] items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold";
+  "inline-flex h-9 min-w-[2.75rem] items-center justify-center gap-1.5 rounded-xl px-6 text-sm font-semibold xl:h-11 xl:gap-2";
 
 export type PrimaryButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   leadingIcon?: ReactNode;

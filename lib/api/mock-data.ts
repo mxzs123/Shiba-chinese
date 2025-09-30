@@ -565,6 +565,306 @@ export const products: ProductRecord[] = [
     ],
     bestsellerRank: 4,
   },
+  {
+    id: "prod-omega3",
+    handle: "omega3-fish-oil",
+    availableForSale: true,
+    title: "深海鱼油 Omega-3 胶囊",
+    description: "高纯度EPA/DHA配方，支持心血管健康与大脑功能。",
+    descriptionHtml:
+      "<p>采用深海鱼类提取，经过分子蒸馏去除重金属，每粒含1000mg高浓度Omega-3。</p>",
+    options: [
+      {
+        id: "opt-omega3-count",
+        name: "规格",
+        values: ["60粒"],
+      },
+    ],
+    priceRange: {
+      minVariantPrice: { amount: "158", currencyCode: CURRENCY },
+      maxVariantPrice: { amount: "158", currencyCode: CURRENCY },
+      minCompareAtPrice: { amount: "218", currencyCode: CURRENCY },
+      maxCompareAtPrice: { amount: "218", currencyCode: CURRENCY },
+    },
+    variants: [
+      {
+        id: "var-omega3-60",
+        title: "60粒",
+        availableForSale: true,
+        selectedOptions: [{ name: "规格", value: "60粒" }],
+        price: { amount: "158", currencyCode: CURRENCY },
+        compareAtPrice: { amount: "218", currencyCode: CURRENCY },
+      },
+    ],
+    featuredImage: featuredImage(
+      "https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=1600&q=80",
+      "深海鱼油胶囊",
+    ),
+    images: [
+      featuredImage(
+        "https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=1600&q=80",
+        "深海鱼油包装",
+      ),
+    ],
+    seo: {
+      title: "深海鱼油 Omega-3 胶囊",
+      description: "高纯度EPA/DHA，支持心脑血管健康。",
+    },
+    tags: ["nutrition", "bestseller"],
+    updatedAt: `${thisYear}-05-01T10:00:00.000Z`,
+    collections: ["pharmacy", "wellness"],
+    bestsellerRank: 5,
+  },
+  {
+    id: "prod-probiotics",
+    handle: "probiotics-capsules",
+    availableForSale: true,
+    title: "复合益生菌胶囊 30粒",
+    description: "10种活性菌株，改善肠道菌群平衡，促进消化健康。",
+    descriptionHtml:
+      "<p>每粒含100亿CFU活性益生菌，采用耐酸包衣技术，确保菌株活着到达肠道。</p>",
+    options: [
+      {
+        id: "opt-probiotics-count",
+        name: "规格",
+        values: ["30粒"],
+      },
+    ],
+    priceRange: {
+      minVariantPrice: { amount: "128", currencyCode: CURRENCY },
+      maxVariantPrice: { amount: "128", currencyCode: CURRENCY },
+      minCompareAtPrice: { amount: "168", currencyCode: CURRENCY },
+      maxCompareAtPrice: { amount: "168", currencyCode: CURRENCY },
+    },
+    variants: [
+      {
+        id: "var-probiotics-30",
+        title: "30粒",
+        availableForSale: true,
+        selectedOptions: [{ name: "规格", value: "30粒" }],
+        price: { amount: "128", currencyCode: CURRENCY },
+        compareAtPrice: { amount: "168", currencyCode: CURRENCY },
+      },
+    ],
+    featuredImage: featuredImage(
+      "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?auto=format&fit=crop&w=1600&q=80",
+      "益生菌胶囊",
+    ),
+    images: [
+      featuredImage(
+        "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?auto=format&fit=crop&w=1600&q=80",
+        "益生菌包装",
+      ),
+    ],
+    seo: {
+      title: "复合益生菌胶囊",
+      description: "10种活性菌株，改善肠道健康。",
+    },
+    tags: ["wellness", "digestion"],
+    updatedAt: `${thisYear}-05-05T11:00:00.000Z`,
+    collections: ["pharmacy", "wellness"],
+    bestsellerRank: 6,
+  },
+  {
+    id: "prod-collagen",
+    handle: "collagen-peptides",
+    availableForSale: true,
+    title: "胶原蛋白肽粉 200g",
+    description: "小分子胶原蛋白肽，支持皮肤弹性与关节健康。",
+    descriptionHtml:
+      "<p>采用深海鱼皮提取，平均分子量2000道尔顿，易于人体吸收利用。</p>",
+    options: [
+      {
+        id: "opt-collagen-size",
+        name: "规格",
+        values: ["200g"],
+      },
+    ],
+    priceRange: {
+      minVariantPrice: { amount: "198", currencyCode: CURRENCY },
+      maxVariantPrice: { amount: "198", currencyCode: CURRENCY },
+      minCompareAtPrice: { amount: "268", currencyCode: CURRENCY },
+      maxCompareAtPrice: { amount: "268", currencyCode: CURRENCY },
+    },
+    variants: [
+      {
+        id: "var-collagen-200",
+        title: "200g",
+        availableForSale: true,
+        selectedOptions: [{ name: "规格", value: "200g" }],
+        price: { amount: "198", currencyCode: CURRENCY },
+        compareAtPrice: { amount: "268", currencyCode: CURRENCY },
+      },
+    ],
+    featuredImage: featuredImage(
+      "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?auto=format&fit=crop&w=1600&q=80",
+      "胶原蛋白肽粉",
+    ),
+    images: [
+      featuredImage(
+        "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?auto=format&fit=crop&w=1600&q=80",
+        "胶原蛋白包装",
+      ),
+    ],
+    seo: {
+      title: "胶原蛋白肽粉",
+      description: "小分子胶原蛋白，支持皮肤与关节健康。",
+    },
+    tags: ["beauty", "wellness"],
+    updatedAt: `${thisYear}-05-08T09:00:00.000Z`,
+    collections: ["pharmacy", "wellness"],
+    bestsellerRank: 7,
+  },
+  {
+    id: "prod-calcium",
+    handle: "calcium-vitamin-d",
+    availableForSale: true,
+    title: "钙+维生素D3 片剂",
+    description: "高效补钙配方，添加维生素D3促进钙吸收。",
+    descriptionHtml:
+      "<p>每片含钙600mg与维生素D3 400IU，适合需要补钙的成年人与老年人。</p>",
+    options: [
+      {
+        id: "opt-calcium-count",
+        name: "规格",
+        values: ["60片"],
+      },
+    ],
+    priceRange: {
+      minVariantPrice: { amount: "78", currencyCode: CURRENCY },
+      maxVariantPrice: { amount: "78", currencyCode: CURRENCY },
+      minCompareAtPrice: { amount: "108", currencyCode: CURRENCY },
+      maxCompareAtPrice: { amount: "108", currencyCode: CURRENCY },
+    },
+    variants: [
+      {
+        id: "var-calcium-60",
+        title: "60片",
+        availableForSale: true,
+        selectedOptions: [{ name: "规格", value: "60片" }],
+        price: { amount: "78", currencyCode: CURRENCY },
+        compareAtPrice: { amount: "108", currencyCode: CURRENCY },
+      },
+    ],
+    featuredImage: featuredImage(
+      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1600&q=80",
+      "钙片",
+    ),
+    images: [
+      featuredImage(
+        "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1600&q=80",
+        "钙片包装",
+      ),
+    ],
+    seo: {
+      title: "钙+维生素D3片剂",
+      description: "高效补钙，添加维生素D3促进吸收。",
+    },
+    tags: ["nutrition", "bone-health"],
+    updatedAt: `${thisYear}-05-10T10:30:00.000Z`,
+    collections: ["pharmacy", "wellness"],
+    bestsellerRank: 8,
+  },
+  {
+    id: "prod-coq10",
+    handle: "coq10-capsules",
+    availableForSale: true,
+    title: "辅酶Q10 软胶囊",
+    description: "支持心脏健康与细胞能量代谢，抗氧化配方。",
+    descriptionHtml:
+      "<p>每粒含100mg辅酶Q10，采用油溶性配方提高生物利用度。</p>",
+    options: [
+      {
+        id: "opt-coq10-count",
+        name: "规格",
+        values: ["60粒"],
+      },
+    ],
+    priceRange: {
+      minVariantPrice: { amount: "168", currencyCode: CURRENCY },
+      maxVariantPrice: { amount: "168", currencyCode: CURRENCY },
+      minCompareAtPrice: { amount: "228", currencyCode: CURRENCY },
+      maxCompareAtPrice: { amount: "228", currencyCode: CURRENCY },
+    },
+    variants: [
+      {
+        id: "var-coq10-60",
+        title: "60粒",
+        availableForSale: true,
+        selectedOptions: [{ name: "规格", value: "60粒" }],
+        price: { amount: "168", currencyCode: CURRENCY },
+        compareAtPrice: { amount: "228", currencyCode: CURRENCY },
+      },
+    ],
+    featuredImage: featuredImage(
+      "https://images.unsplash.com/photo-1550572017-4e6dbce0f44f?auto=format&fit=crop&w=1600&q=80",
+      "辅酶Q10",
+    ),
+    images: [
+      featuredImage(
+        "https://images.unsplash.com/photo-1550572017-4e6dbce0f44f?auto=format&fit=crop&w=1600&q=80",
+        "辅酶Q10包装",
+      ),
+    ],
+    seo: {
+      title: "辅酶Q10软胶囊",
+      description: "支持心脏健康与能量代谢。",
+    },
+    tags: ["heart-health", "antioxidant"],
+    updatedAt: `${thisYear}-05-12T14:00:00.000Z`,
+    collections: ["pharmacy", "wellness"],
+    bestsellerRank: 9,
+  },
+  {
+    id: "prod-lutein",
+    handle: "lutein-eye-health",
+    availableForSale: true,
+    title: "叶黄素护眼胶囊",
+    description: "蓝光防护配方，缓解眼睛疲劳，支持视网膜健康。",
+    descriptionHtml:
+      "<p>每粒含叶黄素20mg与玉米黄质4mg，特别适合长时间用眼人群。</p>",
+    options: [
+      {
+        id: "opt-lutein-count",
+        name: "规格",
+        values: ["60粒"],
+      },
+    ],
+    priceRange: {
+      minVariantPrice: { amount: "138", currencyCode: CURRENCY },
+      maxVariantPrice: { amount: "138", currencyCode: CURRENCY },
+      minCompareAtPrice: { amount: "188", currencyCode: CURRENCY },
+      maxCompareAtPrice: { amount: "188", currencyCode: CURRENCY },
+    },
+    variants: [
+      {
+        id: "var-lutein-60",
+        title: "60粒",
+        availableForSale: true,
+        selectedOptions: [{ name: "规格", value: "60粒" }],
+        price: { amount: "138", currencyCode: CURRENCY },
+        compareAtPrice: { amount: "188", currencyCode: CURRENCY },
+      },
+    ],
+    featuredImage: featuredImage(
+      "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=1600&q=80",
+      "叶黄素胶囊",
+    ),
+    images: [
+      featuredImage(
+        "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=1600&q=80",
+        "叶黄素包装",
+      ),
+    ],
+    seo: {
+      title: "叶黄素护眼胶囊",
+      description: "蓝光防护，缓解眼疲劳。",
+    },
+    tags: ["eye-health", "wellness"],
+    updatedAt: `${thisYear}-05-15T16:00:00.000Z`,
+    collections: ["pharmacy", "wellness"],
+    bestsellerRank: 10,
+  },
 ];
 
 const adhdProduct = products.find(

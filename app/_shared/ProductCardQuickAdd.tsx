@@ -81,7 +81,7 @@ export function ProductCardQuickAdd({
         onAdd={handleAdd}
         disabled={isUnavailable}
         loadingText="加入中..."
-        className="w-full justify-center"
+        className="w-full justify-center px-3 text-xs xl:px-6 xl:text-sm"
       >
         {buttonLabel}
       </AddToCartButton>
