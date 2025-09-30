@@ -63,8 +63,61 @@ export function SupportHoursCalendar({
         </p>
       </div>
 
+      {/* 移动端：横向滚动 */}
       <div
-        className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7"
+        className="flex gap-3 overflow-x-auto p-1 pb-2 md:hidden"
+        role="list"
+        aria-label="客服工作日程"
+      >
+        {schedule.map((day) => {
+          const weekdayLabel = WEEKDAY_LABELS[day.weekday];
+          const dayLabel = `${day.month}月${day.day}日`;
+
+          const baseClasses =
+            "flex min-w-[120px] flex-col gap-2 rounded-xl border p-3 transition-colors duration-200";
+          const stateClasses = day.isWorkingDay
+            ? "border-[#049e6b]/40 bg-[#049e6b]/5 text-neutral-900"
+            : "border-neutral-200 bg-white text-neutral-600";
+          const todayClasses = day.isToday
+            ? "ring-2 ring-[#049e6b] ring-offset-2 ring-offset-white"
+            : "";
+
+          return (
+            <article
+              key={day.isoDate}
+              role="listitem"
+              className={cn(baseClasses, stateClasses, todayClasses)}
+            >
+              <div className="flex items-center justify-between text-xs font-medium">
+                <span className="text-neutral-500">{weekdayLabel}</span>
+                {day.isToday ? (
+                  <span className="rounded-full bg-[#049e6b] px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                    今天
+                  </span>
+                ) : null}
+              </div>
+
+              <p className="text-lg font-semibold text-neutral-900">
+                {dayLabel}
+              </p>
+              <span
+                className={cn(
+                  "inline-flex w-fit items-center rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                  day.isWorkingDay
+                    ? "bg-[#049e6b] text-white"
+                    : "bg-neutral-200 text-neutral-600",
+                )}
+              >
+                {day.isWorkingDay ? "营业日" : "休息日"}
+              </span>
+            </article>
+          );
+        })}
+      </div>
+
+      {/* 桌面端：网格布局 */}
+      <div
+        className="hidden gap-3 md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7"
         role="list"
         aria-label="客服工作日程"
       >
