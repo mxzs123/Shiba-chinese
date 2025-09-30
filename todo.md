@@ -5,12 +5,14 @@
 ### `/d` → `/m` 路由映射
 
 #### ✅ 已实现（V1 核心功能）
+
 - ✅ `/` → `app/m/page.tsx` - 首页（轮播图、分类、活动速递、热门推荐）
 - ✅ `/cart` → `app/m/cart/page.tsx` - 购物车（商品管理、上拉抽屉显示详情）
 - ✅ `/categories` → `app/m/categories/page.tsx` - 分类页（左侧导航+右侧商品列表）
 - ✅ `/account` → `app/m/account/page.tsx` - 我的（个人中心入口）
 
 #### 🚧 待实现（V2 计划）
+
 - [ ] `/login` → `app/m/(auth)/login/page.tsx`
 - [ ] `/register` → `app/m/(auth)/register/page.tsx`
 - [ ] `/<page>` → `app/m/[page]/page.tsx` - CMS 动态页面
@@ -86,6 +88,7 @@
 ### ✅ V1 已实现的核心页面
 
 #### 首页（app/m/page.tsx）
+
 - ✅ 顶部包含搜索栏与消息中心入口（MobileHeader）
 - ✅ 轮播图（HomeHeroSection，与桌面端保持相同比例）
 - ✅ 分类快捷入口（HomeQuickCategoryShortcuts）
@@ -96,12 +99,14 @@
 - ✅ 底栏基础信息（Footer）
 
 #### 分类页（app/m/categories/page.tsx + categories-content.tsx）
+
 - ✅ 顶部保留搜索栏与消息中心（MobileHeader）
 - ✅ 左侧呈现医药品/OTC 等一级分类的垂直列表（w-24 宽度）
 - ✅ 右侧列表展示当前分类信息（包含占位，待实现商品列表）
 - ✅ 分类选中状态管理（useState + useRouter）
 
 #### 购物车页（app/m/cart/page.tsx + cart-content.tsx）
+
 - ✅ 维持桌面端的商品管理与批量操作
   - 全选/单选功能
   - 数量调整（QuantityInput）
@@ -114,6 +119,7 @@
   - 应付总计
 
 #### 我的页面（app/m/account/page.tsx）
+
 - ✅ 用户信息卡片（头像、姓名、邮箱）
 - ✅ 功能入口列表：
   - 个人信息
@@ -185,6 +191,7 @@
 ## 📊 移动端 V1 完成度总结
 
 ### ✅ 已完成（核心功能）
+
 - 移动端布局架构（mobile-app-layout）
 - 底部导航栏（首页/分类/购物车/我的）
 - 顶部栏（搜索+消息中心）
@@ -197,6 +204,7 @@
 - 生产构建成功
 
 ### 🚧 V2 待实现
+
 - 认证流程（登录/注册）
 - 商品详情页
 - 搜索功能
@@ -208,6 +216,7 @@
 - 完整的手动测试与 QA
 
 ### 📈 进度估算
+
 - V1 核心功能：**100%** ✅
 - 整体移动端完成度：**~35%**
 - 预计 V2 需完成：**~20 个页面 + 组件优化**

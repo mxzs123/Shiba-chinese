@@ -1,7 +1,7 @@
 import { getNotifications } from "lib/api";
 import { MobileHeader } from "components/layout/mobile-header";
 import { HomeHeroSection } from "app/_shared/pages/home/HomeHeroSection";
-import { HomeQuickCategoryShortcuts } from "app/_shared/pages/home/HomeQuickCategoryShortcuts";
+import { MobileQuickCategoryShortcuts } from "app/_shared/pages/home/MobileQuickCategoryShortcuts";
 import { HomeActivityNotice } from "app/_shared/pages/home/HomeActivityNotice";
 import { HomeRecommendations } from "app/_shared/pages/home/HomeRecommendations";
 import { HomeAdvantagesSection } from "app/_shared/pages/home/HomeAdvantagesSection";
@@ -26,7 +26,7 @@ export default async function MobileHomePage() {
       <MobileHeader notifications={notifications} />
       <div className="flex flex-col gap-6 px-4 pt-4">
         <HomeHeroSection />
-        <HomeQuickCategoryShortcuts />
+        <MobileQuickCategoryShortcuts />
         <HomeActivityNotice />
         <section>
           <h2 className="mb-4 text-lg font-semibold">热门药品推荐</h2>
