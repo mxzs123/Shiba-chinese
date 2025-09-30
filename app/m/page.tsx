@@ -28,10 +28,7 @@ export default async function MobileHomePage() {
         <HomeHeroSection />
         <MobileQuickCategoryShortcuts />
         <HomeActivityNotice />
-        <section>
-          <h2 className="mb-4 text-lg font-semibold">热门药品推荐</h2>
-          <HomeRecommendations />
-        </section>
+        <HomeRecommendations showBadge={false} />
         <HomeAdvantagesSection />
         <HomeSupportScheduleSection />
       </div>

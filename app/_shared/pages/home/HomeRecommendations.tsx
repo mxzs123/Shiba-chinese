@@ -6,6 +6,8 @@ type HomeRecommendationsProps = {
   title?: string;
   subtitle?: string;
   limit?: number;
+  showBadge?: boolean;
+  showTitle?: boolean;
 };
 
 const DEFAULT_TITLE = "热门药品推荐";
@@ -18,6 +20,8 @@ export async function HomeRecommendations({
   title = DEFAULT_TITLE,
   subtitle = DEFAULT_SUBTITLE,
   limit = DEFAULT_LIMIT,
+  showBadge = true,
+  showTitle = true,
 }: HomeRecommendationsProps) {
   const products = await getCollectionProducts({
     collection: collectionHandle,
@@ -28,17 +32,26 @@ export async function HomeRecommendations({
     return null;
   }
 
+  const hasHeaderContent =
+    showBadge || (showTitle && !!title) || (!!subtitle && subtitle.length > 0);
+
   return (
     <section className="mx-auto w-full max-w-(--breakpoint-2xl) px-4 pb-12 sm:px-6 lg:px-8">
-      <header className="flex flex-col gap-2 pb-6">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#049e6b]">
-          热门药品
-        </p>
-        <h2 className="text-2xl font-bold text-neutral-900">{title}</h2>
-        {subtitle ? (
-          <p className="max-w-3xl text-sm text-neutral-600">{subtitle}</p>
-        ) : null}
-      </header>
+      {hasHeaderContent ? (
+        <header className="flex flex-col gap-2 pb-6">
+          {showBadge ? (
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#049e6b]">
+              热门药品
+            </p>
+          ) : null}
+          {showTitle && title ? (
+            <h2 className="text-2xl font-bold text-neutral-900">{title}</h2>
+          ) : null}
+          {subtitle ? (
+            <p className="max-w-3xl text-sm text-neutral-600">{subtitle}</p>
+          ) : null}
+        </header>
+      ) : null}
 
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-6">
         {items.map((product) => (
