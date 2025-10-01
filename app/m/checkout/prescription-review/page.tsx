@@ -24,13 +24,13 @@ export default async function PrescriptionReviewPage() {
   const customer = sessionUser ?? fallbackUser;
 
   if (!customer) {
-    redirect("/checkout/success");
+    redirect("/m/checkout/success");
   }
 
   const reviewState = await loadPrescriptionReviewState(customer);
 
   if (!reviewState) {
-    redirect("/checkout/success");
+    redirect("/m/checkout/success");
   }
 
   const { order, pendingAssignments, identityCompleted } = reviewState;

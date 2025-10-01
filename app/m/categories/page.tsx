@@ -1,4 +1,8 @@
-import { getNotifications, getProducts } from "lib/api";
+import {
+  getCollectionProducts,
+  getNotifications,
+  getProducts,
+} from "lib/api";
 import { MobileHeader } from "components/layout/mobile-header";
 import { MobileCategoriesContent } from "./categories-content";
 import { DESKTOP_SEARCH_CATEGORIES } from "app/_shared/search/config";
@@ -24,7 +28,11 @@ export default async function MobileCategoriesPage({
   let products = await getProducts({});
 
   if (category) {
-    if (category.source.type === "query") {
+    if (category.source.type === "collection") {
+      products = await getCollectionProducts({
+        collection: category.source.handle,
+      });
+    } else if (category.source.type === "query") {
       products = await getProducts({ query: category.source.value });
     }
   }

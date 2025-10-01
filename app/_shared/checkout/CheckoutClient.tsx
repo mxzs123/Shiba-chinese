@@ -228,6 +228,7 @@ export function CheckoutClient({
   const [pointsError, setPointsError] = useState<string | null>(null);
   const [pointsSuccess, setPointsSuccess] = useState<string | null>(null);
   const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const checkoutRouteBase = variant === "mobile" ? "/m/checkout" : "/checkout";
 
   useEffect(() => {
     if (!addresses.length) {
@@ -624,8 +625,8 @@ export function CheckoutClient({
     setPaymentStep("idle");
     router.push(
       requiresPrescriptionReview
-        ? "/checkout/prescription-review"
-        : "/checkout/success",
+        ? `${checkoutRouteBase}/prescription-review`
+        : `${checkoutRouteBase}/success`,
     );
   };
 
@@ -641,7 +642,7 @@ export function CheckoutClient({
     clearRedirectTimer();
     setPaymentModalOpen(false);
     setPaymentStep("idle");
-    router.push("/checkout/failed");
+    router.push(`${checkoutRouteBase}/failed`);
   };
 
   useEffect(() => {

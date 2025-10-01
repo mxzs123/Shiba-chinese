@@ -15,7 +15,7 @@ export default function CheckoutFailedPage() {
       description="支付请求尚未完成，可能是扫码超时或资金方未确认。您可以重新返回结算页调整支付方式。"
       primaryAction={{
         ...checkoutResultPlaceholders.retryPayment,
-        href: "/checkout",
+        href: "/m/checkout",
       }}
       secondaryActions={[
         {
