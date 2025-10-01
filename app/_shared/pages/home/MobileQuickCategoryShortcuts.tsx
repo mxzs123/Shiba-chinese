@@ -40,7 +40,7 @@ export function MobileQuickCategoryShortcuts({
   return (
     <section className={cn("", className)}>
       <nav aria-label="品类快速导航">
-        <ul className="grid grid-cols-4 gap-3 overflow-hidden rounded-2xl bg-white p-4 shadow-sm">
+        <ul className="grid grid-cols-4 gap-6 bg-white px-4 py-6">
           {categories.map((category) => {
             const Icon =
               categoryIcons[category.label as keyof typeof categoryIcons];
@@ -48,17 +48,15 @@ export function MobileQuickCategoryShortcuts({
               <li key={category.label}>
                 <Link
                   href={category.href}
-                  className="flex flex-col items-center gap-2 transition-all duration-200 active:scale-95"
+                  className="flex flex-col items-center gap-2 transition-opacity active:opacity-60"
                 >
                   {Icon && (
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#049e6b]/10 to-[#049e6b]/5">
-                      <Icon
-                        className="h-5 w-5 text-[#049e6b]"
-                        strokeWidth={2}
-                      />
-                    </div>
+                    <Icon
+                      className="h-10 w-10 text-[#049e6b]"
+                      strokeWidth={1.5}
+                    />
                   )}
-                  <span className="text-center text-xs font-medium leading-tight text-neutral-700">
+                  <span className="text-center text-xs text-neutral-600">
                     {category.label}
                   </span>
                 </Link>

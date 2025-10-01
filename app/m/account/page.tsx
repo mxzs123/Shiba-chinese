@@ -1,14 +1,58 @@
 import Link from "next/link";
-import { ChevronRight, User as UserIcon } from "lucide-react";
+import {
+  User as UserIcon,
+  MapPin,
+  Ticket,
+  FileCheck,
+  Crown,
+  Package,
+} from "lucide-react";
 
 import { getCurrentUser, getUserById } from "lib/api";
-import { ACCOUNT_NAV_ITEMS } from "app/_shared/account/nav-items";
-import { cn } from "lib/utils";
 
 export const metadata = {
   title: "我的",
   description: "个人中心",
 };
+
+const ACCOUNT_FEATURES = [
+  {
+    key: "orders",
+    label: "订单管理",
+    icon: Package,
+    href: "/account/orders",
+  },
+  {
+    key: "addresses",
+    label: "收货地址",
+    icon: MapPin,
+    href: "/account/addresses",
+  },
+  {
+    key: "coupons",
+    label: "优惠券",
+    icon: Ticket,
+    href: "/account/coupons",
+  },
+  {
+    key: "profile",
+    label: "个人信息",
+    icon: UserIcon,
+    href: "/account/profile",
+  },
+  {
+    key: "surveys",
+    label: "我的审核",
+    icon: FileCheck,
+    href: "/account/surveys",
+  },
+  {
+    key: "membership",
+    label: "会员权益",
+    icon: Crown,
+    href: "/account/membership",
+  },
+] as const;
 
 export default async function MobileAccountPage() {
   const [sessionUser, fallbackUser] = await Promise.all([
@@ -41,27 +85,32 @@ export default async function MobileAccountPage() {
         </div>
       </div>
 
-      {/* 功能菜单 */}
-      <div className="mt-4 space-y-3 px-4 pb-24">
-        {ACCOUNT_NAV_ITEMS.map((item, index) => (
-          <Link
-            key={item.key}
-            href={item.href}
-            className={cn(
-              "flex items-center justify-between rounded-xl bg-white p-4 transition-shadow hover:shadow-md",
-              index === 0 && "mt-0",
-            )}
-          >
-            <div className="flex-1">
-              <h2 className="font-medium text-neutral-900">{item.label}</h2>
-              <p className="mt-1 text-xs text-neutral-500">
-                {item.description}
-              </p>
-            </div>
-            <ChevronRight className="h-5 w-5 flex-none text-neutral-400" />
-          </Link>
-        ))}
+      {/* 我的服务 */}
+      <div className="mx-4 mt-4 rounded-2xl bg-white px-4 py-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-neutral-900">
+          我的服务
+        </h2>
+        <div className="grid grid-cols-3 gap-6">
+          {ACCOUNT_FEATURES.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <Link
+                key={feature.key}
+                href={feature.href}
+                className="flex flex-col items-center transition-opacity active:opacity-60"
+              >
+                <Icon className="h-10 w-10 text-[#049e6b]" strokeWidth={1.5} />
+                <span className="mt-2 text-sm text-neutral-600">
+                  {feature.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </div>
+
+      {/* 底部留白 */}
+      <div className="pb-24"></div>
     </div>
   );
 }
