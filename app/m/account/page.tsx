@@ -66,21 +66,46 @@ export default async function MobileAccountPage() {
     return null;
   }
 
+  const membership = user.membership;
+  const loyalty = user.loyalty;
+
   return (
     <div className="flex h-screen flex-col overflow-y-auto bg-neutral-50">
       {/* 用户信息卡片 */}
       <div className="bg-gradient-to-br from-primary to-primary/80 p-6 text-white">
-        <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20">
-            <UserIcon className="h-8 w-8" />
+        {/* 用户名 */}
+        <div className="mb-4">
+          <h1 className="text-xl font-semibold">
+            {user.firstName || user.lastName
+              ? `${user.lastName || ""}${user.firstName || ""}`
+              : "您好"}
+          </h1>
+          <p className="mt-1 text-sm text-white/80">{user.email}</p>
+        </div>
+
+        {/* 会员等级和积分 */}
+        <div className="grid grid-cols-2 gap-3">
+          {/* 会员等级 */}
+          <div className="rounded-xl bg-white/10 p-3 backdrop-blur-sm">
+            <p className="text-xs text-white/70">会员等级</p>
+            {membership ? (
+              <div className="mt-2">
+                <p className="text-lg font-semibold">{membership.tier}</p>
+                <p className="mt-0.5 text-xs text-white/80">
+                  Lv.{membership.level}
+                </p>
+              </div>
+            ) : (
+              <p className="mt-2 text-sm text-white/80">暂无会员</p>
+            )}
           </div>
-          <div>
-            <h1 className="text-xl font-semibold">
-              {user.firstName || user.lastName
-                ? `${user.lastName || ""}${user.firstName || ""}`
-                : user.email || "用户"}
-            </h1>
-            <p className="mt-1 text-sm text-white/80">{user.email}</p>
+
+          {/* 积分余额 */}
+          <div className="rounded-xl bg-white/10 p-3 backdrop-blur-sm">
+            <p className="text-xs text-white/70">当前积分</p>
+            <p className="mt-2 text-lg font-semibold">
+              {loyalty?.balance?.toLocaleString() || 0}
+            </p>
           </div>
         </div>
       </div>
