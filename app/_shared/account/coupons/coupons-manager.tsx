@@ -22,13 +22,12 @@ const FILTERS: Array<{
   label: string;
 }> = [
   { key: "all", label: "全部" },
-  { key: "active", label: "可用" },
-  { key: "scheduled", label: "待生效" },
+  { key: "unused", label: "未使用" },
   { key: "used", label: "已使用" },
-  { key: "expired", label: "已过期" },
+  { key: "expired", label: "过期" },
 ];
 
-type FilterKey = "all" | CustomerCouponState;
+type FilterKey = "all" | "unused" | "used" | "expired";
 
 type CouponsManagerProps = {
   userId: string;
@@ -50,10 +49,17 @@ export default function CouponsManager({
   }, [coupons]);
 
   const filteredCoupons = useMemo(() => {
-    if (filter === "all") {
-      return items;
-    }
-    return items.filter((entry) => entry.state === filter);
+    return items.filter((entry) => {
+      if (filter === "all") {
+        return true;
+      }
+
+      if (filter === "unused") {
+        return entry.state === "active" || entry.state === "scheduled";
+      }
+
+      return entry.state === filter;
+    });
   }, [items, filter]);
 
   const handleRedeem = (code: string) => {

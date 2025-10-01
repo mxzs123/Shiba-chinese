@@ -2,7 +2,9 @@ import { getCurrentUser, getUserById } from "@/lib/api";
 
 import AddressesManager from "./addresses/addresses-manager";
 
-export async function AccountAddressesPanel() {
+export async function AccountAddressesPanel({
+  showHeader = true,
+}: { showHeader?: boolean } = {}) {
   const [sessionUser, fallbackUser] = await Promise.all([
     getCurrentUser(),
     getUserById("user-demo"),
@@ -23,12 +25,14 @@ export async function AccountAddressesPanel() {
 
   return (
     <section className="rounded-3xl border border-neutral-100 bg-white/90 p-8 shadow-lg shadow-neutral-900/5">
-      <header className="mb-6 space-y-1">
-        <h2 className="text-xl font-semibold text-neutral-900">收货地址</h2>
-        <p className="text-sm text-neutral-500">
-          维护常用地址信息，设置默认收货地址以便快速下单。
-        </p>
-      </header>
+      {showHeader ? (
+        <header className="mb-6 space-y-1">
+          <h2 className="text-xl font-semibold text-neutral-900">收货地址</h2>
+          <p className="text-sm text-neutral-500">
+            维护常用地址信息，设置默认收货地址以便快速下单。
+          </p>
+        </header>
+      ) : null}
       <AddressesManager user={user} />
     </section>
   );

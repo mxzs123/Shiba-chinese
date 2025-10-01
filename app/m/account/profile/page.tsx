@@ -3,14 +3,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-import { AccountMembershipPanel } from "@/app/_shared/account";
+import { AccountProfilePanel } from "@/app/_shared/account";
 
 export const metadata: Metadata = {
-  title: "会员权益",
-  description: "查看当前会员等级、积分余额与权益信息。",
+  title: "个人信息管理",
+  description: "更新姓名与联系方式，保持账户资料最新。",
 };
 
-export default function MobileMembershipPage() {
+export default function MobileAccountProfilePage() {
   return (
     <div className="flex min-h-screen flex-col bg-neutral-50 pb-24">
       <header className="px-4 pb-4 pt-6">
@@ -24,16 +24,17 @@ export default function MobileMembershipPage() {
           </Link>
           <div>
             <h1 className="text-2xl font-semibold text-neutral-900">
-              会员权益
+              个人信息
             </h1>
             <p className="mt-1 text-xs text-neutral-500">
-              查看当前等级、积分余额与专属权益
+              更新姓名与联系方式，保持账户资料最新。
             </p>
           </div>
         </div>
       </header>
+
       <div className="flex-1 px-4 pb-6">
-        <AccountMembershipPanel />
+        <AccountProfilePanel showHeader={false} />
       </div>
     </div>
   );

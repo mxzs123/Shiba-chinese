@@ -29,10 +29,12 @@ function formatDate(value?: string) {
 
 type AccountSurveyDetailProps = {
   assignmentId: string;
+  showBackLink?: boolean;
 };
 
 export async function AccountSurveyDetail({
   assignmentId,
+  showBackLink = true,
 }: AccountSurveyDetailProps) {
   const assignment = await getSurveyAssignmentById(assignmentId);
 
@@ -64,13 +66,15 @@ export async function AccountSurveyDetail({
     <section className="space-y-6 rounded-3xl border border-neutral-100 bg-white/80 p-8 shadow-lg shadow-neutral-900/5">
       <header className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-2">
-          <Link
-            href="/account/surveys"
-            prefetch
-            className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-500 transition hover:text-neutral-900"
-          >
-            ← 返回我的问卷
-          </Link>
+          {showBackLink ? (
+            <Link
+              href="/account/surveys"
+              prefetch
+              className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-500 transition hover:text-neutral-900"
+            >
+              ← 返回我的问卷
+            </Link>
+          ) : null}
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
               {assignment.status === "submitted" ? "已提交" : "待填写"}

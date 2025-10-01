@@ -2,7 +2,10 @@ import { getCurrentUser, getCustomerCoupons, getUserById } from "@/lib/api";
 
 import CouponsManager from "./coupons/coupons-manager";
 
-export async function AccountCouponsPanel() {
+export async function AccountCouponsPanel({
+  showTitle = true,
+  showDescription = true,
+}: { showTitle?: boolean; showDescription?: boolean } = {}) {
   const [sessionUser, fallbackUser] = await Promise.all([
     getCurrentUser(),
     getUserById("user-demo"),
@@ -26,10 +29,14 @@ export async function AccountCouponsPanel() {
   return (
     <section className="rounded-3xl border border-neutral-100 bg-white/90 p-8 shadow-lg shadow-neutral-900/5">
       <header className="mb-6 space-y-1">
-        <h2 className="text-xl font-semibold text-neutral-900">优惠券</h2>
-        <p className="text-sm text-neutral-500">
-          查看账户已有优惠券，输入兑换码即可添加到个人中心。
-        </p>
+        {showTitle ? (
+          <h2 className="text-xl font-semibold text-neutral-900">优惠券</h2>
+        ) : null}
+        {showDescription ? (
+          <p className="text-sm text-neutral-500">
+            查看账户已有优惠券，输入兑换码即可添加到个人中心。
+          </p>
+        ) : null}
       </header>
       <CouponsManager userId={user.id} coupons={coupons} />
     </section>

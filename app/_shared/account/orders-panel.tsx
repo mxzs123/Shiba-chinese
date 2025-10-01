@@ -76,9 +76,7 @@ export async function AccountOrdersPanel() {
 
 export default AccountOrdersPanel;
 
-export async function loadAccountOrdersState(): Promise<
-  AccountOrdersState | null
-> {
+export async function loadAccountOrdersState(): Promise<AccountOrdersState | null> {
   const [sessionUser, fallbackUser] = await Promise.all([
     getCurrentUser(),
     getUserById("user-demo"),

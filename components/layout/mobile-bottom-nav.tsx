@@ -32,7 +32,8 @@ export function MobileBottomNav() {
         {navItems.map((item) => {
           const isActive =
             normalizedPathname === item.href ||
-            (item.href !== "/" && normalizedPathname.startsWith(`${item.href}/`));
+            (item.href !== "/" &&
+              normalizedPathname.startsWith(`${item.href}/`));
           const Icon = item.icon;
           const isCart = item.href === "/cart";
 
