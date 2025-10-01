@@ -31,6 +31,7 @@ type IdentityVerificationCardProps = {
   verification?: IdentityVerification;
   action: typeof submitIdentityVerificationAction;
   highlighted?: boolean;
+  variant?: "default" | "mobile";
 };
 
 type LocalDocumentState = {
@@ -64,6 +65,7 @@ export function IdentityVerificationCard({
   verification,
   action,
   highlighted = false,
+  variant = "default",
 }: IdentityVerificationCardProps) {
   const router = useRouter();
   const updateUser = useAuthStore((state) => state.updateUser);
@@ -220,12 +222,17 @@ export function IdentityVerificationCard({
   };
 
   if (status === "verified") {
+    const verifiedBaseClass =
+      variant === "mobile"
+        ? "overflow-hidden rounded-2xl border bg-white/90 shadow-lg shadow-neutral-900/5 transition-all"
+        : "overflow-hidden rounded-3xl border bg-white/90 shadow-lg shadow-neutral-900/5 transition-all";
+
     return (
       <section
         id="identity-verification"
         ref={cardRef}
         className={cn(
-          "overflow-hidden rounded-3xl border bg-white/90 shadow-lg shadow-neutral-900/5 transition-all",
+          verifiedBaseClass,
           highlighted
             ? "border-green-400 shadow-green-200/60 ring-2 ring-green-200"
             : "border-green-100",
@@ -274,12 +281,17 @@ export function IdentityVerificationCard({
     );
   }
 
+  const baseSectionClass =
+    variant === "mobile"
+      ? "rounded-2xl border border-neutral-100 bg-white/90 p-6 shadow-lg shadow-neutral-900/5"
+      : "rounded-3xl border border-neutral-100 bg-white/90 p-8 shadow-lg shadow-neutral-900/5";
+
   return (
     <section
       id="identity-verification"
       ref={cardRef}
       className={cn(
-        "rounded-3xl border border-neutral-100 bg-white/90 p-8 shadow-lg shadow-neutral-900/5",
+        baseSectionClass,
         highlighted &&
           "border-amber-400 shadow-amber-200/60 ring-2 ring-amber-200 motion-safe:animate-[pulse_1.6s_ease-in-out_2]",
       )}

@@ -14,11 +14,29 @@ import { submitIdentityVerificationAction } from "./actions";
 type AccountSurveysPanelProps = {
   highlightPending?: boolean;
   highlightIdentity?: boolean;
+  variant?: "default" | "mobile";
 };
+
+function getPanelClasses(variant: "default" | "mobile") {
+  if (variant === "mobile") {
+    return "space-y-6 rounded-2xl border border-neutral-100 bg-white/80 p-6 shadow-lg shadow-neutral-900/5";
+  }
+
+  return "space-y-6 rounded-3xl border border-neutral-100 bg-white/80 p-8 shadow-lg shadow-neutral-900/5";
+}
+
+function getFallbackClasses(variant: "default" | "mobile") {
+  if (variant === "mobile") {
+    return "rounded-2xl border border-neutral-100 bg-white/80 p-6 text-center shadow-lg shadow-neutral-900/5";
+  }
+
+  return "rounded-3xl border border-neutral-100 bg-white/80 p-8 text-center shadow-lg shadow-neutral-900/5";
+}
 
 export async function AccountSurveysPanel({
   highlightPending = false,
   highlightIdentity = false,
+  variant = "default",
 }: AccountSurveysPanelProps) {
   const [sessionUser, fallbackUser] = await Promise.all([
     getCurrentUser(),
@@ -29,7 +47,7 @@ export async function AccountSurveysPanel({
 
   if (!user) {
     return (
-      <section className="rounded-3xl border border-neutral-100 bg-white/80 p-10 text-center shadow-lg shadow-neutral-900/5">
+      <section className={getFallbackClasses(variant)}>
         <h2 className="text-xl font-semibold text-neutral-900">我的审核</h2>
         <p className="mt-3 text-sm text-neutral-500">
           暂未获取到示例用户数据，请稍后再试。
@@ -83,9 +101,10 @@ export async function AccountSurveysPanel({
         verification={user.identityVerification}
         action={submitIdentityVerificationAction}
         highlighted={highlightIdentity}
+        variant={variant}
       />
 
-      <section className="space-y-6 rounded-3xl border border-neutral-100 bg-white/80 p-8 shadow-lg shadow-neutral-900/5">
+      <section className={getPanelClasses(variant)}>
         <header className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-neutral-900">

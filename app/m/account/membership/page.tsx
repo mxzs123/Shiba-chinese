@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
+import { MobileContentContainer } from "@/app/_shared/layouts/mobile-content-container";
 import { AccountMembershipPanel } from "@/app/_shared/account";
 
 export const metadata: Metadata = {
@@ -13,8 +14,8 @@ export const metadata: Metadata = {
 export default function MobileMembershipPage() {
   return (
     <div className="flex min-h-screen flex-col bg-neutral-50 pb-24">
-      <header className="px-4 pb-4 pt-6">
-        <div className="flex items-center gap-3">
+      <MobileContentContainer className="pt-6">
+        <header className="flex items-center gap-3">
           <Link
             href="/account"
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 shadow-sm active:scale-95"
@@ -30,11 +31,11 @@ export default function MobileMembershipPage() {
               查看当前等级、积分余额与专属权益
             </p>
           </div>
-        </div>
-      </header>
-      <div className="flex-1 px-4 pb-6">
-        <AccountMembershipPanel />
-      </div>
+        </header>
+      </MobileContentContainer>
+      <MobileContentContainer className="flex-1 pt-0">
+        <AccountMembershipPanel variant="mobile" />
+      </MobileContentContainer>
     </div>
   );
 }

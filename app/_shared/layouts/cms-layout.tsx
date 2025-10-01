@@ -6,7 +6,9 @@ export function CmsLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <div className="w-full">
-        <div className="mx-8 max-w-2xl py-20 sm:mx-auto">{children}</div>
+        <div className="w-full max-w-2xl mx-auto px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
+          {children}
+        </div>
       </div>
       <Footer />
     </>

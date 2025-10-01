@@ -20,7 +20,37 @@ function formatDate(value: string | undefined) {
   }).format(date);
 }
 
-export async function AccountMembershipPanel() {
+type AccountMembershipPanelProps = {
+  variant?: "default" | "mobile";
+};
+
+function getPanelClasses(variant: "default" | "mobile") {
+  if (variant === "mobile") {
+    return "rounded-2xl border border-neutral-100 bg-white/90 p-6 shadow-lg shadow-neutral-900/5";
+  }
+
+  return "rounded-3xl border border-neutral-100 bg-white/90 p-8 shadow-lg shadow-neutral-900/5";
+}
+
+function getGradientPanelClasses(variant: "default" | "mobile") {
+  if (variant === "mobile") {
+    return "rounded-2xl border border-neutral-100 bg-gradient-to-br from-[#049e6b]/10 via-white to-white p-6 shadow-lg shadow-neutral-900/5";
+  }
+
+  return "rounded-3xl border border-neutral-100 bg-gradient-to-br from-[#049e6b]/10 via-white to-white p-8 shadow-lg shadow-neutral-900/5";
+}
+
+function getFallbackClasses(variant: "default" | "mobile") {
+  if (variant === "mobile") {
+    return "rounded-2xl border border-neutral-100 bg-white/80 p-6 text-center shadow-lg shadow-neutral-900/5";
+  }
+
+  return "rounded-3xl border border-neutral-100 bg-white/80 p-8 text-center shadow-lg shadow-neutral-900/5";
+}
+
+export async function AccountMembershipPanel({
+  variant = "default",
+}: AccountMembershipPanelProps = {}) {
   const [sessionUser, fallbackUser] = await Promise.all([
     getCurrentUser(),
     getUserById("user-demo"),
@@ -30,7 +60,7 @@ export async function AccountMembershipPanel() {
 
   if (!user) {
     return (
-      <section className="rounded-3xl border border-neutral-100 bg-white/80 p-8 text-center shadow-lg shadow-neutral-900/5">
+      <section className={getFallbackClasses(variant)}>
         <h2 className="text-xl font-semibold text-neutral-900">会员权益</h2>
         <p className="mt-3 text-sm text-neutral-500">
           暂未获取到账户信息，请稍后再试。
@@ -44,20 +74,21 @@ export async function AccountMembershipPanel() {
 
   return (
     <section className="space-y-6">
-      <MembershipCard membership={membership} />
-      <LoyaltyCard loyalty={loyalty} />
+      <MembershipCard membership={membership} variant={variant} />
+      <LoyaltyCard loyalty={loyalty} variant={variant} />
     </section>
   );
 }
 
 type MembershipCardProps = {
   membership?: Membership;
+  variant: "default" | "mobile";
 };
 
-function MembershipCard({ membership }: MembershipCardProps) {
+function MembershipCard({ membership, variant }: MembershipCardProps) {
   if (!membership) {
     return (
-      <div className="rounded-3xl border border-neutral-100 bg-white/80 p-8 text-center shadow-lg shadow-neutral-900/5">
+      <div className={getFallbackClasses(variant)}>
         <h2 className="text-xl font-semibold text-neutral-900">会员等级</h2>
         <p className="mt-3 text-sm text-neutral-500">
           当前账号尚未加入会员，完成首单后将自动开通基础会员权益。
@@ -67,7 +98,7 @@ function MembershipCard({ membership }: MembershipCardProps) {
   }
 
   return (
-    <div className="rounded-3xl border border-neutral-100 bg-gradient-to-br from-[#049e6b]/10 via-white to-white p-8 shadow-lg shadow-neutral-900/5">
+    <div className={getGradientPanelClasses(variant)}>
       <header className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h2 className="text-xl font-semibold text-neutral-900">会员等级</h2>
@@ -133,12 +164,13 @@ function MembershipCard({ membership }: MembershipCardProps) {
 
 type LoyaltyCardProps = {
   loyalty?: PointAccount;
+  variant: "default" | "mobile";
 };
 
-function LoyaltyCard({ loyalty }: LoyaltyCardProps) {
+function LoyaltyCard({ loyalty, variant }: LoyaltyCardProps) {
   if (!loyalty) {
     return (
-      <div className="rounded-3xl border border-neutral-100 bg-white/80 p-8 text-center shadow-lg shadow-neutral-900/5">
+      <div className={getFallbackClasses(variant)}>
         <h2 className="text-xl font-semibold text-neutral-900">积分账户</h2>
         <p className="mt-3 text-sm text-neutral-500">
           当前暂无积分记录，完成订单或参与活动即可累积积分。
@@ -150,7 +182,7 @@ function LoyaltyCard({ loyalty }: LoyaltyCardProps) {
   const recentTransactions = loyalty.transactions.slice(0, 4);
 
   return (
-    <div className="rounded-3xl border border-neutral-100 bg-white/90 p-8 shadow-lg shadow-neutral-900/5">
+    <div className={getPanelClasses(variant)}>
       <header className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h2 className="text-xl font-semibold text-neutral-900">积分账户</h2>

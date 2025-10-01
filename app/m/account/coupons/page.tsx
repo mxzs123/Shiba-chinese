@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
+import { MobileContentContainer } from "@/app/_shared/layouts/mobile-content-container";
 import { AccountCouponsPanel } from "@/app/_shared/account";
 
 export const metadata: Metadata = {
@@ -13,8 +14,8 @@ export const metadata: Metadata = {
 export default function MobileAccountCouponsPage() {
   return (
     <div className="flex min-h-screen flex-col bg-neutral-50 pb-24">
-      <header className="px-4 pb-4 pt-6">
-        <div className="flex items-center gap-3">
+      <MobileContentContainer className="pt-6">
+        <header className="flex items-center gap-3">
           <Link
             href="/account"
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 shadow-sm active:scale-95"
@@ -28,12 +29,16 @@ export default function MobileAccountCouponsPage() {
               查看优惠券状态，输入兑换码即可添加到账户。
             </p>
           </div>
-        </div>
-      </header>
+        </header>
+      </MobileContentContainer>
 
-      <div className="flex-1 px-4 pb-6">
-        <AccountCouponsPanel showTitle={false} showDescription={false} />
-      </div>
+      <MobileContentContainer className="flex-1 pt-0">
+        <AccountCouponsPanel
+          variant="mobile"
+          showTitle={false}
+          showDescription={false}
+        />
+      </MobileContentContainer>
     </div>
   );
 }
