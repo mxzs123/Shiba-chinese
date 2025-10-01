@@ -13,10 +13,11 @@ import {
   type ProductDetailRow,
 } from "@/app/_shared/pages/product/shared";
 import { CartProvider } from "@/components/cart/cart-context";
-import { MobileBackButton } from "@/components/mobile/mobile-back-button";
+import { MobileHeader } from "@/components/layout/mobile-header";
 import { ProductProvider } from "@/components/product/product-context";
 import { Gallery } from "@/components/product/gallery";
 import Prose from "@/components/prose";
+import { getNotifications } from "@/lib/api";
 import type { Product } from "@/lib/api/types";
 import { isDiscountedPrice } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
@@ -71,8 +72,7 @@ function AvailabilityBadge({ available }: { available: boolean }) {
 
 function MobileProductGallery({ images }: MobileGalleryProps) {
   return (
-    <div className="relative bg-white px-4 pb-6 pt-4">
-      <MobileBackButton />
+    <div className="bg-white px-4 pb-6 pt-4">
       <Suspense fallback={<GalleryFallback />}>
         <Gallery images={images} />
       </Suspense>
@@ -244,9 +244,12 @@ export default async function MobileProductPage({ params }: MobilePageProps) {
     guidelineSections,
   } = data;
 
+  const notifications = await getNotifications();
+
   return (
     <CartProvider cartPromise={cartPromise}>
       <ProductProvider>
+        <MobileHeader notifications={notifications} leadingVariant="back" />
         <script
           // eslint-disable-next-line react/no-danger
           type="application/ld+json"

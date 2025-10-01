@@ -84,28 +84,28 @@ export default async function MobileAccountPage() {
         </div>
 
         {/* 会员等级和积分 */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-white/20">
           {/* 会员等级 */}
-          <div className="rounded-xl bg-white/10 p-3 backdrop-blur-sm">
-            <p className="text-xs text-white/70">会员等级</p>
+          <div className="p-4 text-center">
             {membership ? (
-              <div className="mt-2">
-                <p className="text-lg font-semibold">{membership.tier}</p>
-                <p className="mt-0.5 text-xs text-white/80">
-                  Lv.{membership.level}
-                </p>
-              </div>
+              <>
+                <p className="text-xl font-bold">{membership.tier}</p>
+                <p className="mt-1 text-xs text-white/90">Lv.{membership.level}</p>
+              </>
             ) : (
-              <p className="mt-2 text-sm text-white/80">暂无会员</p>
+              <>
+                <p className="text-xl font-bold">--</p>
+                <p className="mt-1 text-xs text-white/90">会员等级</p>
+              </>
             )}
           </div>
 
           {/* 积分余额 */}
-          <div className="rounded-xl bg-white/10 p-3 backdrop-blur-sm">
-            <p className="text-xs text-white/70">当前积分</p>
-            <p className="mt-2 text-lg font-semibold">
+          <div className="p-4 text-center">
+            <p className="text-xl font-bold">
               {loyalty?.balance?.toLocaleString() || 0}
             </p>
+            <p className="mt-1 text-xs text-white/90">积分</p>
           </div>
         </div>
       </div>

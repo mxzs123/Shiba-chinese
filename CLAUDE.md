@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **当前开发状态**:
 
 - 桌面端外壳 (`/d`) 已完成,包含所有核心业务流程
-- 移动端外壳 (`/m`) 尚未实现,当前移动设备访问会自动回退到桌面版本
+- 移动端外壳 (`/m`) 尚未实现,
 - 所有业务逻辑已在 `app/_shared/` 中实现,为移动端开发做好准备
 
 ## 技术栈

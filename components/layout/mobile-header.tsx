@@ -2,24 +2,45 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Search } from "lucide-react";
-import { useState } from "react";
+import { ChevronLeft, Search } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import type { Notification } from "lib/api/types";
 import { NotificationLink } from "components/notifications/notification-link";
+import LogoSquare from "components/logo-square";
 
 type MobileHeaderProps = {
-  notifications: Notification[];
+  notifications?: Notification[];
   showSearchInput?: boolean;
+  leadingVariant?: "auto" | "logo" | "back";
 };
 
 export function MobileHeader({
   notifications,
   showSearchInput = false,
+  leadingVariant = "auto",
 }: MobileHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const safeNotifications = useMemo(() => notifications ?? [], [notifications]);
+
+  const resolvedLeadingVariant = useMemo(() => {
+    if (leadingVariant === "auto") {
+      return pathname === "/" ? "logo" : "back";
+    }
+
+    return leadingVariant;
+  }, [leadingVariant, pathname]);
+
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+      return;
+    }
+
+    router.push("/");
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +52,20 @@ export function MobileHeader({
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white px-4 py-3">
       <div className="flex items-center gap-3">
+        {resolvedLeadingVariant === "logo" ? (
+          <Link href="/" className="flex-none" aria-label="返回首页">
+            <LogoSquare size="sm" />
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={handleBack}
+            aria-label="返回上一页"
+            className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition hover:border-neutral-300 hover:bg-neutral-50"
+          >
+            <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />
+          </button>
+        )}
         {showSearchInput ? (
           <form onSubmit={handleSearchSubmit} className="flex-1">
             <div className="relative">
@@ -53,7 +88,7 @@ export function MobileHeader({
             </div>
           </Link>
         )}
-        <NotificationLink notifications={notifications} />
+        <NotificationLink notifications={safeNotifications} />
       </div>
     </header>
   );

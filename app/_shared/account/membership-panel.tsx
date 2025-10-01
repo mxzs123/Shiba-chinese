@@ -75,7 +75,7 @@ function MembershipCard({ membership }: MembershipCardProps) {
             当前等级享受多项专属福利，持续消费可解锁更高等级。
           </p>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-full bg-[#049e6b] px-4 py-1 text-sm font-semibold text-white">
+        <div className="inline-flex items-center gap-2 self-start rounded-full bg-[#049e6b] px-4 py-1 text-sm font-semibold text-white">
           {membership.tier}
           <span className="rounded-full bg-white/20 px-2 py-0.5 text-xs">
             Lv.{membership.level}
