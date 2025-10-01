@@ -13,6 +13,7 @@ import {
   type ProductDetailRow,
 } from "@/app/_shared/pages/product/shared";
 import { CartProvider } from "@/components/cart/cart-context";
+import { MobileBackButton } from "@/components/mobile/mobile-back-button";
 import { ProductProvider } from "@/components/product/product-context";
 import { Gallery } from "@/components/product/gallery";
 import Prose from "@/components/prose";
@@ -70,7 +71,8 @@ function AvailabilityBadge({ available }: { available: boolean }) {
 
 function MobileProductGallery({ images }: MobileGalleryProps) {
   return (
-    <div className="bg-white px-4 pb-6 pt-4">
+    <div className="relative bg-white px-4 pb-6 pt-4">
+      <MobileBackButton />
       <Suspense fallback={<GalleryFallback />}>
         <Gallery images={images} />
       </Suspense>
@@ -120,7 +122,6 @@ function MobileProductSummary({ product }: MobileSummaryProps) {
           discountLayout="start"
         />
       </div>
-      <AddToCartForm product={product} />
     </section>
   );
 }
@@ -251,7 +252,7 @@ export default async function MobileProductPage({ params }: MobilePageProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
         />
-        <div className="flex min-h-screen flex-col gap-4 bg-neutral-50 pb-12">
+        <div className="flex min-h-screen flex-col gap-4 bg-neutral-50 pb-32">
           <MobileProductGallery images={images} />
           <MobileProductSummary product={product} />
           <ReassuranceNotice className="mx-4" />
@@ -260,7 +261,21 @@ export default async function MobileProductPage({ params }: MobilePageProps) {
           <MobileDescription product={product} />
           <MobileRecommendations products={recommended} />
         </div>
+        <MobileProductPurchaseBar product={product} />
       </ProductProvider>
     </CartProvider>
+  );
+}
+
+function MobileProductPurchaseBar({ product }: { product: Product }) {
+  return (
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white px-4 pt-3 pb-3 shadow-[0_-4px_16px_rgba(15,23,42,0.12)]"
+      style={{
+        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)",
+      }}
+    >
+      <AddToCartForm product={product} variant="inline" />
+    </div>
   );
 }

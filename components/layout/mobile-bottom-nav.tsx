@@ -20,6 +20,10 @@ export function MobileBottomNav() {
   const { cart } = useCart();
   const cartQuantity = cart?.totalQuantity ?? 0;
 
+  if (pathname?.startsWith("/product/")) {
+    return null;
+  }
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white shadow-[0_-2px_8px_rgba(0,0,0,0.08)]">
       <div className="grid h-16 grid-cols-4">

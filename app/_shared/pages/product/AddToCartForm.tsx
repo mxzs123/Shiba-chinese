@@ -8,6 +8,7 @@ import { addItem } from "components/cart/actions";
 import { useCart } from "components/cart/cart-context";
 import { QuantityInput } from "components/quantity-input";
 import type { Product, ProductVariant } from "lib/api/types";
+import { cn } from "lib/utils";
 
 function getPrimaryVariant(product: Product): ProductVariant | undefined {
   if (!product.variants.length) {
@@ -17,7 +18,15 @@ function getPrimaryVariant(product: Product): ProductVariant | undefined {
   return product.variants[0];
 }
 
-export function AddToCartForm({ product }: { product: Product }) {
+type AddToCartFormProps = {
+  product: Product;
+  variant?: "default" | "inline";
+};
+
+export function AddToCartForm({
+  product,
+  variant = "default",
+}: AddToCartFormProps) {
   const { addCartItem } = useCart();
   const primaryVariant = getPrimaryVariant(product);
   const [quantity, setQuantity] = useState(1);
@@ -59,28 +68,62 @@ export function AddToCartForm({ product }: { product: Product }) {
   const isDisabled =
     !product.availableForSale || !primaryVariant?.availableForSale;
 
+  const isInline = variant === "inline";
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <span className="text-sm font-medium text-neutral-800">购买数量</span>
-        <QuantityInput
-          value={quantity}
-          onChange={handleQuantityChange}
-          min={1}
-          max={99}
-          decrementAriaLabel="减少数量"
-          incrementAriaLabel="增加数量"
-          inputAriaLabel="购买数量输入"
-        />
-      </div>
-      <AddToCartButton
-        onAdd={handleAdd}
-        disabled={isDisabled}
-        loadingText="加入中..."
-        className="w-full justify-center px-6 py-3 text-base font-semibold"
-      >
-        加入购物车
-      </AddToCartButton>
+    <div
+      className={cn(
+        "w-full",
+        isInline ? "flex items-center gap-3" : "space-y-4",
+      )}
+    >
+      {isInline ? null : (
+        <div className="flex items-center justify-between gap-4">
+          <span className="text-sm font-medium text-neutral-800">购买数量</span>
+          <QuantityInput
+            value={quantity}
+            onChange={handleQuantityChange}
+            min={1}
+            max={99}
+            decrementAriaLabel="减少数量"
+            incrementAriaLabel="增加数量"
+            inputAriaLabel="购买数量输入"
+          />
+        </div>
+      )}
+      {isInline ? (
+        <>
+          <QuantityInput
+            value={quantity}
+            onChange={handleQuantityChange}
+            min={1}
+            max={99}
+            className="flex-none"
+            buttonClassName="px-3 py-2"
+            inputClassName="w-14 text-base"
+            decrementAriaLabel="减少数量"
+            incrementAriaLabel="增加数量"
+            inputAriaLabel="购买数量输入"
+          />
+          <AddToCartButton
+            onAdd={handleAdd}
+            disabled={isDisabled}
+            loadingText="加入中..."
+            className="h-12 flex-1 justify-center rounded-lg px-4 text-base font-semibold"
+          >
+            加入购物车
+          </AddToCartButton>
+        </>
+      ) : (
+        <AddToCartButton
+          onAdd={handleAdd}
+          disabled={isDisabled}
+          loadingText="加入中..."
+          className="w-full justify-center px-6 py-3 text-base font-semibold"
+        >
+          加入购物车
+        </AddToCartButton>
+      )}
     </div>
   );
 }
