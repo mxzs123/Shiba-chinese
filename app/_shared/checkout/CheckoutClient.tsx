@@ -9,6 +9,7 @@ import { PrimaryButton } from "app/_shared";
 import { AddressFormFields } from "@/app/_shared/address";
 import { DefaultBadge } from "@/app/_shared/account/DefaultBadge";
 import { CouponRedeemForm } from "app/_shared/coupons";
+import { MobileCheckoutSummary } from "./MobileCheckoutSummary";
 import {
   addAddressAction,
   applyCouponAction,
@@ -46,6 +47,7 @@ type CheckoutClientProps = {
   availableCoupons: Coupon[];
   selectedMerchandiseIds?: string[];
   requiresPrescriptionReview?: boolean;
+  variant?: "desktop" | "mobile";
 };
 
 type AddressFormState = Omit<AddressInput, "id">;
@@ -168,6 +170,7 @@ export function CheckoutClient({
   availableCoupons,
   selectedMerchandiseIds,
   requiresPrescriptionReview = false,
+  variant = "desktop",
 }: CheckoutClientProps) {
   const router = useRouter();
   const initialAddresses = customer?.addresses ?? [];
@@ -588,8 +591,9 @@ export function CheckoutClient({
   }, [currentCart?.appliedCoupons]);
 
   const cartIsEmpty = !currentCart || currentCart.lines.length === 0;
-  const canProceedToPay =
-    !cartIsEmpty && selectedAddress && selectedShipping && selectedPayment;
+  const canProceedToPay = Boolean(
+    !cartIsEmpty && selectedAddress && selectedShipping && selectedPayment,
+  );
 
   const clearRedirectTimer = () => {
     if (redirectTimerRef.current) {
@@ -671,11 +675,19 @@ export function CheckoutClient({
     );
   }
 
+  const isMobile = variant === "mobile";
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div
+      className={cn(
+        "grid gap-8",
+        isMobile ? "grid-cols-1" : "lg:grid-cols-[minmax(0,1fr)_360px]",
+      )}
+    >
       <div
         className={cn(
           "space-y-8",
+          isMobile && "pb-[calc(6rem+env(safe-area-inset-bottom))]",
           paymentLocked && "pointer-events-none opacity-50",
         )}
       >
@@ -1125,88 +1137,105 @@ export function CheckoutClient({
         </section>
       </div>
 
-      <aside className="h-fit rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm shadow-black/[0.02]">
-        <h2 className="text-lg font-semibold text-neutral-900">订单摘要</h2>
-        <div className="mt-4 space-y-4">
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium text-neutral-600">商品列表</h3>
-            <ul className="space-y-3">
-              {(currentCart?.lines || []).map((line) => (
-                <li
-                  key={line.merchandise.id}
-                  className="flex items-start justify-between gap-4"
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-neutral-900">
-                      {line.merchandise.product.title}
-                    </p>
-                    {line.merchandise.title ? (
-                      <p className="text-xs text-neutral-500">
-                        {line.merchandise.title}
+      {!isMobile && (
+        <aside className="h-fit rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm shadow-black/[0.02]">
+          <h2 className="text-lg font-semibold text-neutral-900">订单摘要</h2>
+          <div className="mt-4 space-y-4">
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-neutral-600">商品列表</h3>
+              <ul className="space-y-3">
+                {(currentCart?.lines || []).map((line) => (
+                  <li
+                    key={line.merchandise.id}
+                    className="flex items-start justify-between gap-4"
+                  >
+                    <div>
+                      <p className="text-sm font-semibold text-neutral-900">
+                        {line.merchandise.product.title}
                       </p>
-                    ) : null}
-                    <p className="text-xs text-neutral-400">
-                      数量 × {line.quantity}
-                    </p>
-                  </div>
-                  <span className="text-sm font-semibold text-neutral-900">
-                    {formatCurrency(
-                      toNumber(line.cost.totalAmount.amount),
-                      line.cost.totalAmount.currencyCode,
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <dl className="space-y-3 border-t border-dashed border-neutral-200 pt-4 text-sm text-neutral-500">
-            <div className="flex items-center justify-between">
-              <dt>商品金额</dt>
-              <dd className="text-sm font-semibold text-neutral-900">
-                {formatCurrency(itemsSubtotal, cartCurrency)}
-              </dd>
+                      {line.merchandise.title ? (
+                        <p className="text-xs text-neutral-500">
+                          {line.merchandise.title}
+                        </p>
+                      ) : null}
+                      <p className="text-xs text-neutral-400">
+                        数量 × {line.quantity}
+                      </p>
+                    </div>
+                    <span className="text-sm font-semibold text-neutral-900">
+                      {formatCurrency(
+                        toNumber(line.cost.totalAmount.amount),
+                        line.cost.totalAmount.currencyCode,
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div className="flex items-center justify-between">
-              <dt>优惠减免</dt>
-              <dd className="text-sm font-semibold text-emerald-600">
-                {formatCurrency(-couponsTotal, cartCurrency)}
-              </dd>
-            </div>
-            {pointsApplied > 0 ? (
+            <dl className="space-y-3 border-t border-dashed border-neutral-200 pt-4 text-sm text-neutral-500">
               <div className="flex items-center justify-between">
-                <dt>积分抵扣</dt>
-                <dd className="text-sm font-semibold text-emerald-600">
-                  {formatCurrency(-pointsApplied, cartCurrency)}
+                <dt>商品金额</dt>
+                <dd className="text-sm font-semibold text-neutral-900">
+                  {formatCurrency(itemsSubtotal, cartCurrency)}
                 </dd>
               </div>
-            ) : null}
-            <div className="flex items-center justify-between">
-              <dt>运费</dt>
-              <dd className="text-sm font-semibold text-neutral-900">
-                {formatCurrency(shippingFee, cartCurrency)}
-              </dd>
-            </div>
-            <div className="flex items-center justify-between border-t border-neutral-200 pt-4 text-base font-semibold text-neutral-900">
-              <dt>应付总计</dt>
-              <dd className="text-base font-semibold text-neutral-900">
-                {formatCurrency(payable, cartCurrency)}
-              </dd>
-            </div>
-          </dl>
-          <PrimaryButton
-            type="button"
-            className="w-full justify-center"
-            onClick={handleOpenPayment}
-            disabled={!canProceedToPay || paymentModalOpen}
-          >
-            去支付
-          </PrimaryButton>
-          <p className="text-xs text-neutral-400">
-            核对信息无误后点击去支付，支付过程采用二维码方式。
-            实际支付成功以后端回调为准，当前为占位实现。
-          </p>
-        </div>
-      </aside>
+              <div className="flex items-center justify-between">
+                <dt>优惠减免</dt>
+                <dd className="text-sm font-semibold text-emerald-600">
+                  {formatCurrency(-couponsTotal, cartCurrency)}
+                </dd>
+              </div>
+              {pointsApplied > 0 ? (
+                <div className="flex items-center justify-between">
+                  <dt>积分抵扣</dt>
+                  <dd className="text-sm font-semibold text-emerald-600">
+                    {formatCurrency(-pointsApplied, cartCurrency)}
+                  </dd>
+                </div>
+              ) : null}
+              <div className="flex items-center justify-between">
+                <dt>运费</dt>
+                <dd className="text-sm font-semibold text-neutral-900">
+                  {formatCurrency(shippingFee, cartCurrency)}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between border-t border-neutral-200 pt-4 text-base font-semibold text-neutral-900">
+                <dt>应付总计</dt>
+                <dd className="text-base font-semibold text-neutral-900">
+                  {formatCurrency(payable, cartCurrency)}
+                </dd>
+              </div>
+            </dl>
+            <PrimaryButton
+              type="button"
+              className="w-full justify-center"
+              onClick={handleOpenPayment}
+              disabled={!canProceedToPay || paymentModalOpen}
+            >
+              去支付
+            </PrimaryButton>
+            <p className="text-xs text-neutral-400">
+              核对信息无误后点击去支付，支付过程采用二维码方式。
+              实际支付成功以后端回调为准，当前为占位实现。
+            </p>
+          </div>
+        </aside>
+      )}
+
+      {isMobile && (
+        <MobileCheckoutSummary
+          cartLines={currentCart?.lines || []}
+          itemsSubtotal={itemsSubtotal}
+          couponsTotal={couponsTotal}
+          pointsApplied={pointsApplied}
+          shippingFee={shippingFee}
+          payable={payable}
+          currencyCode={cartCurrency}
+          canProceedToPay={canProceedToPay}
+          onPayment={handleOpenPayment}
+          paymentDisabled={paymentModalOpen}
+        />
+      )}
 
       {paymentModalOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
