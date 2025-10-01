@@ -1,8 +1,4 @@
-import {
-  getCollectionProducts,
-  getNotifications,
-  getProducts,
-} from "lib/api";
+import { getCollectionProducts, getNotifications, getProducts } from "lib/api";
 import { MobileHeader } from "components/layout/mobile-header";
 import { MobileCategoriesContent } from "./categories-content";
 import { DESKTOP_SEARCH_CATEGORIES } from "app/_shared/search/config";

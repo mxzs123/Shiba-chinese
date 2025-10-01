@@ -251,7 +251,6 @@ export default async function MobileProductPage({ params }: MobilePageProps) {
       <ProductProvider>
         <MobileHeader notifications={notifications} leadingVariant="back" />
         <script
-          // eslint-disable-next-line react/no-danger
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
         />

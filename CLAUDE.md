@@ -92,13 +92,11 @@ middleware.ts         # 设备分流逻辑 (query → cookie → UA)
 ### 核心架构原则
 
 1. **共享页面壳 (`app/_shared/`)**
-
    - 所有业务逻辑必须在 `_shared` 中实现
    - `/d` 和 `/m` 外壳层只负责引入页面壳并传参,不包含业务逻辑
    - 新增页面时,先在 `_shared/pages/` 创建页面组件,再在外壳层引用
 
 2. **设备分流 (middleware.ts)**
-
    - 判定顺序: query `?device=d|m` → cookie `device` → User Agent
    - 所有请求重写到 `/${device}${pathname}`,地址栏保持原始 URL
    - 响应头设置 `x-device` 和 `Vary: x-device` 以隔离缓存
@@ -106,13 +104,11 @@ middleware.ts         # 设备分流逻辑 (query → cookie → UA)
    - **待开发**: 移动端外壳完成后需移除 `middleware.ts:53-57` 的 fallback 逻辑
 
 3. **数据访问 (`lib/api/`)**
-
    - 所有数据访问统一通过 `lib/api/index.ts` 中的函数
    - 未配置 `COMMERCE_API_URL` 时使用 `mock-data.ts` 中的模拟数据
    - 扩展 API 时必须同步更新 `types.ts` 和相关文档
 
 4. **状态管理**
-
    - 使用 Zustand 管理客户端状态 (store 放在 `hooks/`)
    - 登录态通过 `hooks/useAuthStore.ts` 和 `lib/api/auth-store.ts` 协同
    - Server Actions 写入 `auth_session` cookie
@@ -147,12 +143,10 @@ middleware.ts         # 设备分流逻辑 (query → cookie → UA)
    - 主题变量在 `app/globals.css` 中维护
 
 2. **图标使用**
-
    - 统一使用 `lucide-react`
    - 新增图标通过 `components/icons/` 封装并语义化命名
 
 3. **动画实现**
-
    - 使用 Framer Motion,集中声明动画变体
    - 避免分散的动画实现
 
@@ -239,18 +233,15 @@ NEXT_PUBLIC_JPY_TO_CNY_RATE=0.052
 ## 对接后端
 
 1. **API 替换**:
-
    - 在 `lib/api/index.ts` 中替换 mock 数据相关实现
    - 保持 `types.ts` 中的类型定义不变
    - 扩展分页或排序时同步前端筛选项
 
 2. **购物车存储**:
-
    - 当前基于内存 Map,可替换为 Redis 或数据库
    - 修改 `lib/api/index.ts` 中的 `getCartStore()` 实现
 
 3. **增量刷新**:
-
    - 后端 Webhook 可调用 `/api/revalidate?secret=${REVALIDATION_SECRET}`
    - 支持按 `tag` 或 `path` 触发重新验证
 

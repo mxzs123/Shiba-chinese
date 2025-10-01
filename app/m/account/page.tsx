@@ -74,7 +74,6 @@ export default async function MobileAccountPage() {
     .join("")
     .trim();
 
-
   return (
     <div className="flex h-screen flex-col overflow-y-auto bg-neutral-50">
       <section className="relative px-4 pb-6 pt-4">
@@ -120,7 +119,8 @@ export default async function MobileAccountPage() {
                 {membership?.next?.title ?? "继续保持即可解锁新权益"}
               </p>
               <p className="mt-2 text-xs text-emerald-600">
-                {membership?.next?.requirement ?? "年度消费满 ¥5,000 或积分累计 5,000 以上"}
+                {membership?.next?.requirement ??
+                  "年度消费满 ¥5,000 或积分累计 5,000 以上"}
               </p>
             </div>
           </div>

@@ -164,7 +164,7 @@
 
 ## 阶段 6 · QA 与加固 ⚠️ (部分完成)
 
-- ✅ 运行 `npm run lint` 与 `npm run prettier:check`，保持基础质量阈值
+- ✅ 运行 `npm run lint` 与 `npm run prettier:check`，保持基础质量阈值（2025-02-14 再次验证通过）
   - 已通过：ESLint 检查无错误
   - 已通过：Prettier 格式检查
   - 已通过：TypeScript 类型检查

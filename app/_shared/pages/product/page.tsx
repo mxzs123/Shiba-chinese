@@ -223,7 +223,6 @@ export async function ProductPage(props: PageProps) {
     <CartProvider cartPromise={cartPromise}>
       <ProductProvider>
         <script
-          // eslint-disable-next-line react/no-danger
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
         />

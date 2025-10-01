@@ -1,4 +1,4 @@
-export default {
+const nextConfig = {
   experimental: {
     inlineCss: true,
     useCache: true,
@@ -14,3 +14,5 @@ export default {
     ],
   },
 };
+
+export default nextConfig;
