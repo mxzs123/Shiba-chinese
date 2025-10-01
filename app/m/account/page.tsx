@@ -1,11 +1,12 @@
 import Link from "next/link";
 import {
-  User as UserIcon,
-  MapPin,
-  Ticket,
-  FileCheck,
+  ArrowRight,
   Crown,
+  FileCheck,
+  MapPin,
   Package,
+  Ticket,
+  User as UserIcon,
 } from "lucide-react";
 
 import { getCurrentUser, getUserById } from "lib/api";
@@ -68,50 +69,65 @@ export default async function MobileAccountPage() {
 
   const membership = user.membership;
   const loyalty = user.loyalty;
+  const displayName = [user.lastName, user.firstName]
+    .filter(Boolean)
+    .join("")
+    .trim();
+
 
   return (
     <div className="flex h-screen flex-col overflow-y-auto bg-neutral-50">
-      {/* 用户信息卡片 */}
-      <div className="bg-gradient-to-br from-primary to-primary/80 p-6 text-white">
-        {/* 用户名 */}
-        <div className="mb-4">
-          <h1 className="text-xl font-semibold">
-            {user.firstName || user.lastName
-              ? `${user.lastName || ""}${user.firstName || ""}`
-              : "您好"}
-          </h1>
-          <p className="mt-1 text-sm text-white/80">{user.email}</p>
-        </div>
-
-        {/* 会员等级和积分 */}
-        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-white/20">
-          {/* 会员等级 */}
-          <div className="p-4 text-center">
-            {membership ? (
-              <>
-                <p className="text-xl font-bold">{membership.tier}</p>
-                <p className="mt-1 text-xs text-white/90">Lv.{membership.level}</p>
-              </>
-            ) : (
-              <>
-                <p className="text-xl font-bold">--</p>
-                <p className="mt-1 text-xs text-white/90">会员等级</p>
-              </>
-            )}
+      <section className="relative px-4 pb-6 pt-4">
+        <div className="absolute inset-x-0 top-0 h-[220px] rounded-b-3xl bg-gradient-to-br from-[#0c8c66] via-[#0fa37f] to-[#2ab39b]" />
+        <div className="relative z-10 space-y-5">
+          <div className="space-y-1 text-white">
+            <p className="text-sm text-white/70">欢迎回来</p>
+            <h1 className="text-2xl font-semibold">
+              {displayName || "尊贵会员"}
+            </h1>
+            <p className="text-xs text-white/80">{user.email}</p>
           </div>
 
-          {/* 积分余额 */}
-          <div className="p-4 text-center">
-            <p className="text-xl font-bold">
-              {loyalty?.balance?.toLocaleString() || 0}
-            </p>
-            <p className="mt-1 text-xs text-white/90">积分</p>
+          <div className="grid gap-4 rounded-3xl bg-white/95 p-4 shadow-lg shadow-emerald-900/10 backdrop-blur">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs text-neutral-500">积分余额</p>
+                <p className="mt-1 text-2xl font-semibold text-neutral-900">
+                  {loyalty?.balance?.toLocaleString() ?? "0"}
+                </p>
+                {membership ? (
+                  <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-600">
+                    <Crown className="h-4 w-4" />
+                    {membership.tier}
+                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-700">
+                      Lv.{membership.level}
+                    </span>
+                  </span>
+                ) : null}
+              </div>
+              <Link
+                href="/account/membership"
+                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 transition hover:text-emerald-500"
+              >
+                积分账单
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+
+            <div className="rounded-2xl bg-emerald-50 px-4 py-3 text-emerald-700">
+              <p className="text-xs text-emerald-600/80">距离下一等级</p>
+              <p className="mt-1 text-sm font-semibold">
+                {membership?.next?.title ?? "继续保持即可解锁新权益"}
+              </p>
+              <p className="mt-2 text-xs text-emerald-600">
+                {membership?.next?.requirement ?? "年度消费满 ¥5,000 或积分累计 5,000 以上"}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* 我的服务 */}
-      <div className="mx-4 mt-4 rounded-2xl bg-white px-4 py-6 shadow-sm">
+      <div className="mx-4 mt-2 rounded-2xl bg-white px-4 py-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-neutral-900">
           我的服务
         </h2>
@@ -134,8 +150,7 @@ export default async function MobileAccountPage() {
         </div>
       </div>
 
-      {/* 底部留白 */}
-      <div className="pb-24"></div>
+      <div className="pb-24" />
     </div>
   );
 }
