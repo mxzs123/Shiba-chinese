@@ -17,10 +17,12 @@ const navItems = [
 
 export function MobileBottomNav() {
   const pathname = usePathname();
+  const normalizedPathname =
+    pathname?.replace(/^\/(m|d)(?=\/)/, "") ?? pathname ?? "";
   const { cart } = useCart();
   const cartQuantity = cart?.totalQuantity ?? 0;
 
-  if (pathname?.startsWith("/product/")) {
+  if (normalizedPathname.startsWith("/product/")) {
     return null;
   }
 
@@ -28,7 +30,9 @@ export function MobileBottomNav() {
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white shadow-[0_-2px_8px_rgba(0,0,0,0.08)]">
       <div className="grid h-16 grid-cols-4">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            normalizedPathname === item.href ||
+            (item.href !== "/" && normalizedPathname.startsWith(`${item.href}/`));
           const Icon = item.icon;
           const isCart = item.href === "/cart";
 

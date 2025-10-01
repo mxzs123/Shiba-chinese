@@ -29,12 +29,14 @@ type AccountOrdersViewProps = {
   orders: Order[];
   customerName?: string;
   prescriptionCompliance?: PrescriptionComplianceByOrder;
+  showContextNote?: boolean;
 };
 
 export function AccountOrdersView({
   orders,
   customerName,
   prescriptionCompliance,
+  showContextNote = false,
 }: AccountOrdersViewProps) {
   const entries = useMemo<OrderEntry[]>(
     () =>
@@ -85,12 +87,14 @@ export function AccountOrdersView({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-neutral-100 bg-white/70 px-5 py-4 text-sm text-neutral-600 shadow-inner shadow-white/40">
-        <p>
-          {customerName ? `${customerName}，` : ""}
-          当前可在这里查看所有订单进度，筛选不同状态并获取最新运单号。
-        </p>
-      </div>
+      {showContextNote ? (
+        <div className="rounded-3xl border border-neutral-100 bg-white/70 px-5 py-4 text-sm text-neutral-600 shadow-inner shadow-white/40">
+          <p>
+            {customerName ? `${customerName}，` : ""}
+            当前可在这里查看所有订单与运单信息。
+          </p>
+        </div>
+      ) : null}
 
       <div className="flex w-full items-center rounded-full border border-neutral-200 bg-neutral-100 p-1 text-sm">
         {ORDER_STAGES.map((stage) => {

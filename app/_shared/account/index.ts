@@ -1,5 +1,6 @@
 export { AccountShell } from "./account-shell";
-export { AccountOrdersPanel } from "./orders-panel";
+export { AccountOrdersPanel, loadAccountOrdersState } from "./orders-panel";
+export type { AccountOrdersState } from "./orders-panel";
 export { AccountOrderDetail } from "./account-order-detail";
 export { AccountProfilePanel } from "./profile-panel";
 export { AccountAddressesPanel } from "./addresses-panel";

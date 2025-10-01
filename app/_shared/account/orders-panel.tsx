@@ -2,9 +2,23 @@ import { AccountOrdersView } from "./account-orders-view";
 import { getCurrentUser, getUserById } from "@/lib/api";
 import { loadPrescriptionComplianceOverview } from "@/lib/prescription";
 
-function buildDisplayName(
-  user: Awaited<ReturnType<typeof getCurrentUser>>,
-): string | undefined {
+type SessionUser = Awaited<ReturnType<typeof getCurrentUser>>;
+type DemoUser = Awaited<ReturnType<typeof getUserById>>;
+
+type AccountOrdersUser = NonNullable<SessionUser | DemoUser>;
+
+type LoadOverviewResult = Awaited<
+  ReturnType<typeof loadPrescriptionComplianceOverview>
+>;
+
+export type AccountOrdersState = {
+  user: AccountOrdersUser;
+  orders: LoadOverviewResult["orders"];
+  compliance: LoadOverviewResult["byOrder"];
+  displayName?: string;
+};
+
+function buildDisplayName(user: AccountOrdersUser): string | undefined {
   if (!user) {
     return undefined;
   }
@@ -22,14 +36,9 @@ function buildDisplayName(
 }
 
 export async function AccountOrdersPanel() {
-  const [sessionUser, fallbackUser] = await Promise.all([
-    getCurrentUser(),
-    getUserById("user-demo"),
-  ]);
+  const state = await loadAccountOrdersState();
 
-  const user = sessionUser ?? fallbackUser;
-
-  if (!user) {
+  if (!state) {
     return (
       <section className="rounded-3xl border border-neutral-100 bg-white/80 p-10 text-center shadow-lg shadow-neutral-900/5">
         <h2 className="text-xl font-semibold text-neutral-900">订单管理</h2>
@@ -40,15 +49,7 @@ export async function AccountOrdersPanel() {
     );
   }
 
-  const { orders, byOrder: prescriptionCompliance } =
-    await loadPrescriptionComplianceOverview(user);
-  const sortedOrders = [...orders].sort((first, second) => {
-    const firstDate = new Date(first.createdAt).getTime();
-    const secondDate = new Date(second.createdAt).getTime();
-    return secondDate - firstDate;
-  });
-
-  const displayName = buildDisplayName(user);
+  const { orders, displayName, compliance } = state;
 
   return (
     <section className="rounded-3xl border border-neutral-100 bg-white/80 p-8 shadow-lg shadow-neutral-900/5">
@@ -60,16 +61,48 @@ export async function AccountOrdersPanel() {
           </p>
         </div>
         <div className="text-sm text-neutral-400">
-          共 {sortedOrders.length} 笔订单
+          共 {orders.length} 笔订单
         </div>
       </header>
       <AccountOrdersView
-        orders={sortedOrders}
+        orders={orders}
         customerName={displayName}
-        prescriptionCompliance={prescriptionCompliance}
+        prescriptionCompliance={compliance}
+        showContextNote
       />
     </section>
   );
 }
 
 export default AccountOrdersPanel;
+
+export async function loadAccountOrdersState(): Promise<
+  AccountOrdersState | null
+> {
+  const [sessionUser, fallbackUser] = await Promise.all([
+    getCurrentUser(),
+    getUserById("user-demo"),
+  ]);
+
+  const candidateUser = sessionUser ?? fallbackUser;
+
+  if (!candidateUser) {
+    return null;
+  }
+
+  const user = candidateUser;
+
+  const { orders, byOrder } = await loadPrescriptionComplianceOverview(user);
+  const sortedOrders = [...orders].sort((first, second) => {
+    const firstDate = new Date(first.createdAt).getTime();
+    const secondDate = new Date(second.createdAt).getTime();
+    return secondDate - firstDate;
+  });
+
+  return {
+    user,
+    orders: sortedOrders,
+    compliance: byOrder,
+    displayName: buildDisplayName(user),
+  };
+}
