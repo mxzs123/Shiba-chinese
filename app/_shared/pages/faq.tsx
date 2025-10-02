@@ -27,6 +27,10 @@ type FaqSection = {
   items: FaqItem[];
 };
 
+type FilterableFaqSection = Omit<FaqSection, "items"> & {
+  items: FaqItem[];
+};
+
 const faqSections: FaqSection[] = [
   {
     id: "orders",
@@ -252,9 +256,9 @@ function FaqItem({ item }: { item: FaqItem }) {
   return (
     <details
       id={item.id}
-      className="group rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm transition hover:border-teal-500"
+      className="group rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm transition hover:border-teal-500 sm:px-6 sm:py-4"
     >
-      <summary className="flex cursor-pointer items-center justify-between gap-4 text-left text-lg font-semibold text-neutral-900">
+      <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-xl px-1.5 py-1.5 text-left text-base font-semibold text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 sm:px-2 sm:py-2 sm:text-lg">
         {item.question}
         <span className="text-sm font-medium text-teal-600 transition group-open:rotate-45">
           +
@@ -274,11 +278,11 @@ function FaqSectionCard({ section }: { section: FaqSection }) {
       aria-labelledby={`${section.id}-title`}
       className="scroll-mt-32"
     >
-      <div className="space-y-6 rounded-3xl border border-neutral-200 bg-white p-8 shadow-sm">
+      <div className="space-y-6 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8">
         <div className="space-y-3">
           <h2
             id={`${section.id}-title`}
-            className="text-2xl font-semibold text-neutral-900"
+            className="text-xl font-semibold text-neutral-900 sm:text-2xl"
           >
             {section.title}
           </h2>
@@ -296,12 +300,147 @@ function FaqSectionCard({ section }: { section: FaqSection }) {
   );
 }
 
-function FaqSectionList({ sections }: { sections: FaqSection[] }) {
+function FaqSectionList({ sections }: { sections: FilterableFaqSection[] }) {
   return (
     <div className="space-y-10 lg:space-y-12">
       {sections.map((section) => (
         <FaqSectionCard key={section.id} section={section} />
       ))}
+    </div>
+  );
+}
+
+function FaqFilterChip({
+  href,
+  label,
+  isActive,
+}: {
+  href: string;
+  label: string;
+  isActive: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "inline-flex items-center rounded-full border px-3 py-1.5 text-sm font-medium transition",
+        isActive
+          ? "border-teal-500 bg-teal-50 text-teal-700"
+          : "border-neutral-200 bg-white text-neutral-600 hover:border-teal-500 hover:bg-teal-50 hover:text-teal-700",
+      )}
+    >
+      {label}
+    </Link>
+  );
+}
+
+function buildFaqHref({
+  query,
+  section,
+}: {
+  query?: string;
+  section?: string;
+}) {
+  const search = new URLSearchParams();
+
+  if (query) {
+    search.set("q", query);
+  }
+
+  if (section) {
+    search.set("section", section);
+  }
+
+  const params = search.toString();
+
+  return params.length > 0 ? `/faq?${params}` : "/faq";
+}
+
+function FaqSearchControls({
+  sections,
+  activeQuery,
+  activeSection,
+}: {
+  sections: FaqSection[];
+  activeQuery: string;
+  activeSection?: string;
+}) {
+  const normalizedQuery = activeQuery.trim();
+  const hasActiveSection = sections.some((section) => section.id === activeSection);
+
+  return (
+    <section className="space-y-4 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8">
+      <form
+        action="/faq"
+        className="space-y-3"
+        role="search"
+        aria-label="FAQ 搜索"
+      >
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-neutral-700" htmlFor="faq-search-input">
+            搜索常见问题
+          </label>
+          <div className="flex items-center gap-2">
+            <input
+              id="faq-search-input"
+              name="q"
+              defaultValue={normalizedQuery}
+              placeholder="输入关键词，如“退货”或“配送”"
+              className="h-11 flex-1 rounded-full border border-neutral-200 px-4 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+              inputMode="search"
+            />
+            {hasActiveSection ? (
+              <input type="hidden" name="section" value={activeSection} />
+            ) : null}
+            <button
+              type="submit"
+              className="inline-flex h-11 items-center justify-center rounded-full bg-teal-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
+            >
+              搜索
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div className="flex flex-wrap gap-2">
+        <FaqFilterChip
+          href={buildFaqHref({ query: normalizedQuery || undefined })}
+          label="全部分类"
+          isActive={!hasActiveSection}
+        />
+        {sections.map((section) => (
+          <FaqFilterChip
+            key={section.id}
+            href={buildFaqHref({
+              query: normalizedQuery || undefined,
+              section: section.id,
+            })}
+            label={section.title}
+            isActive={hasActiveSection && section.id === activeSection}
+          />
+        ))}
+      </div>
+
+      <p className="text-xs text-neutral-500">
+        搜索与筛选将在后端接入后提供实时结果，当前为占位交互以便演示流程。
+      </p>
+    </section>
+  );
+}
+
+function FaqEmptyState({ query }: { query: string }) {
+  return (
+    <div className="space-y-4 rounded-3xl border border-dashed border-neutral-200 bg-white p-12 text-center shadow-sm">
+      <p className="text-lg font-semibold text-neutral-900">暂未找到匹配结果</p>
+      <p className="text-sm text-neutral-600">
+        没有和“{query}”相关的问题。你可以尝试调整关键词，或浏览下方分类了解更多信息。
+      </p>
+      <Link
+        href="/faq"
+        className="inline-flex items-center justify-center rounded-full border border-neutral-300 px-5 py-2 text-sm font-medium text-neutral-700 transition hover:border-teal-500 hover:text-teal-700"
+      >
+        清除筛选
+      </Link>
     </div>
   );
 }
@@ -316,7 +455,7 @@ function FaqOverviewCard({
   return (
     <section
       className={cn(
-        "space-y-8 rounded-3xl border border-neutral-200 bg-white p-10 shadow-sm",
+        "space-y-8 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10",
         className,
       )}
     >
@@ -324,7 +463,7 @@ function FaqOverviewCard({
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">
           常见问题
         </p>
-        <h1 className="text-4xl font-bold text-neutral-900">
+        <h1 className="text-3xl font-bold text-neutral-900 sm:text-4xl">
           解答购买与售后最常见的疑问
         </h1>
         <p className="text-base text-neutral-600">
@@ -333,7 +472,7 @@ function FaqOverviewCard({
         </p>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         {sections.map((section) => (
           <Link
             key={section.id}
@@ -360,13 +499,64 @@ function FaqOverviewCard({
   );
 }
 
-export function FaqPage() {
+export async function FaqPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ q?: string; section?: string }>;
+}) {
+  const resolvedSearchParams = (await searchParams) ?? undefined;
+  const activeQuery = resolvedSearchParams?.q?.toString() ?? "";
+  const normalizedQuery = activeQuery.trim().toLowerCase();
+  const requestedSection = resolvedSearchParams?.section?.toString();
+  const hasValidSection = faqSections.some(
+    (section) => section.id === requestedSection,
+  );
+  const activeSection = hasValidSection ? requestedSection : undefined;
+
+  const filteredSections: FilterableFaqSection[] = faqSections
+    .filter((section) => {
+      if (!activeSection) {
+        return true;
+      }
+
+      return section.id === activeSection;
+    })
+    .map((section) => {
+      if (!normalizedQuery) {
+        return section as FilterableFaqSection;
+      }
+
+      const matchingItems = section.items.filter((item) =>
+        item.question.toLowerCase().includes(normalizedQuery),
+      );
+
+      return {
+        ...section,
+        items: matchingItems,
+      } as FilterableFaqSection;
+    })
+    .filter((section) => section.items.length > 0);
+
+  const hasQuery = normalizedQuery.length > 0;
+  const hasResults = filteredSections.length > 0;
+
   return (
     <div className="bg-neutral-50">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-6 py-12 md:px-8">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-8 sm:px-6 lg:gap-12 lg:px-8 lg:py-12">
         <FaqOverviewCard sections={faqSections} />
+        <FaqSearchControls
+          sections={faqSections}
+          activeQuery={activeQuery}
+          activeSection={activeSection}
+        />
 
-        <FaqSectionList sections={faqSections} />
+        {hasResults ? (
+          <FaqSectionList sections={filteredSections} />
+        ) : hasQuery ? (
+          <FaqEmptyState query={activeQuery.trim()} />
+        ) : (
+          <FaqSectionList sections={faqSections} />
+        )}
       </div>
     </div>
   );
