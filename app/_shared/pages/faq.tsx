@@ -366,7 +366,9 @@ function FaqSearchControls({
   activeSection?: string;
 }) {
   const normalizedQuery = activeQuery.trim();
-  const hasActiveSection = sections.some((section) => section.id === activeSection);
+  const hasActiveSection = sections.some(
+    (section) => section.id === activeSection,
+  );
 
   return (
     <section className="space-y-4 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8">
@@ -377,7 +379,10 @@ function FaqSearchControls({
         aria-label="FAQ 搜索"
       >
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-neutral-700" htmlFor="faq-search-input">
+          <label
+            className="text-sm font-medium text-neutral-700"
+            htmlFor="faq-search-input"
+          >
             搜索常见问题
           </label>
           <div className="flex items-center gap-2">
@@ -433,7 +438,8 @@ function FaqEmptyState({ query }: { query: string }) {
     <div className="space-y-4 rounded-3xl border border-dashed border-neutral-200 bg-white p-12 text-center shadow-sm">
       <p className="text-lg font-semibold text-neutral-900">暂未找到匹配结果</p>
       <p className="text-sm text-neutral-600">
-        没有和“{query}”相关的问题。你可以尝试调整关键词，或浏览下方分类了解更多信息。
+        没有和“{query}
+        ”相关的问题。你可以尝试调整关键词，或浏览下方分类了解更多信息。
       </p>
       <Link
         href="/faq"

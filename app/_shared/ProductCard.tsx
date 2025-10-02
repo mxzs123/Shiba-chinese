@@ -14,6 +14,7 @@ export type ProductCardProps = {
   className?: string;
   actionSlot?: ReactNode;
   hideDescription?: boolean;
+  compact?: boolean; // 移动端紧凑样式
 };
 
 export function ProductCard({
@@ -22,6 +23,7 @@ export function ProductCard({
   className,
   actionSlot,
   hideDescription = false,
+  compact = false,
 }: ProductCardProps) {
   const { featuredImage, priceRange } = product;
   const currentPrice = priceRange.minVariantPrice;
@@ -61,20 +63,40 @@ export function ProductCard({
             </div>
           )}
         </div>
-        <div className="flex flex-1 flex-col gap-2.5 p-4 pb-0">
-          <div className="flex-1 space-y-1.5">
-            <h3 className="text-base font-medium text-neutral-900 line-clamp-2">
+        <div
+          className={cn(
+            "flex flex-1 flex-col pb-0",
+            compact ? "gap-2 p-3" : "gap-2.5 p-4",
+          )}
+        >
+          <div className={cn("flex-1", compact ? "space-y-1" : "space-y-1.5")}>
+            <h3
+              className={cn(
+                "font-medium text-neutral-900 line-clamp-2",
+                compact ? "text-sm" : "text-base",
+              )}
+            >
               {product.title}
             </h3>
             {!hideDescription && (
-              <p className="mt-0.5 text-sm text-neutral-500 line-clamp-2">
+              <p
+                className={cn(
+                  "mt-0.5 text-neutral-500 line-clamp-2",
+                  compact ? "text-xs" : "text-sm",
+                )}
+              >
                 {product.description}
               </p>
             )}
           </div>
         </div>
       </Link>
-      <div className="flex flex-col gap-2.5 p-4 pt-2">
+      <div
+        className={cn(
+          "flex flex-col pt-2",
+          compact ? "gap-2 p-3" : "gap-2.5 p-4",
+        )}
+      >
         <Price
           value={currentPrice}
           originalValue={originalPrice}

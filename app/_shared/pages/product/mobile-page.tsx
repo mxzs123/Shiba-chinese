@@ -217,6 +217,7 @@ function MobileRecommendations({ products }: { products: Product[] }) {
           <div key={product.id} className="w-64 shrink-0">
             <ProductCard
               product={product}
+              compact
               actionSlot={<ProductCardQuickAdd product={product} />}
             />
           </div>

@@ -156,7 +156,9 @@ export function CartSheet({
                     <X className="h-5 w-5" aria-hidden />
                   </button>
                 </header>
-                <div className="flex-1 overflow-y-auto px-6 py-4">{children}</div>
+                <div className="flex-1 overflow-y-auto px-6 py-4">
+                  {children}
+                </div>
                 {footer ? (
                   <footer className="border-t px-6 py-4">{footer}</footer>
                 ) : null}

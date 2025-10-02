@@ -59,6 +59,7 @@ export async function HomeRecommendations({
             key={product.handle}
             product={product}
             className="h-full"
+            compact
             hideDescription
             actionSlot={
               <ProductCardQuickAdd product={product} className="mt-2" />
