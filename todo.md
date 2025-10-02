@@ -59,8 +59,8 @@
 
 ### 3. 体验与组件加固
 - [ ] 购物车与导航交互
-  - [ ] 测试购物车抽屉的焦点锁定、滚动穿透、返回手势
-  - [ ] 检查通知中心 Popover 在移动端的触达范围
+  - [x] 测试购物车抽屉的焦点锁定、滚动穿透、返回手势
+  - [x] 检查通知中心 Popover 在移动端的触达范围
 - [ ] 共享组件移动适配
   - [ ] 审核 `_shared/components/product/ProductCard` 的栅格与阴影，新增 `compact` 配置
   - [ ] 为 `_shared/components/sku-selector` 增加移动布局（全屏弹层/底部抽屉）

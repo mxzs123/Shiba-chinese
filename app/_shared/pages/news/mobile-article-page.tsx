@@ -69,7 +69,7 @@ export default async function SharedMobileNewsArticlePage(props: {
             <p>
               返回
               <Link
-                href="/news"
+                href="/m/news"
                 className="ml-1 inline-flex items-center gap-1 font-semibold text-primary underline-offset-4 hover:underline"
               >
                 新闻资讯列表

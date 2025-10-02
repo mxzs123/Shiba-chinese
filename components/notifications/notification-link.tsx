@@ -3,6 +3,7 @@
 import { Popover, Transition } from "@headlessui/react";
 import { Bell, X } from "lucide-react";
 import { Fragment, useCallback, useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 
 import { cn } from "@/lib/utils";
 import type { Notification, NotificationCategory } from "lib/api/types";
@@ -26,6 +27,13 @@ export function NotificationLink({ notifications }: NotificationLinkProps) {
   const unreadCount = useMemo(
     () => items.filter((entry) => !entry.readAt).length,
     [items],
+  );
+  const panelStyle = useMemo<CSSProperties>(
+    () => ({
+      width: "min(22rem, calc(100vw - 2.5rem))",
+      maxHeight: "min(72vh, 28rem)",
+    }),
+    [],
   );
 
   const markAsRead = useCallback((id: string) => {
@@ -70,7 +78,7 @@ export function NotificationLink({ notifications }: NotificationLinkProps) {
             leaveTo="opacity-0"
           >
             <Popover.Overlay
-              className="fixed inset-0 z-10 bg-transparent"
+              className="fixed inset-0 z-10 bg-black/10"
               aria-hidden="true"
             />
           </Transition>
@@ -83,7 +91,10 @@ export function NotificationLink({ notifications }: NotificationLinkProps) {
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <Popover.Panel className="absolute right-0 top-full z-20 mt-3 w-[22rem] origin-top-right rounded-2xl border border-neutral-200 bg-white p-4 shadow-lg focus:outline-none">
+            <Popover.Panel
+              className="absolute right-0 top-full z-20 mt-3 origin-top-right rounded-2xl border border-neutral-200 bg-white p-4 shadow-lg focus:outline-none sm:w-[22rem]"
+              style={panelStyle}
+            >
               <NotificationContent
                 grouped={grouped}
                 hasNotifications={items.length > 0}

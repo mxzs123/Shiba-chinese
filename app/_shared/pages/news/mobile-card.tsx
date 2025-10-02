@@ -20,9 +20,11 @@ export function MobileNewsArticleCard({
     minute: "2-digit",
   }).format(new Date(article.publishedAt));
 
+  const href = `/m/news/${article.slug}`;
+
   return (
     <Link
-      href={article.href}
+      href={href}
       className={cn(
         "group block rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition hover:border-primary/60 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         className,
