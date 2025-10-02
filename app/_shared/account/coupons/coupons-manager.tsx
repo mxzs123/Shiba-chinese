@@ -1,19 +1,16 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-  type ComponentType,
-} from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { BadgeCheck, Clock, Gift, PartyPopper } from "lucide-react";
 
-import type { CustomerCoupon, CustomerCouponState } from "@/lib/api/types";
+import type { CustomerCoupon } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
-import { CouponRedeemForm } from "@/app/_shared/coupons";
+import {
+  CouponCard,
+  CouponRedeemForm,
+  type CouponCardDetail,
+} from "@/app/_shared/coupons";
 import { redeemCouponAction } from "../actions";
 import { useAuthStore } from "@/hooks/useAuthStore";
 
@@ -124,123 +121,43 @@ export default function CouponsManager({
         </div>
       ) : (
         <ul className="space-y-4">
-          {filteredCoupons.map((entry) => (
-            <li key={entry.id}>
-              <CouponCard coupon={entry} />
-            </li>
-          ))}
+          {filteredCoupons.map((entry) => {
+            const definition = entry.coupon;
+            const expiresAt = entry.expiresAt || definition.expiresAt;
+            const details: CouponCardDetail[] = [
+              { label: "领取时间", value: formatDate(entry.assignedAt) },
+              {
+                label: "有效期",
+                value: expiresAt ? formatDate(expiresAt) : "长期有效",
+              },
+            ];
+
+            if (entry.usedAt) {
+              details.push({ label: "使用时间", value: formatDate(entry.usedAt) });
+            }
+
+            if (entry.orderId) {
+              details.push({ label: "关联订单", value: entry.orderId });
+            }
+
+            return (
+              <li key={entry.id}>
+                <CouponCard
+                  coupon={definition}
+                  state={entry.state}
+                  sourceLabel={
+                    entry.source ? `来源：${entry.source}` : undefined
+                  }
+                  details={details}
+                />
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
   );
 }
-
-type CouponCardProps = {
-  coupon: CustomerCoupon;
-};
-
-const STATE_LABEL: Record<
-  CustomerCouponState,
-  { label: string; tone: "positive" | "warning" | "muted" }
-> = {
-  active: { label: "可用", tone: "positive" },
-  scheduled: { label: "待生效", tone: "warning" },
-  used: { label: "已使用", tone: "muted" },
-  expired: { label: "已过期", tone: "muted" },
-};
-
-const STATE_ICON: Record<
-  CustomerCouponState,
-  ComponentType<{ className?: string }>
-> = {
-  active: PartyPopper,
-  scheduled: Clock,
-  used: BadgeCheck,
-  expired: Gift,
-};
-
-function CouponCard({ coupon }: CouponCardProps) {
-  const { coupon: definition, state } = coupon;
-  const stateMeta = STATE_LABEL[state];
-  const Icon = STATE_ICON[state];
-
-  const minimum = definition.minimumSubtotal
-    ? `满 ${definition.minimumSubtotal.amount}${definition.minimumSubtotal.currencyCode}`
-    : "无门槛";
-
-  const expiresAt = coupon.expiresAt || definition.expiresAt;
-
-  return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="space-y-1">
-          <p className="text-lg font-semibold text-neutral-900">
-            {definition.title}
-          </p>
-          {definition.description ? (
-            <p className="text-sm text-neutral-500">{definition.description}</p>
-          ) : null}
-        </div>
-        <span
-          className={cn(
-            "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold",
-            stateMeta.tone === "positive" && "bg-emerald-50 text-emerald-600",
-            stateMeta.tone === "warning" && "bg-amber-50 text-amber-600",
-            stateMeta.tone === "muted" && "bg-neutral-100 text-neutral-500",
-          )}
-        >
-          <Icon className="h-4 w-4" aria-hidden />
-          {stateMeta.label}
-        </span>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-600">
-        <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-500">
-          {definition.type === "percentage"
-            ? `${definition.value}%`
-            : definition.type === "free_shipping"
-              ? "免运费"
-              : `¥${definition.value}`}
-        </span>
-        <span className="text-xs text-neutral-400">{minimum}</span>
-        {coupon.source ? (
-          <span className="text-xs text-neutral-400">
-            来源：{coupon.source}
-          </span>
-        ) : null}
-      </div>
-
-      <div className="grid gap-2 text-xs text-neutral-400 sm:grid-cols-2">
-        <Detail label="领取时间" value={formatDate(coupon.assignedAt)} />
-        <Detail
-          label="有效期"
-          value={expiresAt ? formatDate(expiresAt) : "长期有效"}
-        />
-        {coupon.usedAt ? (
-          <Detail label="使用时间" value={formatDate(coupon.usedAt)} />
-        ) : null}
-        {coupon.orderId ? (
-          <Detail label="关联订单" value={coupon.orderId} />
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-type DetailProps = {
-  label: string;
-  value: string;
-};
-
-function Detail({ label, value }: DetailProps) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="text-neutral-400">{label}</span>
-      <span className="text-neutral-600">{value}</span>
-    </div>
-  );
-}
-
 function formatDate(value: string) {
   try {
     return new Intl.DateTimeFormat("zh-CN", {

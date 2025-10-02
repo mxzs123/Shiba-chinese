@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PrimaryButton } from "app/_shared";
 import { AddressFormFields } from "@/app/_shared/address";
 import { DefaultBadge } from "@/app/_shared/account/DefaultBadge";
-import { CouponRedeemForm } from "app/_shared/coupons";
+import { CouponCard, CouponRedeemForm } from "app/_shared/coupons";
 import { MobileCheckoutSummary } from "./MobileCheckoutSummary";
 import {
   addAddressAction,
@@ -119,6 +119,26 @@ function formatAddressPhone(address: Address) {
   return parts.join(" ");
 }
 
+function isCouponCurrentlyActive(coupon: Coupon) {
+  const now = Date.now();
+
+  if (coupon.startsAt) {
+    const startsAt = new Date(coupon.startsAt).getTime();
+    if (!Number.isNaN(startsAt) && startsAt > now) {
+      return false;
+    }
+  }
+
+  if (coupon.expiresAt) {
+    const expiresAt = new Date(coupon.expiresAt).getTime();
+    if (!Number.isNaN(expiresAt) && expiresAt < now) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 type CheckoutActionButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "accent" | "accentOutline" | "ghost";
   size?: "default" | "sm";
@@ -204,8 +224,9 @@ export function CheckoutClient({
   useEffect(() => {
     setCurrentCart(applySelectionToCart(cart));
   }, [applySelectionToCart, cart]);
-  const [availableCouponList, setAvailableCouponList] =
-    useState<Coupon[]>(availableCoupons);
+  const [availableCouponList, setAvailableCouponList] = useState<Coupon[]>(
+    () => availableCoupons.filter(isCouponCurrentlyActive),
+  );
   const [addressForm, setAddressForm] =
     useState<AddressFormState>(DEFAULT_ADDRESS_FORM);
   const [addressError, setAddressError] = useState<string | null>(null);
@@ -247,6 +268,12 @@ export function CheckoutClient({
       addresses.find((entry) => entry.isDefault)?.id || addresses[0]?.id;
     setSelectedAddressId(fallback);
   }, [addresses, selectedAddressId]);
+
+  useEffect(() => {
+    setAvailableCouponList(
+      availableCoupons.filter(isCouponCurrentlyActive),
+    );
+  }, [availableCoupons]);
 
   useEffect(() => {
     if (!shippingMethods.length) {
@@ -574,6 +601,9 @@ export function CheckoutClient({
       if (exists) {
         return prev;
       }
+      if (!isCouponCurrentlyActive(redeemedCoupon)) {
+        return prev;
+      }
       return [redeemedCoupon, ...prev];
     });
 
@@ -693,7 +723,14 @@ export function CheckoutClient({
         )}
       >
         <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
-          <header className="flex items-center justify-between">
+          <header
+            className={cn(
+              "flex gap-3",
+              isMobile
+                ? "flex-col items-start"
+                : "items-center justify-between",
+            )}
+          >
             <div>
               <h2 className="text-lg font-semibold text-neutral-900">
                 收货地址
@@ -708,7 +745,10 @@ export function CheckoutClient({
                 setIsAddingAddress((prev) => !prev);
                 setAddressError(null);
               }}
-              className="inline-flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1 text-xs font-medium text-neutral-700 transition hover:border-neutral-900 hover:text-neutral-900"
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full border border-neutral-200 px-3 py-1 text-xs font-medium text-neutral-700 transition hover:border-neutral-900 hover:text-neutral-900",
+                isMobile && "w-full justify-center",
+              )}
               disabled={paymentLocked}
             >
               <Plus className="h-3.5 w-3.5" aria-hidden /> 新增收货地址
@@ -910,7 +950,7 @@ export function CheckoutClient({
             submitLabel="立即兑换"
             pendingLabel="兑换中..."
           />
-          <div className="mt-4 space-y-3">
+          <div className={cn("mt-4", isMobile ? "space-y-2" : "space-y-3")}>
             {availableCouponList.length === 0 ? (
               <p className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-6 text-sm text-neutral-500">
                 当前无可用优惠券。
@@ -922,34 +962,20 @@ export function CheckoutClient({
                 );
                 const isProcessing = couponProcessingCode === coupon.code;
                 return (
-                  <div
+                  <CouponCard
                     key={coupon.id}
-                    className={cn(
-                      "flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between",
-                      isApplied
-                        ? "border-emerald-500/60 bg-emerald-50"
-                        : "border-neutral-200 bg-white",
-                    )}
-                  >
-                    <div>
-                      <p className="text-sm font-semibold text-neutral-900">
-                        {coupon.title}
-                      </p>
-                      <p className="text-xs text-neutral-500">
-                        {coupon.description}
-                      </p>
-                      <p className="mt-1 text-xs text-neutral-400">
-                        适用门槛：
-                        {coupon.minimumSubtotal
-                          ? `满 ${coupon.minimumSubtotal.amount}${coupon.minimumSubtotal.currencyCode}`
-                          : "无"}
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
+                    coupon={coupon}
+                    state="available"
+                    layout={isMobile ? "compact" : "default"}
+                    actionDescription={null}
+                    actionSlot={
                       <CheckoutActionButton
                         variant={isApplied ? "accent" : "accentOutline"}
                         size="sm"
-                        className="gap-1.5"
+                        className={cn(
+                          "gap-1.5",
+                          isMobile && "w-full justify-center",
+                        )}
                         onClick={() =>
                           isApplied
                             ? handleRemoveCoupon(coupon.code)
@@ -965,13 +991,11 @@ export function CheckoutClient({
                         ) : null}
                         {isApplied ? "已使用" : "使用优惠"}
                       </CheckoutActionButton>
-                      <span className="text-sm font-semibold text-neutral-900">
-                        {coupon.type === "percentage"
-                          ? `${coupon.value}%`
-                          : coupon.value}
-                      </span>
-                    </div>
-                  </div>
+                    }
+                    className={cn(
+                      isApplied && "border-emerald-500/60 bg-emerald-50",
+                    )}
+                  />
                 );
               })
             )}
