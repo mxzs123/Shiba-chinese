@@ -1,5 +1,7 @@
 # AGENT 交接说明
 
+> 实时进度、任务勾选与优先级以 `todo.md` 为最新来源；本文主要提供架构背景与协作规范。
+
 ## 项目速览
 - 技术栈：Next.js 15（App Router）+ TypeScript + Tailwind v4 + Zustand + shadcn/ui。
 - 架构：单 URL，middleware 按设备分流至 `app/d`（桌面）与 `app/m`（移动），核心业务封装在 `app/_shared` 供双外壳复用。
@@ -11,7 +13,7 @@
   - ✅ 首页、分类、购物车、我的入口。
   - ✅ 账户子页：个人信息、地址、优惠券、会员权益、订单列表与详情、我的审核及问卷详情。
   - ✅ 认证与结算全流程（登录/注册、结算、支付成功/失败、处方审核）、商品详情。
-  - 🚧 内容与搜索线未完成：CMS 动态页、About、FAQ、News 列表/详情、Search 列表/集合页仍缺移动壳。
+  - 🚧 内容与搜索线待补：CMS 动态页、News 列表/详情、Search 列表/集合页仍缺移动壳；About、FAQ 已完成移动适配。
 - 共享层：`app/_shared` 已涵盖账户、结算、优惠券、商品页等逻辑；新增页面需优先在此扩展。
 - 最新文档：`todo.md` 已重新梳理，包含细颗粒任务拆解；主流程链接统一去掉 `'/m'` 前缀。
 
@@ -27,6 +29,12 @@
    - 组件命名：组件 PascalCase、hook camelCase、常量 SCREAMING_SNAKE_CASE。
 5. **质量门槛**：提交前跑 `npm run lint` 与 `npm run prettier:check`；构建需保持绿灯。
 6. **路径约束**：移动端页面不要复制桌面逻辑，务必复用 `_shared`；新增账户 Tab 先扩展 `_shared/account/nav-items.ts`。
+
+### 测试命令
+- `npm run lint`：ESLint 全量检查。
+- `npm run build`：确保生产构建通过。
+- `npm run dev`：Turbopack 开发模式（调试前先跑一次以装载缓存）。
+- 如需补测试脚本，请在合并前本地跑通相应命令（`npm run test` 等），并在 PR 描述中标注。
 
 ## 常用命令
 ```bash
@@ -46,12 +54,6 @@ npm run prettier:check   # CI 用格式检查
 3. 数据层改动后更新 `mock-data.ts`、`types.ts`，同步写注释说明。
 4. 变更完成后跑 lint / prettier，必要时补充 Playwright/单测（resolveDevice、Search/CMS/News 等）。
 5. 回写 `todo.md`，保持交接透明。
-
-## 近期改动速记
-- 2025-02：新增移动端账户子页、优惠券状态调整、会员权益返回按钮、问卷交互等；提交 `b6f6349`。
-- 2025-02（当前回合）：
-  - 清理移动端 TODO，修复 checkout 结果页 `/m` 硬编码路径。
-  - 重新编排 `todo.md`，拆解 content/search 任务、QA 计划与发布 checklist。
 
 ## 未竟事项 & 风险提示
 - 移动内容线 & 搜索线缺页面；上线前需补齐并验证富文本排版、筛选/抽屉交互。
