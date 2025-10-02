@@ -92,7 +92,7 @@ export function NotificationLink({ notifications }: NotificationLinkProps) {
             leaveTo="opacity-0 translate-y-1"
           >
             <Popover.Panel
-              className="absolute right-0 top-full z-20 mt-3 origin-top-right rounded-2xl border border-neutral-200 bg-white p-4 shadow-lg focus:outline-none sm:w-[22rem]"
+              className="absolute right-0 top-full z-20 mt-3 flex origin-top-right flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white p-4 shadow-lg focus:outline-none sm:w-[22rem]"
               style={panelStyle}
             >
               <NotificationContent
@@ -147,7 +147,7 @@ function NotificationContent({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-full flex-col gap-4 overflow-hidden">
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="text-sm font-medium text-neutral-900">消息通知</p>
@@ -162,7 +162,7 @@ function NotificationContent({
           <X className="h-4 w-4" aria-hidden />
         </button>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex-1 space-y-4 overflow-y-auto pr-1">
         {grouped.map(({ category, items }) => {
           if (!items.length) {
             return null;

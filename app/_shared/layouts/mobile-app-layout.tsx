@@ -38,7 +38,11 @@ export async function MobileAppLayout({ children }: { children: ReactNode }) {
             type="prescription"
           />
         ) : null}
-        <Toaster closeButton />
+        <Toaster
+          position="top-center"
+          offset="calc(env(safe-area-inset-top) + 64px)"
+          toastOptions={{ duration: 4500 }}
+        />
       </main>
       <MobileBottomNav />
     </CartProvider>
