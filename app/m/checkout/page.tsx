@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 
 import { CheckoutClient } from "@/app/_shared";
 import { CART_SELECTED_MERCHANDISE_COOKIE } from "@/components/cart/constants";
+import { MobileHeader } from "@/components/layout/mobile-header";
 import {
   filterCartBySelectedMerchandise,
   parseSelectedMerchandiseIds,
@@ -11,6 +12,7 @@ import {
   getAvailableCoupons,
   getCart,
   getCurrentUser,
+  getNotifications,
   getPaymentMethods,
   getProductById,
   getShippingMethods,
@@ -32,6 +34,7 @@ export default async function CheckoutPage() {
     shippingMethods,
     paymentMethods,
     availableCoupons,
+    notifications,
   ] = await Promise.all([
     getCart(),
     getCurrentUser(),
@@ -39,6 +42,7 @@ export default async function CheckoutPage() {
     getShippingMethods(),
     getPaymentMethods(),
     getAvailableCoupons(),
+    getNotifications(),
   ]);
 
   const customer = sessionUser ?? fallbackUser;
@@ -56,14 +60,19 @@ export default async function CheckoutPage() {
     await cartNeedsPrescriptionReview(checkoutCart);
 
   return (
-    <div className="w-full">
-      <header className="mb-4 px-4 pt-6">
-        <h1 className="text-2xl font-semibold text-neutral-900">确认订单</h1>
+    <div className="w-full bg-neutral-50">
+      <MobileHeader
+        notifications={notifications}
+        leadingVariant="back"
+        showSearchInput={false}
+      />
+      <header className="mb-4 px-4 pt-4">
+        <h1 className="text-xl font-semibold text-neutral-900">确认订单</h1>
         <p className="mt-1.5 text-sm text-neutral-500">
           核对收货信息、配送方式与支付方式后提交订单。
         </p>
       </header>
-      <div className="px-4">
+      <div className="px-4 pb-8">
         <CheckoutClient
           cart={checkoutCart}
           customer={customer}
