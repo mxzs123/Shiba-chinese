@@ -5,11 +5,12 @@ import type {
   CartItem,
   Coupon,
   Money,
+  CurrencyCode,
 } from "lib/api/types";
 
-const DEFAULT_CURRENCY = "USD";
+const DEFAULT_CURRENCY: CurrencyCode = "USD";
 
-function createMoney(amount: number, currencyCode: string): Money {
+function createMoney(amount: number, currencyCode: CurrencyCode): Money {
   return {
     amount: amount.toFixed(2),
     currencyCode,
@@ -18,8 +19,8 @@ function createMoney(amount: number, currencyCode: string): Money {
 
 function determineCurrency(
   lines: CartItem[],
-  fallbackCurrency?: string,
-): string {
+  fallbackCurrency?: CurrencyCode,
+): CurrencyCode {
   return (
     lines[0]?.cost.totalAmount.currencyCode ||
     fallbackCurrency ||
@@ -83,7 +84,7 @@ function evaluateCouponDiscount(coupon: Coupon, subtotalValue: number) {
 function recalculateAppliedCoupons(
   appliedCoupons: AppliedCoupon[] | undefined,
   subtotalValue: number,
-  currencyCode: string,
+  currencyCode: CurrencyCode,
 ) {
   if (!appliedCoupons || appliedCoupons.length === 0) {
     return {
@@ -111,7 +112,7 @@ function recalculateAppliedCoupons(
 
 export function calculateTotalsForLines(
   lines: CartItem[],
-  fallbackCurrency?: string,
+  fallbackCurrency?: CurrencyCode,
   appliedCoupons?: AppliedCoupon[],
 ) {
   const currencyCode = determineCurrency(lines, fallbackCurrency);

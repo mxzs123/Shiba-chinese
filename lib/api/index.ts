@@ -42,6 +42,7 @@ import type {
   CartItem,
   Collection,
   Coupon,
+  CurrencyCode,
   CustomerCoupon,
   Menu,
   Order,
@@ -287,7 +288,10 @@ function hydrateCartFromSnapshot(snapshot: CartSnapshot): Cart {
     .filter((coupon): coupon is Coupon => Boolean(coupon))
     .map((coupon) => ({
       coupon,
-      amount: { amount: "0.00", currencyCode: defaultCurrency },
+      amount: {
+        amount: "0.00",
+        currencyCode: defaultCurrency as CurrencyCode,
+      },
     }));
 
   cart.appliedCoupons = appliedCoupons;
@@ -1329,7 +1333,10 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   const expectedSecret = process.env.REVALIDATION_SECRET;
 
   if (expectedSecret && secret !== expectedSecret) {
-    console.error("Invalid revalidation secret.");
+    // 安全相关错误，只在开发环境输出
+    if (process.env.NODE_ENV === "development") {
+      console.error("[API] Invalid revalidation secret.");
+    }
     return NextResponse.json({ status: 401 });
   }
 

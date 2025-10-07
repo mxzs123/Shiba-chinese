@@ -4,7 +4,9 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { addItem } from "components/cart/actions";
 import { useProduct } from "components/product/product-context";
-import { Product, ProductVariant } from "lib/api/types";
+import type { Product, ProductVariant } from "lib/api/types";
+import { APP_TEXT } from "lib/i18n/constants";
+import { handleError } from "lib/error-handler";
 import { useActionState } from "react";
 import { useCart } from "./cart-context";
 
@@ -22,7 +24,7 @@ function SubmitButton({
   if (!availableForSale) {
     return (
       <button disabled className={clsx(buttonClasses, disabledClasses)}>
-        Out Of Stock
+        {APP_TEXT.cart.outOfStock}
       </button>
     );
   }
@@ -30,21 +32,21 @@ function SubmitButton({
   if (!selectedVariantId) {
     return (
       <button
-        aria-label="Please select an option"
+        aria-label={APP_TEXT.cart.selectOption}
         disabled
         className={clsx(buttonClasses, disabledClasses)}
       >
         <div className="absolute left-0 ml-4">
           <PlusIcon className="h-5" />
         </div>
-        Add To Cart
+        {APP_TEXT.cart.addToCart}
       </button>
     );
   }
 
   return (
     <button
-      aria-label="Add to cart"
+      aria-label={APP_TEXT.cart.addToCart}
       className={clsx(buttonClasses, {
         "hover:opacity-90": true,
       })}
@@ -52,7 +54,7 @@ function SubmitButton({
       <div className="absolute left-0 ml-4">
         <PlusIcon className="h-5" />
       </div>
-      Add To Cart
+      {APP_TEXT.cart.addToCart}
     </button>
   );
 }
@@ -78,8 +80,12 @@ export function AddToCart({ product }: { product: Product }) {
   return (
     <form
       action={async () => {
-        addCartItem(finalVariant, product, 1);
-        addItemAction();
+        try {
+          addCartItem(finalVariant, product, 1);
+          await addItemAction();
+        } catch (error) {
+          handleError(error, { action: "addToCart" });
+        }
       }}
     >
       <SubmitButton

@@ -224,8 +224,8 @@ export function CheckoutClient({
   useEffect(() => {
     setCurrentCart(applySelectionToCart(cart));
   }, [applySelectionToCart, cart]);
-  const [availableCouponList, setAvailableCouponList] = useState<Coupon[]>(
-    () => availableCoupons.filter(isCouponCurrentlyActive),
+  const [availableCouponList, setAvailableCouponList] = useState<Coupon[]>(() =>
+    availableCoupons.filter(isCouponCurrentlyActive),
   );
   const [addressForm, setAddressForm] =
     useState<AddressFormState>(DEFAULT_ADDRESS_FORM);
@@ -270,9 +270,7 @@ export function CheckoutClient({
   }, [addresses, selectedAddressId]);
 
   useEffect(() => {
-    setAvailableCouponList(
-      availableCoupons.filter(isCouponCurrentlyActive),
-    );
+    setAvailableCouponList(availableCoupons.filter(isCouponCurrentlyActive));
   }, [availableCoupons]);
 
   useEffect(() => {

@@ -126,7 +126,10 @@ export async function updateItemQuantity(
 
     revalidateTag(TAGS.cart);
   } catch (e) {
-    console.error(e);
+    // 错误已在调用方处理，这里只记录到开发控制台
+    if (process.env.NODE_ENV === "development") {
+      console.error("[Cart Action Error]", e);
+    }
     return "Error updating item quantity";
   }
 }

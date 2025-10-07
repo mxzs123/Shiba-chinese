@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 import { useAuthStore } from "@/hooks/useAuthStore";
 import { sanitizeRedirect } from "@/lib/utils";
+import { handleError } from "@/lib/error-handler";
 
 import type { User } from "@/lib/api/types";
 
@@ -83,7 +84,7 @@ export function RegisterForm({ redirectTo }: RegisterFormProps) {
       const data = (await response.json()) as CaptchaPayload;
       setCaptcha(data);
     } catch (error) {
-      console.error("loadCaptcha failed", error);
+      handleError(error, { action: "loadCaptcha" }, false);
       toast.error("验证码获取失败，请稍后再试");
     } finally {
       setCaptchaLoading(false);
@@ -164,7 +165,7 @@ export function RegisterForm({ redirectTo }: RegisterFormProps) {
         toast.success("注册成功，已自动登录");
         router.replace(safeRedirect ?? "/checkout");
       } catch (error) {
-        console.error("register failed", error);
+        handleError(error, { action: "register" }, false);
         toast.error("注册失败，请检查网络后重试");
         void loadCaptcha();
       } finally {

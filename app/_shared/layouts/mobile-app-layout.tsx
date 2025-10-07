@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 
+import { APP_TEXT } from "lib/i18n/constants";
 import { CartProvider } from "components/cart/cart-context";
 import { MobileBottomNav } from "components/layout/mobile-bottom-nav";
 import { PrescriptionComplianceReminder } from "components/prescription/PrescriptionComplianceReminder";
@@ -41,7 +42,7 @@ export async function MobileAppLayout({ children }: { children: ReactNode }) {
         <Toaster
           position="top-center"
           offset="calc(env(safe-area-inset-top) + 64px)"
-          toastOptions={{ duration: 4500 }}
+          toastOptions={{ duration: APP_TEXT.toastDuration.medium }}
         />
       </main>
       <MobileBottomNav />

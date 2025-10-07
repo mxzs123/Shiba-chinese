@@ -1,6 +1,11 @@
+/**
+ * 支持的货币代码
+ */
+export type CurrencyCode = "CNY" | "JPY" | "USD";
+
 export type Money = {
   amount: string;
-  currencyCode: string;
+  currencyCode: CurrencyCode;
 };
 
 export type Image = {
@@ -15,9 +20,14 @@ export type SEO = {
   description: string;
 };
 
+/**
+ * 商品选项类型
+ */
+export type ProductOptionName = "颜色" | "尺寸" | "规格" | string;
+
 export type ProductOption = {
   id: string;
-  name: string;
+  name: ProductOptionName;
   values: string[];
 };
 

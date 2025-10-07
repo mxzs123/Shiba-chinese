@@ -8,6 +8,7 @@ import { addItem } from "components/cart/actions";
 import { useCart } from "components/cart/cart-context";
 import type { Product, ProductVariant } from "lib/api/types";
 import { cn } from "lib/utils";
+import { handleError } from "lib/error-handler";
 
 type ProductCardQuickAddProps = {
   product: Product;
@@ -66,7 +67,7 @@ export function ProductCardQuickAdd({
         description: `${product.title} × 1 已添加至购物车。`,
       });
     } catch (error) {
-      console.error(error);
+      handleError(error, { action: "addToCart" }, false);
       toast.error("未能加入购物车", {
         description: "系统繁忙，请稍后再试。",
       });

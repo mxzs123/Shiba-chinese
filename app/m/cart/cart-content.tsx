@@ -28,6 +28,7 @@ import {
 import { QuantityInput } from "components/quantity-input";
 import Price from "components/price";
 import { DEFAULT_OPTION } from "lib/constants";
+import { handleError } from "lib/error-handler";
 import { cn, createUrl } from "lib/utils";
 
 import {
@@ -140,11 +141,13 @@ function CartItemQuantityControl({
         })
           .then((result) => {
             if (typeof result === "string") {
-              console.error(result);
+              handleError(new Error(result || "删除失败"), {
+                action: "removeFromCart",
+              });
             }
           })
           .catch((error) => {
-            console.error(error);
+            handleError(error, { action: "removeFromCart" });
           });
       });
     },

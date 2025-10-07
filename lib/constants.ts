@@ -5,8 +5,10 @@ export type SortFilterItem = {
   reverse: boolean;
 };
 
+import { APP_TEXT } from "./i18n/constants";
+
 export const defaultSort: SortFilterItem = {
-  title: "Relevance",
+  title: APP_TEXT.sort.relevance,
   slug: null,
   sortKey: "RELEVANCE",
   reverse: false,
@@ -15,25 +17,25 @@ export const defaultSort: SortFilterItem = {
 export const sorting: SortFilterItem[] = [
   defaultSort,
   {
-    title: "Trending",
+    title: APP_TEXT.sort.trending,
     slug: "trending-desc",
     sortKey: "BEST_SELLING",
     reverse: false,
-  }, // asc
+  },
   {
-    title: "Latest arrivals",
+    title: APP_TEXT.sort.latestArrivals,
     slug: "latest-desc",
     sortKey: "CREATED_AT",
     reverse: true,
   },
   {
-    title: "Price: Low to high",
+    title: APP_TEXT.sort.priceLowToHigh,
     slug: "price-asc",
     sortKey: "PRICE",
     reverse: false,
-  }, // asc
+  },
   {
-    title: "Price: High to low",
+    title: APP_TEXT.sort.priceHighToLow,
     slug: "price-desc",
     sortKey: "PRICE",
     reverse: true,

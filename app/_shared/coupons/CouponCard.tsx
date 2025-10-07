@@ -73,8 +73,8 @@ export function CouponCard({
       ? `满 ${coupon.minimumSubtotal.amount}${coupon.minimumSubtotal.currencyCode}`
       : "无门槛";
 
-  const metaItems = [minimum, sourceLabel].filter(
-    (item): item is string => Boolean(item),
+  const metaItems = [minimum, sourceLabel].filter((item): item is string =>
+    Boolean(item),
   );
 
   const paddingClass = layout === "compact" ? "p-4" : "p-6";
@@ -93,7 +93,7 @@ export function CouponCard({
           <p className={cn("font-semibold text-neutral-900", titleClass)}>
             {coupon.title}
           </p>
-          {descriptionOverride ?? coupon.description ? (
+          {(descriptionOverride ?? coupon.description) ? (
             <p className="text-sm text-neutral-500">
               {descriptionOverride ?? coupon.description}
             </p>

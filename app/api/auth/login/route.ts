@@ -46,7 +46,10 @@ export async function POST(request: Request) {
       );
     }
 
-    console.error("authenticateUser failed", error);
+    // API 路由错误，记录到服务端日志
+    if (process.env.NODE_ENV === "development") {
+      console.error("[Auth API] authenticateUser failed", error);
+    }
     return NextResponse.json(
       { error: "登录失败，请稍后再试" },
       { status: 500 },

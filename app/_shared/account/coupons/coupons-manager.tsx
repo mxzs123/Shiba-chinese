@@ -133,7 +133,10 @@ export default function CouponsManager({
             ];
 
             if (entry.usedAt) {
-              details.push({ label: "使用时间", value: formatDate(entry.usedAt) });
+              details.push({
+                label: "使用时间",
+                value: formatDate(entry.usedAt),
+              });
             }
 
             if (entry.orderId) {

@@ -15,6 +15,7 @@ import { Price } from "app/_shared/Price";
 import { isDiscountedPrice } from "lib/pricing";
 import { addItem } from "components/cart/actions";
 import { useCart } from "components/cart/cart-context";
+import { handleError } from "lib/error-handler";
 
 type MobileCategoriesContentProps = {
   initialProducts: Product[];
@@ -119,7 +120,7 @@ export function MobileCategoriesContent({
           description: `${product.title} × 1`,
         });
       } catch (error) {
-        console.error(error);
+        handleError(error, { action: "loadCategories" }, false);
         toast.error("未能加入购物车", {
           description: "系统繁忙，请稍后再试。",
         });
