@@ -73,13 +73,94 @@ import { getUserFromSessionCookie } from "./auth-store";
 export const CART_ID_COOKIE = "cartId";
 const CART_STATE_COOKIE = "cartState";
 const CART_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
-export const CART_COOKIE_OPTIONS = {
-  httpOnly: true,
-  sameSite: "lax" as const,
-  path: "/",
-  secure: process.env.NODE_ENV === "production",
-  maxAge: CART_COOKIE_MAX_AGE,
-};
+type ForwardedHeader = string | null | undefined;
+
+function normalizeProto(value: ForwardedHeader) {
+  if (!value) {
+    return undefined;
+  }
+
+  const [first] = value.split(",");
+  if (!first) {
+    return undefined;
+  }
+
+  return first
+    .trim()
+    .replace(/^proto=/i, "")
+    .replace(/"/g, "")
+    .toLowerCase();
+}
+
+function extractProtoFromForwarded(value: ForwardedHeader) {
+  if (!value) {
+    return undefined;
+  }
+
+  const segments = value.split(";");
+  for (const segment of segments) {
+    const trimmed = segment.trim();
+    if (trimmed.toLowerCase().startsWith("proto=")) {
+      return normalizeProto(trimmed);
+    }
+  }
+
+  return undefined;
+}
+
+export async function shouldUseSecureCookies(): Promise<boolean> {
+  try {
+    const headerStore = await headers();
+
+    const forwardedProto = normalizeProto(
+      headerStore.get("x-forwarded-proto") ||
+        headerStore.get("x-forwarded-protocol"),
+    );
+
+    if (forwardedProto) {
+      return forwardedProto === "https";
+    }
+
+    const forwarded = extractProtoFromForwarded(headerStore.get("forwarded"));
+    if (forwarded) {
+      return forwarded === "https";
+    }
+
+    const forwardedSsl = headerStore.get("x-forwarded-ssl");
+    if (forwardedSsl) {
+      return forwardedSsl.trim().toLowerCase() === "on";
+    }
+
+    const cfVisitor = headerStore.get("cf-visitor");
+    if (cfVisitor) {
+      try {
+        const parsed = JSON.parse(cfVisitor);
+        const scheme = typeof parsed?.scheme === "string" ? parsed.scheme : "";
+        if (scheme) {
+          return scheme.toLowerCase() === "https";
+        }
+      } catch (error) {
+        // ignore malformed JSON
+      }
+    }
+  } catch (error) {
+    // Fallback handled below
+  }
+
+  return false;
+}
+
+export async function getCartCookieOptions() {
+  const secure = await shouldUseSecureCookies();
+
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    path: "/",
+    secure,
+    maxAge: CART_COOKIE_MAX_AGE,
+  };
+}
 
 type CartStore = Map<string, Cart>;
 
@@ -515,17 +596,18 @@ async function saveCart(cart: Cart) {
     const cookieStore = await cookies();
     const snapshot = createCartSnapshot(cart);
     const encoded = encodeCartSnapshot(snapshot);
+    const cartCookieOptions = await getCartCookieOptions();
 
     cookieStore.set({
       name: CART_STATE_COOKIE,
       value: encoded,
-      ...CART_COOKIE_OPTIONS,
+      ...cartCookieOptions,
     });
 
     cookieStore.set({
       name: CART_ID_COOKIE,
       value: cart.id,
-      ...CART_COOKIE_OPTIONS,
+      ...cartCookieOptions,
     });
   } catch (error) {
     // Best-effort persistence: environments without writable cookies can ignore failures.

@@ -3,11 +3,12 @@
 import { TAGS } from "lib/constants";
 import {
   addToCart,
-  CART_COOKIE_OPTIONS,
   CART_ID_COOKIE,
   createCart,
   getCart,
+  getCartCookieOptions,
   removeFromCart,
+  shouldUseSecureCookies,
   updateCart,
 } from "lib/api";
 import { revalidateTag } from "next/cache";
@@ -22,12 +23,6 @@ import {
   parseSelectedMerchandiseIds,
   serializeSelectedMerchandiseIds,
 } from "./cart-selection";
-
-const CART_SELECTION_COOKIE_BASE_OPTIONS = {
-  sameSite: "lax" as const,
-  path: "/",
-  secure: process.env.NODE_ENV === "production",
-};
 
 export async function addItem(
   prevState: any,
@@ -51,10 +46,11 @@ export async function addItem(
     const existingCartId = cookieStore.get(CART_ID_COOKIE)?.value;
 
     if (existingCartId !== cart.id) {
+      const cartCookieOptions = await getCartCookieOptions();
       cookieStore.set({
         name: CART_ID_COOKIE,
         value: cart.id,
-        ...CART_COOKIE_OPTIONS,
+        ...cartCookieOptions,
       });
     }
 
@@ -138,6 +134,13 @@ export async function redirectToCheckout(formData: FormData) {
   const cookieStore = await cookies();
   const selectionField = formData.get(CART_SELECTED_MERCHANDISE_FORM_FIELD);
 
+  const secureCookies = await shouldUseSecureCookies();
+  const selectionCookieBase = {
+    sameSite: "lax" as const,
+    path: "/",
+    secure: secureCookies,
+  };
+
   if (typeof selectionField === "string") {
     const parsedSelection = parseSelectedMerchandiseIds(selectionField);
 
@@ -145,14 +148,14 @@ export async function redirectToCheckout(formData: FormData) {
       cookieStore.set({
         name: CART_SELECTED_MERCHANDISE_COOKIE,
         value: serializeSelectedMerchandiseIds(parsedSelection),
-        ...CART_SELECTION_COOKIE_BASE_OPTIONS,
+        ...selectionCookieBase,
         maxAge: CART_SELECTED_MERCHANDISE_MAX_AGE,
       });
     } else {
       cookieStore.set({
         name: CART_SELECTED_MERCHANDISE_COOKIE,
         value: "",
-        ...CART_SELECTION_COOKIE_BASE_OPTIONS,
+        ...selectionCookieBase,
         maxAge: 0,
       });
     }
@@ -167,10 +170,11 @@ export async function redirectToCheckout(formData: FormData) {
   const existingCartId = cookieStore.get(CART_ID_COOKIE)?.value;
 
   if (existingCartId !== cart.id) {
+    const cartCookieOptions = await getCartCookieOptions();
     cookieStore.set({
       name: CART_ID_COOKIE,
       value: cart.id,
-      ...CART_COOKIE_OPTIONS,
+      ...cartCookieOptions,
     });
   }
 
@@ -184,10 +188,11 @@ export async function createCartAndSetCookie() {
   const existingCartId = cookieStore.get(CART_ID_COOKIE)?.value;
 
   if (existingCartId !== cart.id) {
+    const cartCookieOptions = await getCartCookieOptions();
     cookieStore.set({
       name: CART_ID_COOKIE,
       value: cart.id,
-      ...CART_COOKIE_OPTIONS,
+      ...cartCookieOptions,
     });
   }
 }
