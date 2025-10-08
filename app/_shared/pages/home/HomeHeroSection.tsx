@@ -21,7 +21,7 @@ export function HomeHeroSection({ className }: HomeHeroSectionProps) {
       )}
     >
       <div className="relative overflow-hidden rounded-3xl border border-[#049e6b]/20 bg-[#049e6b]/5 shadow-sm">
-        <div className="relative aspect-[4/3] w-full md:aspect-[16/9]">
+        <div className="relative aspect-[16/9] w-full">
           <Image
             src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80"
             alt="医护人员正在整理医疗资料"
