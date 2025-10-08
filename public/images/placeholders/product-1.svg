@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">Placeholder Product 1</title>
+  <desc id="desc">Abstract gradient background for product imagery</desc>
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#grad1)" rx="32" />
+  <path d="M120 260h160c26 0 48-22 48-48 0-22-15-41-35-46-6-38-39-66-78-66s-72 28-78 66c-20 5-35 24-35 46 0 26 22 48 48 48z" fill="#e0f2fe" opacity="0.85" />
+  <circle cx="200" cy="150" r="54" fill="#bae6fd" opacity="0.7" />
+  <text x="200" y="320" text-anchor="middle" font-size="36" font-family="'Helvetica Neue', Arial, sans-serif" fill="#f8fafc">
+    Shiba Store
+  </text>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">Placeholder Product 5</title>
+  <desc id="desc">Neutral gradient placeholder for lifestyle imagery</desc>
+  <defs>
+    <linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#f97316" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#grad5)" rx="32" />
+  <path d="M120 260c0-44 36-80 80-80s80 36 80 80-36 80-80 80-80-36-80-80z" fill="#fef9c3" opacity="0.85" />
+  <path d="M200 140c-24 0-44 20-44 44s20 44 44 44 44-20 44-44-20-44-44-44z" fill="#fee2c5" opacity="0.8" />
+  <text x="200" y="320" text-anchor="middle" font-size="34" font-family="'Helvetica Neue', Arial, sans-serif" fill="#fffbeb">
+    Daily Goods
+  </text>
+</svg>

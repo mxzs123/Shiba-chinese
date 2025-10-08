@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">Placeholder Product 3</title>
+  <desc id="desc">Green gradient background for wellness imagery</desc>
+  <defs>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#22c55e" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#grad3)" rx="32" />
+  <path d="M200 90c-38 0-72 28-78 65-24 4-42 25-42 50 0 28 24 52 52 52h136c32 0 58-26 58-58 0-27-19-50-44-56-11-31-40-53-72-53z" fill="#ecfdf5" opacity="0.8" />
+  <path d="M180 210l22-58 22 58h-44z" fill="#bbf7d0" opacity="0.9" />
+  <circle cx="140" cy="150" r="32" fill="#a7f3d0" opacity="0.75" />
+  <text x="200" y="320" text-anchor="middle" font-size="34" font-family="'Helvetica Neue', Arial, sans-serif" fill="#f0fdf4">
+    Wellness Lab
+  </text>
+</svg>

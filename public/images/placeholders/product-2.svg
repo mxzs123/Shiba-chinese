@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">Placeholder Product 2</title>
+  <desc id="desc">Warm gradient background for product imagery</desc>
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#fb7185" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#grad2)" rx="32" />
+  <path d="M90 250c0-44 36-80 80-80h60c44 0 80 36 80 80 0 44-36 80-80 80H170c-44 0-80-36-80-80z" fill="#fff1f2" opacity="0.75" />
+  <circle cx="160" cy="160" r="60" fill="#fed7aa" opacity="0.85" />
+  <circle cx="260" cy="140" r="46" fill="#fecdd3" opacity="0.7" />
+  <text x="200" y="320" text-anchor="middle" font-size="36" font-family="'Helvetica Neue', Arial, sans-serif" fill="#fff7ed">
+    Health Picks
+  </text>
+</svg>

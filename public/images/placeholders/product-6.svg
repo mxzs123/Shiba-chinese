@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">Placeholder Product 6</title>
+  <desc id="desc">Cool neutral gradient placeholder</desc>
+  <defs>
+    <linearGradient id="grad6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#grad6)" rx="32" />
+  <polygon points="120,260 200,120 280,260" fill="#cbd5f5" opacity="0.55" />
+  <circle cx="200" cy="200" r="70" fill="#e2e8f0" opacity="0.8" />
+  <text x="200" y="320" text-anchor="middle" font-size="34" font-family="'Helvetica Neue', Arial, sans-serif" fill="#f8fafc">
+    Shiba Care
+  </text>
+</svg>
