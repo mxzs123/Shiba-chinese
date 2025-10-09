@@ -1,6 +1,14 @@
 import "server-only";
 
-import type { Task, TaskStatus } from "@shiba/models";
+import type {
+  DistributorPartner,
+  DistributorPartnerApplication,
+  DistributorPartnerApplicationInput,
+  DistributorPartnerStatus,
+  Paginated,
+  Task,
+  TaskStatus,
+} from "@shiba/models";
 import type { DistributorOrdersMock, SalesOrdersMock } from "./orders";
 
 import { createMockSession, createMockProfile, mockHandlers } from "./index";
@@ -13,6 +21,12 @@ import {
   updateCustomerFollowUp,
 } from "./customers";
 import { findTaskById, updateTaskStatus } from "./tasks";
+import {
+  createDistributorPartnerApplication,
+  listDistributorPartnerApplications,
+  listDistributorPartners,
+  updateDistributorPartnerStatus,
+} from "./partners";
 
 const API_USE_MOCK = process.env.API_USE_MOCK;
 
@@ -95,6 +109,31 @@ export async function updateMockTaskStatus(
 
 export async function fetchMockTask(taskId: string): Promise<Task | undefined> {
   return findTaskById(taskId);
+}
+
+export async function fetchMockPartners(): Promise<
+  Paginated<DistributorPartner>
+> {
+  return listDistributorPartners();
+}
+
+export async function updateMockPartnerStatus(
+  partnerId: string,
+  status: DistributorPartnerStatus,
+): Promise<DistributorPartner | undefined> {
+  return updateDistributorPartnerStatus(partnerId, status);
+}
+
+export async function submitMockPartnerApplication(
+  input: DistributorPartnerApplicationInput,
+): Promise<DistributorPartnerApplication> {
+  return createDistributorPartnerApplication(input);
+}
+
+export async function fetchMockPartnerApplications(): Promise<
+  DistributorPartnerApplication[]
+> {
+  return listDistributorPartnerApplications();
 }
 
 export async function fetchMockSession(

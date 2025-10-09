@@ -1,14 +1,21 @@
 import { ModulePlaceholder } from "../../../../components/module-placeholder";
+import { fetchMockPartners, shouldUseMock } from "../../../../lib/mock/server-actions";
+import { PartnersClient } from "./partners-client";
 
-export default function DistributorPartnersPage() {
-  return (
-    <section className="space-y-6">
-      <ModulePlaceholder
-        title="二级分销商管理"
-        description="沉淀二级伙伴档案与分层策略，追踪活跃度与成长路径。"
-      >
-        功能规划：伙伴分层、成长任务、绩效看板、风险预警、启停控制。
-      </ModulePlaceholder>
-    </section>
-  );
+export default async function DistributorPartnersPage() {
+  if (!shouldUseMock()) {
+    return (
+      <section className="space-y-6">
+        <ModulePlaceholder
+          title="伙伴服务暂未接通"
+          description="当前环境未启用 Mock 数据，无法展示伙伴管理功能。"
+        >
+          请先开启 API Mock 或接入真实接口后再访问此模块。
+        </ModulePlaceholder>
+      </section>
+    );
+  }
+
+  const initialData = await fetchMockPartners();
+  return <PartnersClient initialData={initialData} />;
 }

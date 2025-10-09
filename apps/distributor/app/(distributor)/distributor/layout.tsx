@@ -7,7 +7,6 @@ import {
   DISTRIBUTOR_NAV_ITEMS,
 } from "../../lib/navigation";
 import { getWorkspaceAnnouncement } from "../../lib/announcements";
-import { DistributorHeaderActions } from "../../../components/distributor-header-actions";
 
 export default async function DistributorLayout({
   children,
@@ -25,7 +24,6 @@ export default async function DistributorLayout({
       navItems={DISTRIBUTOR_NAV_ITEMS}
       breadcrumbs={DISTRIBUTOR_BREADCRUMBS}
       announcement={announcement ?? undefined}
-      actions={<DistributorHeaderActions />}
     >
       {children}
     </WorkspaceShell>

@@ -4,7 +4,6 @@ import { WorkspaceShell } from "../../../components/workspace-shell";
 import { ensureRole } from "../../../lib/auth";
 import { SALES_BREADCRUMBS, SALES_NAV_ITEMS } from "../../lib/navigation";
 import { getWorkspaceAnnouncement } from "../../lib/announcements";
-import { SalesHeaderActions } from "../../../components/sales-header-actions";
 
 export default async function SalesLayout({
   children,
@@ -22,7 +21,6 @@ export default async function SalesLayout({
       navItems={SALES_NAV_ITEMS}
       breadcrumbs={SALES_BREADCRUMBS}
       announcement={announcement ?? undefined}
-      actions={<SalesHeaderActions />}
     >
       {children}
     </WorkspaceShell>
