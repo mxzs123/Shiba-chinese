@@ -20,7 +20,8 @@ const customers: Customer[] = Array.from({ length: 18 }).map((_, index) => ({
   age: 28 + (index % 5) * 3,
   region: index % 3 === 0 ? "上海" : index % 3 === 1 ? "杭州" : "广州",
   type: index % 4 === 0 ? "distributor" : "personal",
-  status: index % 4 === 0 ? "converted" : index % 4 === 1 ? "in-progress" : "pending",
+  status:
+    index % 4 === 0 ? "converted" : index % 4 === 1 ? "in-progress" : "pending",
   salesOwner: index % 2 === 0 ? "王晓" : "李华",
   lastFollowUp: "2025-10-03",
   nextPlan: index % 2 === 0 ? "2025-10-09 电话回访" : undefined,

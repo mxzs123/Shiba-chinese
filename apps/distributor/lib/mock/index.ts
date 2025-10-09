@@ -26,7 +26,9 @@ export function createMockSession(role: Session["role"] = "sales"): Session {
   };
 }
 
-export function createMockProfile(role: UserProfile["role"] = "sales"): UserProfile {
+export function createMockProfile(
+  role: UserProfile["role"] = "sales",
+): UserProfile {
   return {
     id: "mock-user",
     name: role === "sales" ? "王晓" : "佐藤太郎",
@@ -35,10 +37,12 @@ export function createMockProfile(role: UserProfile["role"] = "sales"): UserProf
 }
 
 export const mockHandlers = {
-  salesDashboard: (ctx?: MockContext) => withLatency(salesDashboardMock, ctx?.latency),
+  salesDashboard: (ctx?: MockContext) =>
+    withLatency(salesDashboardMock, ctx?.latency),
   distributorDashboard: (ctx?: MockContext) =>
     withLatency(distributorDashboardMock, ctx?.latency),
-  salesOrders: (ctx?: MockContext) => withLatency(salesOrdersMock, ctx?.latency),
+  salesOrders: (ctx?: MockContext) =>
+    withLatency(salesOrdersMock, ctx?.latency),
   distributorOrders: (ctx?: MockContext) =>
     withLatency(distributorOrdersMock, ctx?.latency),
   customers: (ctx?: MockContext) => withLatency(customersMock, ctx?.latency),

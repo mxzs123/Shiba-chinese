@@ -1,4 +1,8 @@
-export type TranslationDictionary = Record<string, string | TranslationDictionary>;
+export type TranslationValue = string | TranslationDictionary;
+
+export interface TranslationDictionary {
+  [key: string]: TranslationValue;
+}
 
 export interface LocaleMessages {
   locale: string;

@@ -5,14 +5,20 @@ import type { MockContext } from "./index";
 
 const SHOULD_USE_MOCK = process.env.API_USE_MOCK === "true";
 
-export async function fetchMockDashboard(role: "sales" | "distributor", ctx?: MockContext) {
+export async function fetchMockDashboard(
+  role: "sales" | "distributor",
+  ctx?: MockContext,
+) {
   if (role === "sales") {
     return mockHandlers.salesDashboard(ctx);
   }
   return mockHandlers.distributorDashboard(ctx);
 }
 
-export async function fetchMockOrders(type: "sales" | "distributor", ctx?: MockContext) {
+export async function fetchMockOrders(
+  type: "sales" | "distributor",
+  ctx?: MockContext,
+) {
   if (type === "sales") {
     return mockHandlers.salesOrders(ctx);
   }
@@ -27,7 +33,9 @@ export async function fetchMockTasks(ctx?: MockContext) {
   return mockHandlers.tasks(ctx);
 }
 
-export async function fetchMockSession(role: "sales" | "distributor" = "sales") {
+export async function fetchMockSession(
+  role: "sales" | "distributor" = "sales",
+) {
   const session = createMockSession(role);
   const profile = createMockProfile(role);
 

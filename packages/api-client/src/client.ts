@@ -47,7 +47,11 @@ export async function request<T>(
     });
   }
 
-  if (!headers.has("content-type") && options.body && !(options.body instanceof FormData)) {
+  if (
+    !headers.has("content-type") &&
+    options.body &&
+    !(options.body instanceof FormData)
+  ) {
     headers.set("content-type", "application/json");
   }
 
@@ -61,17 +65,19 @@ export async function request<T>(
     headers,
   });
 
-  const parse = options.parseResponse ?? (async (res: Response) => {
-    if (!isJsonResponse(res)) {
-      return undefined;
-    }
+  const parse =
+    options.parseResponse ??
+    (async (res: Response) => {
+      if (!isJsonResponse(res)) {
+        return undefined;
+      }
 
-    try {
-      return (await res.json()) as unknown;
-    } catch {
-      return undefined;
-    }
-  });
+      try {
+        return (await res.json()) as unknown;
+      } catch {
+        return undefined;
+      }
+    });
 
   const payload = (await parse(response)) as T | undefined;
 
@@ -96,7 +102,8 @@ export async function request<T>(
 
 export function createApiClient(config: ApiClientConfig = {}) {
   return {
-    request: <T>(path: string, options?: RequestOptions) => request<T>(path, options, config),
+    request: <T>(path: string, options?: RequestOptions) =>
+      request<T>(path, options, config),
     get: <T>(path: string, options?: RequestOptions) =>
       request<T>(path, { ...options, method: "GET" }, config),
     post: <T, B = unknown>(path: string, body?: B, options?: RequestOptions) =>
@@ -105,7 +112,12 @@ export function createApiClient(config: ApiClientConfig = {}) {
         {
           ...options,
           method: "POST",
-          body: body instanceof FormData ? body : body === undefined ? undefined : JSON.stringify(body),
+          body:
+            body instanceof FormData
+              ? body
+              : body === undefined
+                ? undefined
+                : JSON.stringify(body),
         },
         config,
       ),

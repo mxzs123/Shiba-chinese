@@ -2,10 +2,8 @@ import type { ComponentPropsWithoutRef } from "react";
 import clsx from "clsx";
 
 const variantStyles = {
-  default:
-    "bg-primary text-primary-foreground border-transparent",
-  outline:
-    "border border-primary/40 bg-primary/5 text-primary",
+  default: "bg-primary text-primary-foreground border-transparent",
+  outline: "border border-primary/40 bg-primary/5 text-primary",
 } satisfies Record<string, string>;
 
 export type BadgeVariant = keyof typeof variantStyles;

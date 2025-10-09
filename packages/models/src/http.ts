@@ -7,8 +7,9 @@ export const apiResponseEnvelopeSchema = z.object({
 
 export type ApiResponseEnvelope = z.infer<typeof apiResponseEnvelopeSchema>;
 
-export const createApiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  apiResponseEnvelopeSchema.extend({ data: dataSchema.optional() });
+export const createApiResponseSchema = <T extends z.ZodTypeAny>(
+  dataSchema: T,
+) => apiResponseEnvelopeSchema.extend({ data: dataSchema.optional() });
 
 export type ApiResponse<T> = ApiResponseEnvelope & {
   data?: T;

@@ -6,7 +6,12 @@ export const salesOrdersMock = {
     id: `SO-2024-10-${index + 1}`,
     submittedAt: `2024-10-${String(index + 4).padStart(2, "0")} 09:30`,
     amount: 2800 + index * 120,
-    status: index % 3 === 0 ? "completed" : index % 3 === 1 ? "processing" : "shipped",
+    status:
+      index % 3 === 0
+        ? "completed"
+        : index % 3 === 1
+          ? "processing"
+          : "shipped",
     customer: {
       id: `CUST-${index + 1}`,
       name: index % 2 === 0 ? "李梅" : "张伟",
