@@ -2,7 +2,11 @@ import { create } from "zustand";
 
 import type { Session } from "@shiba/models";
 
-type SessionStatus = "unknown" | "authenticated" | "unauthenticated";
+export type SessionStatus =
+  | "unknown"
+  | "loading"
+  | "authenticated"
+  | "unauthenticated";
 
 interface SessionState {
   session?: Session;
@@ -10,6 +14,7 @@ interface SessionState {
   setSession: (session: Session) => void;
   clearSession: () => void;
   markUnauthenticated: () => void;
+  markLoading: () => void;
 }
 
 export const useSessionStore = create<SessionState>((set) => ({
@@ -18,4 +23,5 @@ export const useSessionStore = create<SessionState>((set) => ({
   setSession: (session) => set({ session, status: "authenticated" }),
   clearSession: () => set({ session: undefined, status: "unauthenticated" }),
   markUnauthenticated: () => set({ status: "unauthenticated" }),
+  markLoading: () => set({ status: "loading" }),
 }));

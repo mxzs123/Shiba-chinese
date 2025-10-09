@@ -3,7 +3,11 @@ import "server-only";
 import { createMockSession, createMockProfile, mockHandlers } from "./index";
 import type { MockContext } from "./index";
 
-const SHOULD_USE_MOCK = process.env.API_USE_MOCK === "true";
+const API_USE_MOCK = process.env.API_USE_MOCK;
+
+const SHOULD_USE_MOCK =
+  API_USE_MOCK === "true" ||
+  (API_USE_MOCK !== "false" && process.env.NODE_ENV !== "production");
 
 export async function fetchMockDashboard(
   role: "sales" | "distributor",
@@ -42,6 +46,13 @@ export async function fetchMockSession(
   return { session, profile };
 }
 
-export function useMock() {
+export async function authenticateMockUser(email: string, _password: string) {
+  const normalized = email.trim().toLowerCase();
+  const role = normalized.includes("distributor") ? "distributor" : "sales";
+
+  return fetchMockSession(role);
+}
+
+export function shouldUseMock() {
   return SHOULD_USE_MOCK;
 }
