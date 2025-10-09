@@ -4,17 +4,17 @@
 
 ## Phase 0 — 启动与上下游对齐
 
-- [ ] 收集并确认需求文档、技术方案、设计稿交付节奏
-- [ ] 明确角色矩阵：销售人员、分销商、二级分销商的页面与权限差异
-- [ ] 与后端约定接口定义、Mock 发布计划、联调窗期
-- [ ] 建立协作基线：代码规范、Lint/Prettier、CI、分支策略
+- [x] 收集并确认需求文档、技术方案、设计稿交付节奏（Figma 设计节奏：Week1 登录/框架/仪表盘，Week2 销售页面，Week3 分销模块，Week4 公共能力；每周二/五同步）
+- [x] 明确角色矩阵：销售人员、分销商、二级分销商的页面与权限差异（分销商仅可申请新增与启停，审批由后台执行）
+- [x] 与后端约定接口定义、Mock 发布计划、联调窗期（后端主导 OpenAPI/排期；我们先提交 P0/P1 接口草案、T+3 天内提供 Mock，周二例会+Week3/Week4 联调）
+- [x] 建立协作基线：代码规范、Lint/Prettier、CI、分支策略（保留 main，按 feature/ 开分支；提交前跑 `npm run lint`、`npm run prettier:check`、`npm run build`；CI 后续接入 GitHub Actions）
 
 ## Phase 1 — 工程与基础设施
 
-- [ ] 创建 `apps/distributor` App Router 工程，配置别名、全局样式、shadcn/ui 主题
-- [ ] 初始化共享 `packages/ui`、`packages/api-client`、`packages/models`（含类型校验）
-- [ ] 建立状态管理（Zustand store 基础骨架）与国际化结构
-- [ ] 搭建 Mock 数据源（Server Action/REST 拦截），确保各模块无后端也可开发
+- [x] 创建 `apps/distributor` App Router 工程，配置别名、全局样式、shadcn/ui 主题（新增 monorepo workspaces、独立 package、layout/page/globals.css、构建通过）
+- [x] 初始化共享 `packages/ui`、`packages/api-client`、`packages/models`（含类型校验）（建立 workspace 包及基础 Badge 组件、API client 基础 request、session/响应 schema 与 zod 校验）
+- [x] 建立状态管理（Zustand store 基础骨架）与国际化结构（新增 @shiba/stores session/UI store、@shiba/i18n locale 配置）
+- [x] 搭建 Mock 数据源（Server Action/REST 拦截），确保各模块无后端也可开发（`lib/mock` 提供仪表盘、订单、客户、任务数据并支持 `API_USE_MOCK` 开关）
 - [ ] 接入错误上报与监控占位（Sentry/Log pipeline），整理环境变量方案
 
 ## Phase 2 — 鉴权与壳层布局
