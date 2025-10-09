@@ -5,6 +5,7 @@ import { listCustomers } from "./customers";
 import { salesOrdersMock, distributorOrdersMock } from "./orders";
 import { salesDashboardMock } from "./sales-dashboard";
 import { listTasks } from "./tasks";
+import { getMockProfile } from "./profile";
 
 export interface MockContext {
   latency?: number;
@@ -29,11 +30,7 @@ export function createMockSession(role: Session["role"] = "sales"): Session {
 export function createMockProfile(
   role: UserProfile["role"] = "sales",
 ): UserProfile {
-  return {
-    id: "mock-user",
-    name: role === "sales" ? "王晓" : "佐藤太郎",
-    role,
-  };
+  return getMockProfile(role);
 }
 
 export const mockHandlers = {

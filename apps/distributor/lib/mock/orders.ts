@@ -316,7 +316,8 @@ function mapDistributorItems(
 function createDistributorOrder(index: number): DistributorOrder {
   const base = createSalesOrder(index);
   const distributor = primaryDistributors[index % primaryDistributors.length]!;
-  const secondary = secondaryDistributors[index % secondaryDistributors.length]!;
+  const secondary =
+    secondaryDistributors[index % secondaryDistributors.length]!;
   const isSecondary = index % 3 === 1;
 
   if (!isSecondary) {

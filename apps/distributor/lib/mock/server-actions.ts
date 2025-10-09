@@ -13,6 +13,7 @@ import type { DistributorOrdersMock, SalesOrdersMock } from "./orders";
 
 import { createMockSession, createMockProfile, mockHandlers } from "./index";
 import type { MockContext } from "./index";
+import { getMockProfile, updateMockProfile } from "./profile";
 import {
   createCustomerFollowUp,
   deleteCustomerFollowUp,
@@ -134,6 +135,24 @@ export async function fetchMockPartnerApplications(): Promise<
   DistributorPartnerApplication[]
 > {
   return listDistributorPartnerApplications();
+}
+
+export type WorkspaceProfileInput = {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+};
+
+export async function fetchMockWorkspaceProfile(role: "sales" | "distributor") {
+  return getMockProfile(role);
+}
+
+export async function updateMockWorkspaceProfile(
+  role: "sales" | "distributor",
+  input: WorkspaceProfileInput,
+) {
+  return updateMockProfile(role, input);
 }
 
 export async function fetchMockSession(

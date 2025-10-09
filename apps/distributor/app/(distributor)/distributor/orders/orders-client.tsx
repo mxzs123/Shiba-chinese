@@ -117,7 +117,9 @@ export function DistributorOrdersClient({
           .filter(Boolean)
           .map((value) => String(value).toLowerCase());
 
-        const matches = haystack.some((value) => value.includes(normalizedTerm));
+        const matches = haystack.some((value) =>
+          value.includes(normalizedTerm),
+        );
         if (!matches) {
           return false;
         }
@@ -185,7 +187,10 @@ export function DistributorOrdersClient({
                 </h3>
                 <div className="mt-3 space-y-2 text-sm">
                   {orderTypeOptions.map((option) => (
-                    <label key={option.value} className="flex items-center gap-2">
+                    <label
+                      key={option.value}
+                      className="flex items-center gap-2"
+                    >
                       <input
                         type="radio"
                         name="order-type"
@@ -209,7 +214,10 @@ export function DistributorOrdersClient({
                 </h3>
                 <div className="mt-3 space-y-2 text-sm">
                   {dateRangeOptions.map((option) => (
-                    <label key={option.value} className="flex items-center gap-2">
+                    <label
+                      key={option.value}
+                      className="flex items-center gap-2"
+                    >
                       <input
                         type="radio"
                         name="order-date-range"
@@ -379,7 +387,9 @@ export function DistributorOrdersClient({
                   </p>
                 </div>
               ) : (
-                <span className="text-sm text-neutral-400">由二级伙伴自配送</span>
+                <span className="text-sm text-neutral-400">
+                  由二级伙伴自配送
+                </span>
               ),
           },
           {
@@ -549,7 +559,9 @@ function OrderDetailDrawer({
                   {currencyFormatter.format(finalAmount)}
                 </p>
                 <p className="text-xs text-neutral-500">
-                  商品金额 {currencyFormatter.format(merchandiseTotal)} · 运费 {currencyFormatter.format(shippingFee)} · 优惠 -{currencyFormatter.format(discount)}
+                  商品金额 {currencyFormatter.format(merchandiseTotal)} · 运费{" "}
+                  {currencyFormatter.format(shippingFee)} · 优惠 -
+                  {currencyFormatter.format(discount)}
                 </p>
               </div>
             </div>

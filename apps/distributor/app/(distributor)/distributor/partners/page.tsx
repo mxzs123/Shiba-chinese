@@ -1,5 +1,8 @@
 import { ModulePlaceholder } from "../../../../components/module-placeholder";
-import { fetchMockPartners, shouldUseMock } from "../../../../lib/mock/server-actions";
+import {
+  fetchMockPartners,
+  shouldUseMock,
+} from "../../../../lib/mock/server-actions";
 import { PartnersClient } from "./partners-client";
 
 export default async function DistributorPartnersPage() {

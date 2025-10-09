@@ -43,21 +43,21 @@ const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_STATUS: PartnerStatusFilter = "all";
 const DEFAULT_REGION: PartnerRegionFilter = "all";
 
-const statusMeta: Record<DistributorPartnerStatus, { label: string; tone: string }> = {
+const statusMeta: Record<
+  DistributorPartnerStatus,
+  { label: string; tone: string }
+> = {
   active: {
     label: "正常",
-    tone:
-      "inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-600",
+    tone: "inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-600",
   },
   paused: {
     label: "暂停",
-    tone:
-      "inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-600",
+    tone: "inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-600",
   },
   disabled: {
     label: "停用",
-    tone:
-      "inline-flex items-center gap-1 rounded-full border border-neutral-200 bg-neutral-100 px-2 py-0.5 text-xs font-semibold text-neutral-600",
+    tone: "inline-flex items-center gap-1 rounded-full border border-neutral-200 bg-neutral-100 px-2 py-0.5 text-xs font-semibold text-neutral-600",
   },
 };
 
@@ -76,12 +76,10 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
   const pageSize = initialData.pageSize || DEFAULT_PAGE_SIZE;
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<PartnerStatusFilter>(
-    DEFAULT_STATUS,
-  );
-  const [regionFilter, setRegionFilter] = useState<PartnerRegionFilter>(
-    DEFAULT_REGION,
-  );
+  const [statusFilter, setStatusFilter] =
+    useState<PartnerStatusFilter>(DEFAULT_STATUS);
+  const [regionFilter, setRegionFilter] =
+    useState<PartnerRegionFilter>(DEFAULT_REGION);
 
   const [submittingId, setSubmittingId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -92,14 +90,12 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
   const [pendingApplications, setPendingApplications] = useState<
     DistributorPartnerApplication[]
   >([]);
-  const [applicationForm, setApplicationForm] = useState<ApplicationFormState>(
-    {
-      name: "",
-      contact: "",
-      region: "",
-      note: "",
-    },
-  );
+  const [applicationForm, setApplicationForm] = useState<ApplicationFormState>({
+    name: "",
+    contact: "",
+    region: "",
+    note: "",
+  });
 
   const regionOptions = useMemo(() => {
     const set = new Set<string>();
@@ -223,7 +219,9 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
     setApplicationForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmitApplication = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitApplication = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
     setCreatingApplication(true);
     setFeedback(null);
@@ -394,9 +392,7 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
           className="space-y-4 rounded-lg border border-primary/30 bg-primary/5 p-5"
         >
           <div>
-            <h2 className="text-sm font-semibold text-primary">
-              新增伙伴申请
-            </h2>
+            <h2 className="text-sm font-semibold text-primary">新增伙伴申请</h2>
             <p className="mt-1 text-xs text-primary/70">
               填写伙伴基本信息后提交，总部将完成资质审核与账号创建。
             </p>
@@ -528,7 +524,10 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
                   value={row.status}
                   disabled={submittingId === row.id}
                   onChange={(event) =>
-                    handleStatusChange(row, event.target.value as DistributorPartnerStatus)
+                    handleStatusChange(
+                      row,
+                      event.target.value as DistributorPartnerStatus,
+                    )
                   }
                   className="min-w-[120px] rounded-md border border-neutral-200 px-2 py-1.5 text-xs text-neutral-700 shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed"
                 >
@@ -573,7 +572,8 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
                   {application.name}
                 </p>
                 <p className="text-xs text-neutral-500">
-                  提交时间：{new Date(application.submittedAt).toLocaleString("zh-CN")}
+                  提交时间：
+                  {new Date(application.submittedAt).toLocaleString("zh-CN")}
                 </p>
                 <p className="mt-1 text-xs text-neutral-500">
                   联系方式：{application.contact} · 地区：{application.region}
