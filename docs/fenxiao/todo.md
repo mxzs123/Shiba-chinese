@@ -15,7 +15,7 @@
 - [x] 初始化共享 `packages/ui`、`packages/api-client`、`packages/models`（含类型校验）（建立 workspace 包及基础 Badge 组件、API client 基础 request、session/响应 schema 与 zod 校验）
 - [x] 建立状态管理（Zustand store 基础骨架）与国际化结构（新增 @shiba/stores session/UI store、@shiba/i18n locale 配置）
 - [x] 搭建 Mock 数据源（Server Action/REST 拦截），确保各模块无后端也可开发（`lib/mock` 提供仪表盘、订单、客户、任务数据并支持 `API_USE_MOCK` 开关）
-- [ ] 接入错误上报与监控占位（Sentry/Log pipeline），整理环境变量方案
+- [x] 接入错误上报与监控占位（Sentry/Log pipeline），整理环境变量方案（新增 @shiba/monitoring、API 错误捕获、.env.example 增加 Sentry/日志开关）
 
 ## Phase 2 — 鉴权与壳层布局
 

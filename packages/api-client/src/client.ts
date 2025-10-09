@@ -1,4 +1,9 @@
 import type { ApiResponse } from "@shiba/models";
+import {
+  captureException,
+  captureMessage,
+  monitoringEnabled,
+} from "@shiba/monitoring";
 
 type FetchLike = typeof fetch;
 
@@ -60,10 +65,23 @@ export async function request<T>(
     headers.set("authorization", `Bearer ${token}`);
   }
 
-  const response = await fetchFn(resolveUrl(path, baseUrl), {
-    ...options,
-    headers,
-  });
+  let response: Response;
+
+  try {
+    response = await fetchFn(resolveUrl(path, baseUrl), {
+      ...options,
+      headers,
+    });
+  } catch (error) {
+    captureException(error, {
+      tags: { path, method: options.method ?? "GET" },
+    });
+
+    return {
+      success: false,
+      error: "network_error",
+    };
+  }
 
   const parse =
     options.parseResponse ??
@@ -74,7 +92,12 @@ export async function request<T>(
 
       try {
         return (await res.json()) as unknown;
-      } catch {
+      } catch (error) {
+        if (monitoringEnabled()) {
+          captureException(error, {
+            tags: { path, stage: "parse" },
+          });
+        }
         return undefined;
       }
     });
@@ -86,6 +109,17 @@ export async function request<T>(
       typeof payload === "object" && payload !== null && "error" in payload
         ? String((payload as Record<string, unknown>).error)
         : response.statusText;
+
+    if (monitoringEnabled()) {
+      captureMessage("api_request_failed", {
+        tags: {
+          path,
+          status: String(response.status),
+          method: options.method ?? "GET",
+        },
+        extra: { payload },
+      });
+    }
 
     return {
       success: false,

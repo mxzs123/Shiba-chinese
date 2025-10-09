@@ -21,7 +21,8 @@
       "@shiba/api-client": ["packages/api-client/src"],
       "@shiba/models": ["packages/models/src"],
       "@shiba/stores": ["packages/stores/src"],
-      "@shiba/i18n": ["packages/i18n/src"]
+      "@shiba/i18n": ["packages/i18n/src"],
+      "@shiba/monitoring": ["packages/monitoring/src"]
     },
     "noUncheckedIndexedAccess": true,
     "plugins": [

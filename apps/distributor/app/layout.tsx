@@ -3,10 +3,13 @@ import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { fallbackLocale } from "@shiba/i18n";
+import { initMonitoring } from "@shiba/monitoring";
 
 import "./globals.css";
 
 const SITE_NAME = "芝园分销平台";
+
+initMonitoring({ serviceName: "distributor-app" });
 
 export const metadata: Metadata = {
   title: {
