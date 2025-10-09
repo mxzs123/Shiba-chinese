@@ -24,8 +24,7 @@ const tasks: Task[] = [
   {
     id: "TASK-0002",
     title: "审核退款申请",
-    description:
-      "核对退款申请材料并同步财务，确认库存回收与折扣政策适用性",
+    description: "核对退款申请材料并同步财务，确认库存回收与折扣政策适用性",
     dueDate: "2025-10-05T12:00:00+08:00",
     priority: "medium",
     status: "completed",
@@ -40,8 +39,7 @@ const tasks: Task[] = [
   {
     id: "TASK-0003",
     title: "补贴政策答疑资料准备",
-    description:
-      "整理区域分销补贴政策 FAQ，输出 PPT 与标准回复话术",
+    description: "整理区域分销补贴政策 FAQ，输出 PPT 与标准回复话术",
     dueDate: "2025-10-08T18:00:00+08:00",
     priority: "medium",
     status: "pending",
@@ -55,8 +53,7 @@ const tasks: Task[] = [
   {
     id: "TASK-0004",
     title: "交付线上渠道素材",
-    description:
-      "根据 A/B 测试反馈更新落地页主视觉与宣传语，打包交付电商团队",
+    description: "根据 A/B 测试反馈更新落地页主视觉与宣传语，打包交付电商团队",
     dueDate: "2025-10-07T17:30:00+08:00",
     priority: "medium",
     status: "in_progress",
@@ -68,8 +65,7 @@ const tasks: Task[] = [
   {
     id: "TASK-0005",
     title: "编制 Q4 进货预测",
-    description:
-      "结合区域订单趋势完成 SKU 库存测算，提交总部审批",
+    description: "结合区域订单趋势完成 SKU 库存测算，提交总部审批",
     dueDate: "2025-10-11T19:00:00+08:00",
     priority: "medium",
     status: "pending",
@@ -81,8 +77,7 @@ const tasks: Task[] = [
   {
     id: "TASK-0006",
     title: "回访新增客户",
-    description:
-      "确认首单履约体验并收集交叉销售机会，邀约参加线下沙龙",
+    description: "确认首单履约体验并收集交叉销售机会，邀约参加线下沙龙",
     dueDate: "2025-10-12T16:00:00+08:00",
     priority: "low",
     status: "pending",
@@ -124,7 +119,7 @@ export function updateTask(taskId: string, input: TaskUpdateInput) {
     task.status = input.status;
     if (input.status === "completed") {
       task.completedAt = now;
-    } else if (task.completedAt && input.status !== "completed") {
+    } else if (task.completedAt) {
       task.completedAt = undefined;
     }
   }

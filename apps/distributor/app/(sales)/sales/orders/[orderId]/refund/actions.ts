@@ -5,13 +5,13 @@ import { revalidatePath } from "next/cache";
 import {
   createRefundApplication,
   type RefundApplication,
-} from "@/lib/mock/refunds";
+} from "../../../../../../lib/mock/refunds";
 import {
   createTemporaryUpload,
   deleteTemporaryUpload,
   type TemporaryUpload,
-} from "@/lib/mock/uploads";
-import { findSalesOrderById } from "@/lib/mock/orders";
+} from "../../../../../../lib/mock/uploads";
+import { findSalesOrderById } from "../../../../../../lib/mock/orders";
 
 type ActionResult<T> =
   | { success: true; data: T }

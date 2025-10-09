@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Task, TaskStatus } from "@shiba/models";
+import type { DistributorOrdersMock, SalesOrdersMock } from "./orders";
 
 import { createMockSession, createMockProfile, mockHandlers } from "./index";
 import type { MockContext } from "./index";
@@ -29,6 +30,14 @@ export async function fetchMockDashboard(
   return mockHandlers.distributorDashboard(ctx);
 }
 
+export async function fetchMockOrders(
+  type: "sales",
+  ctx?: MockContext,
+): Promise<SalesOrdersMock>;
+export async function fetchMockOrders(
+  type: "distributor",
+  ctx?: MockContext,
+): Promise<DistributorOrdersMock>;
 export async function fetchMockOrders(
   type: "sales" | "distributor",
   ctx?: MockContext,

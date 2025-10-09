@@ -45,6 +45,27 @@ export interface SalesOrdersMock {
   items: SalesOrder[];
 }
 
+export type DistributorOrderType = "primary" | "secondary";
+
+export interface DistributorOrder {
+  id: string;
+  type: DistributorOrderType;
+  distributorName: string;
+  secondaryDistributor?: string;
+  submittedAt: string;
+  amount: number;
+  customerName: string;
+  address: string;
+  trackingNo: string;
+}
+
+export interface DistributorOrdersMock {
+  page: number;
+  pageSize: number;
+  total: number;
+  items: DistributorOrder[];
+}
+
 const productCatalog = [
   { name: "护肝胶囊", sku: "SKU-HEP-001", unitPrice: 1680 },
   { name: "益生菌粉", sku: "SKU-PRO-003", unitPrice: 980 },
@@ -118,7 +139,7 @@ function createLineItem(
   quantity: number,
   seed: number,
 ): SalesOrderLineItem {
-  const product = productCatalog[productIndex % productCatalog.length];
+  const product = productCatalog[productIndex % productCatalog.length]!;
   const total = product.unitPrice * quantity;
   return {
     id: `${product.sku}-${seed}`,
@@ -135,10 +156,10 @@ function createSalesOrder(index: number): SalesOrder {
   const submittedAtDate = addDays(baseDate, index);
   const shipmentDate = addDays(submittedAtDate, 2);
 
-  const status = statuses[index % statuses.length];
-  const paymentMethod = paymentMethods[index % paymentMethods.length];
-  const carrier = carriers[index % carriers.length];
-  const customerSeed = customers[index % customers.length];
+  const status = statuses[index % statuses.length]!;
+  const paymentMethod = paymentMethods[index % paymentMethods.length]!;
+  const carrier = carriers[index % carriers.length]!;
+  const customerSeed = customers[index % customers.length]!;
   const quantitySeed = (index % 3) + 1;
 
   const lineItems: SalesOrderLineItem[] = [
@@ -192,7 +213,7 @@ export const salesOrdersMock: SalesOrdersMock = {
   items: Array.from({ length: 30 }).map((_, index) => createSalesOrder(index)),
 };
 
-export const distributorOrdersMock = {
+export const distributorOrdersMock: DistributorOrdersMock = {
   page: 1,
   pageSize: 20,
   total: 76,

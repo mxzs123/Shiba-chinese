@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-import { DataTable } from "@/components/data-table";
-import { FilterDrawer } from "@/components/filter-drawer";
-import { Pagination } from "@/components/pagination";
+import { DataTable } from "../../../../components/data-table";
+import { FilterDrawer } from "../../../../components/filter-drawer";
+import { Pagination } from "../../../../components/pagination";
 import type {
   SalesOrder,
   SalesOrdersMock,
   SalesOrderStatus,
-} from "@/lib/mock/orders";
+} from "../../../../lib/mock/orders";
 
 interface OrdersClientProps {
   initialData: SalesOrdersMock;
@@ -92,13 +92,14 @@ export function OrdersClient({ initialData }: OrdersClientProps) {
 
   const pageSize = initialData.pageSize || 10;
   const referenceDate = useMemo(() => {
-    if (initialData.items.length === 0) {
+    const [firstOrder] = initialData.items;
+    if (!firstOrder) {
       return new Date();
     }
     return initialData.items.reduce((latest, order) => {
       const submittedAt = parseSubmittedAt(order.submittedAt);
       return submittedAt > latest ? submittedAt : latest;
-    }, parseSubmittedAt(initialData.items[0].submittedAt));
+    }, parseSubmittedAt(firstOrder.submittedAt));
   }, [initialData.items]);
 
   const filteredOrders = useMemo(() => {

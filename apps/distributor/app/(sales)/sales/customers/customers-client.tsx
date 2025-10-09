@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { DataTable } from "@/components/data-table";
-import { FilterDrawer } from "@/components/filter-drawer";
-import { Pagination } from "@/components/pagination";
+import { DataTable } from "../../../../components/data-table";
+import { FilterDrawer } from "../../../../components/filter-drawer";
+import { Pagination } from "../../../../components/pagination";
 import type {
   Customer,
   CustomerFollowUp,

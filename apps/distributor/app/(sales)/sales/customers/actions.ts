@@ -12,7 +12,7 @@ import {
   fetchMockCustomerById,
   shouldUseMock,
   updateMockCustomerFollowUp,
-} from "@/lib/mock/server-actions";
+} from "../../../../lib/mock/server-actions";
 
 type ActionResult<T> =
   | { success: true; data: T }

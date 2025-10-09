@@ -12,10 +12,10 @@ export const distributorDashboardMock = {
     ],
   },
   productSales: [
-    { name: "护肝胶囊", amount: 120000 },
-    { name: "维生素B 复合片", amount: 88000 },
-    { name: "免疫提升饮品", amount: 72000 },
-    { name: "益生菌粉", amount: 65000 },
+    { name: "护肝胶囊", amount: 120000, category: "A" },
+    { name: "维生素B 复合片", amount: 88000, category: "A" },
+    { name: "免疫提升饮品", amount: 72000, category: "B" },
+    { name: "益生菌粉", amount: 65000, category: "C" },
   ],
   secondaryDistributorSummary: {
     activeCount: 28,

@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 
-import { logoutAction } from "@/app/lib/session-actions";
+import { logoutAction } from "../app/lib/session-actions";
 
 export function LogoutButton() {
   const [isPending, startTransition] = useTransition();

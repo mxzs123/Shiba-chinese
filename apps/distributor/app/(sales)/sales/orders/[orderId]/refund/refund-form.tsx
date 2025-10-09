@@ -10,9 +10,9 @@ import {
 import { useRouter } from "next/navigation";
 import { FileText, Loader2, Trash2, UploadCloud } from "lucide-react";
 
-import type { SalesOrder } from "@/lib/mock/orders";
-import type { TemporaryUpload } from "@/lib/mock/uploads";
-import type { RefundApplication } from "@/lib/mock/refunds";
+import type { SalesOrder } from "../../../../../../lib/mock/orders";
+import type { TemporaryUpload } from "../../../../../../lib/mock/uploads";
+import type { RefundApplication } from "../../../../../../lib/mock/refunds";
 import {
   removeRefundAttachmentAction,
   submitRefundApplicationAction,

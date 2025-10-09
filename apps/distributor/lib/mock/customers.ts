@@ -34,12 +34,14 @@ function resolveLastFollowUp(followUps: CustomerFollowUp[]) {
       return getTimestamp(b) - getTimestamp(a);
     });
 
-  if (completed.length > 0) {
-    return completed[0].updatedAt ?? completed[0].plannedAt;
+  const [latestCompleted] = completed;
+  if (latestCompleted) {
+    return latestCompleted.updatedAt ?? latestCompleted.plannedAt;
   }
 
-  return [...followUps].sort(sortByPlannedAtAsc)[followUps.length - 1]
-    ?.plannedAt;
+  const sorted = [...followUps].sort(sortByPlannedAtAsc);
+  const last = sorted.at(-1);
+  return last ? last.plannedAt : undefined;
 }
 
 function recalculateCustomer(customer: Customer) {
