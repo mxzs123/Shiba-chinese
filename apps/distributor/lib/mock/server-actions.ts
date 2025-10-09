@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { Task, TaskStatus } from "@shiba/models";
+
 import { createMockSession, createMockProfile, mockHandlers } from "./index";
 import type { MockContext } from "./index";
 import {
@@ -9,6 +11,7 @@ import {
   listCustomers,
   updateCustomerFollowUp,
 } from "./customers";
+import { findTaskById, updateTaskStatus } from "./tasks";
 
 const API_USE_MOCK = process.env.API_USE_MOCK;
 
@@ -70,8 +73,19 @@ export async function deleteMockCustomerFollowUp(
   return deleteCustomerFollowUp(customerId, followUpId);
 }
 
-export async function fetchMockTasks(ctx?: MockContext) {
+export async function fetchMockTasks(ctx?: MockContext): Promise<Task[]> {
   return mockHandlers.tasks(ctx);
+}
+
+export async function updateMockTaskStatus(
+  taskId: string,
+  status: TaskStatus,
+): Promise<Task | undefined> {
+  return updateTaskStatus(taskId, status);
+}
+
+export async function fetchMockTask(taskId: string): Promise<Task | undefined> {
+  return findTaskById(taskId);
 }
 
 export async function fetchMockSession(

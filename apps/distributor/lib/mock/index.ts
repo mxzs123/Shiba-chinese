@@ -4,7 +4,7 @@ import { distributorDashboardMock } from "./distributor-dashboard";
 import { listCustomers } from "./customers";
 import { salesOrdersMock, distributorOrdersMock } from "./orders";
 import { salesDashboardMock } from "./sales-dashboard";
-import { tasksMock } from "./tasks";
+import { listTasks } from "./tasks";
 
 export interface MockContext {
   latency?: number;
@@ -46,5 +46,5 @@ export const mockHandlers = {
   distributorOrders: (ctx?: MockContext) =>
     withLatency(distributorOrdersMock, ctx?.latency),
   customers: (ctx?: MockContext) => withLatency(listCustomers(), ctx?.latency),
-  tasks: (ctx?: MockContext) => withLatency(tasksMock, ctx?.latency),
+  tasks: (ctx?: MockContext) => withLatency(listTasks(), ctx?.latency),
 };
