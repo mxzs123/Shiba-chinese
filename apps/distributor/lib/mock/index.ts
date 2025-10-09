@@ -1,7 +1,7 @@
 import type { Session, UserProfile } from "@shiba/models";
 
 import { distributorDashboardMock } from "./distributor-dashboard";
-import { customersMock } from "./customers";
+import { listCustomers } from "./customers";
 import { salesOrdersMock, distributorOrdersMock } from "./orders";
 import { salesDashboardMock } from "./sales-dashboard";
 import { tasksMock } from "./tasks";
@@ -45,6 +45,6 @@ export const mockHandlers = {
     withLatency(salesOrdersMock, ctx?.latency),
   distributorOrders: (ctx?: MockContext) =>
     withLatency(distributorOrdersMock, ctx?.latency),
-  customers: (ctx?: MockContext) => withLatency(customersMock, ctx?.latency),
+  customers: (ctx?: MockContext) => withLatency(listCustomers(), ctx?.latency),
   tasks: (ctx?: MockContext) => withLatency(tasksMock, ctx?.latency),
 };

@@ -2,6 +2,13 @@ import "server-only";
 
 import { createMockSession, createMockProfile, mockHandlers } from "./index";
 import type { MockContext } from "./index";
+import {
+  createCustomerFollowUp,
+  deleteCustomerFollowUp,
+  findCustomerById,
+  listCustomers,
+  updateCustomerFollowUp,
+} from "./customers";
 
 const API_USE_MOCK = process.env.API_USE_MOCK;
 
@@ -31,6 +38,36 @@ export async function fetchMockOrders(
 
 export async function fetchMockCustomers(ctx?: MockContext) {
   return mockHandlers.customers(ctx);
+}
+
+export async function fetchMockCustomerById(id: string) {
+  return findCustomerById(id);
+}
+
+export async function fetchMockCustomerList() {
+  return listCustomers();
+}
+
+export async function createMockCustomerFollowUp(
+  customerId: string,
+  input: Parameters<typeof createCustomerFollowUp>[1],
+) {
+  return createCustomerFollowUp(customerId, input);
+}
+
+export async function updateMockCustomerFollowUp(
+  customerId: string,
+  followUpId: string,
+  input: Parameters<typeof updateCustomerFollowUp>[2],
+) {
+  return updateCustomerFollowUp(customerId, followUpId, input);
+}
+
+export async function deleteMockCustomerFollowUp(
+  customerId: string,
+  followUpId: string,
+) {
+  return deleteCustomerFollowUp(customerId, followUpId);
 }
 
 export async function fetchMockTasks(ctx?: MockContext) {
