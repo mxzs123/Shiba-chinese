@@ -1,25 +1,33 @@
 import type { ReactNode } from "react";
 
+import { WorkspaceShell } from "../../../components/workspace-shell";
 import { ensureRole } from "../../../lib/auth";
+import {
+  DISTRIBUTOR_BREADCRUMBS,
+  DISTRIBUTOR_NAV_ITEMS,
+} from "../../lib/navigation";
+import { getWorkspaceAnnouncement } from "../../lib/announcements";
+import { DistributorHeaderActions } from "../../../components/distributor-header-actions";
 
 export default async function DistributorLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  await ensureRole("distributor");
+  const session = await ensureRole("distributor");
+  const announcement = await getWorkspaceAnnouncement(session.role);
 
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-50">
-      <header className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-primary">
-            芝园分销平台
-          </p>
-          <h1 className="text-xl font-semibold text-neutral-900">分销商中心</h1>
-        </div>
-      </header>
-      <main className="flex-1 px-6 py-8">{children}</main>
-    </div>
+    <WorkspaceShell
+      title="分销商中心"
+      subtitle="掌握分销业绩与二级伙伴的最新进展。"
+      session={session}
+      navItems={DISTRIBUTOR_NAV_ITEMS}
+      breadcrumbs={DISTRIBUTOR_BREADCRUMBS}
+      announcement={announcement ?? undefined}
+      actions={<DistributorHeaderActions />}
+    >
+      {children}
+    </WorkspaceShell>
   );
 }
