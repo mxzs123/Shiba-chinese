@@ -137,7 +137,10 @@ export default function SalesHomePage() {
             </p>
             <div className="mt-3 flex items-center gap-3">
               <div className="flex-1 rounded-full bg-neutral-100">
-                <div className="flex h-2 overflow-hidden rounded-full" aria-hidden>
+                <div
+                  className="flex h-2 overflow-hidden rounded-full"
+                  aria-hidden
+                >
                   <span
                     className="h-full bg-primary"
                     style={{ width: femalePercent }}
@@ -150,10 +153,12 @@ export default function SalesHomePage() {
               </div>
               <div className="flex items-center gap-2 text-xs text-neutral-500">
                 <span className="flex items-center gap-1">
-                  <span className="inline-block h-2 w-2 rounded-full bg-primary" /> 女 {femalePercent}
+                  <span className="inline-block h-2 w-2 rounded-full bg-primary" />{" "}
+                  女 {femalePercent}
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="inline-block h-2 w-2 rounded-full bg-primary/30" /> 男 {malePercent}
+                  <span className="inline-block h-2 w-2 rounded-full bg-primary/30" />{" "}
+                  男 {malePercent}
                 </span>
               </div>
             </div>
@@ -201,7 +206,9 @@ export default function SalesHomePage() {
               >
                 <div className="flex items-center justify-between text-xs text-neutral-500">
                   <span>截止 {task.dueDate}</span>
-                  <span className={`rounded px-2 py-0.5 font-medium ${priorityStyle}`}>
+                  <span
+                    className={`rounded px-2 py-0.5 font-medium ${priorityStyle}`}
+                  >
                     {priorityLabel}
                   </span>
                 </div>
@@ -209,7 +216,9 @@ export default function SalesHomePage() {
                   {task.title}
                 </p>
                 {task.summary ? (
-                  <p className="mt-1 text-xs text-neutral-500">{task.summary}</p>
+                  <p className="mt-1 text-xs text-neutral-500">
+                    {task.summary}
+                  </p>
                 ) : null}
               </li>
             );

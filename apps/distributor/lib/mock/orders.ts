@@ -208,3 +208,7 @@ export const distributorOrdersMock = {
     trackingNo: `YT10${index}6327815`,
   })),
 };
+
+export function findSalesOrderById(orderId: string) {
+  return salesOrdersMock.items.find((order) => order.id === orderId);
+}

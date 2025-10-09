@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { DataTable } from "@/components/data-table";
@@ -191,7 +192,10 @@ export function OrdersClient({ initialData }: OrdersClientProps) {
                 </h3>
                 <div className="mt-3 space-y-2 text-sm">
                   {statusOptions.map((option) => (
-                    <label key={option.value} className="flex items-center gap-2">
+                    <label
+                      key={option.value}
+                      className="flex items-center gap-2"
+                    >
                       <input
                         type="radio"
                         name="order-status"
@@ -215,7 +219,10 @@ export function OrdersClient({ initialData }: OrdersClientProps) {
                 </h3>
                 <div className="mt-3 space-y-2 text-sm">
                   {dateRangeOptions.map((option) => (
-                    <label key={option.value} className="flex items-center gap-2">
+                    <label
+                      key={option.value}
+                      className="flex items-center gap-2"
+                    >
                       <input
                         type="radio"
                         name="order-date-range"
@@ -255,9 +262,7 @@ export function OrdersClient({ initialData }: OrdersClientProps) {
           />
         </div>
         <div className="flex items-center gap-3 text-xs text-neutral-500">
-          <span>
-            当前筛选：共 {total} 笔订单
-          </span>
+          <span>当前筛选：共 {total} 笔订单</span>
           {activeFiltersCount > 0 ? (
             <span className="rounded-full bg-primary/10 px-2 py-1 font-medium text-primary">
               {activeFiltersCount} 项筛选生效
@@ -294,7 +299,9 @@ export function OrdersClient({ initialData }: OrdersClientProps) {
             header: "客户信息",
             cell: (row) => (
               <div className="space-y-1 text-sm">
-                <p className="font-medium text-neutral-900">{row.customer.name}</p>
+                <p className="font-medium text-neutral-900">
+                  {row.customer.name}
+                </p>
                 <p className="text-xs text-neutral-500">
                   {row.customer.type} · {row.customer.id}
                 </p>
@@ -323,15 +330,29 @@ export function OrdersClient({ initialData }: OrdersClientProps) {
           },
           {
             header: "操作",
-            cell: (row) => (
-              <button
-                type="button"
-                onClick={() => setSelectedOrder(row)}
-                className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
-              >
-                查看详情
-              </button>
-            ),
+            cell: (row) => {
+              const disabled = row.status === "refunded";
+
+              return (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedOrder(row)}
+                    className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+                  >
+                    查看详情
+                  </button>
+                  <Link
+                    href={`/sales/orders/${row.id}/refund`}
+                    className={`rounded-md border px-3 py-1.5 text-sm font-medium transition ${disabled ? "cursor-not-allowed border-neutral-200 text-neutral-400 pointer-events-none" : "border-primary/40 text-primary hover:bg-primary/5"}`}
+                    aria-disabled={disabled}
+                    tabIndex={disabled ? -1 : undefined}
+                  >
+                    {disabled ? "已申请退款" : "申请退款"}
+                  </Link>
+                </div>
+              );
+            },
           },
         ]}
         emptyMessage="暂无符合条件的订单"
@@ -377,6 +398,8 @@ function OrderDetailDrawer({
     return null;
   }
 
+  const canApplyRefund = order.status !== "refunded";
+
   const merchandiseTotal = order.items.reduce(
     (sum, item) => sum + item.total,
     0,
@@ -385,11 +408,7 @@ function OrderDetailDrawer({
 
   return (
     <div className="fixed inset-0 z-50 flex">
-      <div
-        className="flex-1 bg-neutral-900/40"
-        onClick={onClose}
-        aria-hidden
-      />
+      <div className="flex-1 bg-neutral-900/40" onClick={onClose} aria-hidden />
       <section className="flex h-full w-full max-w-xl flex-col border-l border-neutral-200 bg-white shadow-2xl">
         <header className="flex items-start justify-between border-b border-neutral-200 px-6 py-5">
           <div>
@@ -409,6 +428,14 @@ function OrderDetailDrawer({
             <span className={statusMeta[order.status].className}>
               {statusMeta[order.status].label}
             </span>
+            <Link
+              href={`/sales/orders/${order.id}/refund`}
+              className={`inline-flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs font-semibold transition ${canApplyRefund ? "border-primary/40 text-primary hover:bg-primary/5" : "cursor-not-allowed border-neutral-200 text-neutral-400 pointer-events-none"}`}
+              aria-disabled={!canApplyRefund}
+              tabIndex={canApplyRefund ? undefined : -1}
+            >
+              {canApplyRefund ? "申请退款" : "已申请退款"}
+            </Link>
             <button
               type="button"
               onClick={onClose}
@@ -420,9 +447,7 @@ function OrderDetailDrawer({
         </header>
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <section className="space-y-3">
-            <h3 className="text-sm font-semibold text-neutral-900">
-              概要信息
-            </h3>
+            <h3 className="text-sm font-semibold text-neutral-900">概要信息</h3>
             <div className="grid gap-4 text-sm text-neutral-600 md:grid-cols-2">
               <div>
                 <p className="text-xs text-neutral-400">客户</p>
@@ -436,7 +461,9 @@ function OrderDetailDrawer({
               <div>
                 <p className="text-xs text-neutral-400">联系方式</p>
                 <p className="mt-1">{order.customer.phone}</p>
-                <p className="text-xs text-neutral-500">收货地址：{order.customer.address}</p>
+                <p className="text-xs text-neutral-500">
+                  收货地址：{order.customer.address}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-neutral-400">物流信息</p>
@@ -454,7 +481,8 @@ function OrderDetailDrawer({
                   {currencyFormatter.format(finalAmount)}
                 </p>
                 <p className="text-xs text-neutral-500">
-                  含运费 {currencyFormatter.format(order.shippingFee)} · 优惠 {currencyFormatter.format(order.discount)}
+                  含运费 {currencyFormatter.format(order.shippingFee)} · 优惠{" "}
+                  {currencyFormatter.format(order.discount)}
                 </p>
               </div>
             </div>
@@ -466,9 +494,7 @@ function OrderDetailDrawer({
           </section>
 
           <section className="mt-6 space-y-3">
-            <h3 className="text-sm font-semibold text-neutral-900">
-              商品明细
-            </h3>
+            <h3 className="text-sm font-semibold text-neutral-900">商品明细</h3>
             <div className="overflow-hidden rounded-lg border border-neutral-200">
               <table className="min-w-full divide-y divide-neutral-200">
                 <thead className="bg-neutral-50 text-xs uppercase tracking-wide text-neutral-500">

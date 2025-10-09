@@ -39,10 +39,7 @@ export function TrendChart({
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = Math.max(max - min, 1);
-  const width =
-    data.length <= 1
-      ? 120
-      : Math.max((data.length - 1) * 60, 120);
+  const width = data.length <= 1 ? 120 : Math.max((data.length - 1) * 60, 120);
 
   const points = data.map((point, index) => {
     const x = (index / Math.max(data.length - 1, 1)) * width;
