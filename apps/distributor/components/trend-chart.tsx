@@ -39,7 +39,10 @@ export function TrendChart({
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = Math.max(max - min, 1);
-  const width = Math.max(1, (data.length - 1) * 60);
+  const width =
+    data.length <= 1
+      ? 120
+      : Math.max((data.length - 1) * 60, 120);
 
   const points = data.map((point, index) => {
     const x = (index / Math.max(data.length - 1, 1)) * width;
@@ -76,7 +79,8 @@ export function TrendChart({
       <div className="relative">
         <svg
           viewBox={`0 0 ${width} ${height}`}
-          className="h-40 w-full overflow-visible"
+          className="w-full overflow-visible"
+          style={{ aspectRatio: `${width} / ${height}` }}
           preserveAspectRatio="none"
         >
           <defs>

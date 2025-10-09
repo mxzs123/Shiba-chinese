@@ -27,11 +27,25 @@ export function WorkspaceNav({
       ? "flex flex-col gap-1"
       : "flex items-center gap-2 overflow-x-auto";
 
+  const activeHref = items.reduce<string | null>((current, item) => {
+    const isExact = pathname === item.href;
+    const isNested = pathname.startsWith(`${item.href}/`);
+
+    if (!isExact && !isNested) {
+      return current;
+    }
+
+    if (!current) {
+      return item.href;
+    }
+
+    return item.href.length > current.length ? item.href : current;
+  }, null);
+
   return (
     <nav className={buildClassName(containerClasses, className)}>
       {items.map((item) => {
-        const isActive =
-          pathname === item.href || pathname.startsWith(`${item.href}/`);
+        const isActive = activeHref === item.href;
 
         const linkBase =
           orientation === "vertical"
