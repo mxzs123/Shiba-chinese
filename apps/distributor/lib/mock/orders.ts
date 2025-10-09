@@ -47,16 +47,51 @@ export interface SalesOrdersMock {
 
 export type DistributorOrderType = "primary" | "secondary";
 
+export interface DistributorOrderCustomer {
+  id: string;
+  name: string;
+  type: string;
+  phone: string;
+  address: string;
+}
+
+export interface DistributorOrderShipment {
+  date: string;
+  trackingNo: string;
+  carrier: string;
+}
+
+export interface DistributorOrderSecondaryPartner {
+  id: string;
+  name: string;
+  contact: string;
+  phone: string;
+  region: string;
+}
+
+export interface DistributorOrderLineItem {
+  id: string;
+  name: string;
+  sku: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
 export interface DistributorOrder {
   id: string;
   type: DistributorOrderType;
+  distributorId: string;
   distributorName: string;
-  secondaryDistributor?: string;
   submittedAt: string;
   amount: number;
-  customerName: string;
-  address: string;
-  trackingNo: string;
+  customer: DistributorOrderCustomer;
+  shipment?: DistributorOrderShipment;
+  secondaryDistributor?: DistributorOrderSecondaryPartner;
+  items: DistributorOrderLineItem[];
+  shippingFee?: number;
+  discount?: number;
+  note?: string;
 }
 
 export interface DistributorOrdersMock {
@@ -110,6 +145,58 @@ const statuses: SalesOrderStatus[] = [
   "shipped",
   "pending",
   "refunded",
+];
+
+const primaryDistributors = [
+  {
+    id: "DIST-1001",
+    name: "华南总代",
+    contact: "陈涛",
+    phone: "138-2200-1188",
+  },
+  {
+    id: "DIST-1002",
+    name: "沪上优选",
+    contact: "赵敏",
+    phone: "139-8800-6611",
+  },
+  {
+    id: "DIST-1003",
+    name: "西北渠道中心",
+    contact: "张鹏",
+    phone: "137-4433-7722",
+  },
+];
+
+const secondaryDistributors = [
+  {
+    id: "SUB-2001",
+    name: "深圳康泰门店",
+    contact: "王婷",
+    phone: "136-8899-1022",
+    region: "广东 · 深圳",
+  },
+  {
+    id: "SUB-2002",
+    name: "杭州安心健康馆",
+    contact: "李娜",
+    phone: "135-6677-3388",
+    region: "浙江 · 杭州",
+  },
+  {
+    id: "SUB-2003",
+    name: "成都同心诊所",
+    contact: "周成",
+    phone: "139-5566-7722",
+    region: "四川 · 成都",
+  },
+  {
+    id: "SUB-2004",
+    name: "北京颐和门店",
+    contact: "刘颖",
+    phone: "138-9900-5566",
+    region: "北京",
+  },
 ];
 
 function addDays(base: Date, days: number) {
@@ -213,21 +300,87 @@ export const salesOrdersMock: SalesOrdersMock = {
   items: Array.from({ length: 30 }).map((_, index) => createSalesOrder(index)),
 };
 
+function mapDistributorItems(
+  items: SalesOrderLineItem[],
+): DistributorOrderLineItem[] {
+  return items.map((item) => ({
+    id: item.id,
+    name: item.name,
+    sku: item.sku,
+    quantity: item.quantity,
+    unitPrice: item.unitPrice,
+    total: item.total,
+  }));
+}
+
+function createDistributorOrder(index: number): DistributorOrder {
+  const base = createSalesOrder(index);
+  const distributor = primaryDistributors[index % primaryDistributors.length]!;
+  const secondary = secondaryDistributors[index % secondaryDistributors.length]!;
+  const isSecondary = index % 3 === 1;
+
+  if (!isSecondary) {
+    return {
+      id: `DO-${String(20241000 + index)}`,
+      type: "primary",
+      distributorId: distributor.id,
+      distributorName: distributor.name,
+      submittedAt: base.submittedAt,
+      amount: base.amount,
+      customer: {
+        id: base.customer.id,
+        name: base.customer.name,
+        type: base.customer.type,
+        phone: base.customer.phone,
+        address: base.customer.address,
+      },
+      shipment: {
+        date: base.shipment.date,
+        trackingNo: base.shipment.trackingNo,
+        carrier: base.shipment.carrier,
+      },
+      items: mapDistributorItems(base.items),
+      shippingFee: base.shippingFee,
+      discount: base.discount,
+      note: base.note,
+    };
+  }
+
+  return {
+    id: `SD-${String(20241000 + index)}`,
+    type: "secondary",
+    distributorId: distributor.id,
+    distributorName: distributor.name,
+    submittedAt: base.submittedAt,
+    amount: base.amount,
+    customer: {
+      id: base.customer.id,
+      name: base.customer.name,
+      type: base.customer.type,
+      phone: base.customer.phone,
+      address: base.customer.address,
+    },
+    secondaryDistributor: {
+      id: secondary.id,
+      name: secondary.name,
+      contact: secondary.contact,
+      phone: secondary.phone,
+      region: secondary.region,
+    },
+    items: mapDistributorItems(base.items),
+    shippingFee: base.shippingFee,
+    discount: base.discount,
+    note: base.note,
+  };
+}
+
 export const distributorOrdersMock: DistributorOrdersMock = {
   page: 1,
-  pageSize: 20,
-  total: 76,
-  items: Array.from({ length: 10 }).map((_, index) => ({
-    id: `DO-2024-10-${index + 1}`,
-    type: index % 2 === 0 ? "primary" : "secondary",
-    distributorName: index % 2 === 0 ? "张三" : "王婷",
-    secondaryDistributor: index % 2 === 0 ? undefined : "王婷",
-    submittedAt: `2024-10-${String(index + 5).padStart(2, "0")} 11:20`,
-    amount: 5200 + index * 180,
-    customerName: index % 2 === 0 ? "赵杰" : "韩敏",
-    address: "深圳市南山区科技南十二路",
-    trackingNo: `YT10${index}6327815`,
-  })),
+  pageSize: 10,
+  total: 36,
+  items: Array.from({ length: 36 }).map((_, index) =>
+    createDistributorOrder(index),
+  ),
 };
 
 export function findSalesOrderById(orderId: string) {
