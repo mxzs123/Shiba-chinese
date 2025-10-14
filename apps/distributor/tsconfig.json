@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
+      "@/*": ["./*", "../../*"],
       "~/*": ["../../*"],
       "@shiba/ui": ["../../packages/ui/src"],
       "@shiba/api-client": ["../../packages/api-client/src"],

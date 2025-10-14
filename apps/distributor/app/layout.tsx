@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 
@@ -32,7 +33,33 @@ const inter = Inter({
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang={fallbackLocale} className={inter.variable}>
-      <body className="bg-neutral-50 text-neutral-900">{children}</body>
+      <body className="bg-neutral-50 text-neutral-900">
+        <Script id="distributor-cleanup-overlays" strategy="beforeInteractive">
+          {`
+            (function () {
+              try {
+                var attempts = 0;
+                var maxAttempts = 5;
+                var clean = function () {
+                  attempts += 1;
+                  var overlay = document.querySelector(".region-selector-container");
+                  if (overlay && overlay.parentElement) {
+                    overlay.parentElement.removeChild(overlay);
+                    return;
+                  }
+                  if (attempts < maxAttempts) {
+                    requestAnimationFrame(clean);
+                  }
+                };
+                clean();
+              } catch (error) {
+                // ignore cleanup errors
+              }
+            })();
+          `}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }

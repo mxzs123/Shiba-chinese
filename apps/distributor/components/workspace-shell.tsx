@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import type { Session } from "@shiba/models";
 
+import { HydrationSafeContainer } from "./hydration-safe-container";
 import { LogoutButton } from "./logout-button";
 import { WorkspaceNav } from "./workspace-nav";
 
@@ -49,7 +50,7 @@ export function WorkspaceShell({
   const hasBreadcrumbs = breadcrumbs && breadcrumbs.length > 0;
 
   return (
-    <div className="flex min-h-screen bg-neutral-100">
+    <HydrationSafeContainer className="flex min-h-screen bg-neutral-100">
       <aside className="hidden w-60 flex-col border-r border-neutral-200 bg-white px-4 py-6 lg:flex">
         <div className="mb-6 space-y-3">
           <div>
@@ -141,7 +142,7 @@ export function WorkspaceShell({
         ) : null}
         <main className="flex-1 px-6 py-8">{children}</main>
       </div>
-    </div>
+    </HydrationSafeContainer>
   );
 }
 
