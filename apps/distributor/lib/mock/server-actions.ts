@@ -28,12 +28,6 @@ import {
   listDistributorPartners,
   updateDistributorPartnerStatus,
 } from "./partners";
-import {
-  changeMockPassword,
-  findMockAccountByEmail,
-  getMockAccount,
-  updateMockAccount,
-} from "./account";
 
 const API_USE_MOCK = process.env.API_USE_MOCK;
 
@@ -161,30 +155,6 @@ export async function updateMockWorkspaceProfile(
   return updateMockProfile(role, input);
 }
 
-export type WorkspaceAccount = {
-  email: string;
-  phone?: string;
-};
-
-export async function fetchMockWorkspaceAccount(role: "sales" | "distributor") {
-  return getMockAccount(role);
-}
-
-export async function updateMockWorkspaceAccount(
-  role: "sales" | "distributor",
-  input: Partial<WorkspaceAccount>,
-) {
-  return updateMockAccount(role, input);
-}
-
-export async function changeMockWorkspacePassword(
-  role: "sales" | "distributor",
-  oldPassword: string,
-  newPassword: string,
-) {
-  return changeMockPassword(role, oldPassword, newPassword);
-}
-
 export async function fetchMockSession(
   role: "sales" | "distributor" = "sales",
 ) {
@@ -194,18 +164,11 @@ export async function fetchMockSession(
   return { session, profile };
 }
 
-export async function authenticateMockUser(email: string, password: string) {
-  const account = findMockAccountByEmail(email);
+export async function authenticateMockUser(email: string, _password: string) {
+  const normalized = email.trim().toLowerCase();
+  const role = normalized.includes("distributor") ? "distributor" : "sales";
 
-  if (!account) {
-    throw new Error("账号不存在");
-  }
-
-  if (account.password !== password) {
-    throw new Error("密码错误");
-  }
-
-  return fetchMockSession(account.role);
+  return fetchMockSession(role);
 }
 
 export function shouldUseMock() {

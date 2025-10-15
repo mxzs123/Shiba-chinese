@@ -6,23 +6,18 @@ import { toast } from "sonner";
 
 import type { UserProfile } from "@shiba/models";
 
-import type {
-  WorkspaceAccount,
-  WorkspaceDetailsActionResult,
-} from "../app/lib/profile";
+import type { WorkspaceProfileActionResult } from "../app/lib/profile";
 import type { WorkspaceProfileInput } from "../lib/mock/server-actions";
 
 type WorkspaceProfileFormProps = {
   profile: UserProfile;
-  account: WorkspaceAccount;
   action: (
     input: WorkspaceProfileInput,
-  ) => Promise<WorkspaceDetailsActionResult>;
+  ) => Promise<WorkspaceProfileActionResult>;
 };
 
 export function WorkspaceProfileForm({
   profile,
-  account,
   action,
 }: WorkspaceProfileFormProps) {
   const router = useRouter();
@@ -31,8 +26,8 @@ export function WorkspaceProfileForm({
   const [success, setSuccess] = useState<string | null>(null);
 
   const [name, setName] = useState(profile.name ?? "");
-  const [email, setEmail] = useState(account.email ?? profile.email ?? "");
-  const [phone, setPhone] = useState(account.phone ?? profile.phone ?? "");
+  const [email, setEmail] = useState(profile.email ?? "");
+  const [phone, setPhone] = useState(profile.phone ?? "");
   const [address, setAddress] = useState(profile.address ?? "");
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -50,13 +45,6 @@ export function WorkspaceProfileForm({
         return;
       }
 
-      if (result.data) {
-        setName(result.data.profile.name ?? "");
-        setEmail(result.data.account.email ?? "");
-        setPhone(result.data.account.phone ?? "");
-        setAddress(result.data.profile.address ?? "");
-      }
-
       setSuccess("资料已更新");
       toast.success("资料已更新");
       router.refresh();
@@ -65,7 +53,7 @@ export function WorkspaceProfileForm({
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
-      <div className="space-y-5">
+      <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-2">
           <label
             className="text-sm font-medium text-neutral-700"
@@ -82,44 +70,39 @@ export function WorkspaceProfileForm({
             className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
-
+        <div className="space-y-2">
+          <label
+            className="text-sm font-medium text-neutral-700"
+            htmlFor="workspace-profile-phone"
+          >
+            手机号
+          </label>
+          <input
+            id="workspace-profile-phone"
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+            placeholder="请输入手机号"
+            disabled={pending}
+            className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
         <div className="space-y-2">
           <label
             className="text-sm font-medium text-neutral-700"
             htmlFor="workspace-profile-email"
           >
-            登录邮箱
+            邮箱
           </label>
           <input
             id="workspace-profile-email"
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            placeholder="请输入登录邮箱"
+            placeholder="请输入邮箱"
             disabled={pending}
             className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            autoComplete="email"
           />
         </div>
-
-        <div className="space-y-2">
-          <label
-            className="text-sm font-medium text-neutral-700"
-            htmlFor="workspace-profile-phone"
-          >
-            绑定手机号
-          </label>
-          <input
-            id="workspace-profile-phone"
-            value={phone}
-            onChange={(event) => setPhone(event.target.value)}
-            placeholder="请输入绑定手机号"
-            disabled={pending}
-            className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            autoComplete="tel"
-          />
-        </div>
-
         <div className="space-y-2">
           <label
             className="text-sm font-medium text-neutral-700"
@@ -134,7 +117,6 @@ export function WorkspaceProfileForm({
             placeholder="请输入联系地址"
             disabled={pending}
             className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            autoComplete="street-address"
           />
         </div>
       </div>

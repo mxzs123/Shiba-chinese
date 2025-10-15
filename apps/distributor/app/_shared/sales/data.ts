@@ -140,8 +140,9 @@ export function getSalesDashboardViewModel(): SalesDashboardViewModel {
     byPriority: PRIORITY_ORDER.reduce(
       (acc, priority) => ({
         ...acc,
-        [priority]: normalizedTasks.filter((task) => task.priority === priority)
-          .length,
+        [priority]: normalizedTasks.filter(
+          (task) => task.priority === priority,
+        ).length,
       }),
       {} as Record<TaskPriority, number>,
     ),

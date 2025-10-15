@@ -1,13 +1,10 @@
 import type { UserRole } from "@shiba/models";
 
 import {
-  changeWorkspacePasswordAction,
-  loadWorkspaceAccount,
   loadWorkspaceProfile,
-  updateWorkspaceDetailsAction,
+  updateWorkspaceProfileAction,
 } from "../app/lib/profile";
 import { WorkspaceProfileForm } from "./workspace-profile-form";
-import { WorkspacePasswordForm } from "./workspace-password-form";
 import type { WorkspaceProfileInput } from "../lib/mock/server-actions";
 
 type ProfileSettingsPanelProps = {
@@ -22,25 +19,14 @@ const roleCopy: Record<ProfileSettingsPanelProps["role"], string> = {
 export async function ProfileSettingsPanel({
   role,
 }: ProfileSettingsPanelProps) {
-  const [profile, account] = await Promise.all([
-    loadWorkspaceProfile(role),
-    loadWorkspaceAccount(role),
-  ]);
+  const profile = await loadWorkspaceProfile(role);
 
-  async function handleDetailsUpdate(input: WorkspaceProfileInput) {
+  async function handleUpdate(input: WorkspaceProfileInput) {
     "use server";
-    return updateWorkspaceDetailsAction(role, input);
+    return updateWorkspaceProfileAction(role, input);
   }
 
-  async function handlePasswordChange(
-    currentPassword: string,
-    newPassword: string,
-  ) {
-    "use server";
-    return changeWorkspacePasswordAction(role, currentPassword, newPassword);
-  }
-
-  if (!profile || !account) {
+  if (!profile) {
     return (
       <section className="rounded-3xl border border-neutral-100 bg-white/80 p-8 text-center shadow-lg shadow-neutral-900/5">
         <h2 className="text-xl font-semibold text-neutral-900">个人信息</h2>
@@ -52,23 +38,12 @@ export async function ProfileSettingsPanel({
   }
 
   return (
-    <section className="mx-auto space-y-8 rounded-3xl border border-neutral-100 bg-white/90 p-6 shadow-lg shadow-neutral-900/5 sm:p-8 lg:max-w-3xl">
+    <section className="space-y-6 rounded-3xl border border-neutral-100 bg-white/90 p-8 shadow-lg shadow-neutral-900/5">
       <header className="space-y-1">
         <h2 className="text-xl font-semibold text-neutral-900">个人信息</h2>
         <p className="text-sm text-neutral-500">{roleCopy[role]}</p>
       </header>
-      <div className="space-y-4">
-        <h3 className="text-base font-semibold text-neutral-900">账户资料</h3>
-        <WorkspaceProfileForm
-          profile={profile}
-          account={account}
-          action={handleDetailsUpdate}
-        />
-      </div>
-      <div className="space-y-4">
-        <h3 className="text-base font-semibold text-neutral-900">密码安全</h3>
-        <WorkspacePasswordForm action={handlePasswordChange} />
-      </div>
+      <WorkspaceProfileForm profile={profile} action={handleUpdate} />
     </section>
   );
 }

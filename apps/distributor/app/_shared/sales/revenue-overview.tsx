@@ -103,8 +103,16 @@ export function RevenueOverview({
           <AreaChart data={data.monthlyTrend}>
             <defs>
               <linearGradient id="revenue-fill" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor={primaryColor} stopOpacity={0.24} />
-                <stop offset="100%" stopColor={primaryColor} stopOpacity={0} />
+                <stop
+                  offset="0%"
+                  stopColor={primaryColor}
+                  stopOpacity={0.24}
+                />
+                <stop
+                  offset="100%"
+                  stopColor={primaryColor}
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -144,18 +152,8 @@ export function RevenueOverview({
               strokeLinecap="round"
               fill="url(#revenue-fill)"
               fillOpacity={1}
-              dot={{
-                r: 4,
-                fill: primaryColor,
-                stroke: "#fff",
-                strokeWidth: 1.5,
-              }}
-              activeDot={{
-                r: 5,
-                fill: primaryColor,
-                stroke: "#fff",
-                strokeWidth: 2,
-              }}
+              dot={{ r: 4, fill: primaryColor, stroke: "#fff", strokeWidth: 1.5 }}
+              activeDot={{ r: 5, fill: primaryColor, stroke: "#fff", strokeWidth: 2 }}
             />
           </AreaChart>
         </ChartContainer>

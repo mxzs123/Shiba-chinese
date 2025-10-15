@@ -11,14 +11,8 @@ import type {
 
 import { DataTable } from "../../../../components/data-table";
 import { FilterDrawer } from "../../../../components/filter-drawer";
+import { ModulePlaceholder } from "../../../../components/module-placeholder";
 import { Pagination } from "../../../../components/pagination";
-import { Badge } from "~/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
 import {
   fetchPartnerApplicationsAction,
   fetchPartnersAction,
@@ -67,67 +61,11 @@ const statusMeta: Record<
   },
 };
 
-const applicationStatusMeta: Record<
-  DistributorPartnerApplication["status"],
-  { label: string; badgeClass: string }
-> = {
-  pending: {
-    label: "待审批",
-    badgeClass: "border-amber-200 bg-amber-50 text-amber-700",
-  },
-  approved: {
-    label: "已通过",
-    badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  },
-  rejected: {
-    label: "已退回",
-    badgeClass: "border-rose-200 bg-rose-50 text-rose-700",
-  },
-};
-
-const APPROVAL_STEPS = [
-  {
-    id: "submit",
-    title: "提交伙伴申请",
-    description: "门店负责人填写基础信息与合作诉求，提交资质材料。",
-  },
-  {
-    id: "review",
-    title: "渠道运营初审",
-    description: "渠道负责人确认资料完整性，与申请人沟通补充要点。",
-  },
-  {
-    id: "approval",
-    title: "总部审批决策",
-    description: "总部根据门店条件完成准入评估，生成审批结论与备注。",
-  },
-  {
-    id: "onboard",
-    title: "账号开通与协同",
-    description: "通过审批后，创建分销账号并派发培训/开业物料。",
-  },
-] as const;
-
-const submissionTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
 function mapStatusLabel(status: PartnerStatusFilter) {
   if (status === "all") {
     return "全部状态";
   }
   return statusMeta[status].label;
-}
-
-function formatSubmissionTime(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return submissionTimeFormatter.format(date);
 }
 
 export function PartnersClient({ initialData }: PartnersClientProps) {
@@ -158,20 +96,6 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
     region: "",
     note: "",
   });
-
-  const totalPendingApplications = pendingApplications.length;
-  const pendingApplicationsPreview = useMemo(() => {
-    return [...pendingApplications]
-      .sort(
-        (a, b) =>
-          new Date(b.submittedAt).getTime() -
-          new Date(a.submittedAt).getTime(),
-      )
-      .slice(0, 3);
-  }, [pendingApplications]);
-  const hasMorePendingApplications =
-    totalPendingApplications > pendingApplicationsPreview.length;
-  const latestPendingSubmission = pendingApplicationsPreview[0]?.submittedAt;
 
   const regionOptions = useMemo(() => {
     const set = new Set<string>();
@@ -345,132 +269,6 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
 
   return (
     <section className="space-y-6">
-      <Card className="border border-primary/20 bg-white shadow-sm">
-        <CardHeader className="gap-2 pb-4">
-          <CardTitle className="text-lg font-semibold text-neutral-900">
-            伙伴审批流程
-          </CardTitle>
-          <p className="text-sm text-neutral-500">
-            跟踪二级伙伴申请的审批进度，并快速查看当前待处理事项。
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-            <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">
-                审批步骤
-              </p>
-              <ol className="space-y-4">
-                {APPROVAL_STEPS.map((step, index) => (
-                  <li key={step.id} className="flex gap-4">
-                    <div className="flex flex-col items-center self-stretch">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                        {index + 1}
-                      </span>
-                      {index < APPROVAL_STEPS.length - 1 ? (
-                        <span className="mt-2 w-px flex-1 bg-primary/20" />
-                      ) : null}
-                    </div>
-                    <div className="space-y-1 pt-1">
-                      <p className="text-sm font-semibold text-neutral-900">
-                        {step.title}
-                      </p>
-                      <p className="text-xs leading-relaxed text-neutral-500">
-                        {step.description}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div className="flex h-full flex-col gap-4 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">
-                    待审批事项
-                  </p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-semibold text-neutral-900">
-                      {totalPendingApplications}
-                    </span>
-                    <span className="text-sm text-neutral-500">
-                      份等待总部处理
-                    </span>
-                  </div>
-                  {latestPendingSubmission ? (
-                    <p className="text-xs text-neutral-500">
-                      最新申请提交于 {formatSubmissionTime(latestPendingSubmission)}
-                    </p>
-                  ) : (
-                    <p className="text-xs text-neutral-500">
-                      当前没有排队中的伙伴申请。
-                    </p>
-                  )}
-                </div>
-                <Badge
-                  variant="outline"
-                  className={`border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.18em] ${applicationStatusMeta.pending.badgeClass}`}
-                >
-                  {applicationStatusMeta.pending.label}
-                </Badge>
-              </div>
-              {totalPendingApplications === 0 ? (
-                <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-4 text-sm text-neutral-500">
-                  提交首个伙伴申请后，可在此跟踪审批节点与处理建议。
-                </div>
-              ) : (
-                <ul className="space-y-3">
-                  {pendingApplicationsPreview.map((application) => (
-                    <li
-                      key={application.id}
-                      className="rounded-lg border border-neutral-200 bg-white p-3"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm font-semibold text-neutral-900">
-                          {application.name}
-                        </p>
-                        <Badge
-                          variant="outline"
-                          className={`border px-2 py-0.5 text-[11px] ${applicationStatusMeta[application.status].badgeClass}`}
-                        >
-                          {applicationStatusMeta[application.status].label}
-                        </Badge>
-                      </div>
-                      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500">
-                        <span>{application.contact}</span>
-                        <span className="h-1 w-1 rounded-full bg-neutral-300" />
-                        <span>{application.region}</span>
-                      </div>
-                      <p className="mt-1 text-xs text-neutral-400">
-                        提交时间：{formatSubmissionTime(application.submittedAt)}
-                      </p>
-                      {application.note ? (
-                        <p className="mt-2 text-xs text-neutral-500">
-                          备注：{application.note}
-                        </p>
-                      ) : null}
-                    </li>
-                  ))}
-                  {hasMorePendingApplications ? (
-                    <li className="text-xs text-neutral-400">
-                      其余 {totalPendingApplications - pendingApplicationsPreview.length} 份申请将在审批台上线后展示完整列表。
-                    </li>
-                  ) : null}
-                </ul>
-              )}
-              {!showApplicationForm ? (
-                <button
-                  type="button"
-                  onClick={() => setShowApplicationForm(true)}
-                  className="inline-flex items-center justify-center rounded-md bg-primary px-3 py-2 text-xs font-medium text-white transition hover:bg-primary/90"
-                >
-                  发起新增伙伴申请
-                </button>
-              ) : null}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
       <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-2">
           <h1 className="text-xl font-semibold text-neutral-900">
@@ -754,6 +552,42 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
           onPageChange={setPage}
         />
       </div>
+
+      <ModulePlaceholder
+        title="伙伴审批流程（占位）"
+        description="后续将在此接入二级伙伴申请审核与进度跟踪，支持批量处理与总部协同。"
+      >
+        {pendingApplications.length === 0 ? (
+          <p className="text-sm text-neutral-500">
+            当前暂无待审批申请。成功提交后即可在此查看排队进度与操作建议。
+          </p>
+        ) : (
+          <div className="space-y-3 text-sm text-neutral-600">
+            {pendingApplications.slice(0, 3).map((application) => (
+              <div
+                key={application.id}
+                className="rounded-md border border-dashed border-neutral-200 px-3 py-2"
+              >
+                <p className="font-medium text-neutral-900">
+                  {application.name}
+                </p>
+                <p className="text-xs text-neutral-500">
+                  提交时间：
+                  {new Date(application.submittedAt).toLocaleString("zh-CN")}
+                </p>
+                <p className="mt-1 text-xs text-neutral-500">
+                  联系方式：{application.contact} · 地区：{application.region}
+                </p>
+              </div>
+            ))}
+            {pendingApplications.length > 3 ? (
+              <p className="text-xs text-neutral-400">
+                仅展示最近 3 条申请，审批台上线后将支持完整列表与批量操作。
+              </p>
+            ) : null}
+          </div>
+        )}
+      </ModulePlaceholder>
     </section>
   );
 }
