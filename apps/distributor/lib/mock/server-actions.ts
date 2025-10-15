@@ -28,6 +28,12 @@ import {
   listDistributorPartners,
   updateDistributorPartnerStatus,
 } from "./partners";
+import {
+  changeMockPassword,
+  findMockAccountByEmail,
+  getMockAccount,
+  updateMockAccount,
+} from "./account";
 
 const API_USE_MOCK = process.env.API_USE_MOCK;
 
@@ -153,6 +159,30 @@ export async function updateMockWorkspaceProfile(
   input: WorkspaceProfileInput,
 ) {
   return updateMockProfile(role, input);
+}
+
+export type WorkspaceAccount = {
+  email: string;
+  phone?: string;
+};
+
+export async function fetchMockWorkspaceAccount(role: "sales" | "distributor") {
+  return getMockAccount(role);
+}
+
+export async function updateMockWorkspaceAccount(
+  role: "sales" | "distributor",
+  input: Partial<WorkspaceAccount>,
+) {
+  return updateMockAccount(role, input);
+}
+
+export async function changeMockWorkspacePassword(
+  role: "sales" | "distributor",
+  oldPassword: string,
+  newPassword: string,
+) {
+  return changeMockPassword(role, oldPassword, newPassword);
 }
 
 export async function fetchMockSession(

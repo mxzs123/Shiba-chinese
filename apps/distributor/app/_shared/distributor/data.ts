@@ -9,6 +9,22 @@ function formatMonthLabel(raw: string) {
   return `${Number.parseInt(month ?? "1", 10)}月`;
 }
 
+export interface PartnerStatusSlice {
+  id: "active" | "inactive";
+  label: string;
+  value: number;
+  ratio: number;
+  tone: "primary" | "warning";
+}
+
+export interface PartnerSummaryData {
+  activeCount: number;
+  pendingApprovals: number;
+  inactiveCount: number;
+  totalManaged: number;
+  statusSlices: PartnerStatusSlice[];
+}
+
 export interface DistributorDashboardViewModel {
   commission: {
     overview: RevenueOverviewData;
@@ -16,11 +32,7 @@ export interface DistributorDashboardViewModel {
     total: number;
   };
   products: ProductContributionItem[];
-  partners: {
-    activeCount: number;
-    pendingApprovals: number;
-    inactiveCount: number;
-  };
+  partners: PartnerSummaryData;
 }
 
 export function getDistributorDashboardViewModel(): DistributorDashboardViewModel {
@@ -30,7 +42,7 @@ export function getDistributorDashboardViewModel(): DistributorDashboardViewMode
   const monthlyTrend = commission.trend.map((item) => ({
     month: item.month,
     value: item.amount,
-    shortLabel: `${formatMonthLabel(item.month)}月`,
+    shortLabel: formatMonthLabel(item.month),
   }));
 
   const latestPoint = monthlyTrend.at(-1) ?? null;
@@ -66,6 +78,29 @@ export function getDistributorDashboardViewModel(): DistributorDashboardViewMode
     monthCount: monthlyTrend.length,
   };
 
+  const totalManaged =
+    secondaryDistributorSummary.activeCount +
+    secondaryDistributorSummary.inactiveCount;
+
+  const safeTotal = totalManaged > 0 ? totalManaged : 1;
+
+  const statusSlices: PartnerStatusSlice[] = [
+    {
+      id: "active",
+      label: "活跃伙伴",
+      value: secondaryDistributorSummary.activeCount,
+      ratio: secondaryDistributorSummary.activeCount / safeTotal,
+      tone: "primary",
+    },
+    {
+      id: "inactive",
+      label: "长期未活跃",
+      value: secondaryDistributorSummary.inactiveCount,
+      ratio: secondaryDistributorSummary.inactiveCount / safeTotal,
+      tone: "warning",
+    },
+  ];
+
   return {
     commission: {
       overview,
@@ -73,6 +108,12 @@ export function getDistributorDashboardViewModel(): DistributorDashboardViewMode
       total: commission.total,
     },
     products,
-    partners: secondaryDistributorSummary,
+    partners: {
+      activeCount: secondaryDistributorSummary.activeCount,
+      pendingApprovals: secondaryDistributorSummary.pendingApprovals,
+      inactiveCount: secondaryDistributorSummary.inactiveCount,
+      totalManaged,
+      statusSlices,
+    },
   };
 }

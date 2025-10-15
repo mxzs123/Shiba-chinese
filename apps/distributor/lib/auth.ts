@@ -77,9 +77,16 @@ export async function loginWithCredentials(
   }
 
   if (shouldUseMock()) {
-    const { session } = await authenticateMockUser(email, password);
-    await setSession(session);
-    return { success: true, redirectTo: redirectPathForRole(session.role) };
+    try {
+      const { session } = await authenticateMockUser(email, password);
+      await setSession(session);
+      return { success: true, redirectTo: redirectPathForRole(session.role) };
+    } catch (error) {
+      if (error instanceof Error) {
+        return { success: false, error: error.message };
+      }
+      return { success: false, error: "登录失败，请稍后再试" };
+    }
   }
 
   return { success: false, error: "登录服务暂未配置" };
