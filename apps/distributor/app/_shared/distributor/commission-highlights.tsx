@@ -79,8 +79,8 @@ export function CommissionHighlights({
   return (
     <div className={cn("grid gap-4 md:grid-cols-2 xl:grid-cols-4", className)}>
       {metrics.map((metric) => (
-        <Card key={metric.id} className="py-5">
-          <CardHeader className="gap-1 pb-2">
+        <Card key={metric.id} className="gap-4 py-5">
+          <CardHeader className="gap-1 px-5 pb-1">
             <CardTitle className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
               {metric.label}
             </CardTitle>
@@ -88,9 +88,9 @@ export function CommissionHighlights({
               <span className="text-xs text-neutral-500">{metric.caption}</span>
             ) : null}
           </CardHeader>
-          <CardContent className="pt-0">
+          <CardContent className="px-5 pb-1 pt-0">
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-semibold text-neutral-900">
+              <span className="text-3xl font-semibold tracking-tight text-neutral-900">
                 {metric.value}
               </span>
               {metric.badge ? (

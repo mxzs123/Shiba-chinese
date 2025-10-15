@@ -1,6 +1,14 @@
+"use client";
+
+import { PieChart, Pie, Cell, Label } from "recharts";
+
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Progress } from "~/components/ui/progress";
-import { Separator } from "~/components/ui/separator";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "~/components/ui/chart";
 import { cn } from "~/lib/utils";
 
 import type { PartnerStatusSlice, PartnerSummaryData } from "./data";
@@ -17,6 +25,18 @@ const TILE_TONES = {
   warning: "border-amber-200 bg-amber-50 text-amber-700",
 } satisfies Record<"neutral" | "primary" | "warning", string>;
 
+const STATUS_PROGRESS_CLASS: Record<PartnerStatusSlice["tone"], string> = {
+  primary:
+    "bg-primary/15 [&_[data-slot=progress-indicator]]:bg-primary [&_[data-slot=progress-indicator]]:shadow-none",
+  warning:
+    "bg-amber-100 [&_[data-slot=progress-indicator]]:bg-amber-500 [&_[data-slot=progress-indicator]]:shadow-none",
+};
+
+const STATUS_COLORS: Record<PartnerStatusSlice["tone"], string> = {
+  primary: "#2563eb",
+  warning: "#f59e0b",
+};
+
 export function PartnerSummary({ data, className }: PartnerSummaryProps) {
   return (
     <Card className={className}>
@@ -25,33 +45,134 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
           伙伴概览
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6 pb-6">
-        <div className="grid gap-3">
-          <SummaryTile
-            label="活跃伙伴"
-            value={`${data.activeCount} 家`}
-            tone="primary"
-          />
-          <SummaryTile
-            label="待审批"
-            value={`${data.pendingApprovals} 份`}
-            tone={data.pendingApprovals > 0 ? "warning" : "neutral"}
-          />
-          <SummaryTile
-            label="长期未活跃"
-            value={`${data.inactiveCount} 家`}
-            tone={data.inactiveCount > 0 ? "warning" : "neutral"}
-          />
-        </div>
-        <Separator />
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
-            管理覆盖
-          </p>
-          <StatusBarList slices={data.statusSlices} />
-          <p className="text-xs text-neutral-500">
-            当前共管理 {data.totalManaged} 家一级/二级分销伙伴。
-          </p>
+      <CardContent className="pb-6">
+        <div className="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
+          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">
+              状态占比
+            </p>
+            <ChartContainer
+              config={data.statusSlices.reduce(
+                (config, slice) => ({
+                  ...config,
+                  [slice.id]: {
+                    label: slice.label,
+                    color: STATUS_COLORS[slice.tone],
+                  },
+                }),
+                {},
+              )}
+              className="mx-auto aspect-square max-h-[200px] pt-2"
+            >
+              <PieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={
+                    <ChartTooltipContent
+                      nameKey="id"
+                      formatter={(value, _name, item) => {
+                        const payload = item?.payload as
+                          | PartnerStatusSlice
+                          | undefined;
+                        if (!payload) {
+                          return null;
+                        }
+
+                        return (
+                          <div className="flex w-full items-center justify-between gap-4">
+                            <span className="text-neutral-500">
+                              {payload.label}
+                            </span>
+                            <span className="font-mono text-sm font-medium text-neutral-900">
+                              {formatPercent(payload.ratio, 1)} ·{" "}
+                              {Math.round(Number(value))} 家
+                            </span>
+                          </div>
+                        );
+                      }}
+                    />
+                  }
+                />
+                <Pie
+                  data={data.statusSlices.map((slice) => ({
+                    ...slice,
+                    value: slice.value,
+                  }))}
+                  dataKey="value"
+                  nameKey="label"
+                  innerRadius={56}
+                  strokeWidth={6}
+                >
+                  {data.statusSlices.map((slice) => (
+                    <Cell key={slice.id} fill={STATUS_COLORS[slice.tone]} />
+                  ))}
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        return (
+                          <text
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                          >
+                            <tspan
+                              x={viewBox.cx}
+                              y={viewBox.cy}
+                              className="fill-neutral-900 text-xl font-semibold"
+                            >
+                              {data.activeCount}
+                            </tspan>
+                            <tspan
+                              x={viewBox.cx}
+                              y={(viewBox.cy || 0) + 20}
+                              className="fill-neutral-500 text-xs"
+                            >
+                              活跃伙伴
+                            </tspan>
+                          </text>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                </Pie>
+              </PieChart>
+            </ChartContainer>
+          </div>
+          <div className="space-y-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <SummaryTile
+                label="活跃伙伴"
+                value={`${data.activeCount} 家`}
+                tone="primary"
+              />
+              <SummaryTile
+                label="待审批"
+                value={`${data.pendingApprovals} 份`}
+                tone={data.pendingApprovals > 0 ? "warning" : "neutral"}
+              />
+              <SummaryTile
+                label="长期未活跃"
+                value={`${data.inactiveCount} 家`}
+                tone={data.inactiveCount > 0 ? "warning" : "neutral"}
+              />
+              <SummaryTile
+                label="管理总数"
+                value={`${data.totalManaged} 家`}
+                tone="neutral"
+              />
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
+                管理覆盖
+              </p>
+              <StatusBarList slices={data.statusSlices} />
+              <p className="text-xs text-neutral-500">
+                当前共管理 {data.totalManaged} 家一级/二级分销伙伴。
+              </p>
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -92,7 +213,10 @@ function StatusBarList({ slices }: StatusBarListProps) {
               {formatPercent(slice.ratio, 1)}
             </span>
           </div>
-          <Progress value={Math.round(slice.ratio * 100)} className="h-2" />
+          <Progress
+            value={Math.round(slice.ratio * 100)}
+            className={cn("h-2", STATUS_PROGRESS_CLASS[slice.tone])}
+          />
         </div>
       ))}
     </div>
