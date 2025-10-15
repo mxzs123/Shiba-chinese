@@ -148,7 +148,7 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
                 tone="primary"
               />
               <SummaryTile
-                label="待审批"
+                label="伙伴待审批"
                 value={`${data.pendingApprovals} 份`}
                 tone={data.pendingApprovals > 0 ? "warning" : "neutral"}
               />
