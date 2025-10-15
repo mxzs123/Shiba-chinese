@@ -196,8 +196,15 @@ export async function fetchMockSession(
 
 export async function authenticateMockUser(email: string, password: string) {
   const account = findMockAccountByEmail(email);
+  const normalizedEmail = email.trim().toLowerCase();
 
   if (!account) {
+    const legacyRole = resolveLegacyMockRole(normalizedEmail);
+
+    if (legacyRole) {
+      return fetchMockSession(legacyRole);
+    }
+
     throw new Error("账号不存在");
   }
 
@@ -210,4 +217,20 @@ export async function authenticateMockUser(email: string, password: string) {
 
 export function shouldUseMock() {
   return SHOULD_USE_MOCK;
+}
+
+function resolveLegacyMockRole(email: string) {
+  if (!email) {
+    return undefined;
+  }
+
+  if (!email.endsWith("@test.com")) {
+    return undefined;
+  }
+
+  if (email.includes("distributor")) {
+    return "distributor";
+  }
+
+  return "sales";
 }
