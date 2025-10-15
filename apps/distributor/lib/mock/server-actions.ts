@@ -164,13 +164,43 @@ export async function fetchMockSession(
   return { session, profile };
 }
 
-export async function authenticateMockUser(email: string, _password: string) {
-  const normalized = email.trim().toLowerCase();
-  const role = normalized.includes("distributor") ? "distributor" : "sales";
+export async function authenticateMockUser(email: string, password: string) {
+  const account = findMockAccountByEmail(email);
+  const normalizedEmail = email.trim().toLowerCase();
 
-  return fetchMockSession(role);
+  if (!account) {
+    const legacyRole = resolveLegacyMockRole(normalizedEmail);
+
+    if (legacyRole) {
+      return fetchMockSession(legacyRole);
+    }
+
+    throw new Error("账号不存在");
+  }
+
+  if (account.password !== password) {
+    throw new Error("密码错误");
+  }
+
+  return fetchMockSession(account.role);
 }
 
 export function shouldUseMock() {
   return SHOULD_USE_MOCK;
+}
+
+function resolveLegacyMockRole(email: string) {
+  if (!email) {
+    return undefined;
+  }
+
+  if (!email.endsWith("@test.com")) {
+    return undefined;
+  }
+
+  if (email.includes("distributor")) {
+    return "distributor";
+  }
+
+  return "sales";
 }
