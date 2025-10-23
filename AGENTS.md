@@ -52,6 +52,8 @@ npm run prettier:check   # CI 用格式检查
 
 - 目录：`apps/distributor`
 - 文档：`docs/fenxiao/`（含 AGENTS.md、todo.md 与技术方案）
+- 常用命令：`npm run dev:distributor`（开发）、`npm run build:distributor`（构建）、`npm run lint:distributor`（Lint）
+- UI 依赖：分销端复用 `components/ui/*` 的 shadcn 组件，并依赖 `@radix-ui/react-progress` 等 Radix 套件；新增组件时保持依赖在根/子 workspace 的 `package.json` 内一致声明。
 - 规范：建议沿用本文核心规范（接口经 `lib/api`、类型与 mock 同步、Server Action 返回 `{ success, data, error }`），保持跨模块一致性。
 
 ## 后续迭代 & 风险提示

@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import type {
   DistributorPartner,
-  DistributorPartnerApplication,
   DistributorPartnerStatus,
   Paginated,
 } from "@shiba/models";
@@ -12,7 +11,6 @@ import type {
 import { DataTable } from "../../../../components/data-table";
 import { FilterDrawer } from "../../../../components/filter-drawer";
 import { Pagination } from "../../../../components/pagination";
-import { Badge } from "~/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -20,9 +18,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import {
-  fetchPartnerApplicationsAction,
   fetchPartnersAction,
-  submitPartnerApplicationAction,
   updatePartnerStatusAction,
 } from "./actions";
 
@@ -36,13 +32,6 @@ type PartnerRegionFilter = string | "all";
 interface FeedbackState {
   type: "success" | "error";
   message: string;
-}
-
-interface ApplicationFormState {
-  name: string;
-  contact: string;
-  region: string;
-  note: string;
 }
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -64,24 +53,6 @@ const statusMeta: Record<
   disabled: {
     label: "停用",
     tone: "inline-flex items-center gap-1 rounded-full border border-neutral-200 bg-neutral-100 px-2 py-0.5 text-xs font-semibold text-neutral-600",
-  },
-};
-
-const applicationStatusMeta: Record<
-  DistributorPartnerApplication["status"],
-  { label: string; badgeClass: string }
-> = {
-  pending: {
-    label: "待审批",
-    badgeClass: "border-amber-200 bg-amber-50 text-amber-700",
-  },
-  approved: {
-    label: "已通过",
-    badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  },
-  rejected: {
-    label: "已退回",
-    badgeClass: "border-rose-200 bg-rose-50 text-rose-700",
   },
 };
 
@@ -108,26 +79,11 @@ const APPROVAL_STEPS = [
   },
 ] as const;
 
-const submissionTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
 function mapStatusLabel(status: PartnerStatusFilter) {
   if (status === "all") {
     return "全部状态";
   }
   return statusMeta[status].label;
-}
-
-function formatSubmissionTime(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return submissionTimeFormatter.format(date);
 }
 
 export function PartnersClient({ initialData }: PartnersClientProps) {
@@ -146,32 +102,6 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
   const [submittingId, setSubmittingId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackState | null>(null);
-
-  const [showApplicationForm, setShowApplicationForm] = useState(false);
-  const [creatingApplication, setCreatingApplication] = useState(false);
-  const [pendingApplications, setPendingApplications] = useState<
-    DistributorPartnerApplication[]
-  >([]);
-  const [applicationForm, setApplicationForm] = useState<ApplicationFormState>({
-    name: "",
-    contact: "",
-    region: "",
-    note: "",
-  });
-
-  const totalPendingApplications = pendingApplications.length;
-  const pendingApplicationsPreview = useMemo(() => {
-    return [...pendingApplications]
-      .sort(
-        (a, b) =>
-          new Date(b.submittedAt).getTime() -
-          new Date(a.submittedAt).getTime(),
-      )
-      .slice(0, 3);
-  }, [pendingApplications]);
-  const hasMorePendingApplications =
-    totalPendingApplications > pendingApplicationsPreview.length;
-  const latestPendingSubmission = pendingApplicationsPreview[0]?.submittedAt;
 
   const regionOptions = useMemo(() => {
     const set = new Set<string>();
@@ -288,61 +218,6 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
     }
   };
 
-  const handleApplicationFieldChange = <K extends keyof ApplicationFormState>(
-    key: K,
-    value: ApplicationFormState[K],
-  ) => {
-    setApplicationForm((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleSubmitApplication = async (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-    setCreatingApplication(true);
-    setFeedback(null);
-
-    try {
-      const result = await submitPartnerApplicationAction({
-        name: applicationForm.name,
-        contact: applicationForm.contact,
-        region: applicationForm.region,
-        note: applicationForm.note,
-      });
-
-      if (!result.success) {
-        setFeedback({ type: "error", message: result.error });
-        return;
-      }
-
-      setPendingApplications((prev) => [result.data, ...prev]);
-      setFeedback({
-        type: "success",
-        message: "申请已提交，待总部审批处理",
-      });
-      setApplicationForm({ name: "", contact: "", region: "", note: "" });
-      setShowApplicationForm(false);
-    } catch (error) {
-      setFeedback({
-        type: "error",
-        message: (error as Error).message ?? "申请提交失败，请稍后重试",
-      });
-    } finally {
-      setCreatingApplication(false);
-    }
-  };
-
-  useEffect(() => {
-    const loadApplications = async () => {
-      const result = await fetchPartnerApplicationsAction();
-      if (result.success) {
-        setPendingApplications(result.data);
-      }
-    };
-
-    loadApplications();
-  }, []);
-
   return (
     <section className="space-y-6">
       <Card className="border border-primary/20 bg-white shadow-sm">
@@ -351,7 +226,7 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
             伙伴审批流程
           </CardTitle>
           <p className="text-sm text-neutral-500">
-            跟踪二级伙伴申请的审批进度，并快速查看当前待处理事项。
+            了解伙伴准入流程。如需发起申请，请通过下方渠道联系总部运营团队。
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -384,89 +259,27 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
               </ol>
             </div>
             <div className="flex h-full flex-col gap-4 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">
-                    待审批事项
-                  </p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-semibold text-neutral-900">
-                      {totalPendingApplications}
-                    </span>
-                    <span className="text-sm text-neutral-500">
-                      份等待总部处理
-                    </span>
-                  </div>
-                  {latestPendingSubmission ? (
-                    <p className="text-xs text-neutral-500">
-                      最新申请提交于 {formatSubmissionTime(latestPendingSubmission)}
-                    </p>
-                  ) : (
-                    <p className="text-xs text-neutral-500">
-                      当前没有排队中的伙伴申请。
-                    </p>
-                  )}
-                </div>
-                <Badge
-                  variant="outline"
-                  className={`border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.18em] ${applicationStatusMeta.pending.badgeClass}`}
-                >
-                  {applicationStatusMeta.pending.label}
-                </Badge>
+              <div className="space-y-1">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">
+                  事务处理客服
+                </p>
+                <p className="text-sm text-neutral-600">
+                  当前仅支持线下提报伙伴申请，请通过以下方式联系总部运营团队，由专员协助完成审批流程。
+                </p>
               </div>
-              {totalPendingApplications === 0 ? (
-                <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-4 text-sm text-neutral-500">
-                  提交首个伙伴申请后，可在此跟踪审批节点与处理建议。
+              <div className="space-y-2 rounded-lg border border-dashed border-neutral-300 bg-white p-4 text-sm text-neutral-600">
+                <div className="space-y-1">
+                  <p className="font-semibold text-neutral-900">
+                    渠道运营对接
+                  </p>
+                  <p>企业微信：shiba_partner_ops</p>
+                  <p>邮箱：partner-support@shiba.com</p>
+                  <p>电话：400-800-1234（工作日 09:30-18:30）</p>
                 </div>
-              ) : (
-                <ul className="space-y-3">
-                  {pendingApplicationsPreview.map((application) => (
-                    <li
-                      key={application.id}
-                      className="rounded-lg border border-neutral-200 bg-white p-3"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm font-semibold text-neutral-900">
-                          {application.name}
-                        </p>
-                        <Badge
-                          variant="outline"
-                          className={`border px-2 py-0.5 text-[11px] ${applicationStatusMeta[application.status].badgeClass}`}
-                        >
-                          {applicationStatusMeta[application.status].label}
-                        </Badge>
-                      </div>
-                      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500">
-                        <span>{application.contact}</span>
-                        <span className="h-1 w-1 rounded-full bg-neutral-300" />
-                        <span>{application.region}</span>
-                      </div>
-                      <p className="mt-1 text-xs text-neutral-400">
-                        提交时间：{formatSubmissionTime(application.submittedAt)}
-                      </p>
-                      {application.note ? (
-                        <p className="mt-2 text-xs text-neutral-500">
-                          备注：{application.note}
-                        </p>
-                      ) : null}
-                    </li>
-                  ))}
-                  {hasMorePendingApplications ? (
-                    <li className="text-xs text-neutral-400">
-                      其余 {totalPendingApplications - pendingApplicationsPreview.length} 份申请将在审批台上线后展示完整列表。
-                    </li>
-                  ) : null}
-                </ul>
-              )}
-              {!showApplicationForm ? (
-                <button
-                  type="button"
-                  onClick={() => setShowApplicationForm(true)}
-                  className="inline-flex items-center justify-center rounded-md bg-primary px-3 py-2 text-xs font-medium text-white transition hover:bg-primary/90"
-                >
-                  发起新增伙伴申请
-                </button>
-              ) : null}
+                <p className="text-xs text-neutral-400">
+                  添加或来电时，请备注“分销伙伴申请 + 公司名称”，我们会在 1 个工作日内回访。
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -555,13 +368,6 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
               </section>
             </div>
           </FilterDrawer>
-          <button
-            type="button"
-            onClick={() => setShowApplicationForm((prev) => !prev)}
-            className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-white transition hover:bg-primary/90"
-          >
-            {showApplicationForm ? "收起申请" : "申请新增伙伴"}
-          </button>
         </div>
       </header>
 
@@ -587,88 +393,6 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
           </div>
         ) : null}
       </div>
-
-      {showApplicationForm ? (
-        <form
-          onSubmit={handleSubmitApplication}
-          className="space-y-4 rounded-lg border border-primary/30 bg-primary/5 p-5"
-        >
-          <div>
-            <h2 className="text-sm font-semibold text-primary">新增伙伴申请</h2>
-            <p className="mt-1 text-xs text-primary/70">
-              填写伙伴基本信息后提交，总部将完成资质审核与账号创建。
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="space-y-1 text-sm text-neutral-600">
-              <span className="font-medium text-neutral-900">伙伴名称 *</span>
-              <input
-                name="name"
-                value={applicationForm.name}
-                onChange={(event) =>
-                  handleApplicationFieldChange("name", event.target.value)
-                }
-                required
-                className="w-full rounded-md border border-neutral-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </label>
-            <label className="space-y-1 text-sm text-neutral-600">
-              <span className="font-medium text-neutral-900">联系方式 *</span>
-              <input
-                name="contact"
-                value={applicationForm.contact}
-                onChange={(event) =>
-                  handleApplicationFieldChange("contact", event.target.value)
-                }
-                placeholder="电话 / 微信 / 邮箱"
-                required
-                className="w-full rounded-md border border-neutral-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </label>
-            <label className="space-y-1 text-sm text-neutral-600">
-              <span className="font-medium text-neutral-900">所在地区 *</span>
-              <input
-                name="region"
-                value={applicationForm.region}
-                onChange={(event) =>
-                  handleApplicationFieldChange("region", event.target.value)
-                }
-                placeholder="例如 广东 · 深圳"
-                required
-                className="w-full rounded-md border border-neutral-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </label>
-            <label className="space-y-1 text-sm text-neutral-600">
-              <span className="font-medium text-neutral-900">备注说明</span>
-              <input
-                name="note"
-                value={applicationForm.note}
-                onChange={(event) =>
-                  handleApplicationFieldChange("note", event.target.value)
-                }
-                placeholder="可补充门店规模、支持诉求等"
-                className="w-full rounded-md border border-neutral-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </label>
-          </div>
-          <div className="flex items-center justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => setShowApplicationForm(false)}
-              className="rounded-md border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-600 transition hover:bg-neutral-50"
-            >
-              取消
-            </button>
-            <button
-              type="submit"
-              disabled={creatingApplication}
-              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-neutral-400"
-            >
-              {creatingApplication ? "提交中..." : "提交申请"}
-            </button>
-          </div>
-        </form>
-      ) : null}
 
       <DataTable<DistributorPartner>
         data={paginatedItems}
