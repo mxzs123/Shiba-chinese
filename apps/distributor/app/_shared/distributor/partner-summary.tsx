@@ -163,16 +163,11 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
             </ChartContainer>
           </div>
           <div className="space-y-4">
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-3">
               <SummaryTile
                 label="活跃伙伴"
                 value={`${data.activeCount} 家`}
                 tone="primary"
-              />
-              <SummaryTile
-                label="伙伴待审批"
-                value={`${data.pendingApprovals} 份`}
-                tone={data.pendingApprovals > 0 ? "warning" : "neutral"}
               />
               <SummaryTile
                 label="长期未活跃"

@@ -69,6 +69,7 @@ export function CommissionHighlights({
   className,
 }: CommissionHighlightsProps) {
   const growth = commission.overview.growthRatio;
+  const secondaryShare = commission.secondary.share;
 
   const metrics: MetricConfig[] = [
     {
@@ -94,23 +95,20 @@ export function CommissionHighlights({
       tone: "default",
     },
     {
+      id: "secondary-monthly",
+      label: "二级分销佣金",
+      value: formatJPYDisplay(commission.secondary.monthly),
+      secondary:
+        secondaryShare != null
+          ? `占总佣金 ${formatPercent(secondaryShare, 1)}`
+          : undefined,
+      tone: "default",
+    },
+    {
       id: "active",
       label: "活跃伙伴",
       value: `${partners.activeCount} 家`,
       tone: "default",
-    },
-    {
-      id: "pending",
-      label: "伙伴待审批",
-      value: `${partners.pendingApprovals} 份`,
-      tone: partners.pendingApprovals > 0 ? "warning" : "default",
-      badge:
-        partners.pendingApprovals > 0
-          ? {
-              label: "待处理",
-              tone: "warning",
-            }
-          : undefined,
     },
   ];
 

@@ -11,6 +11,10 @@ export const distributorDashboardMock = {
       { month: "2025-10", amount: 68000 },
     ],
   },
+  secondaryCommission: {
+    monthly: 23500,
+    total: 168000,
+  },
   productSales: [
     { name: "护肝胶囊", amount: 120000, category: "A" },
     { name: "维生素B 复合片", amount: 88000, category: "A" },
@@ -19,7 +23,6 @@ export const distributorDashboardMock = {
   ],
   secondaryDistributorSummary: {
     activeCount: 28,
-    pendingApprovals: 3,
     inactiveCount: 5,
   },
 };

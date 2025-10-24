@@ -19,7 +19,6 @@ export interface PartnerStatusSlice {
 
 export interface PartnerSummaryData {
   activeCount: number;
-  pendingApprovals: number;
   inactiveCount: number;
   totalManaged: number;
   statusSlices: PartnerStatusSlice[];
@@ -30,14 +29,23 @@ export interface DistributorDashboardViewModel {
     overview: RevenueOverviewData;
     monthly: number;
     total: number;
+    secondary: {
+      monthly: number;
+      total: number;
+      share: number | null;
+    };
   };
   products: ProductContributionItem[];
   partners: PartnerSummaryData;
 }
 
 export function getDistributorDashboardViewModel(): DistributorDashboardViewModel {
-  const { commission, productSales, secondaryDistributorSummary } =
-    distributorDashboardMock;
+  const {
+    commission,
+    secondaryCommission,
+    productSales,
+    secondaryDistributorSummary,
+  } = distributorDashboardMock;
 
   const monthlyTrend = commission.trend.map((item) => ({
     month: item.month,
@@ -106,11 +114,18 @@ export function getDistributorDashboardViewModel(): DistributorDashboardViewMode
       overview,
       monthly: commission.monthly,
       total: commission.total,
+      secondary: {
+        monthly: secondaryCommission.monthly,
+        total: secondaryCommission.total,
+        share:
+          commission.total > 0
+            ? secondaryCommission.total / commission.total
+            : null,
+      },
     },
     products,
     partners: {
       activeCount: secondaryDistributorSummary.activeCount,
-      pendingApprovals: secondaryDistributorSummary.pendingApprovals,
       inactiveCount: secondaryDistributorSummary.inactiveCount,
       totalManaged,
       statusSlices,
