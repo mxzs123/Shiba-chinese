@@ -92,6 +92,8 @@ export interface DistributorOrder {
   shippingFee?: number;
   discount?: number;
   note?: string;
+  commissionAmount?: number;
+  commissionRate?: number;
 }
 
 export interface DistributorOrdersMock {
@@ -198,6 +200,9 @@ const secondaryDistributors = [
     region: "北京",
   },
 ];
+
+const primaryCommissionRates = [0.12, 0.11, 0.1];
+const secondaryCommissionRates = [0.08, 0.075, 0.07];
 
 function addDays(base: Date, days: number) {
   const date = new Date(base);
@@ -319,6 +324,10 @@ function createDistributorOrder(index: number): DistributorOrder {
   const secondary =
     secondaryDistributors[index % secondaryDistributors.length]!;
   const isSecondary = index % 3 === 1;
+  const primaryCommissionRate =
+    primaryCommissionRates[index % primaryCommissionRates.length]!;
+  const secondaryCommissionRate =
+    secondaryCommissionRates[index % secondaryCommissionRates.length]!;
 
   if (!isSecondary) {
     return {
@@ -344,6 +353,9 @@ function createDistributorOrder(index: number): DistributorOrder {
       shippingFee: base.shippingFee,
       discount: base.discount,
       note: base.note,
+      commissionAmount: Number(
+        (base.amount * primaryCommissionRate).toFixed(2),
+      ),
     };
   }
 
@@ -372,6 +384,10 @@ function createDistributorOrder(index: number): DistributorOrder {
     shippingFee: base.shippingFee,
     discount: base.discount,
     note: base.note,
+    commissionAmount: Number(
+      (base.amount * secondaryCommissionRate).toFixed(2),
+    ),
+    commissionRate: Number(secondaryCommissionRate.toFixed(4)),
   };
 }
 

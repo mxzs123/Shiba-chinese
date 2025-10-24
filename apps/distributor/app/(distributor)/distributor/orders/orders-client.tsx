@@ -23,7 +23,7 @@ const DEFAULT_FILTERS: Filters = { orderType: "all", dateRange: "180" };
 
 const orderTypeOptions: { value: OrderTypeFilter; label: string }[] = [
   { value: "all", label: "全部订单" },
-  { value: "primary", label: "一级分销" },
+  { value: "primary", label: "我的订单" },
   { value: "secondary", label: "二级分销" },
 ];
 
@@ -40,12 +40,17 @@ const currencyFormatter = new Intl.NumberFormat("zh-CN", {
   maximumFractionDigits: 0,
 });
 
+const percentFormatter = new Intl.NumberFormat("zh-CN", {
+  style: "percent",
+  maximumFractionDigits: 1,
+});
+
 const typeMeta: Record<
   DistributorOrderType,
   { label: string; className: string }
 > = {
   primary: {
-    label: "一级分销",
+    label: "我的订单",
     className:
       "inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-600",
   },
@@ -76,6 +81,7 @@ export function DistributorOrdersClient({
   );
 
   const pageSize = initialData.pageSize || 10;
+  const isSecondaryView = filters.orderType === "secondary";
 
   const sortedOrders = useMemo(() => {
     return [...initialData.items].sort((a, b) => {
@@ -105,19 +111,28 @@ export function DistributorOrdersClient({
       }
 
       if (normalizedTerm) {
-        const haystack = [
-          order.id,
-          order.customer.name,
-          order.customer.id,
-          order.customer.phone,
-          order.secondaryDistributor?.name,
-          order.secondaryDistributor?.phone,
-          order.shipment?.trackingNo,
-        ]
+        const haystack = [order.id];
+
+        if (order.type === "secondary") {
+          haystack.push(
+            order.secondaryDistributor?.name,
+            order.secondaryDistributor?.phone,
+            order.secondaryDistributor?.region,
+          );
+        } else {
+          haystack.push(
+            order.customer.name,
+            order.customer.id,
+            order.customer.phone,
+            order.shipment?.trackingNo,
+          );
+        }
+
+        const normalizedHaystack = haystack
           .filter(Boolean)
           .map((value) => String(value).toLowerCase());
 
-        const matches = haystack.some((value) =>
+        const matches = normalizedHaystack.some((value) =>
           value.includes(normalizedTerm),
         );
         if (!matches) {
@@ -165,13 +180,172 @@ export function DistributorOrdersClient({
     return count;
   }, [filters, searchTerm]);
 
+  const columns = useMemo(() => {
+    const renderDash = () => (
+      <span className="text-sm text-neutral-300">-</span>
+    );
+
+    const list = [
+      {
+        header: "订单层级",
+        cell: (row) => (
+          <span className={typeMeta[row.type].className}>
+            {typeMeta[row.type].label}
+          </span>
+        ),
+      },
+      {
+        header: "订单编号",
+        cell: (row) => (
+          <div className="space-y-1 text-sm">
+            <p className="font-semibold text-neutral-900">{row.id}</p>
+            <p className="text-xs text-neutral-500">
+              {row.type === "secondary"
+                ? `由 ${row.secondaryDistributor?.name ?? "—"} 提交`
+                : "由当前账号提交"}
+            </p>
+          </div>
+        ),
+      },
+      { header: "提交时间", accessor: "submittedAt" },
+      {
+        header: "订单金额",
+        align: "right",
+        cell: (row) => (
+          <span className="font-semibold text-neutral-900">
+            {currencyFormatter.format(row.amount)}
+          </span>
+        ),
+      },
+      {
+        header: "我的佣金",
+        align: "right",
+        cell: (row) => {
+          return row.commissionAmount != null ? (
+            <span className="font-semibold text-neutral-900">
+              {currencyFormatter.format(row.commissionAmount)}
+            </span>
+          ) : (
+            renderDash()
+          );
+        },
+      },
+    ];
+
+    if (!isSecondaryView) {
+      list.push(
+        {
+          header: "客户信息",
+          cell: (row) =>
+            row.type === "secondary" ? (
+              <span className="text-sm text-neutral-300">-</span>
+            ) : (
+              <div className="space-y-1 text-sm">
+                <p className="font-medium text-neutral-900">
+                  {row.customer.name}
+                </p>
+                <p className="text-xs text-neutral-500">
+                  {row.customer.type} · {row.customer.id}
+                </p>
+              </div>
+            ),
+        },
+        {
+          header: "联系方式",
+          cell: (row) => {
+            if (row.type === "secondary" && row.secondaryDistributor) {
+              return (
+                <div className="space-y-1 text-sm text-neutral-600">
+                  <p className="text-xs text-neutral-400">二级伙伴</p>
+                  <p className="font-medium text-neutral-900">
+                    {row.secondaryDistributor.contact}
+                  </p>
+                  <p>{row.secondaryDistributor.phone}</p>
+                  <p className="text-xs text-neutral-500">
+                    {row.secondaryDistributor.region}
+                  </p>
+                </div>
+              );
+            }
+
+            return (
+              <div className="text-sm text-neutral-600">
+                <p>{row.customer.phone}</p>
+              </div>
+            );
+          },
+        },
+        {
+          header: "收货地址",
+          cell: (row) =>
+            row.type === "secondary" ? (
+              <span className="text-sm text-neutral-300">-</span>
+            ) : (
+              <p className="text-sm text-neutral-600">{row.customer.address}</p>
+            ),
+        },
+      );
+    }
+
+    if (!isSecondaryView) {
+      list.push({
+        header: "发货日期",
+        cell: (row) =>
+          row.shipment?.date ? (
+            <span>{row.shipment.date}</span>
+          ) : (
+            <span className="text-sm text-neutral-300">-</span>
+          ),
+      });
+    }
+
+    if (!isSecondaryView) {
+      list.push({
+        header: "快递单号",
+        cell: (row) => {
+          if (row.type === "secondary") {
+            return <span className="text-sm text-neutral-300">-</span>;
+          }
+
+          if (!row.shipment) {
+            return <span className="text-sm text-neutral-300">-</span>;
+          }
+
+          return (
+            <div className="space-y-1 text-sm">
+              <p className="font-medium text-neutral-900">
+                {row.shipment.trackingNo}
+              </p>
+              <p className="text-xs text-neutral-500">{row.shipment.carrier}</p>
+            </div>
+          );
+        },
+      });
+    }
+
+    list.push({
+      header: "操作",
+      cell: (row) => (
+        <button
+          type="button"
+          onClick={() => setSelectedOrder(row)}
+          className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+        >
+          查看详情
+        </button>
+      ),
+    });
+
+    return list;
+  }, [isSecondaryView]);
+
   return (
     <div className="space-y-6">
       <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-1">
           <h1 className="text-xl font-semibold text-neutral-900">订单列表</h1>
           <p className="text-sm text-neutral-500">
-            查看近半年内的一级/二级分销订单，按层级筛选并快速核对履约信息。
+            查看近半年内的本账号及二级分销订单，按层级筛选并快速核对履约信息。
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -295,116 +469,7 @@ export function DistributorOrdersClient({
         data={pageItems}
         rowKey={(row) => row.id}
         emptyMessage="暂无符合条件的订单"
-        columns={[
-          {
-            header: "订单层级",
-            cell: (row) => (
-              <span className={typeMeta[row.type].className}>
-                {typeMeta[row.type].label}
-              </span>
-            ),
-          },
-          {
-            header: "订单编号",
-            cell: (row) => (
-              <div className="space-y-1 text-sm">
-                <p className="font-semibold text-neutral-900">{row.id}</p>
-                <p className="text-xs text-neutral-500">
-                  {row.type === "secondary"
-                    ? `由 ${row.secondaryDistributor?.name ?? "—"} 提交`
-                    : `所属：${row.distributorName}`}
-                </p>
-              </div>
-            ),
-          },
-          { header: "提交时间", accessor: "submittedAt" },
-          {
-            header: "订单金额",
-            align: "right",
-            cell: (row) => (
-              <span className="font-semibold text-neutral-900">
-                {currencyFormatter.format(row.amount)}
-              </span>
-            ),
-          },
-          {
-            header: "客户信息",
-            cell: (row) => (
-              <div className="space-y-1 text-sm">
-                <p className="font-medium text-neutral-900">
-                  {row.customer.name}
-                </p>
-                <p className="text-xs text-neutral-500">
-                  {row.customer.type} · {row.customer.id}
-                </p>
-              </div>
-            ),
-          },
-          {
-            header: "联系方式",
-            cell: (row) => {
-              if (row.type === "secondary" && row.secondaryDistributor) {
-                return (
-                  <div className="space-y-1 text-sm text-neutral-600">
-                    <p className="font-medium text-neutral-900">
-                      {row.secondaryDistributor.contact}
-                    </p>
-                    <p>{row.secondaryDistributor.phone}</p>
-                    <p className="text-xs text-neutral-500">
-                      {row.secondaryDistributor.region}
-                    </p>
-                  </div>
-                );
-              }
-
-              return (
-                <div className="text-sm text-neutral-600">
-                  <p>{row.customer.phone}</p>
-                </div>
-              );
-            },
-          },
-          {
-            header: "收货地址",
-            cell: (row) => (
-              <p className="text-sm text-neutral-600">{row.customer.address}</p>
-            ),
-          },
-          {
-            header: "发货日期",
-            cell: (row) => row.shipment?.date ?? "—",
-          },
-          {
-            header: "快递单号",
-            cell: (row) =>
-              row.shipment ? (
-                <div className="space-y-1 text-sm">
-                  <p className="font-medium text-neutral-900">
-                    {row.shipment.trackingNo}
-                  </p>
-                  <p className="text-xs text-neutral-500">
-                    {row.shipment.carrier}
-                  </p>
-                </div>
-              ) : (
-                <span className="text-sm text-neutral-400">
-                  由二级伙伴自配送
-                </span>
-              ),
-          },
-          {
-            header: "操作",
-            cell: (row) => (
-              <button
-                type="button"
-                onClick={() => setSelectedOrder(row)}
-                className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
-              >
-                查看详情
-              </button>
-            ),
-          },
-        ]}
+        columns={columns}
       />
 
       <div className="flex items-center justify-between">
@@ -422,6 +487,7 @@ export function DistributorOrdersClient({
       <OrderDetailDrawer
         order={selectedOrder ?? undefined}
         onClose={() => setSelectedOrder(null)}
+        viewFilter={filters.orderType}
       />
     </div>
   );
@@ -430,9 +496,11 @@ export function DistributorOrdersClient({
 function OrderDetailDrawer({
   order,
   onClose,
+  viewFilter,
 }: {
   order?: DistributorOrder;
   onClose: () => void;
+  viewFilter: OrderTypeFilter;
 }) {
   useEffect(() => {
     if (!order) return;
@@ -454,6 +522,15 @@ function OrderDetailDrawer({
   const shippingFee = order.shippingFee ?? 0;
   const discount = order.discount ?? 0;
   const finalAmount = merchandiseTotal + shippingFee - discount;
+  const shouldHideSensitiveSections = viewFilter === "secondary";
+  const commissionAmount =
+    order.commissionAmount != null
+      ? currencyFormatter.format(order.commissionAmount)
+      : "-";
+  const commissionRate =
+    order.commissionRate != null
+      ? percentFormatter.format(order.commissionRate)
+      : undefined;
 
   return (
     <div className="fixed inset-0 z-50 flex">
@@ -472,7 +549,10 @@ function OrderDetailDrawer({
             <div className="text-xs text-neutral-500">
               <p>{order.submittedAt}</p>
               <p className="mt-1">
-                归属分销商：{order.distributorName}（{order.distributorId}）
+                归属分销商：
+                {order.type === "primary"
+                  ? `${order.distributorName}（${order.distributorId}，当前账号）`
+                  : `${order.distributorName}（${order.distributorId}）`}
               </p>
               {order.type === "secondary" && order.secondaryDistributor ? (
                 <p className="mt-1">
@@ -497,24 +577,38 @@ function OrderDetailDrawer({
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <section className="space-y-4">
             <div className="grid gap-4 text-sm text-neutral-600 md:grid-cols-2">
-              <div>
-                <p className="text-xs text-neutral-400">客户</p>
-                <p className="mt-1 font-medium text-neutral-900">
-                  {order.customer.name}
-                </p>
-                <p className="text-xs text-neutral-500">
-                  {order.customer.type} · {order.customer.id}
-                </p>
-                <p className="text-xs text-neutral-500">
-                  电话：{order.customer.phone}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-neutral-400">收货地址</p>
-                <p className="mt-1 leading-relaxed text-neutral-600">
-                  {order.customer.address}
-                </p>
-              </div>
+              {!shouldHideSensitiveSections ? (
+                <>
+                  <div>
+                    <p className="text-xs text-neutral-400">客户</p>
+                    {order.type === "secondary" ? (
+                      <p className="mt-1 text-sm text-neutral-300">-</p>
+                    ) : (
+                      <>
+                        <p className="mt-1 font-medium text-neutral-900">
+                          {order.customer.name}
+                        </p>
+                        <p className="text-xs text-neutral-500">
+                          {order.customer.type} · {order.customer.id}
+                        </p>
+                        <p className="text-xs text-neutral-500">
+                          电话：{order.customer.phone}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-400">收货地址</p>
+                    {order.type === "secondary" ? (
+                      <p className="mt-1 text-sm text-neutral-300">-</p>
+                    ) : (
+                      <p className="mt-1 leading-relaxed text-neutral-600">
+                        {order.customer.address}
+                      </p>
+                    )}
+                  </div>
+                </>
+              ) : null}
               {order.secondaryDistributor ? (
                 <div>
                   <p className="text-xs text-neutral-400">二级分销伙伴</p>
@@ -532,27 +626,41 @@ function OrderDetailDrawer({
                   </p>
                 </div>
               ) : null}
-              {order.shipment ? (
+              {!shouldHideSensitiveSections ? (
                 <div>
                   <p className="text-xs text-neutral-400">物流信息</p>
-                  <p className="mt-1 font-medium text-neutral-900">
-                    {order.shipment.carrier}
-                  </p>
-                  <p className="text-xs text-neutral-500">
-                    发货日期：{order.shipment.date}
-                  </p>
-                  <p className="text-xs text-neutral-500">
-                    运单号：{order.shipment.trackingNo}
-                  </p>
+                  {order.type === "secondary" ? (
+                    <p className="mt-1 text-sm text-neutral-300">-</p>
+                  ) : order.shipment ? (
+                    <>
+                      <p className="mt-1 font-medium text-neutral-900">
+                        {order.shipment.carrier}
+                      </p>
+                      <p className="text-xs text-neutral-500">
+                        发货日期：{order.shipment.date}
+                      </p>
+                      <p className="text-xs text-neutral-500">
+                        运单号：{order.shipment.trackingNo}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="mt-1 text-neutral-600">物流信息暂未填报。</p>
+                  )}
                 </div>
-              ) : (
-                <div>
-                  <p className="text-xs text-neutral-400">物流信息</p>
-                  <p className="mt-1 text-neutral-600">
-                    由二级分销伙伴负责配送或自提。
+              ) : null}
+              <div>
+                <p className="text-xs text-neutral-400">我的佣金</p>
+                <p
+                  className={`mt-1 text-base ${commissionAmount === "-" ? "font-medium text-neutral-300" : "font-semibold text-neutral-900"}`}
+                >
+                  {commissionAmount}
+                </p>
+                {commissionRate ? (
+                  <p className="text-xs text-neutral-500">
+                    佣金比例：{commissionRate}
                   </p>
-                </div>
-              )}
+                ) : null}
+              </div>
               <div>
                 <p className="text-xs text-neutral-400">金额摘要</p>
                 <p className="mt-1 text-base font-semibold text-neutral-900">
