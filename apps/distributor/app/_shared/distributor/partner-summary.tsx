@@ -10,6 +10,7 @@ import {
   ChartTooltipContent,
 } from "~/components/ui/chart";
 import { cn } from "~/lib/utils";
+import { CHART_COLORS, CHART_CONFIG } from "~/lib/chart-theme";
 
 import type { PartnerStatusSlice, PartnerSummaryData } from "./data";
 import { formatPercent } from "../sales/formatters";
@@ -27,15 +28,20 @@ const TILE_TONES = {
 
 const STATUS_PROGRESS_CLASS: Record<PartnerStatusSlice["tone"], string> = {
   primary:
-    "bg-primary/15 [&_[data-slot=progress-indicator]]:bg-primary [&_[data-slot=progress-indicator]]:shadow-none",
+    "bg-blue-100 [&_[data-slot=progress-indicator]]:bg-blue-600 [&_[data-slot=progress-indicator]]:shadow-none",
   warning:
     "bg-amber-100 [&_[data-slot=progress-indicator]]:bg-amber-500 [&_[data-slot=progress-indicator]]:shadow-none",
 };
 
-const STATUS_COLORS: Record<PartnerStatusSlice["tone"], string> = {
-  primary: "#2563eb",
-  warning: "#f59e0b",
-};
+function getStatusColor(
+  tone: PartnerStatusSlice["tone"],
+  index: number,
+): string {
+  if (tone === "warning") return CHART_COLORS.status.warning;
+  return (
+    CHART_COLORS.data[index % CHART_COLORS.data.length] ?? CHART_COLORS.data[0]
+  );
+}
 
 export function PartnerSummary({ data, className }: PartnerSummaryProps) {
   return (
@@ -46,29 +52,31 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="pb-6">
-        <div className="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">
+        <div className="grid gap-5 lg:grid-cols-[240px_1fr]">
+          <div className="rounded-xl bg-neutral-50 p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
               状态占比
             </p>
             <ChartContainer
               config={data.statusSlices.reduce(
-                (config, slice) => ({
+                (config, slice, index) => ({
                   ...config,
                   [slice.id]: {
                     label: slice.label,
-                    color: STATUS_COLORS[slice.tone],
+                    color: getStatusColor(slice.tone, index),
                   },
                 }),
                 {},
               )}
-              className="mx-auto aspect-square max-h-[200px] pt-2"
+              className="mx-auto aspect-square max-h-[220px] pt-3"
             >
               <PieChart>
                 <ChartTooltip
                   cursor={false}
                   content={
                     <ChartTooltipContent
+                      className="bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-lg rounded-lg px-3 py-2"
+                      labelClassName="text-sm font-semibold text-neutral-900"
                       nameKey="id"
                       formatter={(value, _name, item) => {
                         const payload = item?.payload as
@@ -80,10 +88,10 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
 
                         return (
                           <div className="flex w-full items-center justify-between gap-4">
-                            <span className="text-neutral-500">
+                            <span className="text-sm text-neutral-600">
                               {payload.label}
                             </span>
-                            <span className="font-mono text-sm font-medium text-neutral-900">
+                            <span className="font-mono text-sm font-semibold text-neutral-900">
                               {formatPercent(payload.ratio, 1)} ·{" "}
                               {Math.round(Number(value))} 家
                             </span>
@@ -100,37 +108,51 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
                   }))}
                   dataKey="value"
                   nameKey="label"
-                  innerRadius={56}
-                  strokeWidth={6}
+                  innerRadius={CHART_CONFIG.pie.innerRadius}
+                  outerRadius={CHART_CONFIG.pie.outerRadius}
+                  paddingAngle={CHART_CONFIG.pie.paddingAngle}
+                  strokeWidth={CHART_CONFIG.pie.strokeWidth}
                 >
-                  {data.statusSlices.map((slice) => (
-                    <Cell key={slice.id} fill={STATUS_COLORS[slice.tone]} />
+                  {data.statusSlices.map((slice, index) => (
+                    <Cell
+                      key={slice.id}
+                      fill={getStatusColor(slice.tone, index)}
+                    />
                   ))}
                   <Label
                     content={({ viewBox }) => {
                       if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                         return (
-                          <text
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                          >
-                            <tspan
+                          <g>
+                            <circle
+                              cx={viewBox.cx}
+                              cy={viewBox.cy}
+                              r={56}
+                              fill="#f9fafb"
+                              opacity={0.6}
+                            />
+                            <text
                               x={viewBox.cx}
                               y={viewBox.cy}
-                              className="fill-neutral-900 text-xl font-semibold"
+                              textAnchor="middle"
+                              dominantBaseline="middle"
                             >
-                              {data.activeCount}
-                            </tspan>
-                            <tspan
-                              x={viewBox.cx}
-                              y={(viewBox.cy || 0) + 20}
-                              className="fill-neutral-500 text-xs"
-                            >
-                              活跃伙伴
-                            </tspan>
-                          </text>
+                              <tspan
+                                x={viewBox.cx}
+                                y={viewBox.cy}
+                                className="fill-neutral-900 text-2xl font-bold"
+                              >
+                                {data.activeCount}
+                              </tspan>
+                              <tspan
+                                x={viewBox.cx}
+                                y={(viewBox.cy || 0) + 22}
+                                className="fill-neutral-500 text-xs"
+                              >
+                                活跃伙伴
+                              </tspan>
+                            </text>
+                          </g>
                         );
                       }
                       return null;

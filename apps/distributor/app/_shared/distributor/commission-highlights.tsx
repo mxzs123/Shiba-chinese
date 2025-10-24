@@ -11,7 +11,7 @@ interface CommissionHighlightsProps {
   className?: string;
 }
 
-type MetricTone = "default" | "positive" | "negative" | "warning";
+type MetricTone = "default" | "positive" | "negative" | "warning" | "primary";
 
 interface MetricConfig {
   id: string;
@@ -19,6 +19,7 @@ interface MetricConfig {
   value: string;
   caption?: string;
   secondary?: string;
+  tone?: MetricTone;
   badge?: {
     label: string;
     tone: MetricTone;
@@ -30,6 +31,20 @@ const BADGE_VARIANTS: Record<MetricTone, string> = {
   positive: "border-emerald-200 bg-emerald-50 text-emerald-600",
   negative: "border-rose-200 bg-rose-50 text-rose-600",
   warning: "border-amber-200 bg-amber-50 text-amber-600",
+  primary: "border-primary/20 bg-primary/10 text-primary",
+};
+
+const CARD_VARIANTS: Record<MetricTone, string> = {
+  default:
+    "border border-neutral-200 bg-white hover:shadow-md transition-shadow duration-200",
+  primary:
+    "border-2 border-primary/20 bg-primary/[0.02] hover:shadow-md transition-shadow duration-200",
+  warning:
+    "border-2 border-amber-500/20 bg-amber-50/50 hover:shadow-md transition-shadow duration-200",
+  positive:
+    "border-2 border-emerald-500/20 bg-emerald-50/50 hover:shadow-md transition-shadow duration-200",
+  negative:
+    "border-2 border-rose-500/20 bg-rose-50/50 hover:shadow-md transition-shadow duration-200",
 };
 
 const MOCK_JPY_TO_CNY_RATE = 0.048; // TODO: 上线前改为实时汇率
@@ -62,6 +77,7 @@ export function CommissionHighlights({
       value: formatJPYDisplay(commission.monthly),
       secondary: formatCNYEstimate(commission.monthly),
       caption: commission.overview.latestMonthLabel,
+      tone: "primary",
       badge:
         growth === null
           ? undefined
@@ -75,16 +91,19 @@ export function CommissionHighlights({
       label: "累计佣金",
       value: formatJPYDisplay(commission.total),
       secondary: formatCNYEstimate(commission.total),
+      tone: "default",
     },
     {
       id: "active",
       label: "活跃伙伴",
       value: `${partners.activeCount} 家`,
+      tone: "default",
     },
     {
       id: "pending",
       label: "伙伴待审批",
       value: `${partners.pendingApprovals} 份`,
+      tone: partners.pendingApprovals > 0 ? "warning" : "default",
       badge:
         partners.pendingApprovals > 0
           ? {
@@ -98,7 +117,10 @@ export function CommissionHighlights({
   return (
     <div className={cn("grid gap-4 md:grid-cols-2 xl:grid-cols-4", className)}>
       {metrics.map((metric) => (
-        <Card key={metric.id} className="gap-4 py-5">
+        <Card
+          key={metric.id}
+          className={cn("gap-4 py-5", CARD_VARIANTS[metric.tone ?? "default"])}
+        >
           <CardHeader className="gap-1 px-5 pb-1">
             <CardTitle className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
               {metric.label}
@@ -116,11 +138,11 @@ export function CommissionHighlights({
           <CardContent className="px-5 pb-1 pt-0">
             <div className="flex items-end justify-between gap-3">
               <div className="flex flex-col">
-                <span className="text-3xl font-semibold tracking-tight text-neutral-900">
+                <span className="text-4xl font-bold tracking-tight text-neutral-900">
                   {metric.value}
                 </span>
                 {metric.secondary ? (
-                  <span className="mt-1 text-xs text-neutral-500">
+                  <span className="mt-1.5 text-xs text-neutral-500">
                     {metric.secondary}
                   </span>
                 ) : null}

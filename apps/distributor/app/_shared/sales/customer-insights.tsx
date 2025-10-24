@@ -19,6 +19,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { CHART_COLORS, CHART_CONFIG } from "~/lib/chart-theme";
 
 import type { CustomerInsightsData } from "./data";
 import { formatPercent } from "./formatters";
@@ -30,9 +31,10 @@ interface CustomerInsightsProps {
 }
 
 export function CustomerInsights({ data, className }: CustomerInsightsProps) {
-  const primaryColor = "#1d4ed8";
-  const primaryMuted = "rgba(29, 78, 216, 0.35)";
-  const primaryCursor = "rgba(29, 78, 216, 0.08)";
+  const genderColors = {
+    女: CHART_COLORS.primary.DEFAULT,
+    男: CHART_COLORS.data[1], // 紫色
+  };
 
   return (
     <Card className={cn("h-full", className)}>
@@ -47,20 +49,20 @@ export function CustomerInsights({ data, className }: CustomerInsightsProps) {
           <StatBlock label="本月新增" value={`${data.newThisMonth}`} />
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">
+          <div className="rounded-xl bg-neutral-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
               性别比例
             </p>
             <ChartContainer
-              className="aspect-auto h-[220px]"
+              className="aspect-auto h-[230px]"
               config={{
                 女: {
                   label: "女性",
-                  color: primaryColor,
+                  color: genderColors.女,
                 },
                 男: {
                   label: "男性",
-                  color: primaryMuted,
+                  color: genderColors.男,
                 },
               }}
             >
@@ -74,24 +76,29 @@ export function CustomerInsights({ data, className }: CustomerInsightsProps) {
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  innerRadius={48}
-                  outerRadius={76}
-                  strokeWidth={6}
+                  innerRadius={52}
+                  outerRadius={78}
+                  paddingAngle={2}
+                  strokeWidth={0}
                 >
                   {data.gender.map((slice) => (
                     <Cell
                       key={slice.label}
-                      fill={slice.label === "女" ? primaryColor : primaryMuted}
+                      fill={genderColors[slice.label as "女" | "男"]}
                     />
                   ))}
                 </Pie>
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
+                      className="bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-lg rounded-lg px-3 py-2"
+                      labelClassName="text-sm font-semibold text-neutral-900"
                       formatter={(value, name) => (
                         <div className="flex w-full items-center justify-between gap-4">
-                          <span className="text-neutral-500">{name}</span>
-                          <span className="font-mono font-medium text-neutral-900">
+                          <span className="text-sm text-neutral-600">
+                            {name}
+                          </span>
+                          <span className="font-mono font-semibold text-neutral-900">
                             {formatPercent(Number(value), 0)}
                           </span>
                         </div>
@@ -106,26 +113,26 @@ export function CustomerInsights({ data, className }: CustomerInsightsProps) {
               </PieChart>
             </ChartContainer>
           </div>
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+          <div className="rounded-xl bg-neutral-50 p-4">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
                 年龄结构
               </p>
               {data.dominantAgeGroup ? (
                 <Badge
                   variant="outline"
-                  className="border-neutral-200 bg-white text-[11px] text-neutral-500"
+                  className="border-neutral-200 bg-white text-[11px] font-medium text-neutral-600"
                 >
                   主力 {data.dominantAgeGroup.range}
                 </Badge>
               ) : null}
             </div>
             <ChartContainer
-              className="aspect-auto h-[220px] pt-2"
+              className="aspect-auto h-[230px] pt-3"
               config={{
                 ratio: {
                   label: "占比",
-                  color: primaryColor,
+                  color: CHART_COLORS.primary.DEFAULT,
                 },
               }}
             >
@@ -135,26 +142,36 @@ export function CustomerInsights({ data, className }: CustomerInsightsProps) {
                   ratio: Math.round(group.ratio * 100),
                 }))}
               >
-                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+                <CartesianGrid
+                  strokeDasharray={CHART_CONFIG.grid.strokeDasharray}
+                  strokeOpacity={CHART_CONFIG.grid.strokeOpacity}
+                  stroke={CHART_CONFIG.grid.stroke}
+                />
                 <XAxis
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
                   tickMargin={6}
+                  tick={{ fill: "#6b7280", fontSize: 11 }}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
+                  tick={{ fill: "#9ca3af", fontSize: 11 }}
                   tickFormatter={(value: number) => `${value}%`}
                 />
                 <ChartTooltip
-                  cursor={{ fill: primaryCursor }}
+                  cursor={{ fill: CHART_COLORS.alpha.primary8 }}
                   content={
                     <ChartTooltipContent
+                      className="bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-lg rounded-lg px-3 py-2"
+                      labelClassName="text-sm font-semibold text-neutral-900"
                       formatter={(value, name) => (
                         <div className="flex w-full items-center justify-between gap-4">
-                          <span className="text-neutral-500">{name}</span>
-                          <span className="font-mono font-medium text-neutral-900">
+                          <span className="text-sm text-neutral-600">
+                            {name}
+                          </span>
+                          <span className="font-mono font-semibold text-neutral-900">
                             {formatPercent(Number(value) / 100, 0)}
                           </span>
                         </div>
@@ -164,8 +181,12 @@ export function CustomerInsights({ data, className }: CustomerInsightsProps) {
                 />
                 <Bar
                   dataKey="ratio"
-                  radius={[6, 6, 0, 0]}
-                  fill={primaryColor}
+                  radius={CHART_CONFIG.bar.radius}
+                  fill={CHART_COLORS.primary.DEFAULT}
+                  maxBarSize={CHART_CONFIG.bar.maxSize}
+                  activeBar={{
+                    fill: CHART_COLORS.primary.dark,
+                  }}
                 />
               </BarChart>
             </ChartContainer>
@@ -183,11 +204,11 @@ interface StatBlockProps {
 
 function StatBlock({ label, value }: StatBlockProps) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-      <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">
+    <div className="rounded-xl bg-neutral-50 p-4 hover:shadow-sm transition-shadow duration-200">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
         {label}
       </p>
-      <p className="mt-2 text-lg font-semibold text-neutral-900">{value}</p>
+      <p className="mt-2 text-xl font-bold text-neutral-900">{value}</p>
     </div>
   );
 }

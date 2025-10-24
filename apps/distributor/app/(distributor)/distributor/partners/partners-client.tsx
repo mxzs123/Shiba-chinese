@@ -11,16 +11,8 @@ import type {
 import { DataTable } from "../../../../components/data-table";
 import { FilterDrawer } from "../../../../components/filter-drawer";
 import { Pagination } from "../../../../components/pagination";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import {
-  fetchPartnersAction,
-  updatePartnerStatusAction,
-} from "./actions";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { fetchPartnersAction, updatePartnerStatusAction } from "./actions";
 
 interface PartnersClientProps {
   initialData: Paginated<DistributorPartner>;
@@ -269,15 +261,14 @@ export function PartnersClient({ initialData }: PartnersClientProps) {
               </div>
               <div className="space-y-2 rounded-lg border border-dashed border-neutral-300 bg-white p-4 text-sm text-neutral-600">
                 <div className="space-y-1">
-                  <p className="font-semibold text-neutral-900">
-                    渠道运营对接
-                  </p>
+                  <p className="font-semibold text-neutral-900">渠道运营对接</p>
                   <p>企业微信：shiba_partner_ops</p>
                   <p>邮箱：partner-support@shiba.com</p>
                   <p>电话：400-800-1234（工作日 09:30-18:30）</p>
                 </div>
                 <p className="text-xs text-neutral-400">
-                  添加或来电时，请备注“分销伙伴申请 + 公司名称”，我们会在 1 个工作日内回访。
+                  添加或来电时，请备注“分销伙伴申请 + 公司名称”，我们会在 1
+                  个工作日内回访。
                 </p>
               </div>
             </div>

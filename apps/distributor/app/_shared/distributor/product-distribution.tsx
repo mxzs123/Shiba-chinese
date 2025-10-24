@@ -10,17 +10,10 @@ import {
   ChartTooltipContent,
 } from "~/components/ui/chart";
 import { cn } from "~/lib/utils";
+import { CHART_COLORS, CHART_CONFIG } from "~/lib/chart-theme";
 
 import type { ProductContributionItem } from "../sales/data";
 import { formatCurrency, formatPercent } from "../sales/formatters";
-
-const CHART_COLORS = [
-  "#1d4ed8",
-  "#6366f1",
-  "#22c55e",
-  "#f59e0b",
-  "#ef4444",
-] as const;
 
 interface PreparedProductItem extends ProductContributionItem {
   key: string;
@@ -71,12 +64,11 @@ export function ProductDistributionChart({
   const chartConfig = chart.reduce<
     Record<string, { label: string; color: string }>
   >((config, item, index) => {
-    const paletteColor = CHART_COLORS[index % CHART_COLORS.length];
-    const color: string =
-      paletteColor !== undefined ? paletteColor : CHART_COLORS[0];
     config[item.key] = {
       label: item.name,
-      color,
+      color:
+        CHART_COLORS.data[index % CHART_COLORS.data.length] ??
+        CHART_COLORS.data[0],
     };
     return config;
   }, {});
@@ -91,13 +83,15 @@ export function ProductDistributionChart({
       <CardContent className="pb-4">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[220px]"
+          className="mx-auto aspect-square max-h-[240px]"
         >
           <PieChart>
             <ChartTooltip
               cursor={false}
               content={
                 <ChartTooltipContent
+                  className="bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-lg rounded-lg px-3 py-2"
+                  labelClassName="text-sm font-semibold text-neutral-900"
                   nameKey="key"
                   formatter={(value, _name, item) => {
                     const payload = item?.payload as
@@ -109,9 +103,12 @@ export function ProductDistributionChart({
 
                     return (
                       <div className="flex w-full items-center justify-between gap-4">
-                        <span className="text-neutral-500">{payload.name}</span>
-                        <span className="text-right font-mono text-sm font-medium text-neutral-900">
-                          {formatPercent(payload.ratio, 1)} · {formatCurrency(Number(value))}
+                        <span className="text-sm text-neutral-600">
+                          {payload.name}
+                        </span>
+                        <span className="text-right font-mono text-sm font-semibold text-neutral-900">
+                          {formatPercent(payload.ratio, 1)} ·{" "}
+                          {formatCurrency(Number(value))}
                         </span>
                       </div>
                     );
@@ -126,40 +123,51 @@ export function ProductDistributionChart({
               }))}
               dataKey="value"
               nameKey="name"
-              innerRadius={64}
-              strokeWidth={6}
+              innerRadius={CHART_CONFIG.pie.innerRadius}
+              outerRadius={CHART_CONFIG.pie.outerRadius}
+              paddingAngle={CHART_CONFIG.pie.paddingAngle}
+              strokeWidth={CHART_CONFIG.pie.strokeWidth}
             >
               {chart.map((item, index) => (
                 <Cell
                   key={item.key}
-                  fill={CHART_COLORS[index % CHART_COLORS.length]}
+                  fill={CHART_COLORS.data[index % CHART_COLORS.data.length]}
                 />
               ))}
               <Label
                 content={({ viewBox }) => {
                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                     return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
+                      <g>
+                        <circle
+                          cx={viewBox.cx}
+                          cy={viewBox.cy}
+                          r={56}
+                          fill="#f9fafb"
+                          opacity={0.6}
+                        />
+                        <text
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-neutral-900 text-2xl font-semibold"
+                          textAnchor="middle"
+                          dominantBaseline="middle"
                         >
-                          {formatCurrency(total)}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 22}
-                          className="fill-neutral-500 text-xs"
-                        >
-                          总销售额
-                        </tspan>
-                      </text>
+                          <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            className="fill-neutral-900 text-2xl font-bold"
+                          >
+                            {formatCurrency(total)}
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 22}
+                            className="fill-neutral-500 text-xs"
+                          >
+                            总销售额
+                          </tspan>
+                        </text>
+                      </g>
                     );
                   }
                   return null;
@@ -168,22 +176,23 @@ export function ProductDistributionChart({
             </Pie>
           </PieChart>
         </ChartContainer>
-        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        <div className="mt-4 grid gap-2 grid-cols-2">
           {chart.map((item, index) => (
             <div
               key={item.key}
-              className="flex items-center justify-between rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2"
+              className="flex items-center gap-2.5 rounded-lg bg-neutral-50 px-3 py-2.5"
             >
-              <div className="flex items-center gap-2">
-                <span
-                  className="inline-block size-2.5 rounded-full"
-                  style={{
-                    backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
-                  }}
-                />
-                <span className="text-xs text-neutral-600">{item.name}</span>
-              </div>
-              <span className="font-mono text-xs font-medium text-neutral-900">
+              <span
+                className="inline-block size-3 rounded-sm shrink-0"
+                style={{
+                  backgroundColor:
+                    CHART_COLORS.data[index % CHART_COLORS.data.length],
+                }}
+              />
+              <span className="text-xs text-neutral-600 flex-1 truncate">
+                {item.name}
+              </span>
+              <span className="font-mono text-xs font-semibold text-neutral-900">
                 {formatPercent(item.ratio, 1)}
               </span>
             </div>
@@ -217,28 +226,36 @@ export function ProductDistributionLeaderboard({
           {top.map((item, index) => (
             <div
               key={item.key}
-              className="rounded-xl border border-neutral-200 bg-neutral-50 p-4"
+              className="group rounded-xl bg-neutral-50 p-4 hover:shadow-md hover:bg-white transition-all duration-200 border border-transparent hover:border-neutral-200"
             >
               <div className="flex items-center justify-between text-xs text-neutral-500">
-                <span className="font-medium uppercase tracking-[0.18em] text-neutral-400">
+                <span className="font-semibold uppercase tracking-[0.2em] text-neutral-400">
                   TOP {index + 1}
                 </span>
                 <Badge
                   variant="outline"
-                  className="border-neutral-200 bg-white text-[11px] text-neutral-500"
+                  className="border-neutral-200 bg-white text-[11px] font-medium text-neutral-600"
                 >
                   {formatPercent(item.ratio, 1)}
                 </Badge>
               </div>
-              <p className="mt-3 text-sm font-semibold text-neutral-900">
+              <p className="mt-3 text-sm font-bold text-neutral-900 group-hover:text-primary transition-colors">
                 {item.name}
               </p>
-              <p className="text-xs text-neutral-500">
-                销售额 {formatCurrency(item.amount)}
+              <p className="mt-1 text-xs text-neutral-500">
+                销售额{" "}
+                <span className="font-mono font-semibold text-neutral-900">
+                  {formatCurrency(item.amount)}
+                </span>
               </p>
-              <p className="mt-2 text-xs uppercase tracking-[0.18em] text-neutral-400">
-                类别 {item.category}
-              </p>
+              <div className="mt-3 flex items-center gap-1.5">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+                  类别
+                </span>
+                <span className="text-xs font-medium text-neutral-600">
+                  {item.category}
+                </span>
+              </div>
             </div>
           ))}
         </div>

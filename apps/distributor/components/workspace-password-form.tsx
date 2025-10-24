@@ -7,7 +7,10 @@ import { toast } from "sonner";
 import type { ChangePasswordActionResult } from "../app/lib/profile";
 
 type WorkspacePasswordFormProps = {
-  action: (oldPassword: string, newPassword: string) => Promise<ChangePasswordActionResult>;
+  action: (
+    oldPassword: string,
+    newPassword: string,
+  ) => Promise<ChangePasswordActionResult>;
 };
 
 export function WorkspacePasswordForm({ action }: WorkspacePasswordFormProps) {

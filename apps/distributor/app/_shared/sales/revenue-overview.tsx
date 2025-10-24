@@ -19,6 +19,7 @@ import {
 } from "~/components/ui/chart";
 import { Separator } from "~/components/ui/separator";
 import { cn } from "~/lib/utils";
+import { CHART_COLORS, CHART_CONFIG } from "~/lib/chart-theme";
 
 import type { RevenueOverviewData } from "./data";
 import { formatCurrency, formatPercent } from "./formatters";
@@ -43,10 +44,6 @@ export function RevenueOverview({
   className,
   labels,
 }: RevenueOverviewProps) {
-  const primaryColor = "#1d4ed8";
-  const primarySurface = "rgba(29, 78, 216, 0.12)";
-  const primaryCursor = "rgba(29, 78, 216, 0.08)";
-
   const growthLabel =
     data.growthRatio === null
       ? "--"
@@ -92,24 +89,19 @@ export function RevenueOverview({
         </div>
         <Separator />
         <ChartContainer
-          className="aspect-auto h-[260px]"
+          className="aspect-auto h-[280px]"
           config={{
             value: {
               label: seriesLabel,
-              color: primaryColor,
+              color: CHART_COLORS.primary.DEFAULT,
             },
           }}
         >
           <AreaChart data={data.monthlyTrend}>
-            <defs>
-              <linearGradient id="revenue-fill" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor={primaryColor} stopOpacity={0.24} />
-                <stop offset="100%" stopColor={primaryColor} stopOpacity={0} />
-              </linearGradient>
-            </defs>
             <CartesianGrid
-              strokeDasharray="4 4"
-              strokeOpacity={0.4}
+              strokeDasharray={CHART_CONFIG.grid.strokeDasharray}
+              strokeOpacity={CHART_CONFIG.grid.strokeOpacity}
+              stroke={CHART_CONFIG.grid.stroke}
               vertical={false}
             />
             <XAxis
@@ -117,17 +109,24 @@ export function RevenueOverview({
               axisLine={false}
               tickLine={false}
               tickMargin={8}
+              tick={{ fill: "#6b7280", fontSize: 12 }}
             />
             <YAxis
-              width={0}
               axisLine={false}
               tickLine={false}
+              width={42}
+              tick={{ fill: "#9ca3af", fontSize: 11 }}
               tickFormatter={(value: number) => `${Math.round(value / 1000)}k`}
             />
             <ChartTooltip
-              cursor={{ stroke: primarySurface, strokeWidth: 2 }}
+              cursor={{
+                stroke: CHART_COLORS.alpha.primary12,
+                strokeWidth: 2,
+              }}
               content={
                 <ChartTooltipContent
+                  className="bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-lg rounded-lg px-3 py-2"
+                  labelClassName="text-sm font-semibold text-neutral-900"
                   formatter={(value) => (
                     <span className="font-mono font-semibold text-neutral-900">
                       {formatCurrency(Number(value))}
@@ -139,30 +138,31 @@ export function RevenueOverview({
             <Area
               type="monotone"
               dataKey="value"
-              stroke={primaryColor}
-              strokeWidth={2.4}
+              stroke={CHART_COLORS.primary.dark}
+              strokeWidth={CHART_CONFIG.area.strokeWidth}
               strokeLinecap="round"
-              fill="url(#revenue-fill)"
+              fill={CHART_COLORS.alpha.primary12}
               fillOpacity={1}
               dot={{
-                r: 4,
-                fill: primaryColor,
-                stroke: "#fff",
-                strokeWidth: 1.5,
-              }}
-              activeDot={{
-                r: 5,
-                fill: primaryColor,
+                r: CHART_CONFIG.area.dotRadius,
+                fill: CHART_COLORS.primary.dark,
                 stroke: "#fff",
                 strokeWidth: 2,
+              }}
+              activeDot={{
+                r: CHART_CONFIG.area.activeDotRadius,
+                fill: CHART_COLORS.primary.dark,
+                stroke: "#fff",
+                strokeWidth: 2.5,
+                filter: "drop-shadow(0 2px 4px rgba(37, 99, 235, 0.3))",
               }}
             />
           </AreaChart>
         </ChartContainer>
         {hasDailyTrend ? (
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+          <div className="rounded-xl bg-neutral-50 p-4">
             <div className="flex items-center justify-between text-xs text-neutral-500">
-              <span>{dailyRangeCopy}</span>
+              <span className="font-medium">{dailyRangeCopy}</span>
               <Badge
                 variant="outline"
                 className="border-neutral-200 bg-white text-[11px] text-neutral-500"
@@ -171,18 +171,19 @@ export function RevenueOverview({
               </Badge>
             </div>
             <ChartContainer
-              className="aspect-auto h-[160px] pt-2"
+              className="aspect-auto h-[170px] pt-3"
               config={{
                 value: {
                   label: dailySeriesLabel,
-                  color: primaryColor,
+                  color: CHART_COLORS.primary.DEFAULT,
                 },
               }}
             >
               <BarChart data={data.dailyTrend}>
                 <CartesianGrid
-                  strokeDasharray="3 3"
-                  strokeOpacity={0.3}
+                  strokeDasharray={CHART_CONFIG.grid.strokeDasharray}
+                  strokeOpacity={CHART_CONFIG.grid.strokeOpacity}
+                  stroke={CHART_CONFIG.grid.stroke}
                   vertical={false}
                 />
                 <XAxis
@@ -190,12 +191,15 @@ export function RevenueOverview({
                   axisLine={false}
                   tickLine={false}
                   tickMargin={6}
+                  tick={{ fill: "#6b7280", fontSize: 11 }}
                 />
                 <YAxis axisLine={false} tickLine={false} width={0} />
                 <ChartTooltip
-                  cursor={{ fill: primaryCursor }}
+                  cursor={{ fill: CHART_COLORS.alpha.primary8 }}
                   content={
                     <ChartTooltipContent
+                      className="bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-lg rounded-lg px-3 py-2"
+                      labelClassName="text-sm font-semibold text-neutral-900"
                       formatter={(value) => (
                         <span className="font-mono font-medium text-neutral-900">
                           {formatCurrency(Number(value))}
@@ -206,9 +210,12 @@ export function RevenueOverview({
                 />
                 <Bar
                   dataKey="value"
-                  radius={[6, 6, 0, 0]}
-                  fill={primaryColor}
-                  maxBarSize={18}
+                  radius={CHART_CONFIG.bar.radius}
+                  fill={CHART_COLORS.primary.DEFAULT}
+                  maxBarSize={CHART_CONFIG.bar.maxSize}
+                  activeBar={{
+                    fill: CHART_COLORS.primary.dark,
+                  }}
                 />
               </BarChart>
             </ChartContainer>
