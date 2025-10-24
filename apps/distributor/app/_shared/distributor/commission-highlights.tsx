@@ -36,15 +36,15 @@ const BADGE_VARIANTS: Record<MetricTone, string> = {
 
 const CARD_VARIANTS: Record<MetricTone, string> = {
   default:
-    "border border-neutral-200 bg-white hover:shadow-md transition-shadow duration-200",
+    "border border-neutral-200 bg-white transition-all duration-200",
   primary:
-    "border-2 border-primary/20 bg-primary/[0.02] hover:shadow-md transition-shadow duration-200",
+    "border-2 border-primary/30 bg-white transition-all duration-200",
   warning:
-    "border-2 border-amber-500/20 bg-amber-50/50 hover:shadow-md transition-shadow duration-200",
+    "border border-amber-200 bg-white transition-all duration-200",
   positive:
-    "border-2 border-emerald-500/20 bg-emerald-50/50 hover:shadow-md transition-shadow duration-200",
+    "border border-emerald-200 bg-white transition-all duration-200",
   negative:
-    "border-2 border-rose-500/20 bg-rose-50/50 hover:shadow-md transition-shadow duration-200",
+    "border border-rose-200 bg-white transition-all duration-200",
 };
 
 const MOCK_JPY_TO_CNY_RATE = 0.048; // TODO: 上线前改为实时汇率

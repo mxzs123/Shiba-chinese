@@ -53,8 +53,8 @@ export function getDistributorDashboardViewModel(): DistributorDashboardViewMode
     shortLabel: formatMonthLabel(item.month),
   }));
 
-  const latestPoint = monthlyTrend.at(-1) ?? null;
-  const previousPoint = monthlyTrend.at(-2) ?? null;
+  const latestPoint = monthlyTrend[monthlyTrend.length - 1] ?? null;
+  const previousPoint = monthlyTrend[monthlyTrend.length - 2] ?? null;
 
   const growthRatio =
     latestPoint && previousPoint

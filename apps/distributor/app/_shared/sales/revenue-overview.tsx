@@ -62,7 +62,7 @@ export function RevenueOverview({
   const dailyUnitCopy = labels?.dailyUnit ?? "单位：日元";
 
   return (
-    <Card className={cn("h-full", className)}>
+    <Card className={cn("h-full bg-white", className)}>
       <CardHeader className="pb-4">
         <CardTitle className="text-base font-semibold text-neutral-900">
           {title}
@@ -234,7 +234,7 @@ interface MetricBlockProps {
 
 function MetricBlock({ label, value, tone }: MetricBlockProps) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+    <div className="rounded-xl border border-neutral-200 bg-white p-4 transition-shadow duration-150">
       <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">
         {label}
       </p>

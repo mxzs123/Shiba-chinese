@@ -98,8 +98,8 @@ export function getSalesDashboardViewModel(): SalesDashboardViewModel {
     shortLabel: formatDayLabel(item.date),
   }));
 
-  const latestMonthlyPoint = monthlyTrend.at(-1) ?? null;
-  const previousMonthlyPoint = monthlyTrend.at(-2) ?? null;
+  const latestMonthlyPoint = monthlyTrend[monthlyTrend.length - 1] ?? null;
+  const previousMonthlyPoint = monthlyTrend[monthlyTrend.length - 2] ?? null;
 
   const growthRatio =
     latestMonthlyPoint && previousMonthlyPoint

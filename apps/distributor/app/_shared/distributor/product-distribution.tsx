@@ -74,7 +74,7 @@ export function ProductDistributionChart({
   }, {});
 
   return (
-    <Card className={cn("h-full", className)}>
+    <Card className={cn("h-full bg-white", className)}>
       <CardHeader className="pb-3">
         <CardTitle className="text-base font-semibold text-neutral-900">
           产品贡献占比
@@ -180,7 +180,7 @@ export function ProductDistributionChart({
           {chart.map((item, index) => (
             <div
               key={item.key}
-              className="flex items-center gap-2.5 rounded-lg bg-neutral-50 px-3 py-2.5"
+              className="flex items-center gap-2.5 rounded-lg bg-neutral-50 px-3 py-2.5 transition-colors duration-150"
             >
               <span
                 className="inline-block size-3 rounded-sm shrink-0"
@@ -215,7 +215,7 @@ export function ProductDistributionLeaderboard({
   const { top } = prepareProductData(data);
 
   return (
-    <Card className={cn("h-full", className)}>
+    <Card className={cn("h-full bg-white", className)}>
       <CardHeader className="pb-3">
         <CardTitle className="text-base font-semibold text-neutral-900">
           热销产品榜
@@ -226,7 +226,7 @@ export function ProductDistributionLeaderboard({
           {top.map((item, index) => (
             <div
               key={item.key}
-              className="group rounded-xl bg-neutral-50 p-4 hover:shadow-md hover:bg-white transition-all duration-200 border border-transparent hover:border-neutral-200"
+              className="rounded-xl bg-white border border-neutral-200 p-4 transition-all duration-200"
             >
               <div className="flex items-center justify-between text-xs text-neutral-500">
                 <span className="font-semibold uppercase tracking-[0.2em] text-neutral-400">
@@ -239,7 +239,7 @@ export function ProductDistributionLeaderboard({
                   {formatPercent(item.ratio, 1)}
                 </Badge>
               </div>
-              <p className="mt-3 text-sm font-bold text-neutral-900 group-hover:text-primary transition-colors">
+              <p className="mt-3 text-sm font-bold text-neutral-900 transition-colors">
                 {item.name}
               </p>
               <p className="mt-1 text-xs text-neutral-500">
