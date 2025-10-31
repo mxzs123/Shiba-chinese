@@ -10,9 +10,15 @@ import {
   findSearchCategory,
   type SearchCategory,
 } from "@/app/_shared/search/config";
-import { loadCollection, loadSearchResult } from "@/app/_shared/search/loaders";
+import {
+  loadCollection,
+  loadGoodCategories,
+  loadGoodCategoryProducts,
+  loadSearchResult,
+} from "@/app/_shared/search/loaders";
 import SearchResultsGrid from "@/app/_shared/search/SearchResultsGrid";
 import SearchPagination from "@/app/_shared/search/SearchPagination";
+import GoodProductsGrid from "@/app/_shared/search/GoodProductsGrid";
 
 function getParam(value?: string | string[]) {
   if (!value) {
@@ -83,6 +89,17 @@ export default async function DesktopSearchCollectionPage({
   const q = getParam(resolvedSearchParams.q) || null;
   const sort = getParam(resolvedSearchParams.sort) || null;
   const page = getParam(resolvedSearchParams.page) || null;
+  const goodCategoryParam = getParam(resolvedSearchParams.goodCategory);
+  const goodSubCategoryParam = getParam(
+    resolvedSearchParams.goodSubCategory,
+  );
+
+  const goodCategoryId = goodCategoryParam
+    ? Number.parseInt(goodCategoryParam, 10)
+    : null;
+  const goodSubCategoryId = goodSubCategoryParam
+    ? Number.parseInt(goodSubCategoryParam, 10)
+    : null;
 
   let category = findSearchCategory(slug);
   let collection: Collection | undefined;
@@ -107,12 +124,58 @@ export default async function DesktopSearchCollectionPage({
 
   const basePath = `/search/${slug}`;
 
-  const result = await loadSearchResult({
-    searchValue: q,
-    sortSlug: sort,
-    page,
-    category,
-  });
+  const [result, goodCategories] = await Promise.all([
+    loadSearchResult({
+      searchValue: q,
+      sortSlug: sort,
+      page,
+      category,
+    }),
+    loadGoodCategories(),
+  ]);
+
+  const selectedGoodCategory =
+    goodCategoryId != null
+      ? goodCategories.find((entry) => entry.id === goodCategoryId)
+      : undefined;
+
+  const selectedGoodSubCategory =
+    goodSubCategoryId != null && selectedGoodCategory?.children?.length
+      ? selectedGoodCategory.children.find(
+          (child) => child.id === goodSubCategoryId,
+        )
+      : undefined;
+
+  const goodsResult = selectedGoodCategory
+    ? await loadGoodCategoryProducts({
+        categories: goodCategories,
+        categoryId: selectedGoodCategory.id,
+        subCategoryId: selectedGoodSubCategory?.id ?? null,
+        page,
+        limit: DESKTOP_SEARCH_PAGE_SIZE,
+      })
+    : null;
+
+  const usingGoodsResult = Boolean(goodsResult);
+
+  const totalCount = usingGoodsResult
+    ? goodsResult?.total ?? 0
+    : result.total;
+  const currentPage = usingGoodsResult
+    ? goodsResult?.currentPage ?? 1
+    : result.currentPage;
+  const totalPages = usingGoodsResult
+    ? goodsResult?.totalPages ?? 1
+    : result.totalPages;
+  const pageSize = usingGoodsResult
+    ? goodsResult?.pageSize ?? DESKTOP_SEARCH_PAGE_SIZE
+    : DESKTOP_SEARCH_PAGE_SIZE;
+
+  const headerTitle = selectedGoodCategory
+    ? selectedGoodSubCategory
+      ? selectedGoodSubCategory.name
+      : selectedGoodCategory.name
+    : category.label;
 
   const header = (
     <div className="space-y-4">
@@ -122,10 +185,10 @@ export default async function DesktopSearchCollectionPage({
             精选品类
           </p>
           <h1 className="mt-2 text-3xl font-bold text-neutral-900">
-            {category.label}
+            {headerTitle}
           </h1>
           <p className="mt-2 text-sm text-neutral-500">
-            共 {result.total} 件商品，每页展示 {DESKTOP_SEARCH_PAGE_SIZE} 件。
+            共 {totalCount} 件商品，每页展示 {pageSize} 件。
           </p>
         </div>
         <div className="w-full max-w-lg lg:w-[360px]">
@@ -135,30 +198,52 @@ export default async function DesktopSearchCollectionPage({
     </div>
   );
 
-  const emptyMessage = q
-    ? `在 “${category.label}” 中没有找到与 “${q}” 相关的商品。`
-    : `“${category.label}” 暂无可展示的商品。`;
+  const emptyMessage = selectedGoodCategory
+    ? "当前分类暂无商品，请稍后再试。"
+    : q
+      ? `在 “${category.label}” 中没有找到与 “${q}” 相关的商品。`
+      : `“${category.label}” 暂无可展示的商品。`;
 
   return (
     <SearchPageShell
       sidebar={{
-        activeCategory: category.slug,
+        activeCategory: selectedGoodCategory
+          ? `good-${selectedGoodCategory.id}`
+          : category.slug,
         basePath,
         searchValue: q ?? undefined,
         sortSlug: result.sortSlug ?? null,
+        goodCategories,
+        selectedGoodCategoryId: selectedGoodCategory?.id ?? null,
+        selectedGoodSubCategoryId: selectedGoodSubCategory?.id ?? null,
       }}
       header={header}
     >
-      <SearchResultsGrid
-        products={result.products}
-        emptyMessage={emptyMessage}
-      />
+      {usingGoodsResult ? (
+        <GoodProductsGrid
+          products={goodsResult?.products ?? []}
+          emptyMessage={emptyMessage}
+        />
+      ) : (
+        <SearchResultsGrid
+          products={result.products}
+          emptyMessage={emptyMessage}
+        />
+      )}
       <SearchPagination
         basePath={basePath}
-        currentPage={result.currentPage}
-        totalPages={result.totalPages}
+        currentPage={currentPage}
+        totalPages={totalPages}
         searchValue={q ?? undefined}
         sort={result.sortSlug ?? undefined}
+        extraParams={{
+          goodCategory: selectedGoodCategory?.id
+            ? String(selectedGoodCategory.id)
+            : undefined,
+          goodSubCategory: selectedGoodSubCategory?.id
+            ? String(selectedGoodSubCategory.id)
+            : undefined,
+        }}
       />
     </SearchPageShell>
   );

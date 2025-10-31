@@ -74,6 +74,38 @@ export type Collection = {
   path: string;
 };
 
+export type GoodCategory = {
+  id: number;
+  name: string;
+  jpName?: string | null;
+  enName?: string | null;
+  sort: number;
+  imageUrl?: string | null;
+  children?: GoodCategory[];
+};
+
+export type GoodProduct = {
+  id: number;
+  bn?: string | null;
+  name: string;
+  brief?: string | null;
+  image?: string | null;
+  images?: string | null;
+  price: number;
+  goodsCategoryId: number;
+  unit?: string | null;
+  sn?: string | null;
+  isPrescription?: boolean;
+};
+
+export type GoodsPageList = {
+  list: GoodProduct[];
+  page: number;
+  totalCount: number;
+  totalPages: number;
+  limit: number;
+};
+
 export type Page = {
   id: string;
   title: string;

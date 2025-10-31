@@ -10,6 +10,7 @@ export type SearchPaginationProps = {
   totalPages: number;
   searchValue?: string;
   sort?: string | null;
+  extraParams?: Record<string, string | number | undefined>;
 };
 
 function createPageHref({
@@ -17,16 +18,28 @@ function createPageHref({
   page,
   searchValue,
   sort,
+  extraParams,
 }: {
   basePath: string;
   page: number;
   searchValue?: string;
   sort?: string | null;
+  extraParams?: Record<string, string | number | undefined>;
 }) {
+  const normalisedExtras = extraParams
+    ? Object.fromEntries(
+        Object.entries(extraParams).map(([key, value]) => [
+          key,
+          typeof value === "number" ? String(value) : value,
+        ]),
+      )
+    : undefined;
+
   const params = createSearchParams({
     ...(searchValue ? { q: searchValue } : null),
     ...(sort ? { sort } : null),
     ...(page > 1 ? { page } : null),
+    ...normalisedExtras,
   });
 
   return createUrl(basePath, params);
@@ -50,6 +63,7 @@ export function SearchPagination({
   totalPages,
   searchValue,
   sort,
+  extraParams,
 }: SearchPaginationProps) {
   if (totalPages <= 1) {
     return null;
@@ -68,6 +82,7 @@ export function SearchPagination({
           page: Math.max(currentPage - 1, 1),
           searchValue,
           sort,
+          extraParams,
         })}
         aria-disabled={currentPage === 1}
         className="flex items-center gap-2 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-600 transition hover:border-neutral-300 aria-disabled:pointer-events-none aria-disabled:opacity-50"
@@ -86,6 +101,7 @@ export function SearchPagination({
                   page: pageNumber,
                   searchValue,
                   sort,
+                  extraParams,
                 })}
                 aria-current={isActive ? "page" : undefined}
                 className="flex size-9 items-center justify-center rounded-full border border-transparent text-sm font-medium transition hover:border-neutral-300 aria-[current=page]:border-[#049e6b] aria-[current=page]:bg-[#049e6b]/10 aria-[current=page]:text-[#049e6b]"
@@ -103,6 +119,7 @@ export function SearchPagination({
           page: Math.min(currentPage + 1, totalPages),
           searchValue,
           sort,
+          extraParams,
         })}
         aria-disabled={currentPage === totalPages}
         className="flex items-center gap-2 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-600 transition hover:border-neutral-300 aria-disabled:pointer-events-none aria-disabled:opacity-50"

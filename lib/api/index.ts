@@ -45,6 +45,9 @@ import type {
   CurrencyCode,
   CustomerCoupon,
   Menu,
+  GoodCategory,
+  GoodProduct,
+  GoodsPageList,
   Order,
   Page,
   PaymentMethod,
@@ -182,7 +185,55 @@ type CartSnapshot = {
   updatedAt?: string;
 };
 
+type GoodCategoryResponse = {
+  id: number;
+  name: string;
+  jpName?: string | null;
+  enName?: string | null;
+  sort: number;
+  imageUrl?: string | null;
+  child?: GoodCategoryResponse[] | null;
+};
+
+type GoodsPageListParams = {
+  page?: number;
+  limit?: number;
+  order?: string;
+  where?: Record<string, unknown>;
+};
+
+type GoodsPageListResponse = {
+  status?: boolean;
+  msg?: string;
+  data?: Partial<GoodsPageList> | null;
+};
+
 const CHECKOUT_URL = process.env.COMMERCE_CHECKOUT_URL || checkoutFallback;
+const GOOD_SERVICE_BASE_URL =
+  process.env.GOOD_SERVICE_BASE_URL || process.env.NBMS_SERVICE_BASE_URL;
+const DEFAULT_GOOD_CATEGORIES_API_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://nbmsbs202509104952-api.test.gzwhir.com/api/Good/GetAllCategories"
+    : undefined;
+
+const GOOD_CATEGORIES_API_URL =
+  process.env.GOOD_CATEGORIES_API_URL ||
+  (GOOD_SERVICE_BASE_URL
+    ? `${GOOD_SERVICE_BASE_URL.replace(/\/$/, "")}/api/Good/GetAllCategories`
+    : undefined) ||
+  DEFAULT_GOOD_CATEGORIES_API_URL;
+
+const DEFAULT_GOOD_LIST_API_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://nbmsbs202509104952-api.test.gzwhir.com/api/Good/GetGoodsPageList"
+    : undefined;
+
+const GOOD_LIST_API_URL =
+  process.env.GOOD_LIST_API_URL ||
+  (GOOD_SERVICE_BASE_URL
+    ? `${GOOD_SERVICE_BASE_URL.replace(/\/$/, "")}/api/Good/GetGoodsPageList`
+    : undefined) ||
+  DEFAULT_GOOD_LIST_API_URL;
 
 function cloneMoney(money: Money): Money {
   return { ...money };
@@ -216,6 +267,72 @@ function cloneShippingMethod(method: ShippingMethod): ShippingMethod {
 
 function clonePaymentMethod(method: PaymentMethod): PaymentMethod {
   return { ...method };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isGoodCategoryResponse(
+  value: unknown,
+): value is GoodCategoryResponse {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    typeof value.id === "number" &&
+    typeof value.name === "string" &&
+    typeof value.sort === "number"
+  );
+}
+
+function normalizeGoodCategory(entry: GoodCategoryResponse): GoodCategory {
+  const normalized: GoodCategory = {
+    id: entry.id,
+    name: entry.name,
+    jpName: entry.jpName ?? null,
+    enName: entry.enName ?? null,
+    sort: entry.sort,
+    imageUrl:
+      entry.imageUrl && entry.imageUrl.trim().length
+        ? entry.imageUrl
+        : null,
+  };
+
+  if (Array.isArray(entry.child) && entry.child.length) {
+    normalized.children = entry.child
+      .filter(isGoodCategoryResponse)
+      .map((child) => normalizeGoodCategory(child));
+  }
+
+  return normalized;
+}
+
+function parseGoodCategoryPayload(
+  payload: unknown,
+): GoodCategory[] | undefined {
+  if (!isRecord(payload)) {
+    return undefined;
+  }
+
+  const status = payload["status"];
+
+  if (typeof status === "boolean" && status === false) {
+    return undefined;
+  }
+
+  const data = payload["data"];
+
+  if (!Array.isArray(data)) {
+    return undefined;
+  }
+
+  const normalized = data
+    .filter(isGoodCategoryResponse)
+    .map((entry) => normalizeGoodCategory(entry));
+
+  return normalized.length ? normalized : undefined;
 }
 
 function formatAmount(value: number): string {
@@ -1316,6 +1433,109 @@ export async function getNewsArticle(
   }
 
   return cloneNewsArticle(article);
+}
+
+export async function getGoodCategories(): Promise<GoodCategory[]> {
+  if (!GOOD_CATEGORIES_API_URL) {
+    throw new Error("GOOD_CATEGORIES_API_URL 未配置");
+  }
+
+  try {
+    const response = await fetch(GOOD_CATEGORIES_API_URL, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch Good categories: ${response.status} ${response.statusText}`,
+      );
+    }
+
+    const payload = await response.json();
+    const parsed = parseGoodCategoryPayload(payload);
+
+    if (parsed && parsed.length) {
+      return parsed;
+    }
+  } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[API] Failed to fetch Good categories:", error);
+    }
+    throw error;
+  }
+
+  throw new Error("Good categories payload is empty");
+}
+
+export async function getGoodsPageList(
+  params: GoodsPageListParams = {},
+): Promise<GoodsPageList> {
+  if (!GOOD_LIST_API_URL) {
+    throw new Error("GOOD_LIST_API_URL 未配置");
+  }
+
+  const page = Number.isFinite(params.page) && params.page ? params.page : 1;
+  const limit =
+    Number.isFinite(params.limit) && params.limit ? params.limit : 12;
+  const order = params.order ?? "";
+  const whereString =
+    params.where && Object.keys(params.where).length
+      ? JSON.stringify(params.where)
+      : "";
+
+  try {
+    const response = await fetch(GOOD_LIST_API_URL, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+      },
+      cache: "no-store",
+      body: JSON.stringify({
+        page,
+        limit,
+        order,
+        where: whereString,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch goods page list: ${response.status} ${response.statusText}`,
+      );
+    }
+
+    const payload = (await response.json()) as GoodsPageListResponse;
+
+    if (payload.status === false) {
+      throw new Error(payload.msg || "获取商品列表失败");
+    }
+
+    const data = payload.data;
+    const list = Array.isArray(data?.list) ? data?.list : [];
+    const result: GoodsPageList = {
+      list: list as GoodProduct[],
+      page: typeof data?.page === "number" ? data.page : page,
+      totalCount:
+        typeof data?.totalCount === "number" ? data.totalCount : list.length,
+      totalPages:
+        typeof data?.totalPages === "number"
+          ? data.totalPages
+          : Math.max(1, Math.ceil(list.length / (data?.limit || limit))),
+      limit: typeof data?.limit === "number" ? data.limit : limit,
+    };
+
+    return result;
+  } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[API] Failed to fetch goods page list:", error);
+    }
+    throw error;
+  }
 }
 
 export async function getCollections(): Promise<Collection[]> {
