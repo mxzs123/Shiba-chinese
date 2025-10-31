@@ -10,7 +10,7 @@ import {
   ChartTooltipContent,
 } from "~/components/ui/chart";
 import { cn } from "~/lib/utils";
-import { CHART_COLORS, CHART_CONFIG } from "~/lib/chart-theme";
+import { CHART_COLORS, CHART_CONFIG } from "../../../lib/chart-theme";
 
 import type { ProductContributionItem } from "../sales/data";
 import { formatCurrency, formatPercent } from "../sales/formatters";

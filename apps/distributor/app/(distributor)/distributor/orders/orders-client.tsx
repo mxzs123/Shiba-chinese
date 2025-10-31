@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { DataTable } from "../../../../components/data-table";
 import { FilterDrawer } from "../../../../components/filter-drawer";
@@ -18,6 +18,14 @@ interface Filters {
   orderType: OrderTypeFilter;
   dateRange: DateRangeFilter;
 }
+
+type DistributorOrderColumn = {
+  header: string;
+  accessor?: keyof DistributorOrder;
+  cell?: (row: DistributorOrder, rowIndex: number) => ReactNode;
+  align?: "left" | "center" | "right";
+  className?: string;
+};
 
 const DEFAULT_FILTERS: Filters = { orderType: "all", dateRange: "180" };
 
@@ -111,21 +119,25 @@ export function DistributorOrdersClient({
       }
 
       if (normalizedTerm) {
-        const haystack = [order.id];
+        const haystack: string[] = [order.id];
 
         if (order.type === "secondary") {
-          haystack.push(
+          const secondaryFields = [
             order.secondaryDistributor?.name,
             order.secondaryDistributor?.phone,
             order.secondaryDistributor?.region,
-          );
+          ].filter((field): field is string => typeof field === "string");
+          haystack.push(...secondaryFields);
         } else {
-          haystack.push(
+          const customerFields = [
             order.customer.name,
             order.customer.id,
             order.customer.phone,
-            order.shipment?.trackingNo,
+          ].filter((field): field is string => typeof field === "string");
+          const shipmentFields = [order.shipment?.trackingNo].filter(
+            (field): field is string => typeof field === "string",
           );
+          haystack.push(...customerFields, ...shipmentFields);
         }
 
         const normalizedHaystack = haystack
@@ -180,15 +192,15 @@ export function DistributorOrdersClient({
     return count;
   }, [filters, searchTerm]);
 
-  const columns = useMemo(() => {
+  const columns = useMemo<DistributorOrderColumn[]>(() => {
     const renderDash = () => (
       <span className="text-sm text-neutral-300">-</span>
     );
 
-    const list = [
+    const list: DistributorOrderColumn[] = [
       {
         header: "订单层级",
-        cell: (row) => (
+        cell: (row: DistributorOrder) => (
           <span className={typeMeta[row.type].className}>
             {typeMeta[row.type].label}
           </span>
@@ -196,7 +208,7 @@ export function DistributorOrdersClient({
       },
       {
         header: "订单编号",
-        cell: (row) => (
+        cell: (row: DistributorOrder) => (
           <div className="space-y-1 text-sm">
             <p className="font-semibold text-neutral-900">{row.id}</p>
             <p className="text-xs text-neutral-500">
@@ -211,7 +223,7 @@ export function DistributorOrdersClient({
       {
         header: "订单金额",
         align: "right",
-        cell: (row) => (
+        cell: (row: DistributorOrder) => (
           <span className="font-semibold text-neutral-900">
             {currencyFormatter.format(row.amount)}
           </span>
@@ -220,7 +232,7 @@ export function DistributorOrdersClient({
       {
         header: "我的佣金",
         align: "right",
-        cell: (row) => {
+        cell: (row: DistributorOrder) => {
           return row.commissionAmount != null ? (
             <span className="font-semibold text-neutral-900">
               {currencyFormatter.format(row.commissionAmount)}
@@ -236,7 +248,7 @@ export function DistributorOrdersClient({
       list.push(
         {
           header: "客户信息",
-          cell: (row) =>
+          cell: (row: DistributorOrder) =>
             row.type === "secondary" ? (
               <span className="text-sm text-neutral-300">-</span>
             ) : (
@@ -252,7 +264,7 @@ export function DistributorOrdersClient({
         },
         {
           header: "联系方式",
-          cell: (row) => {
+          cell: (row: DistributorOrder) => {
             if (row.type === "secondary" && row.secondaryDistributor) {
               return (
                 <div className="space-y-1 text-sm text-neutral-600">
@@ -277,7 +289,7 @@ export function DistributorOrdersClient({
         },
         {
           header: "收货地址",
-          cell: (row) =>
+          cell: (row: DistributorOrder) =>
             row.type === "secondary" ? (
               <span className="text-sm text-neutral-300">-</span>
             ) : (
@@ -290,7 +302,7 @@ export function DistributorOrdersClient({
     if (!isSecondaryView) {
       list.push({
         header: "发货日期",
-        cell: (row) =>
+        cell: (row: DistributorOrder) =>
           row.shipment?.date ? (
             <span>{row.shipment.date}</span>
           ) : (
@@ -302,7 +314,7 @@ export function DistributorOrdersClient({
     if (!isSecondaryView) {
       list.push({
         header: "快递单号",
-        cell: (row) => {
+        cell: (row: DistributorOrder) => {
           if (row.type === "secondary") {
             return <span className="text-sm text-neutral-300">-</span>;
           }
@@ -325,7 +337,7 @@ export function DistributorOrdersClient({
 
     list.push({
       header: "操作",
-      cell: (row) => (
+      cell: (row: DistributorOrder) => (
         <button
           type="button"
           onClick={() => setSelectedOrder(row)}

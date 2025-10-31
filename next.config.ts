@@ -3,6 +3,9 @@ const nextConfig = {
     inlineCss: true,
     useCache: true,
   },
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

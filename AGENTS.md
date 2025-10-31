@@ -27,32 +27,32 @@
    - Tailwind 原子按“布局 → 间距 → 视觉”顺序；复杂交互前可加简短注释。
    - 状态管理统一使用 Zustand，必要时 selector 降低重渲染。
    - 组件命名：组件 PascalCase、hook camelCase、常量 SCREAMING_SNAKE_CASE。
-5. **质量门槛**：提交前跑 `npm run lint` 与 `npm run prettier:check`；构建需保持绿灯。
+5. **质量门槛**：提交前跑 `pnpm lint` 与 `pnpm prettier:check`；构建需保持绿灯。
 6. **路径约束**：移动端页面不要复制桌面逻辑，务必复用 `_shared`；新增账户 Tab 先扩展 `_shared/account/nav-items.ts`。
 
 ### 测试命令
 
-- `npm run lint`：ESLint 全量检查。
-- `npm run build`：确保生产构建通过。
-- `npm run dev`：Turbopack 开发模式（调试前先跑一次以装载缓存）。
-- 如需补测试脚本，请在合并前本地跑通相应命令（`npm run test` 等），并在 PR 描述中标注。
+- `pnpm lint`：ESLint 全量检查。
+- `pnpm build`：确保生产构建通过。
+- `pnpm dev`：Turbopack 开发模式（调试前先跑一次以装载缓存）。
+- 如需补测试脚本，请在合并前本地跑通相应命令（`pnpm test` 等），并在 PR 描述中标注。
 
 ## 常用命令
 
 ```bash
-npm run dev              # 本地开发（Turbopack）
-npm run build            # 生产构建
-npm run start            # 预览生产构建
-npm run lint             # ESLint
-npm run prettier         # 自动格式化
-npm run prettier:check   # CI 用格式检查
+pnpm dev              # 本地开发（Turbopack）
+pnpm build            # 生产构建
+pnpm start            # 预览生产构建
+pnpm lint             # ESLint
+pnpm prettier         # 自动格式化
+pnpm prettier:check   # CI 用格式检查
 ```
 
 ## 新增模块：分销平台
 
 - 目录：`apps/distributor`
 - 文档：`docs/fenxiao/`（含 AGENTS.md、todo.md 与技术方案）
-- 常用命令：`npm run dev:distributor`（开发）、`npm run build:distributor`（构建）、`npm run lint:distributor`（Lint）
+- 常用命令：`pnpm dev:distributor`（开发）、`pnpm build:distributor`（构建）、`pnpm lint:distributor`（Lint）
 - UI 依赖：分销端复用 `components/ui/*` 的 shadcn 组件，并依赖 `@radix-ui/react-progress` 等 Radix 套件；新增组件时保持依赖在根/子 workspace 的 `package.json` 内一致声明。
 - 规范：建议沿用本文核心规范（接口经 `lib/api`、类型与 mock 同步、Server Action 返回 `{ success, data, error }`），保持跨模块一致性。
 

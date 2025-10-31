@@ -6,17 +6,17 @@
 
 ## 打包与交付
 
-1. 更新依赖：`npm ci`。
-2. 生成生产构建：`npm run build`。
+1. 更新依赖：`pnpm install --frozen-lockfile`。
+2. 生成生产构建：`pnpm build`。
 3. 收集产物：
    - `.next/`（含 Server 与静态文件）。
    - `public/` 静态资源。
-   - `package.json`、`package-lock.json`、`next.config.ts`、`middleware.ts`。
-4. 可选：使用容器化时，在 CI 中执行 `npm ci --omit=dev && npm run build`，打包成镜像供后端部署环境测试。
+   - `package.json`、`pnpm-lock.yaml`、`next.config.ts`、`middleware.ts`。
+4. 可选：使用容器化时，在 CI 中执行 `pnpm install --frozen-lockfile --prod && pnpm build`，打包成镜像供后端部署环境测试。
 
 ## 部署验证步骤
 
-- 运行 `npm run start`，确认 `/`、`/product/[handle]`、`/search`、`/cart`、`/checkout` 正常。
+- 运行 `pnpm start`，确认 `/`、`/product/[handle]`、`/search`、`/cart`、`/checkout` 正常。
 - 使用 `?device=m` 强制移动外壳（当前尚未完成，可观察 Middleware 行为）。
 - 检查响应头：`x-device`、`Vary: x-device` 是否存在。
 - 监控日志：遇到 500 时查看 `app/_shared` 内 Server Action 是否返回错误。

@@ -8,11 +8,11 @@
 
 ```bash
 # 在项目根目录运行
-npm install
-npm run dev:distributor
+pnpm install
+pnpm dev:distributor
 
 # 或者在当前目录运行
-npm run dev
+pnpm dev
 ```
 
 访问 http://localhost:3000
@@ -60,8 +60,8 @@ npm run dev
 Project Name: shiba-distributor
 Framework Preset: Next.js
 Root Directory: apps/distributor
-Build Command: npm run build
-Install Command: npm install
+Build Command: pnpm build
+Install Command: pnpm install
 Output Directory: .next
 ```
 
@@ -127,7 +127,7 @@ apps/distributor/
 ## 开发规范
 
 - 使用 2 空格缩进
-- 提交前运行 `npm run lint` 检查代码
+- 提交前运行 `pnpm lint` 检查代码
 - 使用 TypeScript 编写类型安全的代码
 - Server Actions 统一返回 `{ success, data, error }` 结构
 

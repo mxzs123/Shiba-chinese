@@ -9,7 +9,7 @@ import {
   ChartTooltipContent,
 } from "~/components/ui/chart";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { CHART_COLORS, CHART_CONFIG } from "~/lib/chart-theme";
+import { CHART_COLORS, CHART_CONFIG } from "../../../lib/chart-theme";
 
 import type { ProductContributionItem } from "./data";
 import { formatCurrency, formatPercent } from "./formatters";

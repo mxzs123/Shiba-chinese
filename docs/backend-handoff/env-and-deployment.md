@@ -32,10 +32,10 @@
 
 ## 部署流程提示
 
-1. 安装依赖并构建：`npm ci && npm run build`。
-2. 导出 `.next` 构建产物和 `public/` 目录，部署到 Node 运行环境（`npm run start`）。
+1. 安装依赖并构建：`pnpm install --frozen-lockfile && pnpm build`。
+2. 导出 `.next` 构建产物和 `public/` 目录，部署到 Node 运行环境（`pnpm start`）。
 3. 确认环境变量在运行时可用，特别是 `REVALIDATION_SECRET`。
-4. 若使用容器化，推荐在镜像内执行 `npm ci --omit=dev`（Next.js 15 仍需部分 devDependencies，用 `--include=dev` 视需求调整）。
+4. 若使用容器化，推荐在镜像内执行 `pnpm install --frozen-lockfile --prod`（Next.js 15 仍需部分 devDependencies，用 `--dev` 视需求调整）。
 
 ## 运行监控
 

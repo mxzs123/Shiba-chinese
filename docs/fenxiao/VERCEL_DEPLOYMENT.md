@@ -38,9 +38,9 @@
 
 | 配置项               | 值              | 说明                              |
 | -------------------- | --------------- | --------------------------------- |
-| **Build Command**    | `npm run build` | Vercel 会在 Root Directory 中执行 |
+| **Build Command**    | `pnpm build`    | Vercel 会在 Root Directory 中执行 |
 | **Output Directory** | `.next`         | Next.js 默认输出目录              |
-| **Install Command**  | `npm install`   | 默认即可                          |
+| **Install Command**  | `pnpm install`  | 默认即可                          |
 
 > **注意**：由于设置了 Root Directory，Vercel 会在 `apps/distributor` 目录下执行这些命令，并自动处理 workspace 依赖。
 
@@ -183,7 +183,7 @@ Vercel 会自动为自定义域名申请和配置 SSL 证书（Let's Encrypt）�
 **解决**：
 
 1. 检查 Root Directory 是否设置为 `apps/distributor`
-2. 确认 Install Command 为 `npm install`
+2. 确认 Install Command 为 `pnpm install`
 3. Vercel 会自动处理 workspace 依赖，从仓库根目录安装
 
 ### Q3: 登录后返回 Mock 数据，如何连接真实 API？

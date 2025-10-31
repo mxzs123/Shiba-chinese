@@ -19,7 +19,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CHART_COLORS, CHART_CONFIG } from "~/lib/chart-theme";
+import { CHART_COLORS, CHART_CONFIG } from "../../../lib/chart-theme";
 
 import type { CustomerInsightsData } from "./data";
 import { formatPercent } from "./formatters";

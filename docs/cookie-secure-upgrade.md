@@ -18,5 +18,5 @@ Unify how we set the `secure` attribute on cookies across the project so deploym
 
 ## Verification
 
-- Run `npm run lint`, `npm run prettier:check`, and `npm run build` after each batch of updates.
+- Run `pnpm lint`, `pnpm prettier:check`, and `pnpm build` after each batch of updates.
 - Manually inspect the `Set-Cookie` headers in staging/production to confirm `secure` toggles correctly when proxied over HTTPS.

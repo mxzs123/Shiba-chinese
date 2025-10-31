@@ -3,9 +3,9 @@
 ## 自动化命令
 
 ```bash
-npm run lint           # ESLint，包含 TypeScript/React 规则
-npm run prettier:check # Prettier 校验（CI 复用）
-# 当前无单元测试框架，可按需补充 Vitest/Jest 并扩展 npm scripts
+pnpm lint           # ESLint，包含 TypeScript/React 规则
+pnpm prettier:check # Prettier 校验（CI 复用）
+# 当前无单元测试框架，可按需补充 Vitest/Jest 并扩展 pnpm scripts
 ```
 
 ## 手动验证清单
@@ -19,7 +19,7 @@ npm run prettier:check # Prettier 校验（CI 复用）
 
 ## 发布前确认
 
-- `npm run build && npm run start` 可正常启动，Middleware 分流在生产模式下仍生效。
+- `pnpm build && pnpm start` 可正常启动，Middleware 分流在生产模式下仍生效。
 - `.env.local` 未被提交，环境变量在部署平台正确配置。
 - `docs/backend-handoff/` 内资料随迭代更新，PR 描述包含关键字段变化。
 - 若接入真实接口：准备后端健康检查地址、限流策略、错误码一览，纳入验收。

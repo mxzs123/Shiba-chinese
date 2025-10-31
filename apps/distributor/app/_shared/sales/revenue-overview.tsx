@@ -19,7 +19,7 @@ import {
 } from "~/components/ui/chart";
 import { Separator } from "~/components/ui/separator";
 import { cn } from "~/lib/utils";
-import { CHART_COLORS, CHART_CONFIG } from "~/lib/chart-theme";
+import { CHART_COLORS, CHART_CONFIG } from "../../../lib/chart-theme";
 
 import type { RevenueOverviewData } from "./data";
 import { formatCurrency, formatPercent } from "./formatters";

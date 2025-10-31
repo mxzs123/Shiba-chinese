@@ -50,7 +50,7 @@
 
 ## 质量要求
 
-- 所有提交必须跑通：`npm run lint`、`npm run prettier:check`、`npm run build`。
+- 所有提交必须跑通：`pnpm lint`、`pnpm prettier:check`、`pnpm build`。
 - 关键路径需补充单测或 Playwright 冒烟用例（登录 → 仪表盘 → 订单 → 退款）。
 - 引入新环境变量或外部依赖时，更新 `.env.example` 或 CI 配置并写明消耗方式。
 

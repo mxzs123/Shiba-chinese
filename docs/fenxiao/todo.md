@@ -7,7 +7,7 @@
 - [x] 收集并确认需求文档、技术方案、设计稿交付节奏（Figma 设计节奏：Week1 登录/框架/仪表盘，Week2 销售页面，Week3 分销模块，Week4 公共能力；每周二/五同步）
 - [x] 明确角色矩阵：销售人员、分销商、二级分销商的页面与权限差异（分销商仅可申请新增与启停，审批由后台执行）
 - [x] 与后端约定接口定义、Mock 发布计划、联调窗期（后端主导 OpenAPI/排期；我们先提交 P0/P1 接口草案、T+3 天内提供 Mock，周二例会+Week3/Week4 联调）
-- [x] 建立协作基线：代码规范、Lint/Prettier、CI、分支策略（保留 main，按 feature/ 开分支；提交前跑 `npm run lint`、`npm run prettier:check`、`npm run build`；CI 后续接入 GitHub Actions）
+- [x] 建立协作基线：代码规范、Lint/Prettier、CI、分支策略（保留 main，按 feature/ 开分支；提交前跑 `pnpm lint`、`pnpm prettier:check`、`pnpm build`；CI 后续接入 GitHub Actions）
 
 ## Phase 1 — 工程与基础设施
 
@@ -50,7 +50,7 @@
 
 - [ ] 与后端联调鉴权、仪表盘、订单、客户、二级分销接口
 - [ ] 编写关键路径单测与 Playwright 冒烟用例（登录→仪表盘→订单→退款申请）
-- [ ] 跑通 `npm run lint`、`npm run prettier:check`、`npm run build` 并配置 CI
+- [ ] 跑通 `pnpm lint`、`pnpm prettier:check`、`pnpm build` 并配置 CI
 - [ ] 安排 UAT/QA 走查，覆盖角色切换、权限、文件上传、任务提醒
 - [ ] 准备部署、监控与回滚方案，确认发布清单与上线检查表
 

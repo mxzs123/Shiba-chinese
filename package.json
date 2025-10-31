@@ -4,6 +4,7 @@
     "apps/*",
     "packages/*"
   ],
+  "packageManager": "pnpm@9.12.2",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -12,9 +13,9 @@
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "test": "prettier --check --ignore-unknown .",
-    "dev:distributor": "npm run dev --workspace @shiba/distributor",
-    "build:distributor": "npm run build --workspace @shiba/distributor",
-    "lint:distributor": "npm run lint --workspace @shiba/distributor"
+    "dev:distributor": "pnpm --filter @shiba/distributor dev",
+    "build:distributor": "pnpm --filter @shiba/distributor build",
+    "lint:distributor": "pnpm --filter @shiba/distributor lint"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",

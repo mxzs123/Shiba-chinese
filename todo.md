@@ -17,7 +17,7 @@
 - [x] 建立 `app/m/layout.tsx`，接入 `MobileAppLayout` 及共享 Provider（CartProvider、Toaster、处方提示）
 - [x] 实装顶部 `MobileHeader`、底部 `MobileBottomNav`，同步导航高亮与购物车徽章
 - [x] 调整 middleware 分流逻辑，移动设备直达 `/m/*`，移除桌面兜底
-- [x] 通过 `npm run lint`、`npm run prettier:check`、`npm run build` 等质量基线
+- [x] 通过 `pnpm lint`、`pnpm prettier:check`、`pnpm build` 等质量基线
 
 ### 已上线页面
 
@@ -101,4 +101,4 @@
 
 - 分类页右侧商品仍为占位数据，待后端接口提供后接入
 - 后续若新增账户 Tab，请先扩展 `_shared/account/nav-items.ts`，再补 `/m/account/*`
-- 相关命令：`npm run dev`（Turbopack）、`npm run build`、`npm run lint`、`npm run prettier:check`
+- 相关命令：`pnpm dev`（Turbopack）、`pnpm build`、`pnpm lint`、`pnpm prettier:check`

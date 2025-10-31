@@ -13,7 +13,7 @@
 
 1. 安装依赖：
    ```bash
-   npm install
+   pnpm install
    ```
 2. 复制 `.env.example` 为 `.env.local` 并填写：
    - `COMMERCE_API_URL`：内部商品服务地址（未配置时使用模拟数据）。
@@ -22,7 +22,7 @@
    - `NEXT_PUBLIC_JPY_TO_CNY_RATE`：日元至人民币的换算汇率（默认 0.052，可按月更新）。
 3. 启动开发服务器：
    ```bash
-   npm run dev
+   pnpm dev
    ```
 4. 打开 [http://localhost:3000](http://localhost:3000) 查看页面。
 
@@ -42,11 +42,11 @@
 
 ## 常用脚本
 
-- `npm run dev`：启动 Turbopack 开发模式。
-- `npm run build`：构建生产包。
-- `npm run start`：预览生产构建。
-- `npm run lint`：运行 ESLint（Next.js 集成）。
-- `npm run prettier` / `npm run prettier:check`：格式化与校验代码风格。
+- `pnpm dev`：启动 Turbopack 开发模式。
+- `pnpm build`：构建生产包。
+- `pnpm start`：预览生产构建。
+- `pnpm lint`：运行 ESLint（Next.js 集成）。
+- `pnpm prettier` / `pnpm prettier:check`：格式化与校验代码风格。
 
 ## 目录速览
 

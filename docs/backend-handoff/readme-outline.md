@@ -28,12 +28,12 @@
 ## 常用脚手架命令
 
 ```bash
-npm run dev            # 启动开发（Turbopack）
-npm run build          # 生产构建
-npm run start          # 本地预览生产包
-npm run lint           # ESLint 校验
-npm run prettier       # 自动格式化
-npm run prettier:check # 仅校验格式（CI 推荐）
+pnpm dev            # 启动开发（Turbopack）
+pnpm build          # 生产构建
+pnpm start          # 本地预览生产包
+pnpm lint           # ESLint 校验
+pnpm prettier       # 自动格式化
+pnpm prettier:check # 仅校验格式（CI 推荐）
 ```
 
 ## 环境变量与示例
@@ -52,7 +52,7 @@ npm run prettier:check # 仅校验格式（CI 推荐）
 
 - Middleware 未生效：检查 `device` cookie、`?device=` query、`x-device` 请求头。
 - Mock 数据缺字段：同时更新 `mock-data.ts` 与 `types.ts`，并补充 README 说明。
-- 构建失败：先运行 `npm run lint`、`npm run prettier:check`，确认 Node 版本 ≥ 18。
+- 构建失败：先运行 `pnpm lint`、`pnpm prettier:check`，确认 Node 版本 ≥ 18。
 
 ## 附录
 

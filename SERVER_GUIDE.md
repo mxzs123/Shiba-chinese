@@ -75,7 +75,7 @@ passwd
 ### 技术栈
 
 - **Node.js**: v20.19.5（通过 nvm 管理）
-- **包管理器**: npm v10.8.2
+- **包管理器**: pnpm v9.12.2
 - **框架**: Next.js 15.5.4
 - **进程管理**: PM2
 - **反向代理**: Nginx 1.20.1
@@ -228,10 +228,10 @@ cp -r .next .next.backup.$(date +%Y%m%d_%H%M%S)
 git pull origin main
 
 # 5. 安装/更新依赖
-npm install
+pnpm install
 
 # 6. 构建项目
-npm run build
+pnpm build
 
 # 7. 重启服务
 pm2 restart shiba
@@ -245,7 +245,7 @@ pm2 logs shiba --lines 20
 ```bash
 cd /srv/Shiba-chinese && \
 git pull && \
-npm run build && \
+pnpm build && \
 pm2 restart shiba && \
 pm2 logs shiba --lines 20
 ```
@@ -260,7 +260,7 @@ git log --oneline -10
 git reset --hard <commit-id>
 
 # 重新构建和重启
-npm run build && pm2 restart shiba
+pnpm build && pm2 restart shiba
 ```
 
 ---
@@ -328,7 +328,7 @@ swapon --show
 swapon /swapfile
 
 # 构建时限制内存使用
-NODE_OPTIONS="--max-old-space-size=1536" npm run build
+NODE_OPTIONS="--max-old-space-size=1536" pnpm build
 ```
 
 ### 磁盘空间不足
@@ -340,8 +340,8 @@ df -h
 # 清理 PM2 日志
 pm2 flush
 
-# 清理 npm 缓存
-npm cache clean --force
+# 清理 pnpm 仓库
+pnpm store prune
 
 # 清理旧的构建文件
 cd /srv/Shiba-chinese
@@ -356,7 +356,7 @@ yum clean all
 ```bash
 # 检查当前版本
 node -v
-npm -v
+pnpm -v
 
 # 切换到正确版本
 source ~/.bashrc
@@ -586,7 +586,7 @@ git reset --hard origin/main
 
 ```bash
 node -v
-npm -v
+pnpm -v
 ```
 
 **Q: 如何查看项目使用的端口？**
