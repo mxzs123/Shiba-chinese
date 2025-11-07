@@ -1,5 +1,5 @@
-import { getCollection, getCollectionProducts, getProducts } from "lib/api";
-import type { Collection, Product } from "lib/api/types";
+import { getGoodsPageList } from "lib/api";
+import type { GoodsPageInfo, Product } from "lib/api/types";
 
 import { DESKTOP_SEARCH_PAGE_SIZE, type SearchCategory } from "./config";
 import { parsePageParam, resolveSort } from "./utils";
@@ -12,23 +12,50 @@ type SearchQueryInput = {
 };
 
 export type SearchResult = {
-  products: Product[];
+  items: Product[];
   total: number;
-  totalPages: number;
-  currentPage: number;
-  pageSize: number;
+  pageInfo: GoodsPageInfo;
   sortSlug?: string | null;
   searchValue?: string | null;
 };
 
-export async function loadCollection(
-  category: SearchCategory,
-): Promise<Collection | undefined> {
-  if (category.source.type !== "collection") {
-    return undefined;
+function mapSortSlugToOrder(sortSlug?: string | null) {
+  if (!sortSlug) {
+    return "1";
   }
 
-  return getCollection(category.source.handle);
+  switch (sortSlug) {
+    case "trending-desc":
+      return "2";
+    case "latest-desc":
+      return "3";
+    case "price-asc":
+      return "4";
+    case "price-desc":
+      return "5";
+    default:
+      return "1";
+  }
+}
+
+function buildWhereInput({
+  searchValue,
+  category,
+}: {
+  searchValue?: string | null;
+  category?: SearchCategory;
+}) {
+  const where: Record<string, unknown> = {};
+
+  if (category) {
+    where.catId = category.catId;
+  }
+
+  if (searchValue && searchValue.trim().length > 0) {
+    where.searchName = searchValue.trim();
+  }
+
+  return Object.keys(where).length > 0 ? where : undefined;
 }
 
 export async function loadSearchResult({
@@ -37,59 +64,45 @@ export async function loadSearchResult({
   page,
   category,
 }: SearchQueryInput): Promise<SearchResult> {
-  const { sortKey, reverse, slug } = resolveSort(sortSlug);
-  const pageSize = DESKTOP_SEARCH_PAGE_SIZE;
+  const resolvedSort = resolveSort(sortSlug);
+  const order = mapSortSlugToOrder(resolvedSort.slug);
+  const currentPage = parsePageParam(page);
+  const limit = DESKTOP_SEARCH_PAGE_SIZE;
+  const where = buildWhereInput({ searchValue, category });
 
-  let products: Product[];
+  const response = await getGoodsPageList({
+    page: currentPage,
+    limit,
+    order,
+    where: where ? JSON.stringify(where) : undefined,
+  });
 
-  if (category) {
-    if (category.source.type === "collection") {
-      products = await getCollectionProducts({
-        collection: category.source.handle,
-        sortKey,
-        reverse,
-      });
-    } else {
-      products = await getProducts({
-        query: category.source.value,
-        sortKey,
-        reverse,
-      });
-    }
-  } else {
-    products = await getProducts({
-      query: searchValue ?? undefined,
-      sortKey,
-      reverse,
-    });
+  const fallbackPageInfo: GoodsPageInfo = {
+    page: currentPage,
+    limit,
+    total: 0,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  };
+
+  if (!response.status || !response.data) {
+    return {
+      items: [],
+      total: 0,
+      pageInfo: fallbackPageInfo,
+      sortSlug: resolvedSort.slug,
+      searchValue,
+    };
   }
 
-  if (category && category.source.type === "collection" && searchValue) {
-    const query = searchValue.trim().toLowerCase();
-
-    if (query.length) {
-      products = products.filter((product) => {
-        const title = product.title.toLowerCase();
-        const description = product.description.toLowerCase();
-        return title.includes(query) || description.includes(query);
-      });
-    }
-  }
-
-  const total = products.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const currentPage = Math.min(parsePageParam(page), totalPages);
-  const start = (currentPage - 1) * pageSize;
-  const end = start + pageSize;
-  const paginatedProducts = products.slice(start, end);
+  const pageInfo = response.data.pageInfo || fallbackPageInfo;
 
   return {
-    products: paginatedProducts,
-    total,
-    totalPages,
-    currentPage,
-    pageSize,
-    sortSlug: slug,
+    items: response.data.items,
+    total: pageInfo.total,
+    pageInfo,
+    sortSlug: resolvedSort.slug,
     searchValue,
   };
 }

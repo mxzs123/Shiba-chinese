@@ -23,6 +23,13 @@ import {
   users,
 } from "./mock-data";
 import {
+  findGoodsProductByBackendId as lookupGoodsProductByBackendId,
+  findGoodsProductByHandle as lookupGoodsProductByHandle,
+  findGoodsProductByInternalId as lookupGoodsProductByInternalId,
+  findGoodsVariantByObjectId as lookupGoodsVariantByObjectId,
+  mockGetGoodsRecommendList,
+} from "./goods";
+import {
   cloneAddress,
   cloneCustomerCoupon,
   cloneIdentityVerification,
@@ -38,8 +45,12 @@ import type {
   Address,
   AddressInput,
   AppliedCoupon,
+  BackendApiResponse,
   Cart,
   CartItem,
+  CartDeleteInput,
+  CartLineInput,
+  CartListRequest,
   Collection,
   Coupon,
   CurrencyCode,
@@ -173,6 +184,8 @@ const globalCartStore = globalThis as GlobalCartStore;
 type CartSnapshotLine = {
   merchandiseId: string;
   quantity: number;
+  lineId?: string;
+  backend?: CartItem["backend"];
 };
 
 type CartSnapshot = {
@@ -323,6 +336,8 @@ function createCartSnapshot(cart: Cart): CartSnapshot {
     lines: cart.lines.map((line) => ({
       merchandiseId: line.merchandise.id,
       quantity: line.quantity,
+      lineId: line.id,
+      backend: line.backend,
     })),
     appliedCoupons: (cart.appliedCoupons ?? []).map(
       (entry) => entry.coupon.code,
@@ -355,13 +370,21 @@ function hydrateCartFromSnapshot(snapshot: CartSnapshot): Cart {
   const cart = createEmptyCart(snapshot.id);
 
   snapshot.lines.forEach((entry) => {
-    const match = findVariantById(entry.merchandiseId);
+    const match =
+      findVariantById(entry.merchandiseId) ||
+      (entry.backend?.objectId
+        ? lookupGoodsVariantByObjectId(entry.backend.objectId)
+        : undefined);
 
     if (!match) {
       return;
     }
 
-    setCartLine(cart, match.variant, entry.quantity);
+    setCartLine(cart, match.variant, entry.quantity, {
+      lineId: entry.lineId || entry.backend?.lineId,
+      backend: entry.backend,
+      product: match.product,
+    });
   });
 
   const appliedCoupons = snapshot.appliedCoupons
@@ -657,9 +680,21 @@ async function ensureCartInstance(): Promise<Cart> {
   return createCart();
 }
 
-function upsertCartLine(cart: Cart, variant: ProductVariant, quantity: number) {
+type CartLineOptions = {
+  lineId?: string;
+  backend?: CartItem["backend"];
+  product?: Product;
+};
+
+function upsertCartLine(
+  cart: Cart,
+  variant: ProductVariant,
+  quantity: number,
+  options?: CartLineOptions,
+) {
+  const targetLineId = options?.lineId || variant.id;
   const existingLine = cart.lines.find(
-    (line) => line.merchandise.id === variant.id,
+    (line) => line.id === targetLineId || line.merchandise.id === variant.id,
   );
   const price = Number(variant.price.amount);
   const currencyCode = variant.price.currencyCode || defaultCurrency;
@@ -675,7 +710,7 @@ function upsertCartLine(cart: Cart, variant: ProductVariant, quantity: number) {
   const lineTotal = formatAmount(price * newQuantity);
 
   const line: CartItem = {
-    id: variant.id,
+    id: targetLineId,
     quantity: newQuantity,
     cost: {
       totalAmount: {
@@ -701,14 +736,22 @@ function upsertCartLine(cart: Cart, variant: ProductVariant, quantity: number) {
     },
   };
 
-  const productMatch = findVariantById(variant.id);
+  const backendMetadata = options?.backend || existingLine?.backend;
+  if (backendMetadata) {
+    line.backend = {
+      ...backendMetadata,
+      lineId: backendMetadata.lineId || targetLineId,
+    };
+  }
+
+  const productMatch = options?.product || findVariantById(variant.id)?.product;
 
   if (productMatch) {
     line.merchandise.product = {
-      id: productMatch.product.id,
-      handle: productMatch.product.handle,
-      title: productMatch.product.title,
-      featuredImage: productMatch.product.featuredImage,
+      id: productMatch.id,
+      handle: productMatch.handle,
+      title: productMatch.title,
+      featuredImage: productMatch.featuredImage,
     };
   }
 
@@ -721,21 +764,28 @@ function upsertCartLine(cart: Cart, variant: ProductVariant, quantity: number) {
   }
 }
 
-function setCartLine(cart: Cart, variant: ProductVariant, quantity: number) {
+function setCartLine(
+  cart: Cart,
+  variant: ProductVariant,
+  quantity: number,
+  options?: CartLineOptions,
+) {
   const currencyCode = variant.price.currencyCode || defaultCurrency;
 
   if (quantity <= 0) {
+    const targetLineId = options?.lineId || variant.id;
     cart.lines = cart.lines.filter(
-      (line) => line.merchandise.id !== variant.id,
+      (line) => line.id !== targetLineId && line.merchandise.id !== variant.id,
     );
     return;
   }
 
   const lineTotal = formatAmount(Number(variant.price.amount) * quantity);
-  const productMatch = findVariantById(variant.id);
+  const productMatch = options?.product || findVariantById(variant.id)?.product;
 
+  const lineId = options?.lineId || variant.id;
   const line: CartItem = {
-    id: variant.id,
+    id: lineId,
     quantity,
     cost: {
       totalAmount: {
@@ -749,10 +799,10 @@ function setCartLine(cart: Cart, variant: ProductVariant, quantity: number) {
       selectedOptions: variant.selectedOptions,
       product: productMatch
         ? {
-            id: productMatch.product.id,
-            handle: productMatch.product.handle,
-            title: productMatch.product.title,
-            featuredImage: productMatch.product.featuredImage,
+            id: productMatch.id,
+            handle: productMatch.handle,
+            title: productMatch.title,
+            featuredImage: productMatch.featuredImage,
           }
         : {
             id: variant.id,
@@ -768,8 +818,15 @@ function setCartLine(cart: Cart, variant: ProductVariant, quantity: number) {
     },
   };
 
+  if (options?.backend) {
+    line.backend = {
+      ...options.backend,
+      lineId: options.backend.lineId || lineId,
+    };
+  }
+
   const existingIndex = cart.lines.findIndex(
-    (line) => line.merchandise.id === variant.id,
+    (line) => line.id === lineId || line.merchandise.id === variant.id,
   );
 
   if (existingIndex >= 0) {
@@ -847,19 +904,56 @@ export async function createCart(): Promise<Cart> {
   return cart;
 }
 
+type LegacyAddLine = { merchandiseId: string; quantity: number };
+
+function isLegacyAddLine(
+  line: CartLineInput | LegacyAddLine,
+): line is LegacyAddLine {
+  return typeof (line as LegacyAddLine).merchandiseId === "string";
+}
+
 export async function addToCart(
-  lines: { merchandiseId: string; quantity: number }[],
+  lines: (CartLineInput | LegacyAddLine)[],
 ): Promise<Cart> {
   const cart = await ensureCartInstance();
 
   for (const line of lines) {
-    const match = findVariantById(line.merchandiseId);
+    if (isLegacyAddLine(line)) {
+      const match = findVariantById(line.merchandiseId);
+
+      if (!match) {
+        continue;
+      }
+
+      upsertCartLine(cart, match.variant, line.quantity, {
+        product: match.product,
+      });
+      continue;
+    }
+
+    const quantity = Math.max(1, Math.round(line.nums));
+    const match =
+      lookupGoodsVariantByObjectId(line.objectId) ||
+      findVariantById(String(line.objectId));
 
     if (!match) {
       continue;
     }
 
-    upsertCartLine(cart, match.variant, line.quantity);
+    const backendMeta = {
+      lineId: `line-${line.objectId}`,
+      productId: line.productId,
+      objectId: line.objectId,
+      cartType: line.cartType,
+      type: line.type,
+      groupId: line.groupId,
+    };
+
+    upsertCartLine(cart, match.variant, quantity, {
+      lineId: backendMeta.lineId,
+      backend: backendMeta,
+      product: match.product,
+    });
   }
 
   normalizeCartTotals(cart);
@@ -868,8 +962,13 @@ export async function addToCart(
   return cart;
 }
 
-export async function removeFromCart(lineIds: string[]): Promise<Cart> {
+export async function removeFromCart(
+  entries: (string | CartDeleteInput)[],
+): Promise<Cart> {
   const cart = await ensureCartInstance();
+  const lineIds = entries.map((entry) =>
+    typeof entry === "string" ? entry : String(entry.id),
+  );
 
   cart.lines = cart.lines.filter((line) =>
     line.id ? !lineIds.includes(line.id) : true,
@@ -880,19 +979,65 @@ export async function removeFromCart(lineIds: string[]): Promise<Cart> {
   return cart;
 }
 
+type LegacyUpdateLine = { id: string; merchandiseId: string; quantity: number };
+type BackendUpdateLine = { id: string; nums: number; objectId?: number };
+
+function isLegacyUpdateLine(
+  line: LegacyUpdateLine | BackendUpdateLine,
+): line is LegacyUpdateLine {
+  return typeof (line as LegacyUpdateLine).merchandiseId === "string";
+}
+
 export async function updateCart(
-  lines: { id: string; merchandiseId: string; quantity: number }[],
+  lines: (LegacyUpdateLine | BackendUpdateLine)[],
 ): Promise<Cart> {
   const cart = await ensureCartInstance();
 
   for (const line of lines) {
-    const match = findVariantById(line.merchandiseId);
+    if (isLegacyUpdateLine(line)) {
+      const match = findVariantById(line.merchandiseId);
 
-    if (!match) {
+      if (!match) {
+        continue;
+      }
+
+      setCartLine(cart, match.variant, line.quantity, {
+        lineId: line.id,
+        product: match.product,
+      });
       continue;
     }
 
-    setCartLine(cart, match.variant, line.quantity);
+    const quantity = Math.max(0, Math.round(line.nums));
+    const targetLine = cart.lines.find(
+      (entry) => entry.id === line.id || entry.backend?.lineId === line.id,
+    );
+
+    if (!targetLine) {
+      continue;
+    }
+
+    if (quantity === 0) {
+      cart.lines = cart.lines.filter((entry) => entry.id !== targetLine.id);
+      continue;
+    }
+
+    const variantMatch =
+      (targetLine.backend?.objectId
+        ? lookupGoodsVariantByObjectId(targetLine.backend.objectId)
+        : undefined) ||
+      (line.objectId ? lookupGoodsVariantByObjectId(line.objectId) : undefined) ||
+      findVariantById(targetLine.merchandise.id);
+
+    if (!variantMatch) {
+      continue;
+    }
+
+    setCartLine(cart, variantMatch.variant, quantity, {
+      lineId: targetLine.id,
+      backend: targetLine.backend,
+      product: variantMatch.product ?? targetLine.merchandise.product,
+    });
   }
 
   normalizeCartTotals(cart);
@@ -965,6 +1110,21 @@ export async function removeCouponFromCart(code: string): Promise<Cart> {
 
 export async function getAvailableCoupons(): Promise<Coupon[]> {
   return coupons.map((entry) => ({ ...entry }));
+}
+
+export async function getCartAvailableCoupons(
+  payload?: CartListRequest,
+): Promise<BackendApiResponse<Coupon[]>> {
+  const data = await getAvailableCoupons();
+
+  return {
+    methodDescription: null,
+    otherData: payload ? JSON.stringify(payload) : null,
+    status: true,
+    msg: "接口响应成功",
+    data,
+    code: 0,
+  };
 }
 
 export async function getCouponByCode(
@@ -1354,6 +1514,12 @@ export async function getPages(): Promise<Page[]> {
 }
 
 export async function getProduct(handle: string): Promise<Product | undefined> {
+  const goodsProduct = lookupGoodsProductByHandle(handle);
+
+  if (goodsProduct) {
+    return goodsProduct;
+  }
+
   const product = findProductByHandle(handle);
 
   if (!product) {
@@ -1366,6 +1532,12 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
 }
 
 export async function getProductById(id: string): Promise<Product | undefined> {
+  const goodsProduct = lookupGoodsProductByInternalId(id);
+
+  if (goodsProduct) {
+    return goodsProduct;
+  }
+
   const product = products.find((entry) => entry.id === id);
 
   if (!product) {
@@ -1377,9 +1549,44 @@ export async function getProductById(id: string): Promise<Product | undefined> {
   return rest;
 }
 
+export async function getVariantById(
+  variantId: string,
+): Promise<{ product: Product; variant: ProductVariant } | undefined> {
+  const match = findVariantById(variantId);
+
+  if (!match) {
+    return undefined;
+  }
+
+  const productRecord = match.product as Product & {
+    collections?: string[];
+    bestsellerRank?: number;
+  };
+
+  const { collections: _collections, bestsellerRank: _rank, ...rest } =
+    productRecord;
+
+  return {
+    product: rest,
+    variant: match.variant,
+  };
+}
+
 export async function getProductRecommendations(
   productId: string,
 ): Promise<Product[]> {
+  const goodsProduct = lookupGoodsProductByInternalId(productId);
+
+  if (goodsProduct?.backend?.productId) {
+    const response = await mockGetGoodsRecommendList({
+      id: goodsProduct.backend.productId,
+    });
+
+    if (response.status && response.data) {
+      return response.data;
+    }
+  }
+
   const filtered = products.filter((product) => product.id !== productId);
 
   return serializeProducts(filtered.slice(0, 4));
@@ -1409,6 +1616,18 @@ export async function getProducts({
 
   return serializeProducts(sorted);
 }
+
+export {
+  mockGetAllGoodsCategories as getAllGoodsCategories,
+  mockGetGoodsDetail as getGoodsDetail,
+  mockGetGoodsPageList as getGoodsPageList,
+  mockGetGoodsRecommendList as getGoodsRecommendList,
+  mockGetProductInfo as getBackendProductInfo,
+  findGoodsProductByHandle,
+  findGoodsProductByBackendId,
+  findGoodsProductByInternalId,
+  findGoodsVariantByObjectId,
+} from "./goods";
 
 export async function revalidate(req: NextRequest): Promise<NextResponse> {
   const secret = req.nextUrl.searchParams.get("secret");

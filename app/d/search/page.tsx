@@ -1,7 +1,7 @@
 import Search from "components/layout/navbar/search";
 
 import { SearchPageShell } from "@/app/_shared/search/SearchPageShell";
-import { DESKTOP_SEARCH_PAGE_SIZE } from "@/app/_shared/search/config";
+import { DESKTOP_SEARCH_PAGE_SIZE, getSearchCategories } from "@/app/_shared/search/config";
 import { loadSearchResult } from "@/app/_shared/search/loaders";
 import SearchResultsGrid from "@/app/_shared/search/SearchResultsGrid";
 import SearchPagination from "@/app/_shared/search/SearchPagination";
@@ -34,7 +34,10 @@ export default async function DesktopSearchPage({
     page,
   });
 
+  const categories = getSearchCategories();
+
   const sidebar = {
+    categories,
     activeCategory: null,
     basePath: "/search",
     searchValue: q ?? undefined,
@@ -68,14 +71,10 @@ export default async function DesktopSearchPage({
 
   return (
     <SearchPageShell sidebar={sidebar} header={header}>
-      <SearchResultsGrid
-        products={result.products}
-        emptyMessage={emptyMessage}
-      />
+      <SearchResultsGrid items={result.items} emptyMessage={emptyMessage} />
       <SearchPagination
         basePath="/search"
-        currentPage={result.currentPage}
-        totalPages={result.totalPages}
+        pageInfo={result.pageInfo}
         searchValue={q ?? undefined}
         sort={result.sortSlug ?? undefined}
       />

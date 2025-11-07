@@ -1,3 +1,4 @@
+import { goodsProducts } from "./mock-goods";
 import type {
   Address,
   AppliedCoupon,
@@ -1495,7 +1496,7 @@ export const checkoutUrl = CHECKOUT_FALLBACK;
 export const defaultCurrency = CURRENCY;
 
 export function findVariantById(variantId: string) {
-  for (const product of products) {
+  for (const product of [...products, ...goodsProducts]) {
     const variant = product.variants.find((v) => v.id === variantId);
     if (variant) {
       return {

@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 
 import { DesktopSearchSidebar } from "./DesktopSearchSidebar";
 import type { DesktopSearchSidebarProps } from "./DesktopSearchSidebar";
-
 export type SearchPageShellProps = {
   sidebar: DesktopSearchSidebarProps;
   children: ReactNode;

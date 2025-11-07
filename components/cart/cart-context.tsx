@@ -16,7 +16,8 @@ type CartAction =
   | {
       type: "UPDATE_ITEM";
       payload: {
-        merchandiseId: string;
+        lineId?: string;
+        merchandiseId?: string;
         updateType: UpdateType;
         quantity?: number;
       };
@@ -94,9 +95,18 @@ function createOrUpdateCartItem(
     ? existingItem.quantity + quantityDelta
     : quantityDelta;
   const totalAmount = calculateItemCost(quantity, variant.price.amount);
+  const backendMeta = variant.backend
+    ? {
+        ...variant.backend,
+        lineId:
+          existingItem?.backend?.lineId ||
+          `temp-${variant.backend.objectId ?? variant.id}`,
+      }
+    : existingItem?.backend;
+  const lineId = existingItem?.id || backendMeta?.lineId || variant.id;
 
   return {
-    id: existingItem?.id,
+    id: lineId,
     quantity,
     cost: {
       totalAmount: {
@@ -104,6 +114,7 @@ function createOrUpdateCartItem(
         currencyCode: variant.price.currencyCode,
       },
     },
+    backend: backendMeta,
     merchandise: {
       id: variant.id,
       title: variant.title,
@@ -157,10 +168,11 @@ function cartReducer(state: Cart | undefined, action: CartAction): Cart {
 
   switch (action.type) {
     case "UPDATE_ITEM": {
-      const { merchandiseId, updateType, quantity } = action.payload;
+      const { lineId, merchandiseId, updateType, quantity } = action.payload;
+      const targetId = lineId || merchandiseId;
       const updatedLines = currentCart.lines
         .map((item) =>
-          item.merchandise.id === merchandiseId
+          item.id === targetId || item.merchandise.id === merchandiseId
             ? updateCartItem(item, updateType, quantity)
             : item,
         )
@@ -241,10 +253,15 @@ export function useCart() {
   );
 
   const updateCartItem = useCallback(
-    (merchandiseId: string, updateType: UpdateType, quantity?: number) => {
+    (
+      lineId: string,
+      merchandiseId: string,
+      updateType: UpdateType,
+      quantity?: number,
+    ) => {
       updateOptimisticCart({
         type: "UPDATE_ITEM",
-        payload: { merchandiseId, updateType, quantity },
+        payload: { lineId, merchandiseId, updateType, quantity },
       });
     },
     [updateOptimisticCart],

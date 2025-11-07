@@ -1,13 +1,13 @@
 import Link from "next/link";
 
+import type { GoodsPageInfo } from "lib/api/types";
 import { createUrl } from "lib/utils";
 
 import { createSearchParams } from "./utils";
 
 export type SearchPaginationProps = {
   basePath: string;
-  currentPage: number;
-  totalPages: number;
+  pageInfo: GoodsPageInfo;
   searchValue?: string;
   sort?: string | null;
 };
@@ -46,15 +46,16 @@ function createPageRange(current: number, total: number, max = 5) {
 
 export function SearchPagination({
   basePath,
-  currentPage,
-  totalPages,
+  pageInfo,
   searchValue,
   sort,
 }: SearchPaginationProps) {
-  if (totalPages <= 1) {
+  if (pageInfo.totalPages <= 1) {
     return null;
   }
 
+  const currentPage = pageInfo.page;
+  const totalPages = pageInfo.totalPages;
   const pages = createPageRange(currentPage, totalPages);
 
   return (

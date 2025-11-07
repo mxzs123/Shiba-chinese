@@ -114,11 +114,13 @@ function EmptyCartState() {
 type UpdateCartItemFn = ReturnType<typeof useCart>["updateCartItem"];
 
 function CartItemQuantityControl({
+  lineId,
   merchandiseId,
   productTitle,
   quantity,
   optimisticUpdate,
 }: {
+  lineId: string;
   merchandiseId: string;
   productTitle: string;
   quantity: number;
@@ -132,7 +134,7 @@ function CartItemQuantityControl({
         return;
       }
 
-      optimisticUpdate(merchandiseId, "set", nextQuantity);
+      optimisticUpdate(lineId, merchandiseId, "set", nextQuantity);
 
       startTransition(() => {
         updateItemQuantity(null, {
@@ -151,7 +153,7 @@ function CartItemQuantityControl({
           });
       });
     },
-    [merchandiseId, optimisticUpdate, quantity],
+    [lineId, merchandiseId, optimisticUpdate, quantity],
   );
 
   return (
@@ -397,12 +399,13 @@ export function MobileCartContent() {
                     )}
                   </div>
                   <div className="flex items-center justify-between">
-                    <CartItemQuantityControl
-                      merchandiseId={item.merchandise.id}
-                      productTitle={item.merchandise.product.title}
-                      quantity={item.quantity}
-                      optimisticUpdate={updateCartItem}
-                    />
+                  <CartItemQuantityControl
+                    lineId={item.id || item.merchandise.id}
+                    merchandiseId={item.merchandise.id}
+                    productTitle={item.merchandise.product.title}
+                    quantity={item.quantity}
+                    optimisticUpdate={updateCartItem}
+                  />
                     <Price
                       amount={item.cost.totalAmount.amount}
                       currencyCode={item.cost.totalAmount.currencyCode}

@@ -15,6 +15,54 @@ export type Image = {
   height: number;
 };
 
+export type BackendApiResponse<TData> = {
+  methodDescription?: string | null;
+  otherData?: string | null;
+  status: boolean;
+  msg: string;
+  data: TData;
+  code: number;
+};
+
+export type BackendSortOrder = "relevance" | "popular" | "latest" | "price_asc" | "price_desc";
+
+export type GoodsWhereInput = {
+  lang?: number;
+  catId?: number;
+  searchName?: string;
+  keywords?: string[];
+  categorySlug?: string;
+  subCategorySlug?: string;
+};
+
+export type GoodsListQuery = {
+  page?: number;
+  limit?: number;
+  order?: BackendSortOrder | string | number;
+  where?: GoodsWhereInput | string;
+};
+
+export type GoodsCategory = {
+  id: number;
+  name: string;
+  jpName?: string;
+  enName?: string;
+  sort?: number;
+  imageUrl?: string;
+  parentId?: number | null;
+  slug?: string;
+  child?: GoodsCategory[] | null;
+};
+
+export type GoodsPageInfo = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
+
 export type SEO = {
   title: string;
   description: string;
@@ -31,6 +79,15 @@ export type ProductOption = {
   values: string[];
 };
 
+export type BackendVariantInfo = {
+  productId: number;
+  objectId: number;
+  cartType: number;
+  type: number;
+  groupId?: number;
+  skuCode?: string;
+};
+
 export type ProductVariant = {
   id: string;
   title: string;
@@ -41,6 +98,7 @@ export type ProductVariant = {
   }[];
   price: Money;
   compareAtPrice?: Money | null;
+  backend?: BackendVariantInfo;
 };
 
 export type Product = {
@@ -63,6 +121,21 @@ export type Product = {
   seo?: SEO;
   tags: string[];
   updatedAt: string;
+  backend?: {
+    productId: number;
+    brand?: string;
+    categoryId?: number;
+    categoryName?: string;
+    subCategoryId?: number;
+    subCategoryName?: string;
+    searchName?: string;
+    jpName?: string;
+    spec?: string;
+    keywords?: string[];
+    priceJpy?: Money;
+    priceCny?: Money;
+    status?: "available" | "unavailable";
+  };
 };
 
 export type Collection = {
@@ -72,6 +145,39 @@ export type Collection = {
   seo?: SEO;
   updatedAt: string;
   path: string;
+};
+
+export type GoodsListItem = Pick<
+  Product,
+  | "id"
+  | "handle"
+  | "title"
+  | "description"
+  | "featuredImage"
+  | "images"
+  | "priceRange"
+  | "variants"
+  | "tags"
+  | "backend"
+> & {
+  status: "available" | "unavailable";
+};
+
+export type GoodsSku = ProductVariant & {
+  backend: BackendVariantInfo;
+};
+
+export type GoodsDetail = GoodsListItem & {
+  detailHtml?: string;
+  longDescription?: string;
+  usageNotes?: string;
+  cautionNotes?: string;
+  storageNotes?: string;
+};
+
+export type GoodsListResult = {
+  items: GoodsListItem[];
+  pageInfo: GoodsPageInfo;
 };
 
 export type Page = {
@@ -370,6 +476,14 @@ export type CartItem = {
     }[];
     product: CartProduct;
   };
+  backend?: {
+    lineId?: number;
+    productId?: number;
+    objectId?: number;
+    cartType?: number;
+    type?: number;
+    groupId?: number;
+  };
 };
 
 export type CartCost = {
@@ -426,6 +540,31 @@ export type Cart = {
   updatedAt?: string;
   buyer?: User;
   appliedCoupons?: AppliedCoupon[];
+};
+
+export type CartLineInput = {
+  productId: number;
+  objectId: number;
+  type: number;
+  cartType: number;
+  groupId?: number;
+  nums: number;
+};
+
+export type CartDeleteInput = {
+  id: number;
+  data?: string;
+};
+
+export type CartListRequest = {
+  userId?: number;
+  ids?: string;
+  type?: number;
+  areaId?: number;
+  point?: number;
+  couponCode?: string;
+  receiptType?: number;
+  objectId?: number;
 };
 
 export type OrderStatus =

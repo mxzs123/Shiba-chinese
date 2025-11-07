@@ -86,6 +86,7 @@ function recalculateAppliedCoupons(
   subtotalValue: number,
   currencyCode: CurrencyCode,
 ) {
+  // TODO_BACKEND: 接入 /api/Cart/GetCartAvailableCoupon 后移除本地折扣估算逻辑。
   if (!appliedCoupons || appliedCoupons.length === 0) {
     return {
       totalDiscount: 0,

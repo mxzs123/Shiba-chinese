@@ -3,15 +3,15 @@ import ProductGridItems from "components/layout/product-grid-items";
 import type { Product } from "lib/api/types";
 
 export type SearchResultsGridProps = {
-  products: Product[];
+  items: Product[];
   emptyMessage?: string;
 };
 
 export function SearchResultsGrid({
-  products,
+  items,
   emptyMessage,
 }: SearchResultsGridProps) {
-  if (!products.length) {
+  if (!items.length) {
     return (
       <div className="rounded-2xl border border-dashed border-neutral-200 p-12 text-center text-sm text-neutral-500">
         {emptyMessage || "暂无搜索结果"}
@@ -21,7 +21,7 @@ export function SearchResultsGrid({
 
   return (
     <Grid className="grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <ProductGridItems products={products} animate={false} showQuickAdd />
+      <ProductGridItems products={items} animate={false} showQuickAdd />
     </Grid>
   );
 }

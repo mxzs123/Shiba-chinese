@@ -1,4 +1,11 @@
-import { getCart, getProduct, getProductRecommendations } from "@/lib/api";
+import {
+  findGoodsProductByHandle,
+  getCart,
+  getGoodsDetail,
+  getGoodsRecommendList,
+  getProduct,
+  getProductRecommendations,
+} from "@/lib/api";
 import type { Image, Product, ProductVariant } from "@/lib/api/types";
 
 export type ProductDetailRow = {
@@ -174,16 +181,37 @@ export function mapProductImages(product: Product): GalleryImage[] {
 export async function loadProductPageData(
   handle: string,
 ): Promise<LoadedProductPageData | null> {
-  const product = await getProduct(handle);
+  const goodsMatch = findGoodsProductByHandle(handle);
+  let product = goodsMatch ?? (await getProduct(handle));
 
   if (!product) {
     return null;
   }
 
+  let recommended: Product[] = [];
+
+  if (goodsMatch?.backend?.productId) {
+    const [detailResponse, recommendResponse] = await Promise.all([
+      getGoodsDetail(goodsMatch.backend.productId),
+      getGoodsRecommendList({ id: goodsMatch.backend.productId }),
+    ]);
+
+    if (detailResponse.status && detailResponse.data) {
+      product = detailResponse.data;
+    }
+
+    if (recommendResponse.status && recommendResponse.data) {
+      recommended = recommendResponse.data;
+    }
+  } else {
+    recommended = await getProductRecommendations(product.id);
+  }
+
+  if (!recommended.length) {
+    recommended = await getProductRecommendations(product.id);
+  }
+
   const cartPromise = getCart();
-  const [recommended] = await Promise.all([
-    getProductRecommendations(product.id),
-  ]);
 
   const productJsonLd = buildProductJsonLd(product);
   const images = mapProductImages(product);

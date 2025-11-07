@@ -1,49 +1,87 @@
-export type SearchCategorySource =
-  | { type: "collection"; handle: string }
-  | { type: "query"; value: string };
+import type { GoodsCategory } from "lib/api/types";
+import { goodsCategories, HOSPITAL_CATEGORY_ID } from "lib/api/mock-goods";
+
+export const DESKTOP_SEARCH_PAGE_SIZE = 12;
 
 export type SearchCategory = {
   slug: string;
   label: string;
+  catId: number;
+  parentId?: number | null;
+  parentSlug?: string;
   description?: string;
-  source: SearchCategorySource;
+  jpName?: string;
+  enName?: string;
+  children?: SearchCategory[];
 };
 
-export const DESKTOP_SEARCH_PAGE_SIZE = 12;
+function createSlugFromCategory(category: GoodsCategory): string {
+  if (category.slug) {
+    return category.slug;
+  }
 
-export const DESKTOP_SEARCH_CATEGORIES: SearchCategory[] = [
-  {
-    slug: "pharmacy",
-    label: "处方药品",
-    source: { type: "collection", handle: "pharmacy" },
-  },
-  {
-    slug: "otc",
-    label: "非处方药品",
-    source: { type: "collection", handle: "wellness" },
-  },
-  {
-    slug: "nutrition",
-    label: "健康保健食品",
-    source: { type: "query", value: "软糖" },
-  },
-  {
-    slug: "hospital",
-    label: "院内制剂",
-    source: { type: "collection", handle: "pharmacy" },
-  },
-  {
-    slug: "beauty",
-    label: "美妆护肤",
-    source: { type: "query", value: "护理" },
-  },
-  {
-    slug: "lifestyle",
-    label: "生活用品",
-    source: { type: "collection", handle: "accessories" },
-  },
-];
+  return `cat-${category.id}`;
+}
+
+function buildSearchCategory(
+  category: GoodsCategory,
+  parent?: { id: number; slug: string },
+): SearchCategory {
+  const slug = parent
+    ? `${parent.slug}-${createSlugFromCategory(category)}`
+    : createSlugFromCategory(category);
+
+  const children = category.child?.map((child) =>
+    buildSearchCategory(child, { id: category.id, slug }),
+  );
+
+  return {
+    slug,
+    label: category.name,
+    catId: category.id,
+    parentId: parent?.id ?? category.parentId ?? null,
+    parentSlug: parent?.slug,
+    description: category.enName,
+    jpName: category.jpName,
+    enName: category.enName,
+    children,
+  };
+}
+
+const hospitalCategoryNode = goodsCategories.find(
+  (category) => category.id === HOSPITAL_CATEGORY_ID,
+);
+
+const fallbackCategory: SearchCategory = {
+  slug: "hospital",
+  label: "院内制剂",
+  catId: HOSPITAL_CATEGORY_ID,
+  children: [],
+};
+
+export const SEARCH_CATEGORY_TREE: SearchCategory[] = hospitalCategoryNode
+  ? [buildSearchCategory(hospitalCategoryNode)]
+  : [fallbackCategory];
+
+function flattenCategories(categories: SearchCategory[]): SearchCategory[] {
+  const result: SearchCategory[] = [];
+
+  for (const category of categories) {
+    result.push(category);
+    if (category.children) {
+      result.push(...flattenCategories(category.children));
+    }
+  }
+
+  return result;
+}
+
+const flatSearchCategories = flattenCategories(SEARCH_CATEGORY_TREE);
 
 export function findSearchCategory(slug: string) {
-  return DESKTOP_SEARCH_CATEGORIES.find((category) => category.slug === slug);
+  return flatSearchCategories.find((category) => category.slug === slug);
+}
+
+export function getSearchCategories() {
+  return SEARCH_CATEGORY_TREE;
 }

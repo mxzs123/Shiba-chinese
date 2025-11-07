@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cn, createUrl } from "lib/utils";
 import { sorting } from "lib/constants";
 
-import { DESKTOP_SEARCH_CATEGORIES, type SearchCategory } from "./config";
+import type { SearchCategory } from "./config";
 import { createSearchParams } from "./utils";
 
 const sidebarSectionClass = "space-y-3";
@@ -13,29 +13,21 @@ const categoryListClass = "space-y-2";
 const categoryItemClass =
   "flex flex-col rounded-xl border border-transparent px-4 py-3 text-sm transition hover:border-[#049e6b] hover:bg-[#049e6b]/5";
 const categoryLabelClass = "font-medium text-neutral-900";
+const childListClass = "mt-2 space-y-1 border-l border-dashed border-neutral-200 pl-4";
+const childLinkClass =
+  "flex items-center rounded-full px-3 py-1.5 text-xs font-medium text-neutral-600 transition hover:text-[#049e6b]";
 const sortListClass = "space-y-2";
 const sortButtonClass =
   "block rounded-lg px-3 py-2 text-sm transition hover:bg-neutral-100";
 
 function createCategoryHref(
-  category: SearchCategory,
+  slug: string | undefined,
   searchValue?: string,
   sortSlug?: string | null,
 ) {
-  const pathname = `/search/${category.slug}`;
+  const pathname = slug ? `/search/${slug}` : "/search";
   return createUrl(
     pathname,
-    createSearchParams({
-      ...(searchValue ? { q: searchValue } : null),
-      ...(sortSlug ? { sort: sortSlug } : null),
-      page: undefined,
-    }),
-  );
-}
-
-function createAllHref(searchValue?: string, sortSlug?: string | null) {
-  return createUrl(
-    "/search",
     createSearchParams({
       ...(searchValue ? { q: searchValue } : null),
       ...(sortSlug ? { sort: sortSlug } : null),
@@ -59,6 +51,7 @@ function createSortHref(
 }
 
 export type DesktopSearchSidebarProps = {
+  categories: SearchCategory[];
   activeCategory?: string | null;
   basePath: string;
   searchValue?: string;
@@ -66,6 +59,7 @@ export type DesktopSearchSidebarProps = {
 };
 
 export function DesktopSearchSidebar({
+  categories,
   activeCategory,
   basePath,
   searchValue,
@@ -78,7 +72,7 @@ export function DesktopSearchSidebar({
         <ul className={categoryListClass}>
           <li>
             <Link
-              href={createAllHref(searchValue, sortSlug)}
+              href={createCategoryHref(undefined, searchValue, sortSlug)}
               className={cn(categoryItemClass, {
                 "border-[#049e6b] bg-[#049e6b]/10": !activeCategory,
               })}
@@ -86,19 +80,49 @@ export function DesktopSearchSidebar({
               <span className={categoryLabelClass}>全部商品</span>
             </Link>
           </li>
-          {DESKTOP_SEARCH_CATEGORIES.map((category) => {
+          {categories.map((category) => {
             const isActive = activeCategory === category.slug;
+            const hasChildren = category.children && category.children.length > 0;
 
             return (
               <li key={category.slug}>
                 <Link
-                  href={createCategoryHref(category, searchValue, sortSlug)}
+                  href={createCategoryHref(category.slug, searchValue, sortSlug)}
                   className={cn(categoryItemClass, {
                     "border-[#049e6b] bg-[#049e6b]/10": isActive,
                   })}
                 >
                   <span className={categoryLabelClass}>{category.label}</span>
+                  {category.jpName ? (
+                    <span className="text-xs text-neutral-500">
+                      {category.jpName}
+                    </span>
+                  ) : null}
                 </Link>
+                {hasChildren ? (
+                  <ul className={childListClass}>
+                    {category.children!.map((child) => {
+                      const childActive = activeCategory === child.slug;
+                      return (
+                        <li key={child.slug}>
+                          <Link
+                            href={createCategoryHref(
+                              child.slug,
+                              searchValue,
+                              sortSlug,
+                            )}
+                            className={cn(childLinkClass, {
+                              "text-[#049e6b]": childActive,
+                              "bg-[#049e6b]/10": childActive,
+                            })}
+                          >
+                            {child.label}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : null}
               </li>
             );
           })}

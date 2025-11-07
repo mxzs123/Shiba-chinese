@@ -9,7 +9,7 @@ import {
   parseSelectedMerchandiseIds,
 } from "@/components/cart/cart-selection";
 import {
-  getAvailableCoupons,
+  getCartAvailableCoupons,
   getCart,
   getCurrentUser,
   getNotifications,
@@ -33,7 +33,7 @@ export default async function CheckoutPage() {
     fallbackUser,
     shippingMethods,
     paymentMethods,
-    availableCoupons,
+    availableCouponsResponse,
     notifications,
   ] = await Promise.all([
     getCart(),
@@ -41,9 +41,12 @@ export default async function CheckoutPage() {
     getUserById("user-demo"),
     getShippingMethods(),
     getPaymentMethods(),
-    getAvailableCoupons(),
+    getCartAvailableCoupons(),
     getNotifications(),
   ]);
+
+  const availableCoupons =
+    (availableCouponsResponse.status && availableCouponsResponse.data) || [];
 
   const customer = sessionUser ?? fallbackUser;
   const selectedMerchandiseCookie = cookieStore.get(

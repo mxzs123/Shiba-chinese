@@ -8,7 +8,7 @@ import {
   parseSelectedMerchandiseIds,
 } from "@/components/cart/cart-selection";
 import {
-  getAvailableCoupons,
+  getCartAvailableCoupons,
   getCart,
   getCurrentUser,
   getPaymentMethods,
@@ -31,15 +31,18 @@ export default async function CheckoutPage() {
     fallbackUser,
     shippingMethods,
     paymentMethods,
-    availableCoupons,
+    availableCouponsResponse,
   ] = await Promise.all([
     getCart(),
     getCurrentUser(),
     getUserById("user-demo"),
     getShippingMethods(),
     getPaymentMethods(),
-    getAvailableCoupons(),
+    getCartAvailableCoupons(),
   ]);
+
+  const availableCoupons =
+    (availableCouponsResponse.status && availableCouponsResponse.data) || [];
 
   const customer = sessionUser ?? fallbackUser;
   const selectedMerchandiseCookie = cookieStore.get(
