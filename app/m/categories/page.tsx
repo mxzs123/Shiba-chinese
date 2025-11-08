@@ -7,6 +7,7 @@ import {
   type SearchCategory,
 } from "app/_shared/search/config";
 import { loadSearchResult } from "app/_shared/search/loaders";
+import type { Product } from "lib/api/types";
 
 export const metadata = {
   title: "商品分类",
@@ -56,10 +57,6 @@ export default async function MobileCategoriesPage({
 
   const products = result.items;
 
-  const allTags = Array.from(
-    new Set(products.flatMap((product) => product.tags)),
-  );
-
   return (
     <div className="flex h-screen flex-col">
       <MobileHeader notifications={notifications} />
@@ -70,8 +67,6 @@ export default async function MobileCategoriesPage({
           initialCategory={categorySlug || ""}
           initialParent={parentSlug}
           initialProducts={products}
-          allTags={allTags}
-          selectedTag={params.tag}
         />
       </div>
     </div>

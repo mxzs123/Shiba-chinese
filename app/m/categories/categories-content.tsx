@@ -23,8 +23,6 @@ type MobileCategoriesContentProps = {
   initialCategory: string;
   initialParent: string;
   initialProducts: Product[];
-  allTags: string[];
-  selectedTag?: string;
 };
 
 function getPrimaryVariant(product: Product): ProductVariant | undefined {
@@ -45,8 +43,6 @@ export function MobileCategoriesContent({
   initialCategory,
   initialParent,
   initialProducts,
-  allTags,
-  selectedTag: initialSelectedTag,
 }: MobileCategoriesContentProps) {
   const router = useRouter();
   const { addCartItem } = useCart();
@@ -68,9 +64,6 @@ export function MobileCategoriesContent({
   const [selectedParent, setSelectedParent] = useState(
     resolvedInitialParent || firstParentSlug,
   );
-  const [selectedTag, setSelectedTag] = useState<string | undefined>(
-    initialSelectedTag,
-  );
   const categoryMap = useMemo(() => {
     const map = new Map<string, SearchCategory>();
     flatCategories.forEach((category) => {
@@ -84,18 +77,11 @@ export function MobileCategoriesContent({
   useEffect(() => {
     setSelectedParent(resolvedInitialParent || firstParentSlug);
   }, [resolvedInitialParent, firstParentSlug]);
-  useEffect(() => {
-    setSelectedTag(initialSelectedTag);
-  }, [initialSelectedTag]);
-
   const commitStateToUrl = useCallback(
-    (categorySlug: string, tag?: string) => {
+    (categorySlug: string) => {
       const params = new URLSearchParams();
       if (categorySlug) {
         params.set("category", categorySlug);
-      }
-      if (tag) {
-        params.set("tag", tag);
       }
       const queryString = params.toString();
       router.push(queryString ? `/categories?${queryString}` : "/categories");
@@ -108,7 +94,6 @@ export function MobileCategoriesContent({
     const fallbackSlug = parentCategory?.children?.[0]?.slug || parentSlug;
     setSelectedParent(parentSlug);
     setSelectedCategory(fallbackSlug);
-    setSelectedTag(undefined);
     commitStateToUrl(fallbackSlug);
   };
 
@@ -118,15 +103,7 @@ export function MobileCategoriesContent({
       category?.parentSlug || category?.slug || firstParentSlug;
     setSelectedCategory(categorySlug);
     setSelectedParent(parentSlugForCategory);
-    setSelectedTag(undefined);
     commitStateToUrl(categorySlug);
-  };
-
-  const handleTagSelect = (tag: string) => {
-    const newTag = selectedTag === tag ? undefined : tag;
-    setSelectedTag(newTag);
-
-    commitStateToUrl(selectedCategory, newTag);
   };
 
   const currentCategory = selectedCategory
@@ -141,13 +118,6 @@ export function MobileCategoriesContent({
     categoryMap.get(currentParentSlug) ||
     categoryTree.find((category) => category.slug === currentParentSlug);
   const childCategories = currentParent?.children ?? [];
-
-  const filteredProducts = useMemo(() => {
-    if (!selectedTag) return initialProducts;
-    return initialProducts.filter((product) =>
-      product.tags.includes(selectedTag),
-    );
-  }, [initialProducts, selectedTag]);
 
   const handleQuickAdd = useCallback(
     async (
@@ -280,33 +250,10 @@ export function MobileCategoriesContent({
             </div>
           )}
 
-          {/* 标签筛选 */}
-          {allTags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {allTags.map((tag) => {
-                const isActive = selectedTag === tag;
-                return (
-                  <button
-                    key={tag}
-                    onClick={() => handleTagSelect(tag)}
-                    className={cn(
-                      "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-                      isActive
-                        ? "bg-primary text-white"
-                        : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200",
-                    )}
-                  >
-                    {tag}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
           {/* 商品网格 */}
-          {filteredProducts.length > 0 ? (
+          {initialProducts.length > 0 ? (
             <div className="grid grid-cols-2 gap-3">
-              {filteredProducts.map((product) => {
+              {initialProducts.map((product) => {
                 const currentPrice = product.priceRange.minVariantPrice;
                 const originalPrice = product.priceRange.minCompareAtPrice;
                 const hasDiscount = isDiscountedPrice(
