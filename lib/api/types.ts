@@ -147,19 +147,7 @@ export type Collection = {
   path: string;
 };
 
-export type GoodsListItem = Pick<
-  Product,
-  | "id"
-  | "handle"
-  | "title"
-  | "description"
-  | "featuredImage"
-  | "images"
-  | "priceRange"
-  | "variants"
-  | "tags"
-  | "backend"
-> & {
+export type GoodsListItem = Product & {
   status: "available" | "unavailable";
 };
 
@@ -477,7 +465,7 @@ export type CartItem = {
     product: CartProduct;
   };
   backend?: {
-    lineId?: number;
+    lineId?: string | number;
     productId?: number;
     objectId?: number;
     cartType?: number;

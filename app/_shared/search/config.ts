@@ -23,6 +23,20 @@ function createSlugFromCategory(category: GoodsCategory): string {
   return `cat-${category.id}`;
 }
 
+function sortGoodsCategories(
+  categories?: GoodsCategory[] | null,
+): GoodsCategory[] {
+  if (!categories?.length) {
+    return [];
+  }
+
+  return [...categories].sort((a, b) => {
+    const aSort = a.sort ?? 0;
+    const bSort = b.sort ?? 0;
+    return bSort - aSort;
+  });
+}
+
 function buildSearchCategory(
   category: GoodsCategory,
   parent?: { id: number; slug: string },
@@ -31,9 +45,12 @@ function buildSearchCategory(
     ? `${parent.slug}-${createSlugFromCategory(category)}`
     : createSlugFromCategory(category);
 
-  const children = category.child?.map((child) =>
-    buildSearchCategory(child, { id: category.id, slug }),
-  );
+  const sortedChildren = sortGoodsCategories(category.child);
+  const children = sortedChildren.length
+    ? sortedChildren.map((child) =>
+        buildSearchCategory(child, { id: category.id, slug }),
+      )
+    : undefined;
 
   return {
     slug,
@@ -48,10 +65,6 @@ function buildSearchCategory(
   };
 }
 
-const hospitalCategoryNode = goodsCategories.find(
-  (category) => category.id === HOSPITAL_CATEGORY_ID,
-);
-
 const fallbackCategory: SearchCategory = {
   slug: "hospital",
   label: "院内制剂",
@@ -59,9 +72,12 @@ const fallbackCategory: SearchCategory = {
   children: [],
 };
 
-export const SEARCH_CATEGORY_TREE: SearchCategory[] = hospitalCategoryNode
-  ? [buildSearchCategory(hospitalCategoryNode)]
-  : [fallbackCategory];
+const sortedRootCategories = sortGoodsCategories(goodsCategories);
+
+export const SEARCH_CATEGORY_TREE: SearchCategory[] =
+  sortedRootCategories.length
+    ? sortedRootCategories.map((category) => buildSearchCategory(category))
+    : [fallbackCategory];
 
 function flattenCategories(categories: SearchCategory[]): SearchCategory[] {
   const result: SearchCategory[] = [];

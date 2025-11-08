@@ -188,6 +188,7 @@ export async function loadProductPageData(
     return null;
   }
 
+  const cartPromise = getCart();
   let recommended: Product[] = [];
 
   if (goodsMatch?.backend?.productId) {
@@ -210,8 +211,6 @@ export async function loadProductPageData(
   if (!recommended.length) {
     recommended = await getProductRecommendations(product.id);
   }
-
-  const cartPromise = getCart();
 
   const productJsonLd = buildProductJsonLd(product);
   const images = mapProductImages(product);

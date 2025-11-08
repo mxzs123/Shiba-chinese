@@ -10,6 +10,7 @@ import type {
   BackendApiResponse,
   GoodsCategory,
   GoodsDetail,
+  GoodsListItem,
   GoodsListQuery,
   GoodsListResult,
   GoodsWhereInput,
@@ -91,6 +92,21 @@ function indexCategories(categories: GoodsCategory[]) {
 }
 
 indexCategories(goodsCategories);
+
+function resolveGoodsStatus(product: Product): GoodsListItem["status"] {
+  if (product.backend?.status) {
+    return product.backend.status;
+  }
+
+  return product.availableForSale ? "available" : "unavailable";
+}
+
+function mapToGoodsListItem(product: Product): GoodsListItem {
+  return {
+    ...product,
+    status: resolveGoodsStatus(product),
+  };
+}
 
 function matchesCategory(product: Product, filters?: GoodsWhereInput): boolean {
   if (!filters) {
@@ -293,7 +309,7 @@ function paginateGoods(products: Product[], page: number, limit: number): GoodsL
   const currentPage = Math.min(Math.max(page, 1), totalPages);
   const start = (currentPage - 1) * limit;
   const end = start + limit;
-  const items = products.slice(start, end);
+  const items = products.slice(start, end).map(mapToGoodsListItem);
 
   return {
     items,
@@ -335,7 +351,7 @@ export function mockGetGoodsDetail(id: number): BackendApiResponse<GoodsDetail |
   }
 
   const detail: GoodsDetail = {
-    ...product,
+    ...mapToGoodsListItem(product),
     detailHtml: product.descriptionHtml,
     longDescription: product.description,
     usageNotes: "遵循院内医生或药师给出的个性化疗程安排，以确保疗效稳定。",

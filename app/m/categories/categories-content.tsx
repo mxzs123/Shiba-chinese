@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { MouseEvent } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 
-import { POPULAR_CATEGORY_LINKS } from "app/_shared/pages/home/categories";
-import { DESKTOP_SEARCH_CATEGORIES } from "app/_shared/search/config";
+import type { SearchCategory } from "app/_shared/search/config";
 import type { Product, ProductVariant } from "lib/api/types";
 import { cn } from "lib/utils";
 import { Price } from "app/_shared/Price";
@@ -18,6 +18,10 @@ import { useCart } from "components/cart/cart-context";
 import { handleError } from "lib/error-handler";
 
 type MobileCategoriesContentProps = {
+  categoryTree: SearchCategory[];
+  flatCategories: SearchCategory[];
+  initialCategory: string;
+  initialParent: string;
   initialProducts: Product[];
   allTags: string[];
   selectedTag?: string;
@@ -36,41 +40,107 @@ function getPrimaryVariant(product: Product): ProductVariant | undefined {
 }
 
 export function MobileCategoriesContent({
+  categoryTree,
+  flatCategories,
+  initialCategory,
+  initialParent,
   initialProducts,
   allTags,
   selectedTag: initialSelectedTag,
 }: MobileCategoriesContentProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const initialCategory = searchParams.get("category") || "pharmacy";
   const { addCartItem } = useCart();
-
-  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const resolvedInitialCategory =
+    (initialCategory &&
+      flatCategories.find((category) => category.slug === initialCategory)?.slug) ||
+    flatCategories[0]?.slug ||
+    "";
+  const firstParentSlug = categoryTree[0]?.slug || "";
+  const resolvedInitialParent =
+    (initialParent &&
+      categoryTree.find((category) => category.slug === initialParent)?.slug) ||
+    flatCategories.find((category) => category.slug === resolvedInitialCategory)
+      ?.parentSlug ||
+    firstParentSlug;
+  const [selectedCategory, setSelectedCategory] = useState(
+    resolvedInitialCategory,
+  );
+  const [selectedParent, setSelectedParent] = useState(
+    resolvedInitialParent || firstParentSlug,
+  );
   const [selectedTag, setSelectedTag] = useState<string | undefined>(
     initialSelectedTag,
   );
+  const categoryMap = useMemo(() => {
+    const map = new Map<string, SearchCategory>();
+    flatCategories.forEach((category) => {
+      map.set(category.slug, category);
+    });
+    return map;
+  }, [flatCategories]);
+  useEffect(() => {
+    setSelectedCategory(resolvedInitialCategory);
+  }, [resolvedInitialCategory]);
+  useEffect(() => {
+    setSelectedParent(resolvedInitialParent || firstParentSlug);
+  }, [resolvedInitialParent, firstParentSlug]);
+  useEffect(() => {
+    setSelectedTag(initialSelectedTag);
+  }, [initialSelectedTag]);
+
+  const commitStateToUrl = useCallback(
+    (categorySlug: string, tag?: string) => {
+      const params = new URLSearchParams();
+      if (categorySlug) {
+        params.set("category", categorySlug);
+      }
+      if (tag) {
+        params.set("tag", tag);
+      }
+      const queryString = params.toString();
+      router.push(queryString ? `/categories?${queryString}` : "/categories");
+    },
+    [router],
+  );
+
+  const handleParentSelect = (parentSlug: string) => {
+    const parentCategory = categoryMap.get(parentSlug);
+    const fallbackSlug = parentCategory?.children?.[0]?.slug || parentSlug;
+    setSelectedParent(parentSlug);
+    setSelectedCategory(fallbackSlug);
+    setSelectedTag(undefined);
+    commitStateToUrl(fallbackSlug);
+  };
 
   const handleCategorySelect = (categorySlug: string) => {
+    const category = categoryMap.get(categorySlug);
+    const parentSlugForCategory =
+      category?.parentSlug || category?.slug || firstParentSlug;
     setSelectedCategory(categorySlug);
+    setSelectedParent(parentSlugForCategory);
     setSelectedTag(undefined);
-    router.push(`/categories?category=${categorySlug}`);
+    commitStateToUrl(categorySlug);
   };
 
   const handleTagSelect = (tag: string) => {
     const newTag = selectedTag === tag ? undefined : tag;
     setSelectedTag(newTag);
 
-    const params = new URLSearchParams();
-    params.set("category", selectedCategory);
-    if (newTag) {
-      params.set("tag", newTag);
-    }
-    router.push(`/categories?${params.toString()}`);
+    commitStateToUrl(selectedCategory, newTag);
   };
 
-  const currentCategory = DESKTOP_SEARCH_CATEGORIES.find(
-    (c) => c.slug === selectedCategory,
-  );
+  const currentCategory = selectedCategory
+    ? categoryMap.get(selectedCategory)
+    : undefined;
+  const currentParentSlug =
+    selectedParent ||
+    currentCategory?.parentSlug ||
+    currentCategory?.slug ||
+    firstParentSlug;
+  const currentParent =
+    categoryMap.get(currentParentSlug) ||
+    categoryTree.find((category) => category.slug === currentParentSlug);
+  const childCategories = currentParent?.children ?? [];
 
   const filteredProducts = useMemo(() => {
     if (!selectedTag) return initialProducts;
@@ -81,7 +151,7 @@ export function MobileCategoriesContent({
 
   const handleQuickAdd = useCallback(
     async (
-      e: React.MouseEvent,
+      e: MouseEvent,
       product: Product,
       primaryVariant: ProductVariant | undefined,
     ) => {
@@ -134,13 +204,13 @@ export function MobileCategoriesContent({
       {/* 左侧分类导航 */}
       <aside className="w-24 flex-none overflow-y-auto border-r border-neutral-200 bg-neutral-50">
         <nav className="flex flex-col">
-          {DESKTOP_SEARCH_CATEGORIES.map((category) => {
-            const isActive = selectedCategory === category.slug;
+          {categoryTree.map((category) => {
+            const isActive = selectedParent === category.slug;
 
             return (
               <button
                 key={category.slug}
-                onClick={() => handleCategorySelect(category.slug)}
+                onClick={() => handleParentSelect(category.slug)}
                 className={cn(
                   "flex min-h-[4rem] flex-col items-center justify-center gap-1 border-l-2 px-2 py-3 text-center text-xs transition-colors",
                   isActive
@@ -173,6 +243,42 @@ export function MobileCategoriesContent({
               {currentCategory?.description}
             </p>
           </div>
+
+          {/* 子分类筛选 */}
+          {childCategories.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() =>
+                  handleCategorySelect(currentParent?.slug || currentParentSlug)
+                }
+                className={cn(
+                  "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                  selectedCategory === (currentParent?.slug || currentParentSlug)
+                    ? "bg-primary text-white"
+                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200",
+                )}
+              >
+                {currentParent?.label ? `全部${currentParent.label}` : "全部"}
+              </button>
+              {childCategories.map((child) => {
+                const isActive = selectedCategory === child.slug;
+                return (
+                  <button
+                    key={child.slug}
+                    onClick={() => handleCategorySelect(child.slug)}
+                    className={cn(
+                      "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                      isActive
+                        ? "bg-primary text-white"
+                        : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200",
+                    )}
+                  >
+                    {child.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {/* 标签筛选 */}
           {allTags.length > 0 && (

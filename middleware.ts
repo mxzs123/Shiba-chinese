@@ -48,6 +48,8 @@ function applyVaryHeader(response: NextResponse, header: string) {
 }
 
 export function middleware(req: NextRequest) {
+  const queryOverride = req.nextUrl.searchParams.get(DEVICE_QUERY_KEY);
+  const cookieOverride = req.cookies.get(DEVICE_COOKIE_NAME)?.value;
   const device = resolveDevice(req);
 
   const { pathname } = req.nextUrl;
@@ -78,6 +80,14 @@ export function middleware(req: NextRequest) {
     });
     response.headers.set(DEVICE_HEADER_KEY, device);
     applyVaryHeader(response, DEVICE_HEADER_KEY);
+    const pathDevice = pathname.startsWith("/m")
+      ? MOBILE_DEVICE_VALUE
+      : pathname.startsWith("/d")
+        ? DESKTOP_DEVICE_VALUE
+        : undefined;
+    if (pathDevice && pathDevice !== cookieOverride) {
+      response.cookies.set(DEVICE_COOKIE_NAME, pathDevice, { path: "/" });
+    }
     return response;
   }
 
@@ -92,9 +102,6 @@ export function middleware(req: NextRequest) {
 
   response.headers.set(DEVICE_HEADER_KEY, device);
   applyVaryHeader(response, DEVICE_HEADER_KEY);
-
-  const queryOverride = req.nextUrl.searchParams.get(DEVICE_QUERY_KEY);
-  const cookieOverride = req.cookies.get(DEVICE_COOKIE_NAME)?.value;
 
   if (queryOverride && queryOverride !== cookieOverride) {
     response.cookies.set(DEVICE_COOKIE_NAME, device, { path: "/" });

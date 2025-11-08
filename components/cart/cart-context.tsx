@@ -95,15 +95,23 @@ function createOrUpdateCartItem(
     ? existingItem.quantity + quantityDelta
     : quantityDelta;
   const totalAmount = calculateItemCost(quantity, variant.price.amount);
-  const backendMeta = variant.backend
-    ? {
-        ...variant.backend,
-        lineId:
-          existingItem?.backend?.lineId ||
-          `temp-${variant.backend.objectId ?? variant.id}`,
-      }
-    : existingItem?.backend;
-  const lineId = existingItem?.id || backendMeta?.lineId || variant.id;
+  const backendMeta: CartItem["backend"] =
+    existingItem?.backend ??
+    (variant.backend
+      ? {
+          productId: variant.backend.productId,
+          objectId: variant.backend.objectId,
+          cartType: variant.backend.cartType,
+          type: variant.backend.type,
+          groupId: variant.backend.groupId,
+        }
+      : undefined);
+  const lineId =
+    existingItem?.id ||
+    (backendMeta?.lineId !== undefined
+      ? String(backendMeta.lineId)
+      : undefined) ||
+    variant.id;
 
   return {
     id: lineId,

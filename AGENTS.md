@@ -29,6 +29,7 @@
    - 组件命名：组件 PascalCase、hook camelCase、常量 SCREAMING_SNAKE_CASE。
 5. **质量门槛**：提交前跑 `pnpm lint` 与 `pnpm prettier:check`；构建需保持绿灯。
 6. **路径约束**：移动端页面不要复制桌面逻辑，务必复用 `_shared`；新增账户 Tab 先扩展 `_shared/account/nav-items.ts`。
+7. **设备切换**：middleware 会根据 UA/`device` cookie 自动分流；本地想在桌面浏览器调试移动壳，请先访问 `/?device=m` 或任意 `/m/...` 写入 `device=m`，需要回桌面则访问 `/?device=d`。
 
 ### 测试命令
 

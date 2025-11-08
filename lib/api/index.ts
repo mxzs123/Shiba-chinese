@@ -681,7 +681,7 @@ async function ensureCartInstance(): Promise<Cart> {
 }
 
 type CartLineOptions = {
-  lineId?: string;
+  lineId?: string | number;
   backend?: CartItem["backend"];
   product?: Product;
 };
@@ -692,7 +692,8 @@ function upsertCartLine(
   quantity: number,
   options?: CartLineOptions,
 ) {
-  const targetLineId = options?.lineId || variant.id;
+  const targetLineId =
+    options?.lineId !== undefined ? String(options.lineId) : variant.id;
   const existingLine = cart.lines.find(
     (line) => line.id === targetLineId || line.merchandise.id === variant.id,
   );
@@ -771,11 +772,13 @@ function setCartLine(
   options?: CartLineOptions,
 ) {
   const currencyCode = variant.price.currencyCode || defaultCurrency;
+  const normalizedLineId =
+    options?.lineId !== undefined ? String(options.lineId) : variant.id;
 
   if (quantity <= 0) {
-    const targetLineId = options?.lineId || variant.id;
     cart.lines = cart.lines.filter(
-      (line) => line.id !== targetLineId && line.merchandise.id !== variant.id,
+      (line) =>
+        line.id !== normalizedLineId && line.merchandise.id !== variant.id,
     );
     return;
   }
@@ -783,7 +786,7 @@ function setCartLine(
   const lineTotal = formatAmount(Number(variant.price.amount) * quantity);
   const productMatch = options?.product || findVariantById(variant.id)?.product;
 
-  const lineId = options?.lineId || variant.id;
+  const lineId = normalizedLineId;
   const line: CartItem = {
     id: lineId,
     quantity,
