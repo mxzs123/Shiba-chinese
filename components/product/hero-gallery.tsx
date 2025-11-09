@@ -5,6 +5,8 @@ import { GridTileImage } from "components/grid/tile";
 import { useProduct, useUpdateURL } from "components/product/product-context";
 import Image from "next/image";
 
+import { cn } from "@/lib/utils";
+
 export function HeroGallery({
   images,
 }: {
@@ -25,75 +27,83 @@ export function HeroGallery({
   };
 
   return (
-    <form className="contents">
-      <div className="relative aspect-square w-full overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-50 lg:col-start-1 lg:row-start-1 lg:self-stretch">
+    <form className="flex h-full w-full flex-col items-center">
+      <div className="relative mx-auto aspect-square w-full max-w-[480px] overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-50">
         {images[imageIndex] ? (
           <Image
             fill
             priority
             className="h-full w-full object-contain"
-            sizes="(min-width: 1024px) 50vw, 100vw"
+            sizes="(min-width: 1024px) 480px, 100vw"
             alt={images[imageIndex]?.altText as string}
             src={images[imageIndex]?.src as string}
           />
         ) : null}
-
         {hasMultiple ? (
-          <>
+          <div className="pointer-events-none absolute inset-x-0 bottom-5 flex justify-center gap-1.5">
+            {images.map((image, index) => (
+              <span
+                key={image.src}
+                aria-hidden
+                className={`h-1.5 w-6 rounded-full transition ${
+                  index === imageIndex
+                    ? "bg-teal-500"
+                    : "bg-white/70 backdrop-blur"
+                }`}
+              />
+            ))}
+          </div>
+        ) : null}
+      </div>
+
+      {totalImages ? (
+        <div className="mt-4 flex w-full max-w-[480px] items-center gap-3 lg:mt-5">
+          {hasMultiple ? (
             <button
               type="submit"
               formAction={changeImage(previousIndex)}
               aria-label="上一张商品图"
-              className="group absolute left-4 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-2xl border border-white/70 bg-white/90 p-3 text-neutral-700 shadow-sm transition hover:border-teal-100 hover:text-teal-600"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 shadow-sm transition hover:border-teal-100 hover:text-teal-600"
             >
-              <ArrowLeftIcon className="h-5 w-5 transition group-hover:-translate-x-0.5" />
+              <ArrowLeftIcon className="h-4 w-4" />
             </button>
+          ) : null}
+          <ul
+            className={cn(
+              "flex items-center gap-3 overflow-x-auto",
+              hasMultiple ? "flex-1" : "mx-auto",
+            )}
+          >
+            {images.map((image, index) => (
+              <li key={image.src} className="shrink-0">
+                <button
+                  type="submit"
+                  formAction={changeImage(index)}
+                  aria-label={`查看第 ${index + 1} 张商品图`}
+                  className="block h-20 w-20 overflow-hidden rounded-2xl border border-neutral-200 bg-white"
+                >
+                  <GridTileImage
+                    alt={image.altText}
+                    src={image.src}
+                    width={80}
+                    height={80}
+                    active={index === imageIndex}
+                  />
+                </button>
+              </li>
+            ))}
+          </ul>
+          {hasMultiple ? (
             <button
               type="submit"
               formAction={changeImage(nextIndex)}
               aria-label="下一张商品图"
-              className="group absolute right-4 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-2xl border border-white/70 bg-white/90 p-3 text-neutral-700 shadow-sm transition hover:border-teal-100 hover:text-teal-600"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 shadow-sm transition hover:border-teal-100 hover:text-teal-600"
             >
-              <ArrowRightIcon className="h-5 w-5 transition group-hover:translate-x-0.5" />
+              <ArrowRightIcon className="h-4 w-4" />
             </button>
-            <div className="pointer-events-none absolute inset-x-0 bottom-5 flex justify-center gap-1.5">
-              {images.map((image, index) => (
-                <span
-                  key={image.src}
-                  aria-hidden
-                  className={`h-1.5 w-6 rounded-full transition ${
-                    index === imageIndex
-                      ? "bg-teal-500"
-                      : "bg-white/70 backdrop-blur"
-                  }`}
-                />
-              ))}
-            </div>
-          </>
-        ) : null}
-      </div>
-
-      {hasMultiple ? (
-        <ul className="mt-5 flex items-center gap-3 overflow-x-auto lg:col-span-2 lg:row-start-2 lg:mt-6">
-          {images.map((image, index) => (
-            <li key={image.src} className="shrink-0">
-              <button
-                type="submit"
-                formAction={changeImage(index)}
-                aria-label={`查看第 ${index + 1} 张商品图`}
-                className="block h-20 w-20 overflow-hidden rounded-2xl border border-neutral-200 bg-white"
-              >
-                <GridTileImage
-                  alt={image.altText}
-                  src={image.src}
-                  width={80}
-                  height={80}
-                  active={index === imageIndex}
-                />
-              </button>
-            </li>
-          ))}
-        </ul>
+          ) : null}
+        </div>
       ) : null}
     </form>
   );

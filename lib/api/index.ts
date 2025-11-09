@@ -1029,7 +1029,9 @@ export async function updateCart(
       (targetLine.backend?.objectId
         ? lookupGoodsVariantByObjectId(targetLine.backend.objectId)
         : undefined) ||
-      (line.objectId ? lookupGoodsVariantByObjectId(line.objectId) : undefined) ||
+      (line.objectId
+        ? lookupGoodsVariantByObjectId(line.objectId)
+        : undefined) ||
       findVariantById(targetLine.merchandise.id);
 
     if (!variantMatch) {
@@ -1566,8 +1568,11 @@ export async function getVariantById(
     bestsellerRank?: number;
   };
 
-  const { collections: _collections, bestsellerRank: _rank, ...rest } =
-    productRecord;
+  const {
+    collections: _collections,
+    bestsellerRank: _rank,
+    ...rest
+  } = productRecord;
 
   return {
     product: rest,

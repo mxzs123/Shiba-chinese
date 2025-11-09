@@ -1,6 +1,7 @@
 # 上架展示改造 TODO（今日内完成）
 
 ## 背景
+
 - 需在今日内让桌面端商品一览/购物车等页面“看起来已对接后端”，以便向 B 端客户展示上架商品。
 - 实际后端尚未完成；我们暂以 mock 数据兜底，但前端的类型、API 契约、页面结构必须与后端预期保持一致，后续才可无痛切换到真实接口。
 - 现有实现还停留在 `lib/api` 本地 store + 硬编码分类，无法复用后端的层级分类与购物车接口。
@@ -8,24 +9,26 @@
 ## 参考接口（来自最新后端文档）
 
 ### 商品 Good 模块
-| 接口 | 说明 | 备注 |
-| --- | --- | --- |
-| `POST /api/Good/GetAllCategories` | 获取所有商品分类栏目数据；后端存在“大类 + 子类”结构，小类需在大类展开时展示 | 无需参数；响应格式为 `{ status, msg, data, code, ... }` |
-| `POST /api/Good/GetGoodsPageList` | 基于条件的分页商品列表 | 请求体示例：`{ "page": number, "limit": number, "order": string, "where": string }` |
-| `POST /api/Good/GetDetial` / `POST /api/Good/GetDetialByToken` | 商品详情（含 SKU、图文、库存）；`ByToken` 版本需要登录 | 请求体：`{ "id": number, "data": string }`；响应同上 |
-| `POST /api/Good/GetGoodsParams` | 单个商品参数 | — |
-| `POST /api/Good/GetProductInfo` | 获取单个货品（SKU）信息，含 `type`、`groupId` 等字段 | 请求体：`{ "id": number, "type": string, "groupId": number }` |
-| `POST /api/Good/GetGoodsComment` | 商品评价分页 | — |
-| `POST /api/Good/GetGoodsRecommendList` | 随机推荐商品，用于详情页推荐区 | 请求体：`{ "id": number, "data": string }` |
+
+| 接口                                                           | 说明                                                                        | 备注                                                                                |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `POST /api/Good/GetAllCategories`                              | 获取所有商品分类栏目数据；后端存在“大类 + 子类”结构，小类需在大类展开时展示 | 无需参数；响应格式为 `{ status, msg, data, code, ... }`                             |
+| `POST /api/Good/GetGoodsPageList`                              | 基于条件的分页商品列表                                                      | 请求体示例：`{ "page": number, "limit": number, "order": string, "where": string }` |
+| `POST /api/Good/GetDetial` / `POST /api/Good/GetDetialByToken` | 商品详情（含 SKU、图文、库存）；`ByToken` 版本需要登录                      | 请求体：`{ "id": number, "data": string }`；响应同上                                |
+| `POST /api/Good/GetGoodsParams`                                | 单个商品参数                                                                | —                                                                                   |
+| `POST /api/Good/GetProductInfo`                                | 获取单个货品（SKU）信息，含 `type`、`groupId` 等字段                        | 请求体：`{ "id": number, "type": string, "groupId": number }`                       |
+| `POST /api/Good/GetGoodsComment`                               | 商品评价分页                                                                | —                                                                                   |
+| `POST /api/Good/GetGoodsRecommendList`                         | 随机推荐商品，用于详情页推荐区                                              | 请求体：`{ "id": number, "data": string }`                                          |
 
 ### 购物车 Cart 模块
-| 接口 | 说明 | 备注 |
-| --- | --- | --- |
-| `POST /api/Cart/AddCart` | 添加单个货品到购物车（Auth）；需要 `nums`, `productId`, `type`, `cartType`, `objectId` | 响应 `{ status, msg, data }` |
-| `POST /api/Cart/GetList` | 获取购物车列表（Auth）；请求体 `{ userId, ids, type, areaId, point, couponCode, receiptType, objectId }` | 用于全局 `getCart()` |
-| `POST /api/Cart/SetCartNum` | 设置购物车商品数量（Auth）；请求体 `{ id, nums }` | 购物车行 ID 由后端返回 |
-| `POST /api/Cart/DoDelete` | 删除购物车行（Auth）；请求体 `{ id, data }` | |
-| `POST /api/Cart/GetCartAvailableCoupon` | 根据提交数据判断可用优惠券（Auth） | 接口文档已给出 |
+
+| 接口                                    | 说明                                                                                                     | 备注                         |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `POST /api/Cart/AddCart`                | 添加单个货品到购物车（Auth）；需要 `nums`, `productId`, `type`, `cartType`, `objectId`                   | 响应 `{ status, msg, data }` |
+| `POST /api/Cart/GetList`                | 获取购物车列表（Auth）；请求体 `{ userId, ids, type, areaId, point, couponCode, receiptType, objectId }` | 用于全局 `getCart()`         |
+| `POST /api/Cart/SetCartNum`             | 设置购物车商品数量（Auth）；请求体 `{ id, nums }`                                                        | 购物车行 ID 由后端返回       |
+| `POST /api/Cart/DoDelete`               | 删除购物车行（Auth）；请求体 `{ id, data }`                                                              |                              |
+| `POST /api/Cart/GetCartAvailableCoupon` | 根据提交数据判断可用优惠券（Auth）                                                                       | 接口文档已给出               |
 
 > **注意：** 文档未提供 `data` 字段的具体 schema。以下任务会按现有 UI 需求推测字段，并在 mock 中保持一致，等真实 schema 下发后再次校正。
 
@@ -59,6 +62,7 @@
    - 每一步调整后至少自测 `/search`、`/cart`、`/checkout` 三个主要流程，确认 UI 不回退。
 
 ## 依赖 & 风险
+
 - **缺少具体响应 schema**：本文档中字段推断需在后端提供正式 schema 后复核；请预留 TODO 标注。
 - **Auth 方案待确认**：`Cart` 多个接口需要 Auth，mock 阶段先跳过，接入时需确保 `auth_session` cookie 透传。
 - **时间限制**：目标是“今日完成”——请优先实现结构性改造，细节优化（文案、样式）可后置。

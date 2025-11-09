@@ -166,9 +166,19 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
           {/* 底部说明 */}
           <div className="rounded-lg bg-neutral-50 px-4 py-3">
             <p className="text-xs text-neutral-600 leading-relaxed">
-              当前共管理 <span className="font-semibold text-neutral-900">{data.totalManaged}</span> 家一级/二级分销伙伴，
-              其中 <span className="font-semibold text-primary">{data.activeCount}</span> 家活跃，
-              <span className="font-semibold text-amber-600">{data.inactiveCount}</span> 家长期未活跃。
+              当前共管理{" "}
+              <span className="font-semibold text-neutral-900">
+                {data.totalManaged}
+              </span>{" "}
+              家一级/二级分销伙伴， 其中{" "}
+              <span className="font-semibold text-primary">
+                {data.activeCount}
+              </span>{" "}
+              家活跃，
+              <span className="font-semibold text-amber-600">
+                {data.inactiveCount}
+              </span>{" "}
+              家长期未活跃。
             </p>
           </div>
         </div>
@@ -195,7 +205,7 @@ function StatusCard({ slice }: StatusCardProps) {
       className={cn(
         "rounded-xl border p-4 transition-all duration-200",
         bgColor,
-        borderColor
+        borderColor,
       )}
     >
       <div className="flex items-start justify-between mb-3">

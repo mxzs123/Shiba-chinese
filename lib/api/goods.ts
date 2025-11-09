@@ -24,7 +24,10 @@ const DEFAULT_LIMIT = 12;
 
 type SortKey = "relevance" | "popular" | "latest" | "price_asc" | "price_desc";
 
-function createResponse<T>(data: T, msg = SUCCESS_MESSAGE): BackendApiResponse<T> {
+function createResponse<T>(
+  data: T,
+  msg = SUCCESS_MESSAGE,
+): BackendApiResponse<T> {
   return {
     methodDescription: null,
     otherData: null,
@@ -35,7 +38,11 @@ function createResponse<T>(data: T, msg = SUCCESS_MESSAGE): BackendApiResponse<T
   };
 }
 
-function createErrorResponse<T>(msg: string, code = 500, data: T): BackendApiResponse<T> {
+function createErrorResponse<T>(
+  msg: string,
+  code = 500,
+  data: T,
+): BackendApiResponse<T> {
   return {
     methodDescription: null,
     otherData: null,
@@ -46,7 +53,9 @@ function createErrorResponse<T>(msg: string, code = 500, data: T): BackendApiRes
   };
 }
 
-function sanitizeWhereInput(input?: GoodsListQuery["where"]): GoodsWhereInput | undefined {
+function sanitizeWhereInput(
+  input?: GoodsListQuery["where"],
+): GoodsWhereInput | undefined {
   if (!input) {
     return undefined;
   }
@@ -175,14 +184,21 @@ function matchesKeywords(product: Product, filters?: GoodsWhereInput): boolean {
     return true;
   }
 
-  const backendKeywords = new Set((product.backend?.keywords || []).map((keyword) => keyword.toLowerCase()));
+  const backendKeywords = new Set(
+    (product.backend?.keywords || []).map((keyword) => keyword.toLowerCase()),
+  );
 
-  return filters.keywords.some((keyword) => backendKeywords.has(keyword.toLowerCase()));
+  return filters.keywords.some((keyword) =>
+    backendKeywords.has(keyword.toLowerCase()),
+  );
 }
 
 function filterGoods(products: Product[], filters?: GoodsWhereInput) {
   return products.filter(
-    (product) => matchesCategory(product, filters) && matchesSearch(product, filters) && matchesKeywords(product, filters),
+    (product) =>
+      matchesCategory(product, filters) &&
+      matchesSearch(product, filters) &&
+      matchesKeywords(product, filters),
   );
 }
 
@@ -237,7 +253,10 @@ function getRankValue(product: Product): number {
   return goodsProductRankMap.get(product.handle) ?? 999;
 }
 
-function computeRelevanceScore(product: Product, filters?: GoodsWhereInput): number {
+function computeRelevanceScore(
+  product: Product,
+  filters?: GoodsWhereInput,
+): number {
   if (!filters?.searchName) {
     return 0;
   }
@@ -262,7 +281,9 @@ function computeRelevanceScore(product: Product, filters?: GoodsWhereInput): num
     score += 4;
   }
 
-  if (backend?.keywords?.some((keyword) => keyword.toLowerCase().includes(query))) {
+  if (
+    backend?.keywords?.some((keyword) => keyword.toLowerCase().includes(query))
+  ) {
     score += 2;
   }
 
@@ -273,7 +294,11 @@ function computeRelevanceScore(product: Product, filters?: GoodsWhereInput): num
   return score;
 }
 
-function sortGoods(products: Product[], sortKey: SortKey, filters?: GoodsWhereInput) {
+function sortGoods(
+  products: Product[],
+  sortKey: SortKey,
+  filters?: GoodsWhereInput,
+) {
   const sorted = [...products];
 
   switch (sortKey) {
@@ -285,7 +310,8 @@ function sortGoods(products: Product[], sortKey: SortKey, filters?: GoodsWhereIn
       break;
     case "latest":
       sorted.sort(
-        (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
       );
       break;
     case "popular":
@@ -293,7 +319,10 @@ function sortGoods(products: Product[], sortKey: SortKey, filters?: GoodsWhereIn
       break;
     case "relevance":
     default:
-      sorted.sort((a, b) => computeRelevanceScore(b, filters) - computeRelevanceScore(a, filters));
+      sorted.sort(
+        (a, b) =>
+          computeRelevanceScore(b, filters) - computeRelevanceScore(a, filters),
+      );
       if (!filters?.searchName) {
         sorted.sort((a, b) => getRankValue(a) - getRankValue(b));
       }
@@ -303,7 +332,11 @@ function sortGoods(products: Product[], sortKey: SortKey, filters?: GoodsWhereIn
   return sorted;
 }
 
-function paginateGoods(products: Product[], page: number, limit: number): GoodsListResult {
+function paginateGoods(
+  products: Product[],
+  page: number,
+  limit: number,
+): GoodsListResult {
   const total = products.length;
   const totalPages = Math.max(1, Math.ceil(total / limit));
   const currentPage = Math.min(Math.max(page, 1), totalPages);
@@ -324,7 +357,9 @@ function paginateGoods(products: Product[], page: number, limit: number): GoodsL
   };
 }
 
-export function mockGetAllGoodsCategories(): BackendApiResponse<GoodsCategory[]> {
+export function mockGetAllGoodsCategories(): BackendApiResponse<
+  GoodsCategory[]
+> {
   return createResponse(goodsCategories);
 }
 
@@ -343,7 +378,9 @@ export function mockGetGoodsPageList(
   return createResponse(result);
 }
 
-export function mockGetGoodsDetail(id: number): BackendApiResponse<GoodsDetail | null> {
+export function mockGetGoodsDetail(
+  id: number,
+): BackendApiResponse<GoodsDetail | null> {
   const product = goodsProductMapByBackendId.get(id);
 
   if (!product) {
@@ -384,7 +421,9 @@ export function mockGetGoodsRecommendList(
   params: { id?: number; data?: string } = {},
 ): BackendApiResponse<Product[]> {
   const excludedId = params.id;
-  const candidates = goodsProducts.filter((product) => product.backend?.productId !== excludedId);
+  const candidates = goodsProducts.filter(
+    (product) => product.backend?.productId !== excludedId,
+  );
   const items = candidates.slice(0, 4);
   return createResponse(items);
 }

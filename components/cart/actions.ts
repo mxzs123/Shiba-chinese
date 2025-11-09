@@ -47,18 +47,19 @@ export async function addItem(
     }
 
     const backendMeta = variantInfo.variant.backend;
-    const payload = backendMeta && typeof backendMeta.objectId === "number"
-      ? [
-          {
-            productId: backendMeta.productId,
-            objectId: backendMeta.objectId,
-            type: backendMeta.type ?? 0,
-            cartType: backendMeta.cartType ?? 0,
-            groupId: backendMeta.groupId,
-            nums: normalizedQuantity,
-          },
-        ]
-      : [{ merchandiseId: selectedVariantId, quantity: normalizedQuantity }];
+    const payload =
+      backendMeta && typeof backendMeta.objectId === "number"
+        ? [
+            {
+              productId: backendMeta.productId,
+              objectId: backendMeta.objectId,
+              type: backendMeta.type ?? 0,
+              cartType: backendMeta.cartType ?? 0,
+              groupId: backendMeta.groupId,
+              nums: normalizedQuantity,
+            },
+          ]
+        : [{ merchandiseId: selectedVariantId, quantity: normalizedQuantity }];
 
     const cart = await addToCart(payload);
 
@@ -120,8 +121,8 @@ export async function updateItemQuantity(
       return "Error fetching cart";
     }
 
-    const lineItem = cart.lines.find((line) =>
-      line.id === lineId || line.merchandise.id === merchandiseId,
+    const lineItem = cart.lines.find(
+      (line) => line.id === lineId || line.merchandise.id === merchandiseId,
     );
 
     if (lineItem && lineItem.id) {

@@ -13,7 +13,8 @@ const categoryListClass = "space-y-2";
 const categoryItemClass =
   "flex flex-col rounded-xl border border-transparent px-4 py-3 text-sm transition hover:border-[#049e6b] hover:bg-[#049e6b]/5";
 const categoryLabelClass = "font-medium text-neutral-900";
-const childListClass = "mt-2 space-y-1 border-l border-dashed border-neutral-200 pl-4";
+const childListClass =
+  "mt-2 space-y-1 border-l border-dashed border-neutral-200 pl-4";
 const childLinkClass =
   "flex items-center rounded-full px-3 py-1.5 text-xs font-medium text-neutral-600 transition hover:text-[#049e6b]";
 const sortListClass = "space-y-2";
@@ -82,12 +83,17 @@ export function DesktopSearchSidebar({
           </li>
           {categories.map((category) => {
             const isActive = activeCategory === category.slug;
-            const hasChildren = category.children && category.children.length > 0;
+            const hasChildren =
+              category.children && category.children.length > 0;
 
             return (
               <li key={category.slug}>
                 <Link
-                  href={createCategoryHref(category.slug, searchValue, sortSlug)}
+                  href={createCategoryHref(
+                    category.slug,
+                    searchValue,
+                    sortSlug,
+                  )}
                   className={cn(categoryItemClass, {
                     "border-[#049e6b] bg-[#049e6b]/10": isActive,
                   })}

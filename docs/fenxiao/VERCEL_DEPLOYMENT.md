@@ -36,11 +36,11 @@
 
 展开 **"Build and Output Settings"**，确认/修改：
 
-| 配置项               | 值              | 说明                              |
-| -------------------- | --------------- | --------------------------------- |
-| **Build Command**    | `pnpm build`    | Vercel 会在 Root Directory 中执行 |
-| **Output Directory** | `.next`         | Next.js 默认输出目录              |
-| **Install Command**  | `pnpm install`  | 默认即可                          |
+| 配置项               | 值             | 说明                              |
+| -------------------- | -------------- | --------------------------------- |
+| **Build Command**    | `pnpm build`   | Vercel 会在 Root Directory 中执行 |
+| **Output Directory** | `.next`        | Next.js 默认输出目录              |
+| **Install Command**  | `pnpm install` | 默认即可                          |
 
 > **注意**：由于设置了 Root Directory，Vercel 会在 `apps/distributor` 目录下执行这些命令，并自动处理 workspace 依赖。
 

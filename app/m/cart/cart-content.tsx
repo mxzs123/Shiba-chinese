@@ -399,13 +399,13 @@ export function MobileCartContent() {
                     )}
                   </div>
                   <div className="flex items-center justify-between">
-                  <CartItemQuantityControl
-                    lineId={item.id || item.merchandise.id}
-                    merchandiseId={item.merchandise.id}
-                    productTitle={item.merchandise.product.title}
-                    quantity={item.quantity}
-                    optimisticUpdate={updateCartItem}
-                  />
+                    <CartItemQuantityControl
+                      lineId={item.id || item.merchandise.id}
+                      merchandiseId={item.merchandise.id}
+                      productTitle={item.merchandise.product.title}
+                      quantity={item.quantity}
+                      optimisticUpdate={updateCartItem}
+                    />
                     <Price
                       amount={item.cost.totalAmount.amount}
                       currencyCode={item.cost.totalAmount.currencyCode}

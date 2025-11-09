@@ -1,7 +1,10 @@
 import Search from "components/layout/navbar/search";
 
 import { SearchPageShell } from "@/app/_shared/search/SearchPageShell";
-import { DESKTOP_SEARCH_PAGE_SIZE, getSearchCategories } from "@/app/_shared/search/config";
+import {
+  DESKTOP_SEARCH_PAGE_SIZE,
+  getSearchCategories,
+} from "@/app/_shared/search/config";
 import { loadSearchResult } from "@/app/_shared/search/loaders";
 import SearchResultsGrid from "@/app/_shared/search/SearchResultsGrid";
 import SearchPagination from "@/app/_shared/search/SearchPagination";

@@ -24,7 +24,12 @@ export type BackendApiResponse<TData> = {
   code: number;
 };
 
-export type BackendSortOrder = "relevance" | "popular" | "latest" | "price_asc" | "price_desc";
+export type BackendSortOrder =
+  | "relevance"
+  | "popular"
+  | "latest"
+  | "price_asc"
+  | "price_desc";
 
 export type GoodsWhereInput = {
   lang?: number;

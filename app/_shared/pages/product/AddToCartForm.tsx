@@ -22,11 +22,13 @@ function getPrimaryVariant(product: Product): ProductVariant | undefined {
 type AddToCartFormProps = {
   product: Product;
   variant?: "default" | "inline";
+  className?: string;
 };
 
 export function AddToCartForm({
   product,
   variant = "default",
+  className,
 }: AddToCartFormProps) {
   const { addCartItem } = useCart();
   const primaryVariant = getPrimaryVariant(product);
@@ -71,12 +73,34 @@ export function AddToCartForm({
 
   const isInline = variant === "inline";
 
+  const inlineControls = (
+    <div className="grid gap-3 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
+      <QuantityInput
+        value={quantity}
+        onChange={handleQuantityChange}
+        min={1}
+        max={99}
+        className="w-full sm:w-auto sm:flex-none"
+        buttonClassName="px-3 py-2"
+        inputClassName="w-20 text-base"
+        decrementAriaLabel="减少数量"
+        incrementAriaLabel="增加数量"
+        inputAriaLabel="购买数量输入"
+      />
+      <AddToCartButton
+        onAdd={handleAdd}
+        disabled={isDisabled}
+        loadingText="加入中..."
+        className="h-12 w-full justify-center rounded-lg px-4 text-base font-semibold"
+      >
+        加入购物车
+      </AddToCartButton>
+    </div>
+  );
+
   return (
     <div
-      className={cn(
-        "w-full",
-        isInline ? "flex items-center gap-3" : "space-y-4",
-      )}
+      className={cn("w-full", isInline ? "space-y-0" : "space-y-4", className)}
     >
       {isInline ? null : (
         <div className="flex items-center justify-between gap-4">
@@ -93,28 +117,7 @@ export function AddToCartForm({
         </div>
       )}
       {isInline ? (
-        <>
-          <QuantityInput
-            value={quantity}
-            onChange={handleQuantityChange}
-            min={1}
-            max={99}
-            className="flex-none"
-            buttonClassName="px-3 py-2"
-            inputClassName="w-14 text-base"
-            decrementAriaLabel="减少数量"
-            incrementAriaLabel="增加数量"
-            inputAriaLabel="购买数量输入"
-          />
-          <AddToCartButton
-            onAdd={handleAdd}
-            disabled={isDisabled}
-            loadingText="加入中..."
-            className="h-12 flex-1 justify-center rounded-lg px-4 text-base font-semibold"
-          >
-            加入购物车
-          </AddToCartButton>
-        </>
+        inlineControls
       ) : (
         <AddToCartButton
           onAdd={handleAdd}

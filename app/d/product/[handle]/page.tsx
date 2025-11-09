@@ -43,10 +43,12 @@ type FeatureHighlight = {
 
 function ProductHeroGalleryFallback() {
   return (
-    <>
-      <div className="relative aspect-square w-full overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-100 lg:col-start-1 lg:row-start-1" />
-      <div className="mt-5 hidden h-20 rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/80 lg:col-span-2 lg:row-start-2 lg:block lg:mt-6" />
-    </>
+    <div className="flex flex-col items-center">
+      <div className="relative mx-auto aspect-square w-full max-w-[480px] overflow-hidden rounded-3xl border border-neutral-200 bg-neutral-100" />
+      <div className="mt-4 flex h-20 w-full max-w-[480px] items-center justify-center gap-3 rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/80">
+        <span className="h-12 w-20 rounded-2xl border border-neutral-200 bg-white" />
+      </div>
+    </div>
   );
 }
 
@@ -108,11 +110,11 @@ function ProductHero({ product, images }: ProductHeroProps) {
 
   return (
     <section className="rounded-3xl border border-neutral-200 bg-white p-6 sm:p-8 lg:p-12">
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:auto-rows-min">
+      <div className="grid gap-10 items-start lg:auto-rows-min lg:grid-cols-[minmax(0,0.9fr)_minmax(440px,1fr)] lg:items-stretch">
         <Suspense fallback={<ProductHeroGalleryFallback />}>
           <HeroGallery images={images} />
         </Suspense>
-        <div className="flex flex-col gap-8 lg:col-start-2 lg:row-start-1 lg:h-full">
+        <div className="flex flex-col gap-8 lg:col-start-2 lg:row-start-1">
           <div className="space-y-4">
             <AvailabilityBadge available={product.availableForSale} />
             <div className="space-y-3">
@@ -124,32 +126,46 @@ function ProductHero({ product, images }: ProductHeroProps) {
               </p>
             </div>
           </div>
-          <div className="space-y-6 rounded-2xl border border-neutral-100 bg-neutral-50/80 p-6">
-            <Price
-              value={price}
-              originalValue={originalPrice}
-              className={cn(
-                "text-4xl font-semibold",
-                hasDiscount ? "text-emerald-600" : "text-neutral-900",
-              )}
-              currencyClassName={cn(
-                "text-lg font-medium",
-                hasDiscount ? "text-emerald-600/80" : "text-neutral-500",
-              )}
-              showConvertedPrice
-              convertedClassName="text-base font-medium text-neutral-500"
-              convertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400"
-              originalClassName="text-xl font-medium text-neutral-400 line-through"
-              originalCurrencyClassName="text-sm font-medium uppercase tracking-wide text-neutral-400/80"
-              originalConvertedClassName="text-sm font-medium text-neutral-400"
-              originalConvertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400/60"
-              badgeClassName="px-2 py-0.5 text-sm font-semibold text-emerald-600 bg-emerald-500/10"
-              originalColumnAlign="start"
-              discountLayout="start"
+          <div className="space-y-6 rounded-2xl border border-neutral-100 bg-neutral-50/80 p-6 shadow-sm">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-wrap items-end justify-between gap-x-3 gap-y-2">
+                <Price
+                  value={price}
+                  originalValue={originalPrice}
+                  className={cn(
+                    "text-4xl font-semibold leading-tight",
+                    hasDiscount ? "text-emerald-600" : "text-neutral-900",
+                  )}
+                  currencyClassName={cn(
+                    "text-lg font-medium",
+                    hasDiscount ? "text-emerald-600/80" : "text-neutral-500",
+                  )}
+                  showConvertedPrice
+                  convertedClassName="text-base font-medium text-neutral-500"
+                  convertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400"
+                  originalClassName="text-lg font-medium text-neutral-400 line-through"
+                  originalCurrencyClassName="text-sm font-medium uppercase tracking-wide text-neutral-400/80"
+                  originalConvertedClassName="text-sm font-medium text-neutral-400"
+                  originalConvertedCurrencyClassName="text-xs font-medium uppercase tracking-wide text-neutral-400/60"
+                  badgeClassName="px-2 py-0.5 text-xs font-semibold text-emerald-600 bg-emerald-500/10"
+                  originalColumnAlign="start"
+                  discountLayout="start"
+                />
+                <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                  含税价格 · 支持人民币结算
+                </span>
+              </div>
+              <p className="text-sm text-neutral-500">
+                库存实时同步日本药局，付款成功后 3-5 个工作日内发出。
+              </p>
+            </div>
+            <AddToCartForm
+              product={product}
+              variant="inline"
+              className="border-t border-neutral-200 pt-4"
             />
-            <AddToCartForm product={product} />
+            <ReassuranceNotice className="border-0 bg-transparent px-0 py-0" />
           </div>
-          <ReassuranceNotice className="lg:mt-auto" />
         </div>
       </div>
     </section>

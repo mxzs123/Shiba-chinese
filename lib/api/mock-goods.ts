@@ -481,7 +481,11 @@ const rawGoodsRecords: RawGoodsRecord[] = [
 
 const DEFAULT_JPY_CURRENCY: CurrencyCode = "JPY";
 
-function toMoney(amount: number, currencyCode: CurrencyCode, fractionDigits = 0): Money {
+function toMoney(
+  amount: number,
+  currencyCode: CurrencyCode,
+  fractionDigits = 0,
+): Money {
   return {
     amount: amount.toFixed(fractionDigits),
     currencyCode,
@@ -496,7 +500,9 @@ function createProductFromRecord(record: RawGoodsRecord): Product {
   const priceMoney = toMoney(record.priceJpy, DEFAULT_JPY_CURRENCY);
   const priceCny = toMoney(record.priceCny, "CNY", 2);
   const now = new Date();
-  const updatedAt = new Date(now.getTime() - record.rank * 86400000).toISOString();
+  const updatedAt = new Date(
+    now.getTime() - record.rank * 86400000,
+  ).toISOString();
   const variantId = buildVariantId(record.slug);
 
   const variant: ProductVariant = {
@@ -604,9 +610,13 @@ function createProductFromRecord(record: RawGoodsRecord): Product {
   };
 }
 
-export const goodsProducts: Product[] = rawGoodsRecords.map(createProductFromRecord);
+export const goodsProducts: Product[] = rawGoodsRecords.map(
+  createProductFromRecord,
+);
 
-export const goodsProductMapByHandle = new Map(goodsProducts.map((product) => [product.handle, product]));
+export const goodsProductMapByHandle = new Map(
+  goodsProducts.map((product) => [product.handle, product]),
+);
 
 export const goodsProductMapByBackendId = new Map(
   goodsProducts
@@ -623,7 +633,10 @@ export const goodsVariantsByObjectId = new Map(
 );
 
 export const goodsCollectionHandles = new Map(
-  rawGoodsRecords.map((record) => [record.slug, record.collectionHandles || []]),
+  rawGoodsRecords.map((record) => [
+    record.slug,
+    record.collectionHandles || [],
+  ]),
 );
 
 export const goodsProductRankMap = new Map(

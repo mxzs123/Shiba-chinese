@@ -48,7 +48,8 @@ export function MobileCategoriesContent({
   const { addCartItem } = useCart();
   const resolvedInitialCategory =
     (initialCategory &&
-      flatCategories.find((category) => category.slug === initialCategory)?.slug) ||
+      flatCategories.find((category) => category.slug === initialCategory)
+        ?.slug) ||
     flatCategories[0]?.slug ||
     "";
   const firstParentSlug = categoryTree[0]?.slug || "";
@@ -223,7 +224,8 @@ export function MobileCategoriesContent({
                 }
                 className={cn(
                   "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-                  selectedCategory === (currentParent?.slug || currentParentSlug)
+                  selectedCategory ===
+                    (currentParent?.slug || currentParentSlug)
                     ? "bg-primary text-white"
                     : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200",
                 )}
