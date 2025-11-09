@@ -67,110 +67,75 @@ export function DesktopSearchSidebar({
   sortSlug,
 }: DesktopSearchSidebarProps) {
   return (
-    <aside className="sticky top-28 flex h-fit w-full flex-col gap-8">
-      <section className={sidebarSectionClass}>
-        <h2 className={sectionTitleClass}>精选品类</h2>
-        <ul className={categoryListClass}>
-          <li>
-            <Link
-              href={createCategoryHref(undefined, searchValue, sortSlug)}
-              className={cn(categoryItemClass, {
-                "border-[#049e6b] bg-[#049e6b]/10": !activeCategory,
-              })}
-            >
-              <span className={categoryLabelClass}>全部商品</span>
-            </Link>
-          </li>
-          {categories.map((category) => {
-            const isActive = activeCategory === category.slug;
-            const hasChildren =
-              category.children && category.children.length > 0;
-
-            return (
-              <li key={category.slug}>
-                <Link
-                  href={createCategoryHref(
-                    category.slug,
-                    searchValue,
-                    sortSlug,
-                  )}
-                  className={cn(categoryItemClass, {
-                    "border-[#049e6b] bg-[#049e6b]/10": isActive,
-                  })}
-                >
-                  <span className={categoryLabelClass}>{category.label}</span>
-                  {category.jpName ? (
-                    <span className="text-xs text-neutral-500">
-                      {category.jpName}
-                    </span>
-                  ) : null}
-                </Link>
-                {hasChildren ? (
-                  <ul className={childListClass}>
-                    {category.children!.map((child) => {
-                      const childActive = activeCategory === child.slug;
-                      return (
-                        <li key={child.slug}>
-                          <Link
-                            href={createCategoryHref(
-                              child.slug,
-                              searchValue,
-                              sortSlug,
-                            )}
-                            className={cn(childLinkClass, {
-                              "text-[#049e6b]": childActive,
-                              "bg-[#049e6b]/10": childActive,
-                            })}
-                          >
-                            {child.label}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : null}
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-
-      <section className={sidebarSectionClass}>
-        <h2 className={sectionTitleClass}>排序方式</h2>
-        <div className="rounded-2xl border border-neutral-200 p-2">
-          <ul className={sortListClass}>
-            {sorting.map((item) => {
-              const itemSortSlug = item.slug;
-              const isActive =
-                sortSlug === itemSortSlug || (!sortSlug && !itemSortSlug);
+    <aside className="flex h-full w-full flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-2">
+        <section className={sidebarSectionClass}>
+          <h2 className={sectionTitleClass}>精选品类</h2>
+          <ul className={categoryListClass}>
+            <li>
+              <Link
+                href={createCategoryHref(undefined, searchValue, sortSlug)}
+                className={cn(categoryItemClass, {
+                  "border-[#049e6b] bg-[#049e6b]/10": !activeCategory,
+                })}
+              >
+                <span className={categoryLabelClass}>全部商品</span>
+              </Link>
+            </li>
+            {categories.map((category) => {
+              const isActive = activeCategory === category.slug;
+              const hasChildren =
+                category.children && category.children.length > 0;
 
               return (
-                <li key={item.title}>
+                <li key={category.slug}>
                   <Link
-                    href={createSortHref(basePath, item.slug, searchValue)}
-                    prefetch={!isActive ? false : undefined}
-                    className={cn(sortButtonClass, {
-                      "bg-[#049e6b]/10 text-[#049e6b]": isActive,
+                    href={createCategoryHref(
+                      category.slug,
+                      searchValue,
+                      sortSlug,
+                    )}
+                    className={cn(categoryItemClass, {
+                      "border-[#049e6b] bg-[#049e6b]/10": isActive,
                     })}
                   >
-                    {item.title === "Relevance"
-                      ? "综合排序"
-                      : item.title === "Trending"
-                        ? "热度优先"
-                        : item.title === "Latest arrivals"
-                          ? "上新优先"
-                          : item.title === "Price: Low to high"
-                            ? "价格从低到高"
-                            : item.title === "Price: High to low"
-                              ? "价格从高到低"
-                              : item.title}
+                    <span className={categoryLabelClass}>{category.label}</span>
+                    {category.jpName ? (
+                      <span className="text-xs text-neutral-500">
+                        {category.jpName}
+                      </span>
+                    ) : null}
                   </Link>
+                  {hasChildren ? (
+                    <ul className={childListClass}>
+                      {category.children!.map((child) => {
+                        const childActive = activeCategory === child.slug;
+                        return (
+                          <li key={child.slug}>
+                            <Link
+                              href={createCategoryHref(
+                                child.slug,
+                                searchValue,
+                                sortSlug,
+                              )}
+                              className={cn(childLinkClass, {
+                                "text-[#049e6b]": childActive,
+                                "bg-[#049e6b]/10": childActive,
+                              })}
+                            >
+                              {child.label}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : null}
                 </li>
               );
             })}
           </ul>
-        </div>
-      </section>
+        </section>
+      </div>
     </aside>
   );
 }

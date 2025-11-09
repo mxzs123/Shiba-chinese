@@ -1,4 +1,3 @@
-import Search from "components/layout/navbar/search";
 import { getCollection, getCollectionProducts } from "lib/api";
 import type { Collection, GoodsPageInfo } from "lib/api/types";
 import type { Metadata } from "next";
@@ -14,6 +13,7 @@ import {
 import { loadSearchResult } from "@/app/_shared/search/loaders";
 import SearchResultsGrid from "@/app/_shared/search/SearchResultsGrid";
 import SearchPagination from "@/app/_shared/search/SearchPagination";
+import { SortDropdown } from "@/app/_shared/search/SortDropdown";
 import { parsePageParam, resolveSort } from "@/app/_shared/search/utils";
 
 function getParam(value?: string | string[]) {
@@ -87,7 +87,7 @@ export default async function DesktopSearchCollectionPage({
 
     const header = (
       <div className="space-y-4">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#049e6b]">
               精选品类
@@ -99,8 +99,12 @@ export default async function DesktopSearchCollectionPage({
               共 {result.total} 件商品，每页展示 {DESKTOP_SEARCH_PAGE_SIZE} 件。
             </p>
           </div>
-          <div className="w-full max-w-lg lg:w-[360px]">
-            <Search />
+          <div className="w-full lg:w-[280px]">
+            <SortDropdown
+              currentSort={result.sortSlug ?? null}
+              basePath={basePath}
+              searchValue={q ?? undefined}
+            />
           </div>
         </div>
       </div>
@@ -163,7 +167,7 @@ export default async function DesktopSearchCollectionPage({
 
   const header = (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#049e6b]">
             精选品类
@@ -175,8 +179,12 @@ export default async function DesktopSearchCollectionPage({
             共 {total} 件商品，每页展示 {DESKTOP_SEARCH_PAGE_SIZE} 件。
           </p>
         </div>
-        <div className="w-full max-w-lg lg:w-[360px]">
-          <Search />
+        <div className="w-full lg:w-[280px]">
+          <SortDropdown
+            currentSort={sort ?? null}
+            basePath={basePath}
+            searchValue={q ?? undefined}
+          />
         </div>
       </div>
     </div>

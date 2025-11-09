@@ -1,5 +1,3 @@
-import Search from "components/layout/navbar/search";
-
 import { SearchPageShell } from "@/app/_shared/search/SearchPageShell";
 import {
   DESKTOP_SEARCH_PAGE_SIZE,
@@ -8,6 +6,7 @@ import {
 import { loadSearchResult } from "@/app/_shared/search/loaders";
 import SearchResultsGrid from "@/app/_shared/search/SearchResultsGrid";
 import SearchPagination from "@/app/_shared/search/SearchPagination";
+import { SortDropdown } from "@/app/_shared/search/SortDropdown";
 
 function getParam(value?: string | string[]) {
   if (!value) {
@@ -49,7 +48,7 @@ export default async function DesktopSearchPage({
 
   const header = (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#049e6b]">
             搜索中心
@@ -61,8 +60,12 @@ export default async function DesktopSearchPage({
             共 {result.total} 件商品，每页展示 {DESKTOP_SEARCH_PAGE_SIZE} 件。
           </p>
         </div>
-        <div className="w-full max-w-lg lg:w-[360px]">
-          <Search />
+        <div className="w-full lg:w-[280px]">
+          <SortDropdown
+            currentSort={result.sortSlug ?? null}
+            basePath="/search"
+            searchValue={q ?? undefined}
+          />
         </div>
       </div>
     </div>
