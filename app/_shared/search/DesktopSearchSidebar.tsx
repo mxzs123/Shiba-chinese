@@ -86,6 +86,10 @@ export function DesktopSearchSidebar({
               const isActive = activeCategory === category.slug;
               const hasChildren =
                 category.children && category.children.length > 0;
+              const isChildActive = hasChildren
+                ? category.children!.some((c) => c.slug === activeCategory)
+                : false;
+              const isExpanded = isActive || isChildActive;
 
               return (
                 <li key={category.slug}>
@@ -106,7 +110,7 @@ export function DesktopSearchSidebar({
                       </span>
                     ) : null}
                   </Link>
-                  {hasChildren ? (
+                  {hasChildren && isExpanded ? (
                     <ul className={childListClass}>
                       {category.children!.map((child) => {
                         const childActive = activeCategory === child.slug;
