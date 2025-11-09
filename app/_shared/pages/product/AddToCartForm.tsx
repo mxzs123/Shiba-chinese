@@ -74,13 +74,13 @@ export function AddToCartForm({
   const isInline = variant === "inline";
 
   const inlineControls = (
-    <div className="grid gap-3 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
+    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
       <QuantityInput
         value={quantity}
         onChange={handleQuantityChange}
         min={1}
         max={99}
-        className="w-full sm:w-auto sm:flex-none"
+        className="w-auto flex-none"
         buttonClassName="px-3 py-2"
         inputClassName="w-20 text-base"
         decrementAriaLabel="减少数量"
