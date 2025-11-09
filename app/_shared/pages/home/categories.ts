@@ -7,7 +7,7 @@ export type HomeCategoryLink = {
 export const POPULAR_CATEGORY_LINKS: HomeCategoryLink[] = [
   {
     label: "处方药品",
-    href: "/search/pharmacy",
+    href: "/search/prescription",
     description: "在线复诊、药师审方配送",
   },
   {
@@ -17,7 +17,7 @@ export const POPULAR_CATEGORY_LINKS: HomeCategoryLink[] = [
   },
   {
     label: "健康保健食品",
-    href: "/search/nutrition",
+    href: "/search/wellness",
     description: "维生素、免疫与营养补给",
   },
   {

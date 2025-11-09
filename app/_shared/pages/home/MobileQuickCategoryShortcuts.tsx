@@ -29,6 +29,16 @@ const categoryIcons = {
   其他: MoreHorizontalIcon,
 };
 
+const labelToSlug: Record<string, string> = {
+  处方药品: "prescription",
+  "非处方药品（OTC）": "otc",
+  健康保健食品: "wellness",
+  院内制剂: "hospital",
+  美妆护肤: "beauty",
+  生活用品: "lifestyle",
+  其他: "misc",
+};
+
 export function MobileQuickCategoryShortcuts({
   categories = POPULAR_CATEGORY_LINKS,
   className,
@@ -44,10 +54,12 @@ export function MobileQuickCategoryShortcuts({
           {categories.map((category) => {
             const Icon =
               categoryIcons[category.label as keyof typeof categoryIcons];
+            const slug = labelToSlug[category.label] || "";
+            const target = slug ? `/categories?category=${slug}` : "/categories";
             return (
               <li key={category.label}>
                 <Link
-                  href={category.href}
+                  href={target}
                   className="flex flex-col items-center gap-2 transition-opacity active:opacity-60"
                 >
                   {Icon && (
