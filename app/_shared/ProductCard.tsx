@@ -15,6 +15,7 @@ export type ProductCardProps = {
   actionSlot?: ReactNode;
   hideDescription?: boolean;
   compact?: boolean; // 移动端紧凑样式
+  imageFit?: "contain" | "cover"; // 图片铺放策略（默认 contain，保证整图可见）
 };
 
 export function ProductCard({
@@ -24,6 +25,7 @@ export function ProductCard({
   actionSlot,
   hideDescription = false,
   compact = false,
+  imageFit = "contain",
 }: ProductCardProps) {
   const { featuredImage, priceRange } = product;
   const currentPrice = priceRange.minVariantPrice;
@@ -42,7 +44,7 @@ export function ProductCard({
         aria-label={product.title}
         className="group flex flex-1 flex-col focus:outline-none"
       >
-        <div className="relative block aspect-square w-full overflow-hidden">
+        <div className="relative block aspect-square w-full overflow-hidden bg-neutral-50">
           {hasDiscount ? (
             <span className="absolute left-3 top-3 z-10 inline-flex items-center rounded-full bg-emerald-500/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">
               芝园价
@@ -54,7 +56,11 @@ export function ProductCard({
               alt={featuredImage.altText}
               fill
               sizes="(min-width: 1024px) 280px, 50vw"
-              className="object-cover"
+              className={cn(
+                imageFit === "cover"
+                  ? "object-cover"
+                  : "object-contain object-center",
+              )}
               priority={false}
             />
           ) : (
