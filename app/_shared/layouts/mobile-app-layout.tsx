@@ -27,18 +27,12 @@ export async function MobileAppLayout({ children }: { children: ReactNode }) {
     <CartProvider cartPromise={cart}>
       <main className="pb-16">
         {children}
-        {reviewState ? (
-          <PrescriptionComplianceReminder
-            orderId={reviewState.order.id}
-            orderNumber={reviewState.order.number}
-            productTitles={reviewState.productTitles}
-            pendingSurveyCount={pendingSurveyCount}
-            identityCompleted={reviewState.identityCompleted}
-            identityHref={IDENTITY_HIGHLIGHT_HREF}
-            surveyHref={SURVEY_HIGHLIGHT_HREF}
-            type="prescription"
-          />
-        ) : null}
+        {/**
+         * 内测阶段不上架处方药，隐藏“待完成处方审核”浮窗。
+         * 恢复显示时：
+         *  1) 在此处重新渲染 PrescriptionComplianceReminder；
+         *  2) 继续复用 reviewState/IDENTITY_HIGHLIGHT_HREF/SURVEY_HIGHLIGHT_HREF。
+         */}
         <Toaster
           position="top-center"
           offset="calc(env(safe-area-inset-top) + 64px)"
