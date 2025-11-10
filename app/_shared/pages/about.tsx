@@ -133,13 +133,23 @@ function ComplianceTable(props: { items: ComplianceItem[] }) {
                   <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-semibold tracking-wide text-neutral-600">
                     {item.status}
                   </span>
-                  <PrimaryButton
-                    className="h-9 rounded-lg px-4 text-xs"
-                    aria-label={`上传 ${item.label} PDF`}
-                  >
-                    <FileUp className="h-4 w-4" aria-hidden />
-                    上传文件
-                  </PrimaryButton>
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-xs font-semibold text-primary-foreground hover:brightness-105"
+                      aria-label={`查看 ${item.label} PDF`}
+                    >
+                      <FileUp className="h-4 w-4" aria-hidden />
+                      查看 PDF
+                    </a>
+                  ) : (
+                    <PrimaryButton className="h-9 rounded-lg px-4 text-xs" aria-label={`上传 ${item.label} PDF`}>
+                      <FileUp className="h-4 w-4" aria-hidden />
+                      上传文件
+                    </PrimaryButton>
+                  )}
                 </div>
               </td>
             </tr>
@@ -182,33 +192,22 @@ export default function AboutPage() {
         <h1 className="text-4xl font-semibold text-neutral-900">
           关于芝园药局
         </h1>
-        <p className="mt-4 max-w-3xl text-base leading-7 text-neutral-600">
-          这里集中展示企业基础信息、合规资质与对外沟通指引。页面采用模块化布局，未来接入
-          CMS 或内部后台时可直接替换对应的数据源，并在保持同一 URL
-          的同时完成桌面 / 移动外壳的兼容。
-        </p>
       </div>
 
-      <Section
-        description="字段建议与工商登记系统或 CMS 保持同步，便于一键更新。"
-        title="公司信息"
-      >
+      <Section title="公司信息">
         <InfoTable items={companyInfo} />
       </Section>
 
-      <Section
-        description="每项证照可上传 PDF 或外部链接，建议同步记录编号与有效期，便于合规与客服快速查阅。"
-        title="经营许可证"
-      >
+      <Section title="经营许可证">
         <ComplianceTable items={complianceItems} />
       </Section>
 
-      <Section
-        description="整理常见对外问答，确保客服脚本与官网披露一致。"
-        title="常见问题"
-      >
-        <FAQList items={faqItems} />
-      </Section>
+      {/* FAQ 暂时隐藏，待提供真实问答后恢复 */}
+      {false && (
+        <Section title="常见问题">
+          <FAQList items={faqItems} />
+        </Section>
+      )}
     </div>
   );
 }

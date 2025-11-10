@@ -99,13 +99,23 @@ function ComplianceCards({ items }: { items: ComplianceItem[] }) {
             <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-semibold tracking-wide text-neutral-600">
               {item.status}
             </span>
-            <PrimaryButton
-              className="h-9 rounded-lg px-3 text-xs shadow-none"
-              aria-label={`上传 ${item.label} PDF`}
-            >
-              <FileUp className="h-4 w-4" aria-hidden />
-              上传文件
-            </PrimaryButton>
+            {item.href ? (
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground"
+                aria-label={`查看 ${item.label} PDF`}
+              >
+                <FileUp className="h-4 w-4" aria-hidden />
+                查看 PDF
+              </a>
+            ) : (
+              <PrimaryButton className="h-9 rounded-lg px-3 text-xs shadow-none" aria-label={`上传 ${item.label} PDF`}>
+                <FileUp className="h-4 w-4" aria-hidden />
+                上传文件
+              </PrimaryButton>
+            )}
           </div>
         </article>
       ))}
@@ -146,9 +156,6 @@ function Hero() {
         <h1 className="text-2xl font-semibold text-neutral-900">
           关于芝园药局
         </h1>
-        <p className="text-sm leading-6 text-neutral-600">
-          汇总企业基础信息、经营资质与常见问答，便于合作伙伴与客户快速了解芝园药局的服务能力与合规保障。
-        </p>
       </MobileContentContainer>
     </div>
   );
@@ -162,26 +169,20 @@ export default async function MobileAboutPage() {
       <MobileHeader notifications={notifications} leadingVariant="back" />
       <Hero />
       <MobileContentContainer className="space-y-10 pb-12">
-        <Section
-          title="公司信息"
-          description="字段建议与工商登记系统或 CMS 保持同步，便于一键更新。"
-        >
+        <Section title="公司信息">
           <InfoList items={companyInfo} />
         </Section>
 
-        <Section
-          title="经营许可证"
-          description="为每项证照上传电子件或外链，保留编号与有效期便于合规查验。"
-        >
+        <Section title="经营许可证">
           <ComplianceCards items={complianceItems} />
         </Section>
 
-        <Section
-          title="常见问题"
-          description="整理对外问答，确保客服脚本与官网披露一致。"
-        >
-          <FAQList items={faqItems} />
-        </Section>
+        {/* FAQ 暂时隐藏，待提供真实问答后恢复 */}
+        {false && (
+          <Section title="常见问题">
+            <FAQList items={faqItems} />
+          </Section>
+        )}
       </MobileContentContainer>
     </div>
   );
