@@ -20,6 +20,10 @@ export function MobileHeader({
   showSearchInput = false,
   leadingVariant = "auto",
 }: MobileHeaderProps) {
+  // 内测阶段隐藏消息通知入口（仅 UI；客户端仅识别 NEXT_PUBLIC_*）。
+  const hideNotifications =
+    process.env.NEXT_PUBLIC_INTERNAL_TESTING === "1" ||
+    process.env.NEXT_PUBLIC_MOCK_MODE === "1";
   const pathname = usePathname();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
@@ -88,7 +92,10 @@ export function MobileHeader({
             </div>
           </Link>
         )}
-        <NotificationLink notifications={safeNotifications} />
+        {/* 内测阶段隐藏消息通知入口 */}
+        {hideNotifications ? null : (
+          <NotificationLink notifications={safeNotifications} />
+        )}
       </div>
     </header>
   );
