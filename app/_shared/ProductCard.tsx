@@ -44,7 +44,11 @@ export function ProductCard({
         aria-label={product.title}
         className="group flex flex-1 flex-col focus:outline-none"
       >
-        <div className="relative block aspect-square w-full overflow-hidden bg-neutral-50">
+        {/*
+         * 统一商品缩略图容器为正方形，使用 object-contain，确保各比例图片完整显示。
+         * 适当内边距避免贴边裁切的观感问题。
+         */}
+        <div className="relative block aspect-square w-full overflow-hidden bg-neutral-50 p-2 sm:p-3">
           {hasDiscount ? (
             <span className="absolute left-3 top-3 z-10 inline-flex items-center rounded-full bg-emerald-500/95 px-2 py-1 text-[11px] font-semibold text-white shadow-sm">
               芝园价

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Grid3x3, ShoppingCart, User } from "lucide-react";
+import { Home, Grid3x3, ShoppingCart, User, Info } from "lucide-react";
 
 import { useCart } from "components/cart/cart-context";
 import { CartBadge } from "app/_shared";
@@ -15,6 +15,7 @@ const baseNavItems: NavItem[] = [
   { href: "/cart", label: "购物车", icon: ShoppingCart },
 ];
 const accountNavItem: NavItem = { href: "/account", label: "我的", icon: User };
+const aboutNavItem: NavItem = { href: "/about", label: "关于", icon: Info };
 
 export function MobileBottomNav({ hideAccount = false }: { hideAccount?: boolean }) {
   const pathname = usePathname();
@@ -30,7 +31,10 @@ export function MobileBottomNav({ hideAccount = false }: { hideAccount?: boolean
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white shadow-[0_-2px_8px_rgba(0,0,0,0.08)]">
       <div className="grid h-16 grid-cols-4">
-        {(hideAccount ? baseNavItems : [...baseNavItems, accountNavItem]).map((item) => {
+        {(
+          // 内测阶段隐藏“个人中心”时，用“关于”入口补齐第四项，避免布局空位。
+          hideAccount ? [...baseNavItems, aboutNavItem] : [...baseNavItems, accountNavItem]
+        ).map((item) => {
           const isActive =
             normalizedPathname === item.href ||
             (item.href !== "/" &&
