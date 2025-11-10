@@ -251,6 +251,14 @@ export function CheckoutClient({
   const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const checkoutRouteBase = variant === "mobile" ? "/m/checkout" : "/checkout";
 
+  // 内测版：通过环境变量开关隐藏优惠券、积分与支付方式，仅改动 UI 与金额展示口径。
+  // 同时兼容 MOCK_MODE=1 作为兜底开关。
+  const INTERNAL_TESTING_ENABLED =
+    process.env.NEXT_PUBLIC_INTERNAL_TESTING === "1" ||
+    process.env.INTERNAL_TESTING === "1" ||
+    process.env.NEXT_PUBLIC_MOCK_MODE === "1" ||
+    process.env.MOCK_MODE === "1";
+
   useEffect(() => {
     if (!addresses.length) {
       setSelectedAddressId(undefined);
@@ -332,11 +340,10 @@ export function CheckoutClient({
     : 0;
   const couponsTotal = Number.isFinite(couponsTotalRaw) ? couponsTotalRaw : 0;
   const shippingFee = Number.isFinite(shippingFeeRaw) ? shippingFeeRaw : 0;
-
-  const rawPayable = itemsSubtotal - couponsTotal + shippingFee;
-  const payableBeforePoints = Number.isFinite(rawPayable)
-    ? Math.max(rawPayable, 0)
-    : 0;
+  // 内测模式下忽略优惠券折扣；仅用于演示闭环，避免刷新/身份导致金额不一致。
+  const effectiveCouponsTotal = INTERNAL_TESTING_ENABLED ? 0 : couponsTotal;
+  const rawPayable = itemsSubtotal - effectiveCouponsTotal + shippingFee;
+  const payableBeforePoints = Number.isFinite(rawPayable) ? Math.max(rawPayable, 0) : 0;
 
   const loyaltyAccount: PointAccount | undefined = customer?.loyalty;
   const loyaltyBalance = loyaltyAccount?.balance ?? 0;
@@ -344,7 +351,8 @@ export function CheckoutClient({
     loyaltyBalance,
     Math.floor(payableBeforePoints),
   );
-  const payable = Math.max(payableBeforePoints - pointsApplied, 0);
+  const effectivePointsApplied = INTERNAL_TESTING_ENABLED ? 0 : pointsApplied;
+  const payable = Math.max(payableBeforePoints - effectivePointsApplied, 0);
   const pointsRemaining = Math.max(loyaltyBalance - pointsApplied, 0);
   const paymentLocked = paymentModalOpen && paymentStep === "pending";
 
@@ -934,6 +942,7 @@ export function CheckoutClient({
           </div>
         </section>
 
+        {!INTERNAL_TESTING_ENABLED && (
         <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
           <header className="flex items-center gap-2 text-neutral-900">
             <Ticket className="h-5 w-5" aria-hidden />
@@ -1009,7 +1018,9 @@ export function CheckoutClient({
             </p>
           ) : null}
         </section>
+        )}
 
+        {!INTERNAL_TESTING_ENABLED && (
         <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
           <header className="flex items-center gap-2 text-neutral-900">
             <Wallet className="h-5 w-5" aria-hidden />
@@ -1101,7 +1112,9 @@ export function CheckoutClient({
             </p>
           ) : null}
         </section>
+        )}
 
+        {!INTERNAL_TESTING_ENABLED && (
         <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
           <header className="flex items-center gap-2 text-neutral-900">
             <h2 className="text-lg font-semibold">支付方式</h2>
@@ -1158,6 +1171,7 @@ export function CheckoutClient({
             })}
           </div>
         </section>
+        )}
       </div>
 
       {!isMobile && (
@@ -1202,17 +1216,19 @@ export function CheckoutClient({
                   {formatCurrency(itemsSubtotal, cartCurrency)}
                 </dd>
               </div>
-              <div className="flex items-center justify-between">
-                <dt>优惠减免</dt>
-                <dd className="text-sm font-semibold text-emerald-600">
-                  {formatCurrency(-couponsTotal, cartCurrency)}
-                </dd>
-              </div>
-              {pointsApplied > 0 ? (
+              {!INTERNAL_TESTING_ENABLED && (
+                <div className="flex items-center justify-between">
+                  <dt>优惠减免</dt>
+                  <dd className="text-sm font-semibold text-emerald-600">
+                    {formatCurrency(-effectiveCouponsTotal, cartCurrency)}
+                  </dd>
+                </div>
+              )}
+              {!INTERNAL_TESTING_ENABLED && pointsApplied > 0 ? (
                 <div className="flex items-center justify-between">
                   <dt>积分抵扣</dt>
                   <dd className="text-sm font-semibold text-emerald-600">
-                    {formatCurrency(-pointsApplied, cartCurrency)}
+                    {formatCurrency(-effectivePointsApplied, cartCurrency)}
                   </dd>
                 </div>
               ) : null}
@@ -1249,8 +1265,8 @@ export function CheckoutClient({
         <MobileCheckoutSummary
           cartLines={currentCart?.lines || []}
           itemsSubtotal={itemsSubtotal}
-          couponsTotal={couponsTotal}
-          pointsApplied={pointsApplied}
+          couponsTotal={effectiveCouponsTotal}
+          pointsApplied={effectivePointsApplied}
           shippingFee={shippingFee}
           payable={payable}
           currencyCode={cartCurrency}

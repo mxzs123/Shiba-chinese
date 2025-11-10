@@ -14,6 +14,14 @@ const { SITE_NAME } = process.env;
 export async function Navbar() {
   const menu = await getMenu("next-js-frontend-header-menu");
   const notifications = await getNotifications();
+  // 在内测版或显式开关下隐藏“个人中心”入口（仅 UI 层处理）。
+  const hideAccount =
+    process.env.HIDE_ACCOUNT === "1" ||
+    process.env.NEXT_PUBLIC_HIDE_ACCOUNT === "1" ||
+    process.env.MOCK_MODE === "1" ||
+    process.env.NEXT_PUBLIC_MOCK_MODE === "1" ||
+    process.env.INTERNAL_TESTING === "1" ||
+    process.env.NEXT_PUBLIC_INTERNAL_TESTING === "1";
 
   return (
     <nav className="relative flex items-center justify-between p-4 lg:px-6">
@@ -57,7 +65,8 @@ export async function Navbar() {
             </Suspense>
           </div>
           <NotificationLink notifications={notifications} />
-          <AccountLink />
+          {/* 内测阶段隐藏个人中心入口 */}
+          {hideAccount ? null : <AccountLink />}
           <CartLink />
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useTransition } from "react";
 import { toast } from "sonner";
 
 import { AddToCartButton } from "./AddToCartButton";
@@ -32,6 +32,7 @@ export function ProductCardQuickAdd({
   className,
 }: ProductCardQuickAddProps) {
   const { addCartItem } = useCart();
+  const [, startTransition] = useTransition();
   const primaryVariant = getPrimaryVariant(product);
 
   const isUnavailable =
@@ -53,7 +54,11 @@ export function ProductCardQuickAdd({
     }
 
     try {
-      addCartItem(primaryVariant, product, 1);
+      // Wrap optimistic add in a transition to comply with Next 15
+      // and avoid "Optimistic update outside a transition".
+      startTransition(() => {
+        addCartItem(primaryVariant, product, 1);
+      });
       const result = await addItem(null, primaryVariant.id, 1);
 
       if (typeof result === "string") {

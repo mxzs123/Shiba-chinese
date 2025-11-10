@@ -8,14 +8,15 @@ import { useCart } from "components/cart/cart-context";
 import { CartBadge } from "app/_shared";
 import { cn } from "lib/utils";
 
-const navItems = [
+type NavItem = { href: string; label: string; icon: typeof Home };
+const baseNavItems: NavItem[] = [
   { href: "/", label: "首页", icon: Home },
   { href: "/categories", label: "分类", icon: Grid3x3 },
   { href: "/cart", label: "购物车", icon: ShoppingCart },
-  { href: "/account", label: "我的", icon: User },
 ];
+const accountNavItem: NavItem = { href: "/account", label: "我的", icon: User };
 
-export function MobileBottomNav() {
+export function MobileBottomNav({ hideAccount = false }: { hideAccount?: boolean }) {
   const pathname = usePathname();
   const normalizedPathname =
     pathname?.replace(/^\/(m|d)(?=\/)/, "") ?? pathname ?? "";
@@ -29,7 +30,7 @@ export function MobileBottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white shadow-[0_-2px_8px_rgba(0,0,0,0.08)]">
       <div className="grid h-16 grid-cols-4">
-        {navItems.map((item) => {
+        {(hideAccount ? baseNavItems : [...baseNavItems, accountNavItem]).map((item) => {
           const isActive =
             normalizedPathname === item.href ||
             (item.href !== "/" &&
