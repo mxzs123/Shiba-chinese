@@ -37,7 +37,7 @@ export const POPULAR_CATEGORY_LINKS: HomeCategoryLink[] = [
   },
   {
     label: "其他",
-    href: "/search",
+    href: "/search/misc",
     description: "更多精选好物一站购齐",
   },
 ];
