@@ -21,43 +21,20 @@ export default async function Footer() {
           </Link>
           <div className="space-y-2">
             <p className="text-neutral-900">
-              上海市徐汇区虹桥路 666 号 Future Tower 10F
+              日本東京都港区芝公園2-3-3 寺田ビル1階
             </p>
             <p>
               电话：
               <a
                 className="text-neutral-900 hover:text-black"
-                href="tel:+862155551234"
+                href="tel:+81364529888"
               >
-                +86 21 5555 1234
+                03-6452-9888
               </a>
             </p>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                className="hover:text-neutral-900"
-                href="https://weixin.qq.com"
-                rel="noreferrer"
-                target="_blank"
-              >
-                微信公众号 @ShibaCommerce
-              </Link>
-              <Link
-                className="hover:text-neutral-900"
-                href="https://weibo.com"
-                rel="noreferrer"
-                target="_blank"
-              >
-                新浪微博 @ShibaCommerce
-              </Link>
-              <Link
-                className="hover:text-neutral-900"
-                href="https://www.linkedin.com"
-                rel="noreferrer"
-                target="_blank"
-              >
-                LinkedIn / Shiba Commerce
-              </Link>
-            </div>
+            <p>
+              FAX：<span className="text-neutral-900">03-6452-9839</span>
+            </p>
           </div>
         </div>
         <Suspense
