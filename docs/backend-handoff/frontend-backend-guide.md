@@ -3,8 +3,8 @@
 ## 数据访问层概览
 
 - 所有数据统一经由 `lib/api/index.ts` 导出，函数命名遵循 `get*` / `update*` / `redeem*` 等语义。
-- 默认实现读取 `lib/api/mock-data.ts`，并在内存中维护购物车（`CartStore`）。真实接入时可逐个函数替换为远端 HTTP/GraphQL 请求。
-- `lib/api/types.ts` 定义了全部领域模型：`Product`、`Collection`、`Cart`、`Order`、`User`、`SurveyAssignment` 等；扩展/修改字段务必同步此文件。
+- 默认实现通过 `lib/api/mock-data.ts` 作为聚合入口读取 mock 数据（实际存放在 `mock-account.ts`、`mock-checkout.ts`、`mock-products.ts`、`mock-orders.ts`、`mock-surveys.ts` 等文件），并在内存中维护购物车（`CartStore`）。真实接入时可逐个函数替换为远端 HTTP/GraphQL 请求。
+- `lib/api/types.ts` 定义了全部领域模型：`Product`、`Collection`、`Cart`、`Order`、`User`、`SurveyAssignment` 等；扩展/修改字段务必同步此文件与对应 mock 模块。
 
 ## 函数分组与契约
 

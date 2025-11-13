@@ -3,7 +3,7 @@
 ## 项目简介
 
 - 目标：交付一套基于 Next.js App Router 的电商前端展示与交互层，支持桌面/移动外壳分流。
-- 当前状态：首个阶段（桌面外壳 `/d` 与核心业务流程）已完成，默认接入 `lib/api/mock-data.ts`。
+- 当前状态：首个阶段（桌面外壳 `/d` 与核心业务流程）已完成，默认接入 `lib/api/mock-data.ts` 作为统一 mock 入口（内部已按领域拆分到 `mock-account.ts`、`mock-checkout.ts`、`mock-products.ts`、`mock-orders.ts`、`mock-surveys.ts`）。
 
 ## 技术栈速览
 
@@ -16,7 +16,7 @@
 - `app/`：页面路由，按桌面 `/d`、共享 `_shared`、通用页面组织。
 - `app/_shared/`：领域组件、Server Actions、复用页面模块。
 - `components/`：跨页面复用组件，按业务域划分。
-- `lib/api/`：数据访问层（mock 与替换点），`mock-data.ts`、`types.ts` 保持契约。
+- `lib/api/`：数据访问层（mock 与替换点），`mock-data.ts`（聚合）、`mock-*.ts` 与 `types.ts` 保持契约。
 - `docs/backend-handoff/`：本次准备的交接说明集。
 
 ## 设备分流策略
