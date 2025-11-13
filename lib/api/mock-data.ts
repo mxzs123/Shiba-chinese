@@ -1,4 +1,5 @@
 import { goodsProducts } from "./mock-goods";
+import { now, thisYear } from "./mock-shared";
 import type {
   Address,
   AppliedCoupon,
@@ -68,9 +69,6 @@ function getPlaceholderFor(source: string) {
   placeholderMap.set(source, assigned);
   return assigned;
 }
-
-const now = new Date();
-const thisYear = now.getFullYear();
 
 const featuredImage = (url: string, altText: string) => ({
   url: getPlaceholderFor(url),
@@ -1306,191 +1304,7 @@ export const collections: CollectionRecord[] = [
   },
 ];
 
-export const pages: Page[] = [
-  {
-    id: "page-about",
-    title: "品牌故事",
-    handle: "about",
-    body: "# 关于芝园药局\n\n我们与多家日本制造工厂合作，将轻配方饮品与健康补给带到中国市场。",
-    bodySummary: "关于品牌的介绍页。",
-    seo: {
-      title: "关于芝园药局",
-      description: "了解我们的理念与产品溯源",
-    },
-    createdAt: `${thisYear}-01-01T00:00:00.000Z`,
-    updatedAt: `${thisYear}-03-12T10:00:00.000Z`,
-  },
-  {
-    id: "page-faq",
-    title: "常见问题",
-    handle: "faq",
-    body: `# 常见问题\n\n涵盖下单支付、配送签收、售后退换以及会员积分等高频问题。页面将根据客服反馈定期更新。`,
-    bodySummary: "了解下单、配送、售后与会员权益的常见问题。",
-    seo: {
-      title: "常见问题",
-      description: "了解芝园药局的下单流程、配送时效、退货规则与客服支持渠道",
-    },
-    createdAt: `${thisYear}-01-15T00:00:00.000Z`,
-    updatedAt: `${thisYear}-02-12T08:00:00.000Z`,
-  },
-];
-
-export const menus: Record<string, Menu[]> = {
-  "next-js-frontend-header-menu": [
-    { title: "商品一览", path: "/search" },
-    { title: "关于药局", path: "/about" },
-    { title: "最新资讯", path: "/news" },
-    { title: "远程问诊", path: "/news/telemedicine-rx-full-workflow" },
-    { title: "赴日就诊", path: "/news/japan-medical-support" },
-    { title: "常见疑问", path: "/faq" },
-  ],
-  "next-js-frontend-footer-menu": [
-    { title: "配送与退换", path: "/faq" },
-    { title: "联系我们", path: "mailto:hello@example.com" },
-    { title: "隐私政策", path: "/faq" },
-  ],
-};
-
-const newsArticles: NewsArticle[] = [
-  {
-    id: "news-rx-telemedicine",
-    slug: "telemedicine-rx-full-workflow",
-    title: "处方复诊全流程上线线上问诊，48 小时内完成审方发药",
-    summary:
-      "芝园联合权威三甲医院医生团队，支持 ADHD、慢病复诊线上问诊，药师复核后优先发货。",
-    href: "/news/telemedicine-rx-full-workflow",
-    tags: ["医疗服务", "处方药"],
-    highlight: true,
-    publishedAt: `${thisYear}-05-28T08:30:00.000Z`,
-    updatedAt: `${thisYear}-05-28T12:00:00.000Z`,
-    seo: {
-      title: "处方复诊支持线上问诊 | 芝园资讯",
-      description: "48 小时内完成审方发药，适配慢病复诊与 ADHD 客户。",
-    },
-    bodyHtml: `
-      <p>芝园药局与上海嘉宁医院达成战略合作，围绕 ADHD 与慢性病复诊场景搭建线上问诊流程。</p>
-      <p>用户可在芝园 App 中提交既往处方与病历，24 小时内由三甲主治医师进行问诊评估，审方完成后由执业药师复核并发货。</p>
-      <ul>
-        <li>支持复诊药品覆盖注意力缺陷、焦虑、部分心血管疾病。</li>
-        <li>全过程支持电子病历与电子处方存档，方便线下复核。</li>
-        <li>48 小时内完成审方发药，核心城区可选择当日速配。</li>
-      </ul>
-      <p>若涉及需进一步线下面诊的情况，医生会提供转诊建议。芝园将持续优化线上问诊体验。</p>
-    `,
-  },
-  {
-    id: "news-japan-medical-support",
-    slug: "japan-medical-support",
-    title: "赴日就诊服务上线：专科预约、签证资料与陪诊全程协同",
-    summary:
-      "新增赴日就诊顾问团队，协助完成医院对接、就诊翻译与术后远程随访，保障跨境治疗顺畅进行。",
-    href: "/news/japan-medical-support",
-    tags: ["医疗服务", "赴日就诊"],
-    publishedAt: `${thisYear}-05-27T11:00:00.000Z`,
-    updatedAt: `${thisYear}-05-27T11:00:00.000Z`,
-    seo: {
-      title: "赴日就诊一站式服务上线 | 芝园资讯",
-      description:
-        "提供赴日就诊专科预约、签证材料准备、落地陪诊与术后随访服务，助力患者安心就医。",
-    },
-    bodyHtml: `
-      <p>芝园赴日就诊顾问团队正式上线，为有跨境治疗需求的客户提供覆盖出行、就诊与回国恢复的一站式协助。</p>
-      <p>服务内容包括预约日本权威专科医院、整理签证与病历材料、安排医疗口译随行以及术后远程复诊跟进。</p>
-      <ul>
-        <li>根据诊疗诉求匹配合适的日本医疗机构与专家门诊。</li>
-        <li>全程提供日中双语支持，确保病情沟通与知情同意清晰无误。</li>
-        <li>回国后由芝园药师团队持续跟进用药与康复需求。</li>
-      </ul>
-      <p>如需了解更多赴日就诊方案，可通过芝园客服留下联系方式，顾问会在 1 个工作日内回应。</p>
-    `,
-  },
-  {
-    id: "news-health-supplement",
-    slug: "member-day-supplement-offer",
-    title: "会员日限定：精选保健食品第 2 件享 8 折",
-    summary:
-      "高人气的维生素与肝脏呵护组合参与活动，加入购物车自动应用优惠，库存有限速抢。",
-    href: "/news/member-day-supplement-offer",
-    tags: ["促销", "会员"],
-    publishedAt: `${thisYear}-05-26T10:00:00.000Z`,
-    updatedAt: `${thisYear}-05-27T09:20:00.000Z`,
-    seo: {
-      title: "会员日保健食品 8 折活动 | 芝园资讯",
-      description: "热门维生素、肝脏呵护组合参与活动，会员第 2 件享 8 折。",
-    },
-    bodyHtml: `
-      <p>5 月会员日即将开启，芝园准备了丰富的健康补给组合，覆盖免疫调理、肝脏呵护、女性健康等主题。</p>
-      <p>活动期间，会员登录后自动享受“第 2 件 8 折”优惠，无需额外输入优惠码，可与积分抵扣叠加。</p>
-      <p>热门组合包括：</p>
-      <ol>
-        <li>全天然维生素 C + 锌含片，日常免疫守护。</li>
-        <li>护肝营养包：水飞蓟素胶囊搭配高纯度卵磷脂。</li>
-        <li>女性专属：复合维生素 B 群与铁元素补给组合。</li>
-      </ol>
-      <p>活动库存有限，售完即止。如有特殊用药需求，请提前咨询营养师或执业药师。</p>
-    `,
-  },
-  {
-    id: "news-pharmacy-safety",
-    slug: "insulin-storage-summer-tips",
-    title: "用药提醒：近期高温天气，请按药箱指引存放胰岛素类药物",
-    summary:
-      "药师建议保持 2-8℃ 冷藏，外出配送全程冷链，签收后请尽快放入冷藏包以免失效。",
-    href: "/news/insulin-storage-summer-tips",
-    tags: ["用药安全"],
-    publishedAt: `${thisYear}-05-24T09:15:00.000Z`,
-    seo: {
-      title: "高温季胰岛素存放指南 | 芝园资讯",
-      description: "药师提醒：签收后尽快冷藏，外出请使用保温包确保药效。",
-    },
-    bodyHtml: `
-      <p>随着气温持续攀升，芝园药师团队提醒糖尿病客户务必关注胰岛素的存储条件。</p>
-      <p>冷链配送：芝园采用全程冷链，签收时请检查外包装是否完好，若有异样请立即联系客户服务。</p>
-      <p>家庭存放建议：</p>
-      <ul>
-        <li>未开封胰岛素：保持 2-8℃ 冷藏，可使用家用冰箱冷藏层。</li>
-        <li>使用中的胰岛素：可在 25℃ 以下存放 28 天，避免阳光直射。</li>
-        <li>外出携带：请使用附赠的冷藏包或冰袋，确保低温环境。</li>
-      </ul>
-      <p>如遇到胰岛素出现变色、沉淀等异常情况，请立即停止使用并联系在线药师。</p>
-    `,
-  },
-];
-
-export const news = newsArticles;
-
-export const notifications: Notification[] = [
-  {
-    id: "notice-system-001",
-    category: "system",
-    title: "积分体系升级完毕",
-    description: "新的积分换购商品已经上线，快去看看有哪些惊喜。",
-    createdAt: `${thisYear}-05-20T09:00:00.000Z`,
-  },
-  {
-    id: "notice-order-001",
-    category: "order",
-    title: "订单 #ZY240518 已发货",
-    description: "顺丰速运已经揽收，预计 1-2 个工作日送达。",
-    createdAt: `${thisYear}-05-18T12:30:00.000Z`,
-  },
-  {
-    id: "notice-system-002",
-    category: "system",
-    title: "补贴券到账提醒",
-    description: "本月会员补贴券已发放 2 张，可在下单时叠加使用。",
-    createdAt: `${thisYear}-05-15T08:00:00.000Z`,
-    readAt: `${thisYear}-05-15T09:05:00.000Z`,
-  },
-  {
-    id: "notice-order-002",
-    category: "order",
-    title: "订单 #ZY240510 已完成",
-    description: "感谢你的耐心等待，欢迎对本次购物体验进行评价。",
-    createdAt: `${thisYear}-05-12T19:45:00.000Z`,
-    readAt: `${thisYear}-05-13T08:12:00.000Z`,
-  },
-];
+export { pages, menus, news, notifications } from "./mock-content";
 
 export const checkoutUrl = CHECKOUT_FALLBACK;
 export const defaultCurrency = CURRENCY;
