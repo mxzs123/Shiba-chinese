@@ -6,7 +6,7 @@ import type { Product } from "lib/api/types";
 import { isDiscountedPrice } from "lib/pricing";
 import { cn } from "lib/utils";
 
-import { Price } from "./Price";
+import { ProductCardPrice } from "./ProductCardPrice";
 
 export type ProductCardProps = {
   product: Product;
@@ -75,11 +75,11 @@ export function ProductCard({
         </div>
         <div
           className={cn(
-            "flex flex-1 flex-col pb-0",
-            compact ? "gap-2 p-3" : "gap-2.5 p-4",
+            "flex flex-col pb-0",
+            compact ? "gap-1.5 px-3 pt-3" : "gap-2 px-4 pt-4",
           )}
         >
-          <div className={cn("flex-1", compact ? "space-y-1" : "space-y-1.5")}>
+          <div className={cn(compact ? "space-y-1" : "space-y-1.5")}>
             <h3
               className={cn(
                 "font-medium text-neutral-900 line-clamp-2",
@@ -107,28 +107,10 @@ export function ProductCard({
           compact ? "gap-2 p-3" : "gap-2.5 p-4",
         )}
       >
-        <Price
+        <ProductCardPrice
           value={currentPrice}
           originalValue={originalPrice}
-          className={cn(
-            "text-base font-semibold",
-            hasDiscount ? "text-emerald-600" : "text-neutral-900",
-          )}
-          currencyClassName={cn(
-            "text-[10px] font-medium uppercase",
-            hasDiscount ? "text-emerald-600/80" : "text-neutral-400",
-          )}
-          showConvertedPrice
-          badge=""
-          convertedPrefix=""
-          convertedClassName="text-[11px] font-medium text-neutral-500"
-          convertedCurrencyClassName="text-[9px] font-medium uppercase text-neutral-400"
-          originalClassName="text-xs font-medium text-neutral-400 line-through"
-          originalCurrencyClassName="text-[10px] font-medium uppercase text-neutral-400/80"
-          originalConvertedPrefix=""
-          originalConvertedClassName="text-[11px] font-medium text-neutral-400"
-          originalConvertedCurrencyClassName="text-[9px] font-medium uppercase text-neutral-400/60"
-          badgeClassName=""
+          compact={compact}
         />
         {actionSlot ? actionSlot : null}
       </div>
