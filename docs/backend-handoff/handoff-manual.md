@@ -28,7 +28,8 @@
 - **动画**：使用 Framer Motion，动画配置集中在组件或 `hooks/`；避免直接在页面散落自定义动画逻辑。
 - **主题与样式**：Tailwind v4 原子类按「布局 → 间距 → 视觉」排序；新增组件遵循 2 空格缩进、命名规范。
 - **数据更新**：
-  - 修改 `lib/api/mock-data.ts` 时同步 `types.ts`，并在 `docs/backend-handoff/` 记录字段变化。
+  - mock 数据已按领域拆分到 `lib/api/mock-account.ts`、`mock-checkout.ts`、`mock-products.ts`、`mock-orders.ts`、`mock-surveys.ts`，统一入口仍为 `lib/api/mock-data.ts`。
+  - 扩展字段时优先更新对应 `mock-*.ts` 与 `types.ts`，并在 `docs/backend-handoff/` 记录字段变化。
   - 若与真实服务联调，保留 mock 作为离线 fallback。
 
 ## Design Tokens / 样式变量

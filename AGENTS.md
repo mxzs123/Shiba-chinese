@@ -6,7 +6,7 @@
 
 - 技术栈：Next.js 15（App Router）+ TypeScript + Tailwind v4 + Zustand + shadcn/ui。
 - 架构：单 URL，middleware 按设备分流至 `app/d`（桌面）与 `app/m`（移动），核心业务封装在 `app/_shared` 供双外壳复用。
-- 数据：统一走 `lib/api`，默认使用 mock 数据；扩展接口时同步维护 `types.ts`、`mock-data.ts` 与相关 finder。
+- 数据：统一走 `lib/api`，默认使用 mock 数据；扩展接口时同步维护 `types.ts`、`lib/api/mock-*.ts`（通过 `mock-data.ts` 聚合）与相关 finder。
 
 ## 当前交付状态
 
@@ -21,7 +21,7 @@
 1. **业务只写在 `_shared`**：`app/d`、`app/m` 页面仅做壳层与布局，传参调用共享组件/页面模块。
 2. **链接规范**：`next/link` 与渐进增强跳转一律使用用户感知路径（无 `/d`、`/m` 前缀）。
 3. **数据与 Server Action**：
-   - 所有接口经 `lib/api`；若增字段，记得更新类型、mock 数据与 finder。
+   - 所有接口经 `lib/api`；若增字段，记得更新类型、对应领域的 mock 数据（`lib/api/mock-*.ts`）与 finder。
    - Server Action 必须返回 `{ success, data, error }` 结构，放在 `_shared/*/actions.ts`。
 4. **样式 & 交互**：
    - Tailwind 原子按“布局 → 间距 → 视觉”顺序；复杂交互前可加简短注释。

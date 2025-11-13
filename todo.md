@@ -1,5 +1,7 @@
 # 移动端开发任务追踪
 
+> 状态说明：移动端 V1 已上线，本文件主要作为当时任务拆解与验收记录的历史文档，当前迭代不再在此维护新的 TODO，请以 Issue / 项目管理工具为准。
+
 ## 🔄 最近改动
 
 - 2025-10-02：完成移动端共享组件适配（PrimaryButton 触屏高度、ProductCard compact、SkuSelector sheet），新增 design tokens 记录。
