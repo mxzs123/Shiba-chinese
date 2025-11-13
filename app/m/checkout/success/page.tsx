@@ -124,12 +124,8 @@ export default async function CheckoutSuccessPage() {
     identityStatus !== "verified",
   );
 
-  const title = INTERNAL_TESTING_ENABLED
-    ? "信息提交成功，我们会尽快联系您"
-    : "支付成功，订单已确认";
-  const description = INTERNAL_TESTING_ENABLED
-    ? "我们已记录此次订购需求，团队将通过您填写的手机或微信与您确认药品细节与支付方式，请保持联系方式畅通。"
-    : "我们已收到您的支付请求，仓库正在安排备货。发货后会通过短信与邮箱通知物流单号。";
+  const title = "支付成功，订单已确认";
+  const description = "我们已收到您的支付请求，仓库正在安排备货。发货后会通过短信与邮箱通知物流单号。";
   const tips = INTERNAL_TESTING_ENABLED
     ? []
     : [
