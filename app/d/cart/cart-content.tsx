@@ -131,10 +131,11 @@ function CartItemQuantityControl({
       if (nextQuantity === quantity) {
         return;
       }
-
-      optimisticUpdate(lineId, merchandiseId, "set", nextQuantity);
-
+      // Next 15 requires useOptimistic updates to run inside a transition or server action.
+      // Wrap the optimistic cart update in startTransition to avoid
+      // "Optimistic update outside a transition" warnings.
       startTransition(() => {
+        optimisticUpdate(lineId, merchandiseId, "set", nextQuantity);
         updateItemQuantity(null, {
           lineId,
           merchandiseId,

@@ -219,7 +219,7 @@ export function DistributorOrdersClient({
           </div>
         ),
       },
-      { header: "提交时间", accessor: "submittedAt" },
+      { header: "提交时间", cell: (row: DistributorOrder) => row.submittedAt },
       {
         header: "订单金额",
         align: "right",
@@ -481,7 +481,7 @@ export function DistributorOrdersClient({
         data={pageItems}
         rowKey={(row) => row.id}
         emptyMessage="暂无符合条件的订单"
-        columns={columns}
+        columns={columns as any}
       />
 
       <div className="flex items-center justify-between">

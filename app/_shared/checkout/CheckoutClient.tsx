@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { ButtonHTMLAttributes, FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -16,6 +17,7 @@ import {
   removeCouponAction,
   setDefaultAddressAction,
   redeemCouponCodeAction,
+  confirmPaymentAndNotifyAction,
 } from "./actions";
 import { filterCartBySelectedMerchandise } from "@/components/cart/cart-selection";
 import { cn } from "lib/utils";
@@ -242,14 +244,24 @@ export function CheckoutClient({
   const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [paymentStep, setPaymentStep] = useState<
-    "idle" | "pending" | "success"
+    "idle" | "qr" | "help" | "success"
   >("idle");
+  const [notifySubmitting, setNotifySubmitting] = useState(false);
+  const [notifyError, setNotifyError] = useState<string | null>(null);
   const [pointsInput, setPointsInput] = useState("");
   const [pointsApplied, setPointsApplied] = useState(0);
   const [pointsError, setPointsError] = useState<string | null>(null);
   const [pointsSuccess, setPointsSuccess] = useState<string | null>(null);
   const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const checkoutRouteBase = variant === "mobile" ? "/m/checkout" : "/checkout";
+
+  // 内测版：通过环境变量开关隐藏优惠券、积分与支付方式，仅改动 UI 与金额展示口径。
+  // 同时兼容 MOCK_MODE=1 作为兜底开关。
+  const INTERNAL_TESTING_ENABLED =
+    process.env.NEXT_PUBLIC_INTERNAL_TESTING === "1" ||
+    process.env.INTERNAL_TESTING === "1" ||
+    process.env.NEXT_PUBLIC_MOCK_MODE === "1" ||
+    process.env.MOCK_MODE === "1";
 
   useEffect(() => {
     if (!addresses.length) {
@@ -332,11 +344,10 @@ export function CheckoutClient({
     : 0;
   const couponsTotal = Number.isFinite(couponsTotalRaw) ? couponsTotalRaw : 0;
   const shippingFee = Number.isFinite(shippingFeeRaw) ? shippingFeeRaw : 0;
-
-  const rawPayable = itemsSubtotal - couponsTotal + shippingFee;
-  const payableBeforePoints = Number.isFinite(rawPayable)
-    ? Math.max(rawPayable, 0)
-    : 0;
+  // 内测模式下忽略优惠券折扣；仅用于演示闭环，避免刷新/身份导致金额不一致。
+  const effectiveCouponsTotal = INTERNAL_TESTING_ENABLED ? 0 : couponsTotal;
+  const rawPayable = itemsSubtotal - effectiveCouponsTotal + shippingFee;
+  const payableBeforePoints = Number.isFinite(rawPayable) ? Math.max(rawPayable, 0) : 0;
 
   const loyaltyAccount: PointAccount | undefined = customer?.loyalty;
   const loyaltyBalance = loyaltyAccount?.balance ?? 0;
@@ -344,9 +355,10 @@ export function CheckoutClient({
     loyaltyBalance,
     Math.floor(payableBeforePoints),
   );
-  const payable = Math.max(payableBeforePoints - pointsApplied, 0);
+  const effectivePointsApplied = INTERNAL_TESTING_ENABLED ? 0 : pointsApplied;
+  const payable = Math.max(payableBeforePoints - effectivePointsApplied, 0);
   const pointsRemaining = Math.max(loyaltyBalance - pointsApplied, 0);
-  const paymentLocked = paymentModalOpen && paymentStep === "pending";
+  const paymentLocked = paymentModalOpen && paymentStep === "qr";
 
   useEffect(() => {
     if (maxPointRedeemable <= 0) {
@@ -638,7 +650,7 @@ export function CheckoutClient({
 
     clearRedirectTimer();
     setPaymentModalOpen(true);
-    setPaymentStep("pending");
+    setPaymentStep("qr");
   };
 
   const handleClosePayment = () => {
@@ -658,19 +670,46 @@ export function CheckoutClient({
     );
   };
 
-  const handleMockPaymentComplete = () => {
-    setPaymentStep("success");
-    clearRedirectTimer();
-    redirectTimerRef.current = setTimeout(() => {
-      handleNavigateToSuccess();
-    }, 800);
-  };
+  const handleConfirmPaid = async () => {
+    if (!selectedAddress || !selectedShipping || !selectedPayment) return;
+    try {
+      setNotifyError(null);
+      setNotifySubmitting(true);
+      let key: string | null = null;
+      try {
+        key = window.localStorage.getItem("qr_pay_idemp");
+        if (!key) {
+          key = crypto.randomUUID();
+          window.localStorage.setItem("qr_pay_idemp", key);
+        }
+      } catch (e) {
+        // ignore storage errors
+      }
 
-  const handlePaymentFailed = () => {
-    clearRedirectTimer();
-    setPaymentModalOpen(false);
-    setPaymentStep("idle");
-    router.push(`${checkoutRouteBase}/failed`);
+      const result = await confirmPaymentAndNotifyAction({
+        customer,
+        address: selectedAddress,
+        shipping: selectedShipping,
+        payment: selectedPayment,
+        payable: { amount: payable, currencyCode: cartCurrency },
+        pointsApplied,
+        idempotencyKey: key || undefined,
+        device: variant,
+      });
+
+      if (!result.success) {
+        setNotifyError(result.error);
+        return;
+      }
+
+      setPaymentStep("success");
+      clearRedirectTimer();
+      redirectTimerRef.current = setTimeout(() => {
+        handleNavigateToSuccess();
+      }, 800);
+    } finally {
+      setNotifySubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -934,6 +973,7 @@ export function CheckoutClient({
           </div>
         </section>
 
+        {!INTERNAL_TESTING_ENABLED && (
         <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
           <header className="flex items-center gap-2 text-neutral-900">
             <Ticket className="h-5 w-5" aria-hidden />
@@ -1009,7 +1049,9 @@ export function CheckoutClient({
             </p>
           ) : null}
         </section>
+        )}
 
+        {!INTERNAL_TESTING_ENABLED && (
         <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
           <header className="flex items-center gap-2 text-neutral-900">
             <Wallet className="h-5 w-5" aria-hidden />
@@ -1101,7 +1143,9 @@ export function CheckoutClient({
             </p>
           ) : null}
         </section>
+        )}
 
+        {!INTERNAL_TESTING_ENABLED && (
         <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
           <header className="flex items-center gap-2 text-neutral-900">
             <h2 className="text-lg font-semibold">支付方式</h2>
@@ -1158,6 +1202,7 @@ export function CheckoutClient({
             })}
           </div>
         </section>
+        )}
       </div>
 
       {!isMobile && (
@@ -1202,17 +1247,19 @@ export function CheckoutClient({
                   {formatCurrency(itemsSubtotal, cartCurrency)}
                 </dd>
               </div>
-              <div className="flex items-center justify-between">
-                <dt>优惠减免</dt>
-                <dd className="text-sm font-semibold text-emerald-600">
-                  {formatCurrency(-couponsTotal, cartCurrency)}
-                </dd>
-              </div>
-              {pointsApplied > 0 ? (
+              {!INTERNAL_TESTING_ENABLED && (
+                <div className="flex items-center justify-between">
+                  <dt>优惠减免</dt>
+                  <dd className="text-sm font-semibold text-emerald-600">
+                    {formatCurrency(-effectiveCouponsTotal, cartCurrency)}
+                  </dd>
+                </div>
+              )}
+              {!INTERNAL_TESTING_ENABLED && pointsApplied > 0 ? (
                 <div className="flex items-center justify-between">
                   <dt>积分抵扣</dt>
                   <dd className="text-sm font-semibold text-emerald-600">
-                    {formatCurrency(-pointsApplied, cartCurrency)}
+                    {formatCurrency(-effectivePointsApplied, cartCurrency)}
                   </dd>
                 </div>
               ) : null}
@@ -1249,8 +1296,8 @@ export function CheckoutClient({
         <MobileCheckoutSummary
           cartLines={currentCart?.lines || []}
           itemsSubtotal={itemsSubtotal}
-          couponsTotal={couponsTotal}
-          pointsApplied={pointsApplied}
+          couponsTotal={effectiveCouponsTotal}
+          pointsApplied={effectivePointsApplied}
           shippingFee={shippingFee}
           payable={payable}
           currencyCode={cartCurrency}
@@ -1264,9 +1311,7 @@ export function CheckoutClient({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-neutral-900">
-                自研扫码支付
-              </h3>
+              <h3 className="text-lg font-semibold text-neutral-900">自研扫码支付</h3>
               <button
                 type="button"
                 className="text-sm font-medium text-neutral-500 transition hover:text-neutral-900"
@@ -1275,39 +1320,71 @@ export function CheckoutClient({
                 关闭
               </button>
             </div>
-            <p className="mt-2 text-sm text-neutral-500">
-              二维码为占位图，待接入后端接口后替换为真实支付码。
-            </p>
+            <p className="mt-2 text-sm text-neutral-500">请使用微信 / 支付宝扫码完成支付。</p>
             <div className="mt-6 flex flex-col items-center gap-4">
-              <div className="flex h-56 w-56 items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 text-sm text-neutral-400">
-                {/* TODO: Replace with backend QR code + payment status polling */}
-                QR Code Placeholder
+              <div className="w-full">
+                <div className="mx-auto w-full max-w-xs overflow-hidden rounded-2xl border border-dashed border-neutral-300 bg-white">
+                  <Image
+                    src="/about/pay.png"
+                    alt="扫码支付二维码"
+                    width={768}
+                    height={768}
+                    className="h-auto w-full object-contain"
+                    priority
+                  />
+                </div>
               </div>
-              {paymentStep === "pending" ? (
+              {paymentStep === "qr" ? (
                 <div className="flex w-full flex-col items-center gap-3">
-                  <p className="text-xs text-neutral-500">
-                    请使用微信 / 支付宝扫码，完成后点击下方按钮模拟支付完成。
-                  </p>
+                  <p className="text-sm font-medium text-neutral-800">是否已完成支付？</p>
                   <PrimaryButton
                     type="button"
-                    onClick={handleMockPaymentComplete}
+                    onClick={handleConfirmPaid}
                     className="w-full justify-center"
+                    disabled={notifySubmitting}
+                    loading={notifySubmitting}
+                    loadingText="提交中..."
                   >
-                    模拟支付完成
+                    我已完成支付
                   </PrimaryButton>
                   <button
                     type="button"
                     className="inline-flex items-center gap-2 text-xs font-medium text-neutral-400 transition hover:text-neutral-600"
-                    onClick={handlePaymentFailed}
+                    onClick={() => setPaymentStep("help")}
                   >
                     <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
-                    支付遇到问题？
+                    尚未完成/遇到问题
                   </button>
+                  {notifyError ? (
+                    <p className="w-full rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">{notifyError}</p>
+                  ) : null}
+                </div>
+              ) : null}
+              {paymentStep === "help" ? (
+                <div className="w-full space-y-3 rounded-xl bg-neutral-50 px-4 py-4 text-sm text-neutral-700">
+                  <p>
+                    支付过程中遇到问题？或已支付但误点“否”？请主动联系我们的客服，我们会协助退款或完成订单处理。
+                  </p>
+                  <div className="flex gap-3">
+                    <Link
+                      href="/about"
+                      className="inline-flex w-full items-center justify-center rounded-lg bg-neutral-900 px-3 py-2 text-sm font-semibold text-white hover:brightness-105"
+                    >
+                      联系客服
+                    </Link>
+                    <button
+                      type="button"
+                      className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-600 hover:border-neutral-900 hover:text-neutral-900"
+                      onClick={() => setPaymentStep("qr")}
+                    >
+                      返回扫码
+                    </button>
+                  </div>
                 </div>
               ) : null}
               {paymentStep === "success" ? (
                 <div className="flex w-full flex-col items-center gap-3 rounded-xl bg-emerald-50 px-4 py-4 text-sm text-emerald-600">
-                  <p>支付成功（模拟），即将跳转到结果页。</p>
+                  <p>订单已提交成功，我们会尽快联系并安排发货。</p>
                   <button
                     type="button"
                     className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 transition hover:text-emerald-600"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { AddToCartButton } from "app/_shared";
@@ -31,6 +31,7 @@ export function AddToCartForm({
   className,
 }: AddToCartFormProps) {
   const { addCartItem } = useCart();
+  const [, startTransition] = useTransition();
   const primaryVariant = getPrimaryVariant(product);
   const [quantity, setQuantity] = useState(1);
 
@@ -47,7 +48,11 @@ export function AddToCartForm({
     }
 
     try {
-      addCartItem(primaryVariant, product, quantity);
+      // Next 15 要求 useOptimistic 的更新在 transition 或 action 内执行；
+      // 这里使用 startTransition 包裹乐观加入购物车，避免告警。
+      startTransition(() => {
+        addCartItem(primaryVariant, product, quantity);
+      });
       const result = await addItem(null, primaryVariant.id, quantity);
 
       if (typeof result === "string") {

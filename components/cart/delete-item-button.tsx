@@ -3,7 +3,7 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { removeItem } from "components/cart/actions";
 import type { CartItem } from "lib/api/types";
-import { useActionState } from "react";
+import { useActionState, useTransition } from "react";
 
 export function DeleteItemButton({
   item,
@@ -13,6 +13,7 @@ export function DeleteItemButton({
   optimisticUpdate: any;
 }) {
   const [message, formAction] = useActionState(removeItem, null);
+  const [, startTransition] = useTransition();
   const merchandiseId = item.merchandise.id;
   const lineId = item.id || merchandiseId;
   const removeItemAction = formAction.bind(null, lineId);
@@ -20,8 +21,11 @@ export function DeleteItemButton({
   return (
     <form
       action={async () => {
-        optimisticUpdate(lineId, merchandiseId, "delete");
-        removeItemAction();
+        // Ensure optimistic removal runs inside a transition to satisfy Next 15.
+        startTransition(() => {
+          optimisticUpdate(lineId, merchandiseId, "delete");
+          removeItemAction();
+        });
       }}
     >
       <button

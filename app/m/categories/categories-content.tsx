@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import type { MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -46,6 +46,7 @@ export function MobileCategoriesContent({
 }: MobileCategoriesContentProps) {
   const router = useRouter();
   const { addCartItem } = useCart();
+  const [, startTransition] = useTransition();
   const resolvedInitialCategory =
     (initialCategory &&
       flatCategories.find((category) => category.slug === initialCategory)
@@ -147,7 +148,10 @@ export function MobileCategoriesContent({
       }
 
       try {
-        addCartItem(primaryVariant, product, 1);
+        // 将乐观更新置于 transition 内，符合 Next 15 的 useOptimistic 约束。
+        startTransition(() => {
+          addCartItem(primaryVariant, product, 1);
+        });
         const result = await addItem(null, primaryVariant.id, 1);
 
         if (typeof result === "string") {
@@ -270,7 +274,11 @@ export function MobileCategoriesContent({
                     href={`/product/${product.handle}`}
                     className="group flex flex-col overflow-hidden rounded-lg border bg-white shadow-sm transition hover:shadow-md"
                   >
-                    <div className="relative aspect-square w-full overflow-hidden">
+            {/*
+             * 移动端商品卡片缩略图：统一正方形容器，使用 object-contain，
+             * 保证不同长宽比图片完整可见，背景与内边距与桌面一致。
+             */}
+            <div className="relative aspect-square w-full overflow-hidden bg-neutral-50 p-2">
                       {hasDiscount && (
                         <span className="absolute left-2 top-2 z-10 inline-flex items-center rounded-full bg-emerald-500/95 px-2 py-0.5 text-[10px] font-semibold text-white">
                           芝园价
@@ -282,7 +290,7 @@ export function MobileCategoriesContent({
                           alt={product.featuredImage.altText}
                           fill
                           sizes="(max-width: 768px) 50vw, 280px"
-                          className="object-cover"
+                          className="object-contain object-center"
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center bg-neutral-100 text-neutral-500">

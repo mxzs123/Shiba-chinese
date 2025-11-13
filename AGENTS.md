@@ -76,3 +76,14 @@ pnpm prettier:check   # CI 用格式检查
 - `apps/distributor/README.md`：分销平台应用说明。
 - `middleware.ts`：设备分流核心逻辑，改动需谨慎并补测试。
 - `_shared/` 各领域目录：务必熟悉，避免在外壳重复实现业务。
+
+## 内测版说明（internal-testing 分支）
+
+- 分支：internal-testing（从 main 派生，主干保持不变）。
+- 开关：.env.local 增加 INTERNAL_TESTING=1 与 NEXT_PUBLIC_INTERNAL_TESTING=1；如需显式隐藏账号入口可加 NEXT_PUBLIC_HIDE_ACCOUNT=1（INTERNAL_TESTING 已包含）。
+- UI 变更（仅内测版生效）：
+  - 隐藏“个人中心”入口（桌面 Navbar、移动 BottomNav）。
+  - 结算页隐藏“优惠券 / 积分抵扣 / 支付方式”区块；应付总计仅=商品金额+运费（忽略优惠与积分）。
+- 稳定性修复：对加入购物车/数量修改/删除等 useOptimistic 更新统一包裹 startTransition，消除 Next 15 告警。
+- 启动：git checkout internal-testing → 配置 .env.local（见上）→ pnpm dev；若 UI 未变化，请重启 dev 并清理 cartId/cartState cookies。
+- 验收路径：/search 加购 → /cart → /checkout（应无优惠/积分/支付模块，金额口径一致）。

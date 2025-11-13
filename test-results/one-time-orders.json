@@ -1,0 +1,52 @@
+[
+  {
+    "id": "rec_1763040318869_9zk5yu",
+    "type": "one_time_order",
+    "createdAt": "2025-11-13T13:25:18.869Z",
+    "payload": {
+      "orderId": "ORD-1763040318869",
+      "submittedAt": "2025-11-13T13:25:18.869Z",
+      "contact": {
+        "name": "MAOXUANYU",
+        "phone": "1",
+        "wechat": null
+      },
+      "address": {
+        "country": "中国",
+        "province": "東京都",
+        "city": "1",
+        "district": "1",
+        "address1": "港区芝公園",
+        "postalCode": "105"
+      },
+      "note": "",
+      "items": [
+        {
+          "title": "CyTIX 日本诊所院线用 高浓度高纯NAD+ 逆龄抗衰点滴 (100mg)",
+          "skuTitle": "100mg/瓶",
+          "quantity": 1,
+          "amount": "70000.00",
+          "currency": "JPY"
+        }
+      ],
+      "totals": {
+        "subtotalAmount": {
+          "amount": "70000.00",
+          "currencyCode": "JPY"
+        },
+        "totalAmount": {
+          "amount": "70000.00",
+          "currencyCode": "JPY"
+        },
+        "totalTaxAmount": {
+          "amount": "0.00",
+          "currencyCode": "JPY"
+        },
+        "discountAmount": {
+          "amount": "0.00",
+          "currencyCode": "JPY"
+        }
+      }
+    }
+  }
+]
