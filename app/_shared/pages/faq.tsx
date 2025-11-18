@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { cn } from "lib/utils";
+import { ChevronDown, Search } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "常见问题 | 芝园药局",
@@ -39,51 +40,47 @@ const faqSections: FaqSection[] = [
     items: [
       {
         id: "orders-payment-methods",
-        question: "支持哪些支付方式？",
+        question: "支持哪些支付方式？具体的支付流程是怎样的？",
         answer: (
-          <>
+          <div className="space-y-4">
+            <p>目前支持以下主流支付方式：</p>
+            <ul className="list-disc space-y-1 pl-5 text-neutral-600">
+              <li>WeChat Pay (微信支付)</li>
+              <li>Alipay+ (支付宝)</li>
+              <li>银联 QR (UnionPay QR)</li>
+              <li>JKOPay / PayPay / メルペイ (Merpay)</li>
+              <li>d払い / auPAY / 楽天Pay / AEON Pay</li>
+              <li>Bank Pay / 銀行PAY (ゆうちょPay) / J-Coin Pay</li>
+            </ul>
             <p>
-              我们支持微信支付、支付宝、银联在线以及带有 3D-Secure 的 Visa /
-              Mastercard。
-              选择海外信用卡时系统会自动进行风控校验，若失败可尝试绑定至支付宝后再支付。
+              支付成功后，订单会自动生成。您可以在“会员中心 -
+              我的订单”中查看订单详情与实时状态。
             </p>
-            <p>
-              即时到账后会生成订单编号，您可在“会员中心 -
-              我的订单”中实时查看状态。
-            </p>
-          </>
+          </div>
         ),
       },
       {
-        id: "orders-invoice",
-        question: "如何索取发票或报销凭证？",
+        id: "orders-payment-issues",
+        question: "支付失败或遇到问题怎么办？",
         answer: (
-          <>
-            <p>
-              芝园支持开具电子发票，支付成功后 24
-              小时内会发送至下单邮箱，并同步存档于 “会员中心 - 我的订单 -
-              查看详情”。如需纸质发票，请在备注中说明或联系客服协助。
-            </p>
-            <p>
-              海外信用卡消费凭证可在支付渠道侧下载，国内支付方式则可在“交易记录”中导出账单。
-            </p>
-          </>
+          <p>
+            如果在支付过程中遇到失败或其他问题，请直接联系我们的客服微信，我们将为您提供一对一的帮助。
+          </p>
         ),
       },
       {
         id: "orders-processing",
-        question: "下单后多久会处理？",
+        question: "下单后多久发货？如果缺货怎么处理？",
         answer: (
-          <>
+          <div className="space-y-3">
             <p>
-              工作日 16:00
-              前完成支付的订单会在当日进入拣货流程；其余订单将顺延至下一个工作日。
-              若商品需药师复核，我们会在“订单提醒”中推送确认通知，请按提示补充信息。
+              一般情况下，下单后 <strong>2-3 个工作日</strong>内完成发货。
             </p>
             <p>
-              如遇缺货我们会第一时间通过短信和站内信告知，并提供替代方案或退款选项。
+              如遇商品缺货，可能需要等待 <strong>7-14 个工作日</strong>
+              才能发货。对于短期内无法补货的情况，客服会主动添加您的微信进行告知，并协商后续处理方案。
             </p>
-          </>
+          </div>
         ),
       },
     ],
@@ -97,48 +94,47 @@ const faqSections: FaqSection[] = [
         id: "shipping-methods",
         question: "目前使用哪些物流渠道？",
         answer: (
-          <>
-            <p>
-              海外包裹采用日本东京仓发货，经由国际专线清关后由顺丰速运或京东快递完成最后一公里。
-              支持选择常温与冷链两种线路，系统会根据商品属性自动匹配。
-            </p>
-            <p>
-              国内仓现货会直接由顺丰速运配送，默认顺丰标快，如需加急可联系客服调整为顺丰特惠。
-            </p>
-          </>
+          <div className="space-y-3">
+            <p>我们要根据商品所在地和目的地选择最优物流：</p>
+            <ul className="list-disc space-y-1 pl-5 text-neutral-600">
+              <li>
+                <span className="font-medium text-neutral-900">日本国内：</span>
+                佐川急便、黑猫宅急便 (Yamato)
+              </li>
+              <li>
+                <span className="font-medium text-neutral-900">国际物流：</span>
+                EMS、京东物流、顺丰速运 (SF Express)、FedEx
+              </li>
+            </ul>
+          </div>
         ),
       },
       {
         id: "shipping-lead-time",
-        question: "配送大概需要多久？",
+        question: "配送一般需要多久？哪里可以查看物流？",
         answer: (
-          <>
-            <p>
-              常温商品一般在 5-7 个工作日送达，冷链药品需配合温控检查，预计 7-10
-              个工作日。
-              节假日及海关安检高峰期可能略有延长，我们会在站内信公告最新进度。
-            </p>
-            <p>
-              支持在“我的订单”中实时查看物流轨迹，若长时间无更新可提交售后工单，我们会主动跟踪。
-            </p>
-          </>
+          <p>
+            国际配送一般需要 <strong>7-14 天</strong>。发货后，建议您使用{" "}
+            <a
+              href="https://www.17track.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-primary underline hover:text-primary/80"
+            >
+              17track
+            </a>{" "}
+            网站，输入运单号查询最新的物流轨迹。
+          </p>
         ),
       },
       {
         id: "shipping-damage",
-        question: "签收时发现破损怎么办？",
+        question: "签收时发现包裹破损怎么办？",
         answer: (
-          <>
-            <p>
-              请先在快递员在场时拍照取证，保留外包装、运单号以及商品整体照片，并在
-              24 小时内提交售后申请。
-            </p>
-            <p>
-              进入“会员中心 - 我的订单 -
-              申请售后”，上传照片并填写问题描述，我们会在 1 个工作日内反馈。
-              经确认后可选择退款、补发或补寄配件。
-            </p>
-          </>
+          <p>
+            请在收到货后的 <strong>48 小时内</strong>
+            联系客服微信，并提供包裹外观及商品破损的照片，我们会尽快为您处理。
+          </p>
         ),
       },
     ],
@@ -150,102 +146,56 @@ const faqSections: FaqSection[] = [
     items: [
       {
         id: "service-return-range",
-        question: "哪些商品可以退换？",
+        question: "哪些商品可以退换？有什么条件要求？",
         answer: (
-          <>
+          <div className="space-y-3">
             <p>
-              非处方药、保健食品及周边商品在签收后 7
-              日内支持无理由退换，只要保持未拆封且影响二次销售即可。
+              为了保证商品品质和用药安全，
+              <strong>付款后暂不支持无理由取消订单、更改订单内容或退换货。</strong>
             </p>
             <p>
-              处方药、冷链药品以及定制商品暂不支持无理由退货，但如出现质量问题我们将负责到底。
+              但在以下情况，我们将为您全额退款：
+              <br />
+              <span className="text-neutral-600">
+                收到商品本身存在质量问题（如商品破损、变质等）。
+              </span>
             </p>
-          </>
+            <p className="text-sm text-neutral-500">
+              * 请务必在收到商品后 <strong>7 天内</strong> 联系客服处理。
+            </p>
+          </div>
         ),
       },
       {
         id: "service-process",
-        question: "退换货流程是怎样的？",
+        question: "退换货的具体流程是什么？",
         answer: (
-          <>
-            <ol className="list-decimal space-y-2 pl-5 text-sm text-neutral-600">
-              <li>在“我的订单”找到对应订单，点击“申请售后”。</li>
-              <li>选择退货或换货，填写原因并上传照片凭证（如有）。</li>
-              <li>等待客服审核，审核通过后会收到退件地址或换货安排。</li>
-              <li>
-                寄回商品后请保留物流单据，退款将在仓库验收完成后 3-5
-                个工作日内原路返回。
-              </li>
-            </ol>
-          </>
+          <div className="space-y-4">
+            <div className="rounded-lg bg-neutral-50 p-4">
+              <p className="mb-2 font-medium text-neutral-900">
+                商品质量问题处理流程：
+              </p>
+              <ol className="list-decimal space-y-1 pl-5 text-neutral-600">
+                <li>在收到商品后 7 天内联系客服微信</li>
+                <li>提供订单信息和商品问题的照片</li>
+                <li>客服确认后将安排全额退款</li>
+              </ol>
+            </div>
+            <p className="text-sm text-neutral-500">
+              注：如果是运输过程中造成的包裹破损，建议您先向运输公司申请赔偿，并携带运输公司提供的破损受理书联系我们的客服协助处理。
+            </p>
+          </div>
         ),
       },
       {
         id: "service-support",
-        question: "售后审核需要多久？",
+        question: "售后审核需要多久？如何通知结果？",
         answer: (
-          <>
-            <p>
-              工作日 09:00-18:00 内提交的售后申请会在 12
-              小时内完成审核，其余时间将在次日优先处理。
-              审核结果会通过短信、邮件以及站内信同步通知。
-            </p>
-          </>
-        ),
-      },
-    ],
-  },
-  {
-    id: "membership",
-    title: "会员与积分",
-    description: "积分获取、等级体系与专属权益。",
-    items: [
-      {
-        id: "membership-points",
-        question: "积分如何获得与使用？",
-        answer: (
-          <>
-            <p>
-              下单实付金额会按 1 元=1 积分累计，订单在确认收货后 3
-              天内自动到账。
-              参与问卷、好友邀请、线下活动也能获得额外积分，我们会在“通知中心”内推送活动信息。
-            </p>
-            <p>
-              积分可在结算页直接抵扣现金（100 积分=1
-              元），同时可兑换专属周边或线下体验服务。
-            </p>
-          </>
-        ),
-      },
-      {
-        id: "membership-tier",
-        question: "会员等级如何升级？",
-        answer: (
-          <>
-            <p>
-              芝园会员分为银卡、金卡与黑金三档，以近 12 个月累计消费额计算：
-            </p>
-            <ul className="list-disc space-y-1 pl-5 text-sm text-neutral-600">
-              <li>银卡：累计消费满 1,500 元。</li>
-              <li>金卡：累计消费满 5,000 元或邀请 5 位新会员有效下单。</li>
-              <li>黑金：累计消费满 12,000 元，并保持月度活跃。</li>
-            </ul>
-            <p>
-              达成条件后会自动升级，当月即可享受相应折扣、专属客服与生日礼遇。
-            </p>
-          </>
-        ),
-      },
-      {
-        id: "membership-freeze",
-        question: "积分会过期吗？",
-        answer: (
-          <>
-            <p>
-              积分以年度为单位有效，当年度获得的积分会在次年 12 月 31 日到期。
-              我们会提前 30 天推送到期提醒，可通过下单或兑换礼品快速消耗。
-            </p>
-          </>
+          <p>
+            我们会在收到您的售后申请后尽快处理，一般在{" "}
+            <strong>1-2 个工作日</strong>
+            内给予答复。审核结果将直接通过微信通知您。
+          </p>
         ),
       },
     ],
@@ -256,15 +206,13 @@ function FaqItem({ item }: { item: FaqItem }) {
   return (
     <details
       id={item.id}
-      className="group rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-sm transition hover:border-teal-500 sm:px-6 sm:py-4"
+      className="group overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all duration-200 hover:border-primary/50 hover:shadow-md open:border-primary/20 open:shadow-sm"
     >
-      <summary className="flex cursor-pointer items-center justify-between gap-4 rounded-xl px-1.5 py-1.5 text-left text-base font-semibold text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 sm:px-2 sm:py-2 sm:text-lg">
+      <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 text-base font-medium text-neutral-900 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset">
         {item.question}
-        <span className="text-sm font-medium text-teal-600 transition group-open:rotate-45">
-          +
-        </span>
+        <ChevronDown className="h-5 w-5 shrink-0 text-neutral-400 transition-transform duration-200 ease-out group-open:rotate-180 group-open:text-primary" />
       </summary>
-      <div className="mt-4 space-y-4 text-sm leading-relaxed text-neutral-600">
+      <div className="border-t border-neutral-100 bg-neutral-50/50 px-5 py-4 text-sm leading-relaxed text-neutral-600">
         {item.answer}
       </div>
     </details>
@@ -278,19 +226,19 @@ function FaqSectionCard({ section }: { section: FaqSection }) {
       aria-labelledby={`${section.id}-title`}
       className="scroll-mt-32"
     >
-      <div className="space-y-6 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8">
-        <div className="space-y-3">
+      <div className="space-y-6">
+        <div className="space-y-2">
           <h2
             id={`${section.id}-title`}
-            className="text-xl font-semibold text-neutral-900 sm:text-2xl"
+            className="text-xl font-bold text-neutral-900 sm:text-2xl"
           >
             {section.title}
           </h2>
           {section.description ? (
-            <p className="text-sm text-neutral-600">{section.description}</p>
+            <p className="text-neutral-500">{section.description}</p>
           ) : null}
         </div>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {section.items.map((item) => (
             <FaqItem key={item.id} item={item} />
           ))}
@@ -302,7 +250,7 @@ function FaqSectionCard({ section }: { section: FaqSection }) {
 
 function FaqSectionList({ sections }: { sections: FilterableFaqSection[] }) {
   return (
-    <div className="space-y-10 lg:space-y-12">
+    <div className="space-y-12 lg:space-y-16">
       {sections.map((section) => (
         <FaqSectionCard key={section.id} section={section} />
       ))}
@@ -323,10 +271,10 @@ function FaqFilterChip({
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center rounded-full border px-3 py-1.5 text-sm font-medium transition",
+        "inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
         isActive
-          ? "border-teal-500 bg-teal-50 text-teal-700"
-          : "border-neutral-200 bg-white text-neutral-600 hover:border-teal-500 hover:bg-teal-50 hover:text-teal-700",
+          ? "border-primary/20 bg-primary/10 text-primary shadow-sm"
+          : "border-neutral-200 bg-white text-neutral-600 hover:border-primary/30 hover:bg-neutral-50 hover:text-neutral-900",
       )}
     >
       {label}
@@ -371,137 +319,87 @@ function FaqSearchControls({
   );
 
   return (
-    <section className="space-y-4 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8">
-      <form
-        action="/faq"
-        className="space-y-3"
-        role="search"
-        aria-label="FAQ 搜索"
-      >
-        <div className="flex flex-col gap-2">
-          <label
-            className="text-sm font-medium text-neutral-700"
-            htmlFor="faq-search-input"
-          >
-            搜索常见问题
-          </label>
-          <div className="flex items-center gap-2">
+    <section className="sticky top-[calc(var(--safe-area-inset-top)+64px)] z-10 -mx-4 space-y-4 bg-neutral-50/95 px-4 py-4 backdrop-blur-sm sm:static sm:top-auto sm:mx-0 sm:bg-transparent sm:px-0 sm:py-0">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm sm:p-6">
+        <form
+          action="/faq"
+          className="space-y-4"
+          role="search"
+          aria-label="FAQ 搜索"
+        >
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400" />
             <input
               id="faq-search-input"
               name="q"
               defaultValue={normalizedQuery}
-              placeholder="输入关键词，如“退货”或“配送”"
-              className="h-11 flex-1 rounded-full border border-neutral-200 px-4 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/50"
+              placeholder="搜索问题，如“支付”、“发货”"
+              className="h-12 w-full rounded-xl border border-neutral-200 bg-neutral-50 pl-11 pr-4 text-base text-neutral-900 placeholder:text-neutral-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
               inputMode="search"
             />
             {hasActiveSection ? (
               <input type="hidden" name="section" value={activeSection} />
             ) : null}
-            <button
-              type="submit"
-              className="inline-flex h-11 items-center justify-center rounded-full bg-teal-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
-            >
-              搜索
-            </button>
           </div>
-        </div>
-      </form>
 
-      <div className="flex flex-wrap gap-2">
-        <FaqFilterChip
-          href={buildFaqHref({ query: normalizedQuery || undefined })}
-          label="全部分类"
-          isActive={!hasActiveSection}
-        />
-        {sections.map((section) => (
-          <FaqFilterChip
-            key={section.id}
-            href={buildFaqHref({
-              query: normalizedQuery || undefined,
-              section: section.id,
-            })}
-            label={section.title}
-            isActive={hasActiveSection && section.id === activeSection}
-          />
-        ))}
+          <div className="flex flex-wrap gap-2">
+            <FaqFilterChip
+              href={buildFaqHref({ query: normalizedQuery || undefined })}
+              label="全部"
+              isActive={!hasActiveSection}
+            />
+            {sections.map((section) => (
+              <FaqFilterChip
+                key={section.id}
+                href={buildFaqHref({
+                  query: normalizedQuery || undefined,
+                  section: section.id,
+                })}
+                label={section.title}
+                isActive={hasActiveSection && section.id === activeSection}
+              />
+            ))}
+          </div>
+        </form>
       </div>
-
-      <p className="text-xs text-neutral-500">
-        搜索与筛选将在后端接入后提供实时结果，当前为占位交互以便演示流程。
-      </p>
     </section>
   );
 }
 
 function FaqEmptyState({ query }: { query: string }) {
   return (
-    <div className="space-y-4 rounded-3xl border border-dashed border-neutral-200 bg-white p-12 text-center shadow-sm">
-      <p className="text-lg font-semibold text-neutral-900">暂未找到匹配结果</p>
-      <p className="text-sm text-neutral-600">
-        没有和“{query}
-        ”相关的问题。你可以尝试调整关键词，或浏览下方分类了解更多信息。
-      </p>
+    <div className="flex flex-col items-center justify-center space-y-4 rounded-2xl border border-dashed border-neutral-200 bg-white py-16 text-center">
+      <div className="rounded-full bg-neutral-50 p-4">
+        <Search className="h-8 w-8 text-neutral-400" />
+      </div>
+      <div className="space-y-1">
+        <p className="text-lg font-medium text-neutral-900">
+          暂未找到相关结果
+        </p>
+        <p className="text-sm text-neutral-500">
+          没有找到与“{query}”匹配的问题
+        </p>
+      </div>
       <Link
         href="/faq"
-        className="inline-flex items-center justify-center rounded-full border border-neutral-300 px-5 py-2 text-sm font-medium text-neutral-700 transition hover:border-teal-500 hover:text-teal-700"
+        className="mt-2 inline-flex items-center justify-center rounded-full bg-neutral-900 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-800"
       >
-        清除筛选
+        清除搜索
       </Link>
     </div>
   );
 }
 
-function FaqOverviewCard({
-  sections,
-  className,
-}: {
-  sections: FaqSection[];
-  className?: string;
-}) {
+function FaqHeader() {
   return (
-    <section
-      className={cn(
-        "space-y-8 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10",
-        className,
-      )}
-    >
-      <div className="space-y-3">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-teal-600">
-          常见问题
-        </p>
-        <h1 className="text-3xl font-bold text-neutral-900 sm:text-4xl">
-          解答购买与售后最常见的疑问
-        </h1>
-        <p className="text-base text-neutral-600">
-          我们整理下单、配送、售后与会员服务中的高频问题，帮助你快速定位需要的帮助信息。
-          数据来自真实客服反馈与用户留言，并会定期复核更新。
-        </p>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        {sections.map((section) => (
-          <Link
-            key={section.id}
-            href={`#${section.id}`}
-            className="group flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-left transition hover:border-teal-500 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
-          >
-            <div className="flex flex-col gap-1">
-              <span className="text-lg font-semibold text-neutral-900">
-                {section.title}
-              </span>
-              {section.description ? (
-                <span className="text-sm text-neutral-500">
-                  {section.description}
-                </span>
-              ) : null}
-            </div>
-            <span className="text-teal-600 transition group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
-        ))}
-      </div>
-    </section>
+    <div className="space-y-4 text-center sm:text-left">
+      <h1 className="text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+        常见问题
+      </h1>
+      <p className="mx-auto max-w-2xl text-base text-neutral-600 sm:mx-0 sm:text-lg">
+        如果您无法找到需要的答案，请直接联系我们的客服微信寻求帮助。
+      </p>
+    </div>
   );
 }
 
@@ -547,22 +445,25 @@ export async function FaqPage({
   const hasResults = filteredSections.length > 0;
 
   return (
-    <div className="bg-neutral-50">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-8 sm:px-6 lg:gap-12 lg:px-8 lg:py-12">
-        <FaqOverviewCard sections={faqSections} />
-        <FaqSearchControls
-          sections={faqSections}
-          activeQuery={activeQuery}
-          activeSection={activeSection}
-        />
+    <div className="min-h-screen bg-neutral-50/50">
+      <div className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-8 lg:gap-12">
+          <FaqHeader />
 
-        {hasResults ? (
-          <FaqSectionList sections={filteredSections} />
-        ) : hasQuery ? (
-          <FaqEmptyState query={activeQuery.trim()} />
-        ) : (
-          <FaqSectionList sections={faqSections} />
-        )}
+          <FaqSearchControls
+            sections={faqSections}
+            activeQuery={activeQuery}
+            activeSection={activeSection}
+          />
+
+          {hasResults ? (
+            <FaqSectionList sections={filteredSections} />
+          ) : hasQuery ? (
+            <FaqEmptyState query={activeQuery.trim()} />
+          ) : (
+            <FaqSectionList sections={faqSections} />
+          )}
+        </div>
       </div>
     </div>
   );
