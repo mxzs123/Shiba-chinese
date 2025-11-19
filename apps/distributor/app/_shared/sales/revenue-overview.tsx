@@ -17,7 +17,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "~/components/ui/chart";
-import { Separator } from "~/components/ui/separator";
 import { cn } from "~/lib/utils";
 import { CHART_COLORS, CHART_CONFIG } from "../../../lib/chart-theme";
 
@@ -62,191 +61,178 @@ export function RevenueOverview({
   const dailyUnitCopy = labels?.dailyUnit ?? "单位：日元";
 
   return (
-    <Card className={cn("h-full bg-white", className)}>
-      <CardHeader className="pb-4">
+    <Card className={cn("flex flex-col h-full bg-white", className)}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
         <CardTitle className="text-base font-semibold text-neutral-900">
           {title}
         </CardTitle>
+        {/* Optional: Date Range Picker could go here */}
       </CardHeader>
-      <CardContent className="space-y-6 pb-6">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <MetricBlock label={latestMonthCopy} value={data.latestMonthLabel} />
-          <MetricBlock
-            label={latestValueCopy}
-            value={formatCurrency(data.latestValue)}
-          />
-          <MetricBlock
-            label={growthCopy}
-            value={data.growthRatio === null ? "--" : growthLabel}
-            tone={
-              data.growthRatio === null
-                ? undefined
-                : data.growthRatio >= 0
-                  ? "positive"
-                  : "negative"
-            }
-          />
+      <CardContent className="flex-1 flex flex-col gap-6 pb-6">
+        {/* KPI Summary Row */}
+        <div className="flex items-center justify-between gap-4 px-1">
+          <div>
+            <p className="text-sm font-medium text-neutral-500">
+              {latestValueCopy}
+            </p>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-3xl font-bold tracking-tight text-neutral-900">
+                {formatCurrency(data.latestValue)}
+              </span>
+              <span className="text-sm text-neutral-500">
+                ({data.latestMonthLabel})
+              </span>
+            </div>
+          </div>
+          <div className="text-right">
+             <p className="text-sm font-medium text-neutral-500">
+              {growthCopy}
+            </p>
+             <div className="mt-1 flex items-center justify-end gap-1.5">
+                {data.growthRatio !== null && (
+                  <span
+                    className={cn(
+                      "flex h-6 items-center rounded-full px-2 text-xs font-medium",
+                      data.growthRatio >= 0
+                        ? "bg-emerald-50 text-emerald-700"
+                        : "bg-rose-50 text-rose-700"
+                    )}
+                  >
+                    {growthLabel}
+                  </span>
+                )}
+             </div>
+          </div>
         </div>
-        <Separator />
-        <ChartContainer
-          className="aspect-auto h-[280px]"
-          config={{
-            value: {
-              label: seriesLabel,
-              color: CHART_COLORS.primary.DEFAULT,
-            },
-          }}
-        >
-          <AreaChart data={data.monthlyTrend}>
-            <CartesianGrid
-              strokeDasharray={CHART_CONFIG.grid.strokeDasharray}
-              strokeOpacity={CHART_CONFIG.grid.strokeOpacity}
-              stroke={CHART_CONFIG.grid.stroke}
-              vertical={false}
-            />
-            <XAxis
-              dataKey="shortLabel"
-              axisLine={false}
-              tickLine={false}
-              tickMargin={8}
-              tick={{ fill: "#6b7280", fontSize: 12 }}
-            />
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              width={42}
-              tick={{ fill: "#9ca3af", fontSize: 11 }}
-              tickFormatter={(value: number) => `${Math.round(value / 1000)}k`}
-            />
-            <ChartTooltip
-              cursor={{
-                stroke: CHART_COLORS.alpha.primary12,
-                strokeWidth: 2,
-              }}
-              content={
-                <ChartTooltipContent
-                  className="bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-lg rounded-lg px-3 py-2"
-                  labelClassName="text-sm font-semibold text-neutral-900"
-                  formatter={(value) => (
-                    <span className="font-mono font-semibold text-neutral-900">
-                      {formatCurrency(Number(value))}
-                    </span>
-                  )}
-                />
-              }
-            />
-            <Area
-              type="monotone"
-              dataKey="value"
-              stroke={CHART_COLORS.primary.dark}
-              strokeWidth={CHART_CONFIG.area.strokeWidth}
-              strokeLinecap="round"
-              fill={CHART_COLORS.alpha.primary12}
-              fillOpacity={1}
-              dot={{
-                r: CHART_CONFIG.area.dotRadius,
-                fill: CHART_COLORS.primary.dark,
-                stroke: "#fff",
-                strokeWidth: 2,
-              }}
-              activeDot={{
-                r: CHART_CONFIG.area.activeDotRadius,
-                fill: CHART_COLORS.primary.dark,
-                stroke: "#fff",
-                strokeWidth: 2.5,
-                filter: "drop-shadow(0 2px 4px rgba(37, 99, 235, 0.3))",
-              }}
-            />
-          </AreaChart>
-        </ChartContainer>
-        {hasDailyTrend ? (
-          <div className="rounded-xl bg-neutral-50 p-4">
-            <div className="flex items-center justify-between text-xs text-neutral-500">
-              <span className="font-medium">{dailyRangeCopy}</span>
-              <Badge
-                variant="outline"
-                className="border-neutral-200 bg-white text-[11px] text-neutral-500"
-              >
+
+        {/* Main Area Chart */}
+        <div className="h-[300px] w-full">
+          <ChartContainer
+             className="h-full w-full"
+             config={{
+               value: {
+                 label: seriesLabel,
+                 color: CHART_COLORS.primary.DEFAULT,
+               },
+             }}
+           >
+            <AreaChart data={data.monthlyTrend} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="5%"
+                    stopColor={CHART_COLORS.primary.DEFAULT}
+                    stopOpacity={0.2}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={CHART_COLORS.primary.DEFAULT}
+                    stopOpacity={0}
+                  />
+                </linearGradient>
+              </defs>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#f0f0f0"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="shortLabel"
+                axisLine={false}
+                tickLine={false}
+                tickMargin={12}
+                tick={{ fill: "#9ca3af", fontSize: 12 }}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                width={42}
+                tick={{ fill: "#9ca3af", fontSize: 11 }}
+                tickFormatter={(value: number) => `${Math.round(value / 1000)}k`}
+              />
+              <ChartTooltip
+                cursor={{
+                  stroke: CHART_COLORS.primary.light,
+                  strokeWidth: 1,
+                  strokeDasharray: "4 4",
+                }}
+                content={
+                  <ChartTooltipContent
+                    className="min-w-[120px]"
+                    formatter={(value) => (
+                      <div className="flex w-full justify-between font-medium text-neutral-900">
+                        <span>{formatCurrency(Number(value))}</span>
+                      </div>
+                    )}
+                  />
+                }
+              />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke={CHART_COLORS.primary.DEFAULT}
+                strokeWidth={3}
+                fill="url(#fillDesktop)"
+                fillOpacity={1}
+                activeDot={{
+                  r: 6,
+                  fill: CHART_COLORS.primary.DEFAULT,
+                  stroke: "#fff",
+                  strokeWidth: 2,
+                }}
+              />
+            </AreaChart>
+          </ChartContainer>
+        </div>
+
+        {/* Daily Trend Bar Chart (Optional) */}
+        {hasDailyTrend && (
+          <div className="mt-auto pt-4 border-t border-neutral-100">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-xs font-medium text-neutral-500">
+                {dailyRangeCopy}
+              </span>
+              <Badge variant="secondary" className="text-[10px] text-neutral-500 font-normal">
                 {dailyUnitCopy}
               </Badge>
             </div>
-            <ChartContainer
-              className="aspect-auto h-[170px] pt-3"
-              config={{
-                value: {
-                  label: dailySeriesLabel,
-                  color: CHART_COLORS.primary.DEFAULT,
-                },
-              }}
-            >
-              <BarChart data={data.dailyTrend}>
-                <CartesianGrid
-                  strokeDasharray={CHART_CONFIG.grid.strokeDasharray}
-                  strokeOpacity={CHART_CONFIG.grid.strokeOpacity}
-                  stroke={CHART_CONFIG.grid.stroke}
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="shortLabel"
-                  axisLine={false}
-                  tickLine={false}
-                  tickMargin={6}
-                  tick={{ fill: "#6b7280", fontSize: 11 }}
-                />
-                <YAxis axisLine={false} tickLine={false} width={0} />
-                <ChartTooltip
-                  cursor={{ fill: CHART_COLORS.alpha.primary8 }}
-                  content={
-                    <ChartTooltipContent
-                      className="bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-lg rounded-lg px-3 py-2"
-                      labelClassName="text-sm font-semibold text-neutral-900"
-                      formatter={(value) => (
-                        <span className="font-mono font-medium text-neutral-900">
-                          {formatCurrency(Number(value))}
-                        </span>
-                      )}
+            <div className="h-[100px] w-full">
+              <ChartContainer
+                className="h-full w-full"
+                config={{
+                  value: {
+                    label: dailySeriesLabel,
+                    color: CHART_COLORS.primary.DEFAULT,
+                  },
+                }}
+              >
+                <BarChart data={data.dailyTrend} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                   <ChartTooltip
+                      cursor={{ fill: "rgba(0,0,0,0.04)" }}
+                      content={
+                        <ChartTooltipContent
+                          hideLabel
+                          formatter={(value) => (
+                             <span className="font-medium text-neutral-900">
+                               {formatCurrency(Number(value))}
+                             </span>
+                          )}
+                        />
+                      }
                     />
-                  }
-                />
-                <Bar
-                  dataKey="value"
-                  radius={CHART_CONFIG.bar.radius}
-                  fill={CHART_COLORS.primary.DEFAULT}
-                  maxBarSize={CHART_CONFIG.bar.maxSize}
-                  activeBar={{
-                    fill: CHART_COLORS.primary.dark,
-                  }}
-                />
-              </BarChart>
-            </ChartContainer>
+                  <Bar
+                    dataKey="value"
+                    fill={CHART_COLORS.primary.light}
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={32}
+                  />
+                </BarChart>
+              </ChartContainer>
+            </div>
           </div>
-        ) : null}
+        )}
       </CardContent>
     </Card>
   );
 }
 
-interface MetricBlockProps {
-  label: string;
-  value: string;
-  tone?: "positive" | "negative";
-}
-
-function MetricBlock({ label, value, tone }: MetricBlockProps) {
-  return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4 transition-shadow duration-150">
-      <p className="text-xs uppercase tracking-[0.18em] text-neutral-400">
-        {label}
-      </p>
-      <p
-        className={cn(
-          "mt-2 text-lg font-semibold text-neutral-900",
-          tone === "positive" && "text-primary",
-          tone === "negative" && "text-rose-600",
-        )}
-      >
-        {value}
-      </p>
-    </div>
-  );
-}

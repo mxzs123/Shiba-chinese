@@ -1,3 +1,11 @@
+import {
+  CreditCard,
+  TrendingUp,
+  Users,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
+
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
@@ -17,6 +25,7 @@ interface MetricConfig {
   id: string;
   label: string;
   value: string;
+  icon: LucideIcon;
   caption?: string;
   secondary?: string;
   tone?: MetricTone;
@@ -27,22 +36,14 @@ interface MetricConfig {
 }
 
 const BADGE_VARIANTS: Record<MetricTone, string> = {
-  default: "border-neutral-200 bg-white text-neutral-500",
-  positive: "border-emerald-200 bg-emerald-50 text-emerald-600",
-  negative: "border-rose-200 bg-rose-50 text-rose-600",
-  warning: "border-amber-200 bg-amber-50 text-amber-600",
-  primary: "border-primary/20 bg-primary/10 text-primary",
+  default: "border-neutral-200 bg-neutral-50 text-neutral-600",
+  positive: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  negative: "border-rose-200 bg-rose-50 text-rose-700",
+  warning: "border-amber-200 bg-amber-50 text-amber-700",
+  primary: "border-blue-200 bg-blue-50 text-blue-700",
 };
 
-const CARD_VARIANTS: Record<MetricTone, string> = {
-  default: "border border-neutral-200 bg-white transition-all duration-200",
-  primary: "border-2 border-primary/30 bg-white transition-all duration-200",
-  warning: "border border-amber-200 bg-white transition-all duration-200",
-  positive: "border border-emerald-200 bg-white transition-all duration-200",
-  negative: "border border-rose-200 bg-white transition-all duration-200",
-};
-
-const MOCK_JPY_TO_CNY_RATE = 0.048; // TODO: 上线前改为实时汇率
+const MOCK_JPY_TO_CNY_RATE = 0.048;
 
 function formatNumber(value: number) {
   const rounded = Math.round(value);
@@ -50,12 +51,12 @@ function formatNumber(value: number) {
 }
 
 function formatJPYDisplay(value: number) {
-  return `JPY ${formatNumber(value)}`;
+  return `¥${formatNumber(value)}`;
 }
 
 function formatCNYEstimate(value: number) {
   const cny = Math.round(value * MOCK_JPY_TO_CNY_RATE);
-  return `≈ 人民币 ${formatCurrency(cny)}`;
+  return `≈ RMB ${formatCurrency(cny)}`;
 }
 
 export function CommissionHighlights({
@@ -73,6 +74,7 @@ export function CommissionHighlights({
       value: formatJPYDisplay(commission.monthly),
       secondary: formatCNYEstimate(commission.monthly),
       caption: commission.overview.latestMonthLabel,
+      icon: Wallet,
       tone: "primary",
       badge:
         growth === null
@@ -87,6 +89,7 @@ export function CommissionHighlights({
       label: "累计佣金",
       value: formatJPYDisplay(commission.total),
       secondary: formatCNYEstimate(commission.total),
+      icon: CreditCard,
       tone: "default",
     },
     {
@@ -95,14 +98,17 @@ export function CommissionHighlights({
       value: formatJPYDisplay(commission.secondary.monthly),
       secondary:
         secondaryShare != null
-          ? `占总佣金 ${formatPercent(secondaryShare, 1)}`
+          ? `占比 ${formatPercent(secondaryShare, 1)}`
           : undefined,
+      icon: TrendingUp,
       tone: "default",
     },
     {
       id: "active",
       label: "活跃伙伴",
-      value: `${partners.activeCount} 家`,
+      value: `${partners.activeCount}`,
+      secondary: `总数 ${partners.totalManaged}`,
+      icon: Users,
       tone: "default",
     },
   ];
@@ -112,46 +118,31 @@ export function CommissionHighlights({
       {metrics.map((metric) => (
         <Card
           key={metric.id}
-          className={cn("gap-4 py-5", CARD_VARIANTS[metric.tone ?? "default"])}
+          className="overflow-hidden border-neutral-200/60 shadow-sm transition-all hover:shadow-md"
         >
-          <CardHeader className="gap-1 px-5 pb-1">
-            <CardTitle className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-neutral-500">
               {metric.label}
             </CardTitle>
-            <span
-              className={cn(
-                "block min-h-[1rem] text-xs text-neutral-500",
-                metric.caption ? undefined : "invisible",
-              )}
-              aria-hidden={!metric.caption}
-            >
-              {metric.caption ?? "\u00A0"}
-            </span>
+            <metric.icon className="h-4 w-4 text-neutral-400" />
           </CardHeader>
-          <CardContent className="px-5 pb-1 pt-0">
-            <div className="flex items-end justify-between gap-3">
-              <div className="flex flex-col">
-                <span className="text-4xl font-bold tracking-tight text-neutral-900">
-                  {metric.value}
-                </span>
-                {metric.secondary ? (
-                  <span className="mt-1.5 text-xs text-neutral-500">
-                    {metric.secondary}
-                  </span>
-                ) : null}
+          <CardContent>
+            <div className="flex items-baseline justify-between">
+              <div className="text-2xl font-bold text-neutral-900">
+                {metric.value}
               </div>
               {metric.badge ? (
                 <Badge
                   variant="outline"
-                  className={cn(
-                    "text-[11px]",
-                    BADGE_VARIANTS[metric.badge.tone],
-                  )}
+                  className={cn("ml-2 h-5 px-1.5 text-[10px]", BADGE_VARIANTS[metric.badge.tone])}
                 >
                   {metric.badge.label}
                 </Badge>
               ) : null}
             </div>
+            <p className="mt-1 text-xs text-neutral-500">
+              {metric.secondary}
+            </p>
           </CardContent>
         </Card>
       ))}

@@ -1,7 +1,7 @@
 "use client";
 
 import { PieChart, Pie, Cell, Label } from "recharts";
-import { TrendingUp, AlertCircle } from "lucide-react";
+import { TrendingUp, AlertCircle, Users } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Progress } from "~/components/ui/progress";
@@ -11,7 +11,7 @@ import {
   ChartTooltipContent,
 } from "~/components/ui/chart";
 import { cn } from "~/lib/utils";
-import { CHART_COLORS, CHART_CONFIG } from "../../../lib/chart-theme";
+import { CHART_COLORS } from "../../../lib/chart-theme";
 
 import type { PartnerStatusSlice, PartnerSummaryData } from "./data";
 import { formatPercent } from "../sales/formatters";
@@ -21,11 +21,19 @@ interface PartnerSummaryProps {
   className?: string;
 }
 
-const STATUS_PROGRESS_CLASS: Record<PartnerStatusSlice["tone"], string> = {
-  primary:
-    "bg-blue-100 [&_[data-slot=progress-indicator]]:bg-blue-600 [&_[data-slot=progress-indicator]]:shadow-none",
-  warning:
-    "bg-amber-100 [&_[data-slot=progress-indicator]]:bg-amber-500 [&_[data-slot=progress-indicator]]:shadow-none",
+const STATUS_STYLES: Record<PartnerStatusSlice["tone"], { bg: string; border: string; icon: string; progress: string }> = {
+  primary: {
+    bg: "bg-blue-50/50",
+    border: "border-blue-100",
+    icon: "text-blue-600",
+    progress: "bg-blue-100 [&_[data-slot=progress-indicator]]:bg-blue-600",
+  },
+  warning: {
+    bg: "bg-amber-50/50",
+    border: "border-amber-100",
+    icon: "text-amber-600",
+    progress: "bg-amber-100 [&_[data-slot=progress-indicator]]:bg-amber-500",
+  },
 };
 
 function getStatusColor(
@@ -40,17 +48,16 @@ function getStatusColor(
 
 export function PartnerSummary({ data, className }: PartnerSummaryProps) {
   return (
-    <Card className={cn("bg-white", className)}>
-      <CardHeader className="pb-4">
+    <Card className={cn("flex flex-col h-full bg-white", className)}>
+      <CardHeader className="pb-2">
         <CardTitle className="text-base font-semibold text-neutral-900">
           伙伴概览
         </CardTitle>
       </CardHeader>
-      <CardContent className="pb-6">
-        <div className="space-y-6">
-          {/* 饼图区域 - 居中显示 */}
-          <div className="flex justify-center">
-            <ChartContainer
+      <CardContent className="flex-1 flex flex-col pb-6">
+        {/* Chart Section */}
+        <div className="relative py-4">
+           <ChartContainer
               config={data.statusSlices.reduce(
                 (config, slice, index) => ({
                   ...config,
@@ -61,7 +68,7 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
                 }),
                 {},
               )}
-              className="mx-auto aspect-square max-h-[240px]"
+              className="mx-auto aspect-square w-full max-w-[180px]"
             >
               <PieChart>
                 <ChartTooltip
@@ -78,7 +85,6 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
                         if (!payload) {
                           return null;
                         }
-
                         return (
                           <div className="flex w-full items-center justify-between gap-4">
                             <span className="text-sm text-neutral-600">
@@ -101,10 +107,10 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
                   }))}
                   dataKey="value"
                   nameKey="label"
-                  innerRadius={CHART_CONFIG.pie.innerRadius}
-                  outerRadius={CHART_CONFIG.pie.outerRadius}
-                  paddingAngle={CHART_CONFIG.pie.paddingAngle}
-                  strokeWidth={CHART_CONFIG.pie.strokeWidth}
+                  innerRadius={60}
+                  outerRadius={72}
+                  strokeWidth={0}
+                  paddingAngle={4}
                 >
                   {data.statusSlices.map((slice, index) => (
                     <Cell
@@ -116,36 +122,27 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
                     content={({ viewBox }) => {
                       if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                         return (
-                          <g>
-                            <circle
-                              cx={viewBox.cx}
-                              cy={viewBox.cy}
-                              r={56}
-                              fill="#ffffff"
-                              opacity={0.9}
-                            />
-                            <text
+                          <text
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                          >
+                            <tspan
                               x={viewBox.cx}
                               y={viewBox.cy}
-                              textAnchor="middle"
-                              dominantBaseline="middle"
+                              className="fill-neutral-900 text-2xl font-bold"
                             >
-                              <tspan
-                                x={viewBox.cx}
-                                y={viewBox.cy}
-                                className="fill-neutral-900 text-3xl font-bold"
-                              >
-                                {data.totalManaged}
-                              </tspan>
-                              <tspan
-                                x={viewBox.cx}
-                                y={(viewBox.cy || 0) + 24}
-                                className="fill-neutral-500 text-xs font-medium"
-                              >
-                                管理总数
-                              </tspan>
-                            </text>
-                          </g>
+                              {data.totalManaged}
+                            </tspan>
+                            <tspan
+                              x={viewBox.cx}
+                              y={(viewBox.cy || 0) + 20}
+                              className="fill-neutral-500 text-xs font-medium"
+                            >
+                              总数
+                            </tspan>
+                          </text>
                         );
                       }
                       return null;
@@ -154,31 +151,22 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
                 </Pie>
               </PieChart>
             </ChartContainer>
-          </div>
+        </div>
 
-          {/* 状态卡片 - 网格布局 */}
-          <div className="grid gap-3 sm:grid-cols-2">
-            {data.statusSlices.map((slice) => (
-              <StatusCard key={slice.id} slice={slice} />
-            ))}
-          </div>
-
-          {/* 底部说明 */}
-          <div className="rounded-lg bg-neutral-50 px-4 py-3">
-            <p className="text-xs text-neutral-600 leading-relaxed">
-              当前共管理{" "}
-              <span className="font-semibold text-neutral-900">
-                {data.totalManaged}
-              </span>{" "}
-              家一级/二级分销伙伴， 其中{" "}
-              <span className="font-semibold text-primary">
-                {data.activeCount}
-              </span>{" "}
-              家活跃，
-              <span className="font-semibold text-amber-600">
-                {data.inactiveCount}
-              </span>{" "}
-              家长期未活跃。
+        {/* Status Cards */}
+        <div className="mt-auto grid gap-3">
+          {data.statusSlices.map((slice) => (
+            <StatusRow key={slice.id} slice={slice} />
+          ))}
+        </div>
+        
+        {/* Footer Note */}
+        <div className="mt-6 pt-4 border-t border-neutral-100">
+          <div className="flex items-start gap-2 text-xs text-neutral-500">
+            <Users className="h-3.5 w-3.5 mt-0.5 text-neutral-400" />
+            <p className="leading-relaxed">
+               共有 <span className="font-semibold text-neutral-900">{data.totalManaged}</span> 家分销伙伴。
+               需关注 <span className="font-medium text-amber-600">{data.inactiveCount} 家长期未活跃</span> 伙伴的情况。
             </p>
           </div>
         </div>
@@ -187,50 +175,30 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
   );
 }
 
-interface StatusCardProps {
+interface StatusRowProps {
   slice: PartnerStatusSlice;
 }
 
-function StatusCard({ slice }: StatusCardProps) {
-  const isPrimary = slice.tone === "primary";
-  const isWarning = slice.tone === "warning";
-
-  const Icon = isPrimary ? TrendingUp : AlertCircle;
-  const iconColor = isPrimary ? "text-blue-600" : "text-amber-600";
-  const bgColor = isPrimary ? "bg-blue-50" : "bg-amber-50";
-  const borderColor = isPrimary ? "border-blue-200" : "border-amber-200";
+function StatusRow({ slice }: StatusRowProps) {
+  const style = STATUS_STYLES[slice.tone];
+  const Icon = slice.tone === "primary" ? TrendingUp : AlertCircle;
 
   return (
-    <div
-      className={cn(
-        "rounded-xl border p-4 transition-all duration-200",
-        bgColor,
-        borderColor,
-      )}
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Icon className={cn("size-4", iconColor)} />
-          <span className="text-sm font-semibold text-neutral-900">
-            {slice.label}
-          </span>
-        </div>
-        <span className="text-lg font-bold text-neutral-900">
-          {slice.value}
-          <span className="text-xs font-normal text-neutral-500 ml-1">家</span>
-        </span>
+    <div className="flex items-center gap-3">
+      <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", style.bg)}>
+        <Icon className={cn("h-4 w-4", style.icon)} />
       </div>
-      <div className="space-y-2">
-        <Progress
-          value={Math.round(slice.ratio * 100)}
-          className={cn("h-2", STATUS_PROGRESS_CLASS[slice.tone])}
-        />
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-neutral-500">占比</span>
-          <span className="font-mono text-xs font-semibold text-neutral-900">
-            {formatPercent(slice.ratio, 1)}
+      <div className="flex-1 space-y-1.5">
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-medium text-neutral-700">{slice.label}</span>
+          <span className="font-bold text-neutral-900">
+            {slice.value} <span className="text-xs font-normal text-neutral-500">家</span>
           </span>
         </div>
+        <Progress 
+          value={Math.round(slice.ratio * 100)} 
+          className={cn("h-1.5", style.progress)} 
+        />
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "~/components/ui/chart";
+import { Progress } from "~/components/ui/progress";
 import { cn } from "~/lib/utils";
 import { CHART_COLORS, CHART_CONFIG } from "../../../lib/chart-theme";
 
@@ -74,16 +75,16 @@ export function ProductDistributionChart({
   }, {});
 
   return (
-    <Card className={cn("h-full bg-white", className)}>
-      <CardHeader className="pb-3">
+    <Card className={cn("flex flex-col h-full bg-white", className)}>
+      <CardHeader className="pb-2">
         <CardTitle className="text-base font-semibold text-neutral-900">
           产品贡献占比
         </CardTitle>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent className="flex-1 flex flex-col justify-center pb-6">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[240px]"
+          className="mx-auto aspect-square w-full max-w-[200px] mb-4"
         >
           <PieChart>
             <ChartTooltip
@@ -123,10 +124,10 @@ export function ProductDistributionChart({
               }))}
               dataKey="value"
               nameKey="name"
-              innerRadius={CHART_CONFIG.pie.innerRadius}
-              outerRadius={CHART_CONFIG.pie.outerRadius}
-              paddingAngle={CHART_CONFIG.pie.paddingAngle}
-              strokeWidth={CHART_CONFIG.pie.strokeWidth}
+              innerRadius={68}
+              outerRadius={82}
+              strokeWidth={0}
+              paddingAngle={4}
             >
               {chart.map((item, index) => (
                 <Cell
@@ -138,36 +139,27 @@ export function ProductDistributionChart({
                 content={({ viewBox }) => {
                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                     return (
-                      <g>
-                        <circle
-                          cx={viewBox.cx}
-                          cy={viewBox.cy}
-                          r={56}
-                          fill="#f9fafb"
-                          opacity={0.6}
-                        />
-                        <text
+                      <text
+                        x={viewBox.cx}
+                        y={viewBox.cy}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                      >
+                        <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
+                          className="fill-neutral-900 text-xl font-bold"
                         >
-                          <tspan
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            className="fill-neutral-900 text-2xl font-bold"
-                          >
-                            {formatCurrency(total)}
-                          </tspan>
-                          <tspan
-                            x={viewBox.cx}
-                            y={(viewBox.cy || 0) + 22}
-                            className="fill-neutral-500 text-xs"
-                          >
-                            总销售额
-                          </tspan>
-                        </text>
-                      </g>
+                          {chart.length}
+                        </tspan>
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) + 20}
+                          className="fill-neutral-500 text-xs"
+                        >
+                          品类
+                        </tspan>
+                      </text>
                     );
                   }
                   return null;
@@ -176,14 +168,14 @@ export function ProductDistributionChart({
             </Pie>
           </PieChart>
         </ChartContainer>
-        <div className="mt-4 grid gap-2 grid-cols-2">
+        <div className="grid gap-2 grid-cols-2">
           {chart.map((item, index) => (
             <div
               key={item.key}
-              className="flex items-center gap-2.5 rounded-lg bg-neutral-50 px-3 py-2.5 transition-colors duration-150"
+              className="flex items-center gap-2 rounded-md border border-neutral-100 px-2 py-1.5"
             >
               <span
-                className="inline-block size-3 rounded-sm shrink-0"
+                className="h-2 w-2 rounded-full shrink-0"
                 style={{
                   backgroundColor:
                     CHART_COLORS.data[index % CHART_COLORS.data.length],
@@ -192,7 +184,7 @@ export function ProductDistributionChart({
               <span className="text-xs text-neutral-600 flex-1 truncate">
                 {item.name}
               </span>
-              <span className="font-mono text-xs font-semibold text-neutral-900">
+              <span className="font-mono text-[10px] font-medium text-neutral-900">
                 {formatPercent(item.ratio, 1)}
               </span>
             </div>
@@ -213,57 +205,52 @@ export function ProductDistributionLeaderboard({
   className,
 }: ProductDistributionLeaderboardProps) {
   const { top } = prepareProductData(data);
+  const maxAmount = Math.max(...top.map(t => t.amount));
 
   return (
-    <Card className={cn("h-full bg-white", className)}>
-      <CardHeader className="pb-3">
+    <Card className={cn("flex flex-col h-full bg-white", className)}>
+      <CardHeader className="pb-2">
         <CardTitle className="text-base font-semibold text-neutral-900">
-          热销产品榜
+          热销榜单
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 pb-5">
-        <div className="grid gap-3 sm:grid-cols-2">
+      <CardContent className="flex-1 pb-6">
+        <div className="space-y-5">
           {top.map((item, index) => (
-            <div
-              key={item.key}
-              className="rounded-xl bg-white border border-neutral-200 p-4 transition-all duration-200"
-            >
-              <div className="flex items-center justify-between text-xs text-neutral-500">
-                <span className="font-semibold uppercase tracking-[0.2em] text-neutral-400">
-                  TOP {index + 1}
-                </span>
-                <Badge
-                  variant="outline"
-                  className="border-neutral-200 bg-white text-[11px] font-medium text-neutral-600"
-                >
-                  {formatPercent(item.ratio, 1)}
-                </Badge>
+            <div key={item.key} className="group">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-3">
+                   <span className={cn(
+                     "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold",
+                     index === 0 ? "bg-yellow-100 text-yellow-700" :
+                     index === 1 ? "bg-neutral-100 text-neutral-700" :
+                     index === 2 ? "bg-neutral-100 text-neutral-700" :
+                     "bg-neutral-50 text-neutral-500"
+                   )}>
+                     {index + 1}
+                   </span>
+                   <span className="text-sm font-medium text-neutral-900">
+                     {item.name}
+                   </span>
+                </div>
+                <div className="text-right">
+                  <span className="block text-sm font-bold text-neutral-900">
+                    {formatCurrency(item.amount)}
+                  </span>
+                </div>
               </div>
-              <p className="mt-3 text-sm font-bold text-neutral-900 transition-colors">
-                {item.name}
-              </p>
-              <p className="mt-1 text-xs text-neutral-500">
-                销售额{" "}
-                <span className="font-mono font-semibold text-neutral-900">
-                  {formatCurrency(item.amount)}
-                </span>
-              </p>
-              <div className="mt-3 flex items-center gap-1.5">
-                <span className="text-[10px] uppercase tracking-[0.2em] text-neutral-400">
-                  类别
-                </span>
-                <span className="text-xs font-medium text-neutral-600">
-                  {item.category}
+              <div className="flex items-center gap-3">
+                <Progress 
+                  value={(item.amount / maxAmount) * 100} 
+                  className="h-1.5 flex-1" 
+                />
+                <span className="text-[10px] font-medium text-neutral-500 w-8 text-right">
+                  {formatPercent(item.ratio, 1)}
                 </span>
               </div>
             </div>
           ))}
         </div>
-        {data.length > top.length ? (
-          <p className="text-xs text-neutral-500">
-            其余品类请在产品分析页查看更多明细。
-          </p>
-        ) : null}
       </CardContent>
     </Card>
   );
