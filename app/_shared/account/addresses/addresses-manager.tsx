@@ -30,6 +30,7 @@ const EMPTY_FORM: AddressFormState = {
   lastName: "",
   phone: "",
   phoneCountryCode: "+86",
+  wechat: "",
   company: "",
   country: "中国",
   countryCode: "CN",
@@ -49,6 +50,7 @@ function toFormState(address: Address): AddressFormState {
     lastName: address.lastName ?? "",
     phone: address.phone ?? "",
     phoneCountryCode: address.phoneCountryCode ?? "+86",
+    wechat: address.wechat ?? "",
     company: address.company ?? "",
     country: address.country ?? "中国",
     countryCode: address.countryCode ?? "CN",
@@ -359,8 +361,8 @@ export default function AddressesManager({ user }: AddressesManagerProps) {
                             aria-hidden
                           />
                           <div className="space-y-1">
-                            {addressLines.map((line) => (
-                              <p key={line}>{line}</p>
+                            {addressLines.map((line, index) => (
+                              <p key={`${index}-${line}`}>{line}</p>
                             ))}
                           </div>
                         </div>

@@ -53,13 +53,15 @@ type CheckoutClientProps = {
   internalTestingEnabled?: boolean;
 };
 
-type AddressFormState = Omit<AddressInput, "id">;
+type AddressFormState = AddressInput;
 
 const DEFAULT_ADDRESS_FORM: AddressFormState = {
+  id: undefined,
   firstName: "",
   lastName: "",
   phone: "",
   phoneCountryCode: "+86",
+  wechat: "",
   company: "",
   country: "中国",
   countryCode: "CN",
@@ -254,6 +256,7 @@ export function CheckoutClient({
   const [pointsApplied, setPointsApplied] = useState(0);
   const [pointsError, setPointsError] = useState<string | null>(null);
   const [pointsSuccess, setPointsSuccess] = useState<string | null>(null);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
   const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const checkoutRouteBase = variant === "mobile" ? "/m/checkout" : "/checkout";
 
@@ -459,6 +462,7 @@ export function CheckoutClient({
   const resetAddressForm = () => {
     setAddressForm(DEFAULT_ADDRESS_FORM);
     setAddressError(null);
+    setEditingAddressId(null);
   };
 
   const validateAddressForm = () => {
@@ -517,9 +521,34 @@ export function CheckoutClient({
       setSelectedAddressId(result.data.added.id);
       resetAddressForm();
       setIsAddingAddress(false);
+      setEditingAddressId(null);
     } finally {
       setAddressSubmitting(false);
     }
+  };
+
+  const handleEditAddress = (address: Address) => {
+    setIsAddingAddress(true);
+    setEditingAddressId(address.id);
+    setAddressError(null);
+    setAddressForm({
+      id: address.id,
+      firstName: address.firstName ?? "",
+      lastName: address.lastName ?? "",
+      phone: address.phone ?? "",
+      phoneCountryCode: address.phoneCountryCode ?? "+86",
+      wechat: address.wechat ?? "",
+      company: address.company ?? "",
+      country: address.country ?? "中国",
+      countryCode: address.countryCode ?? "CN",
+      province: address.province ?? "",
+      city: address.city ?? "",
+      district: address.district ?? "",
+      postalCode: address.postalCode ?? "",
+      address1: address.address1 ?? "",
+      address2: address.address2 ?? "",
+      isDefault: Boolean(address.isDefault),
+    });
   };
 
   const handleSetDefaultAddress = async (addressId: string) => {
@@ -775,7 +804,15 @@ export function CheckoutClient({
             <button
               type="button"
               onClick={() => {
-                setIsAddingAddress((prev) => !prev);
+                setIsAddingAddress((prev) => {
+                  const next = !prev;
+                  if (next === true) {
+                    resetAddressForm();
+                  } else {
+                    setEditingAddressId(null);
+                  }
+                  return next;
+                });
                 setAddressError(null);
               }}
               className={cn(
@@ -784,7 +821,8 @@ export function CheckoutClient({
               )}
               disabled={paymentLocked}
             >
-              <Plus className="h-3.5 w-3.5" aria-hidden /> 新增收货地址
+              <Plus className="h-3.5 w-3.5" aria-hidden />{" "}
+              {editingAddressId ? "编辑收货地址" : "新增收货地址"}
             </button>
           </header>
           <div className="mt-6 space-y-4">
@@ -828,6 +866,11 @@ export function CheckoutClient({
                                   {displayPhone}
                                 </p>
                               ) : null}
+                              {address.wechat ? (
+                                <p className="text-xs text-neutral-500">
+                                  微信：{address.wechat}
+                                </p>
+                              ) : null}
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
@@ -853,9 +896,23 @@ export function CheckoutClient({
                         <div className="text-xs text-neutral-500">
                           {addressLines.length === 0
                             ? null
-                            : addressLines.map((line) => (
-                                <p key={line}>{line}</p>
+                            : addressLines.map((line, index) => (
+                                <p key={`${index}-${line}`}>{line}</p>
                               ))}
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              handleEditAddress(address);
+                            }}
+                          className="inline-flex items-center gap-1 rounded-full border border-emerald-200 px-3 py-1 text-[11px] font-medium text-emerald-700 transition hover:border-emerald-600 hover:text-emerald-800"
+                          disabled={paymentLocked}
+                        >
+                          编辑
+                        </button>
                         </div>
                       </label>
                     </li>
@@ -875,7 +932,7 @@ export function CheckoutClient({
               onSubmit={handleSubmitAddress}
             >
               <h3 className="text-sm font-semibold text-neutral-800">
-                新增收货地址
+                {editingAddressId ? "编辑收货地址" : "新增收货地址"}
               </h3>
               <AddressFormFields
                 value={addressForm}
@@ -891,7 +948,7 @@ export function CheckoutClient({
                   loading={addressSubmitting}
                   loadingText="保存中..."
                 >
-                  保存地址
+                  {editingAddressId ? "保存修改" : "保存地址"}
                 </PrimaryButton>
                 <button
                   type="button"

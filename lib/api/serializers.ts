@@ -194,6 +194,7 @@ export function createAddressRecord(input: AddressInput): Address {
     lastName: (input.lastName || "").trim(),
     phone: input.phone?.trim() || undefined,
     phoneCountryCode: normaliseDialCode(input.phoneCountryCode),
+    wechat: input.wechat?.trim() || undefined,
     company: input.company?.trim() || undefined,
     country: input.country?.trim() || "中国",
     countryCode: input.countryCode?.trim().toUpperCase() || "CN",
