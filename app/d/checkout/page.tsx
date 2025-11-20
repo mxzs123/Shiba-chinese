@@ -3,7 +3,10 @@ import { cookies } from "next/headers";
 
 import { CheckoutClient } from "@/app/_shared/checkout/CheckoutClient";
 import { CART_SELECTED_MERCHANDISE_COOKIE } from "@/components/cart/constants";
-import { parseSelectedMerchandiseIds } from "@/components/cart/cart-selection";
+import {
+  filterCartBySelectedMerchandise,
+  parseSelectedMerchandiseIds,
+} from "@/components/cart/cart-selection";
 import type { Cart } from "lib/types";
 import {
   getCart,
@@ -16,8 +19,7 @@ import {
 
 export const metadata: Metadata = {
   title: "结算",
-  description:
-    "确认收货地址、配送方式和支付方式，完成订单提交。",
+  description: "确认收货地址、配送方式和支付方式，完成订单提交。",
 };
 
 /**
@@ -39,18 +41,22 @@ function containsPrescriptionProduct(cart?: Cart): boolean {
 export default async function CheckoutPage() {
   const cookieStore = await cookies();
 
-  // 并发获取所有必需数据
-  const [cart, customer, demoUser, shippingMethods, paymentMethods, availableCoupons] =
+  // 并发获取购物车与基础数据；用户信息单独处理以规避 demo 账号缺失导致的崩溃。
+  const cartPromise = getCart();
+  const shippingMethodsPromise = getShippingMethods();
+  const paymentMethodsPromise = getPaymentMethods();
+  const availableCouponsPromise = getAvailableCoupons();
+  const customer = await getCurrentUser();
+  const demoUser = customer
+    ? null
+    : await getUserById("user-demo").catch(() => null); // demo 用户作为降级，失败时忽略
+  const [cart, shippingMethods, paymentMethods, availableCoupons] =
     await Promise.all([
-      getCart(),
-      getCurrentUser(),
-      getUserById("user-demo"), // demo 用户作为降级
-      getShippingMethods(),
-      getPaymentMethods(),
-      getAvailableCoupons(),
+      cartPromise,
+      shippingMethodsPromise,
+      paymentMethodsPromise,
+      availableCouponsPromise,
     ]);
-
-  // 未登录时使用 demo 用户
   const effectiveCustomer = customer || demoUser;
 
   // 获取选中的商品 ID
@@ -60,9 +66,13 @@ export default async function CheckoutPage() {
   const selectedMerchandiseIds = parseSelectedMerchandiseIds(
     selectedMerchandiseCookie,
   );
+  const filteredCart = filterCartBySelectedMerchandise(
+    cart,
+    new Set(selectedMerchandiseIds),
+  );
 
   // 检测是否包含处方商品
-  const requiresPrescriptionReview = containsPrescriptionProduct(cart);
+  const requiresPrescriptionReview = containsPrescriptionProduct(filteredCart);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 lg:px-0">

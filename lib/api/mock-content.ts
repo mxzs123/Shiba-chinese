@@ -1,9 +1,4 @@
-import type {
-  Menu,
-  NewsArticle,
-  Notification,
-  Page,
-} from "./types";
+import type { Menu, NewsArticle, Notification, Page } from "./types";
 import { thisYear } from "./mock-shared";
 
 export const pages: Page[] = [
@@ -347,4 +342,3 @@ export const notifications: Notification[] = [
     readAt: `${thisYear}-05-13T08:12:00.000Z`,
   },
 ];
-

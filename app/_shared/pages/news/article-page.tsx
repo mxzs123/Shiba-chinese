@@ -68,7 +68,9 @@ function formatPublishedAt(value: string) {
 }
 
 function buildJapanMedicalSupportArticles(all: NewsArticle[]) {
-  const intro = all.find((article) => article.slug === JAPAN_MEDICAL_SUPPORT_SLUG);
+  const intro = all.find(
+    (article) => article.slug === JAPAN_MEDICAL_SUPPORT_SLUG,
+  );
   const related = all.filter((article) => {
     if (article.slug === JAPAN_MEDICAL_SUPPORT_SLUG) return false;
     return article.tags?.includes(JAPAN_MEDICAL_SUPPORT_TAG);
@@ -91,7 +93,9 @@ export async function NewsArticlePage(props: { params: PageParams }) {
       return notFound();
     }
 
-    const publishedAt = intro ? formatPublishedAt(intro.publishedAt) : undefined;
+    const publishedAt = intro
+      ? formatPublishedAt(intro.publishedAt)
+      : undefined;
 
     return (
       <>

@@ -205,7 +205,7 @@ export function ProductDistributionLeaderboard({
   className,
 }: ProductDistributionLeaderboardProps) {
   const { top } = prepareProductData(data);
-  const maxAmount = Math.max(...top.map(t => t.amount));
+  const maxAmount = Math.max(...top.map((t) => t.amount));
 
   return (
     <Card className={cn("flex flex-col h-full bg-white", className)}>
@@ -220,18 +220,23 @@ export function ProductDistributionLeaderboard({
             <div key={item.key} className="group">
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-3">
-                   <span className={cn(
-                     "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold",
-                     index === 0 ? "bg-yellow-100 text-yellow-700" :
-                     index === 1 ? "bg-neutral-100 text-neutral-700" :
-                     index === 2 ? "bg-neutral-100 text-neutral-700" :
-                     "bg-neutral-50 text-neutral-500"
-                   )}>
-                     {index + 1}
-                   </span>
-                   <span className="text-sm font-medium text-neutral-900">
-                     {item.name}
-                   </span>
+                  <span
+                    className={cn(
+                      "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold",
+                      index === 0
+                        ? "bg-yellow-100 text-yellow-700"
+                        : index === 1
+                          ? "bg-neutral-100 text-neutral-700"
+                          : index === 2
+                            ? "bg-neutral-100 text-neutral-700"
+                            : "bg-neutral-50 text-neutral-500",
+                    )}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="text-sm font-medium text-neutral-900">
+                    {item.name}
+                  </span>
                 </div>
                 <div className="text-right">
                   <span className="block text-sm font-bold text-neutral-900">
@@ -240,9 +245,9 @@ export function ProductDistributionLeaderboard({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Progress 
-                  value={(item.amount / maxAmount) * 100} 
-                  className="h-1.5 flex-1" 
+                <Progress
+                  value={(item.amount / maxAmount) * 100}
+                  className="h-1.5 flex-1"
                 />
                 <span className="text-[10px] font-medium text-neutral-500 w-8 text-right">
                   {formatPercent(item.ratio, 1)}

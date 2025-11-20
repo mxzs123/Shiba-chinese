@@ -111,7 +111,10 @@ function ComplianceCards({ items }: { items: ComplianceItem[] }) {
                 查看 PDF
               </a>
             ) : (
-              <PrimaryButton className="h-9 rounded-lg px-3 text-xs shadow-none" aria-label={`上传 ${item.label} PDF`}>
+              <PrimaryButton
+                className="h-9 rounded-lg px-3 text-xs shadow-none"
+                aria-label={`上传 ${item.label} PDF`}
+              >
                 <FileUp className="h-4 w-4" aria-hidden />
                 上传文件
               </PrimaryButton>

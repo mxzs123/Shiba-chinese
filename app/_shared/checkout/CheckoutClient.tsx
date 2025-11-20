@@ -347,7 +347,9 @@ export function CheckoutClient({
   // 内测模式下忽略优惠券折扣；仅用于演示闭环，避免刷新/身份导致金额不一致。
   const effectiveCouponsTotal = INTERNAL_TESTING_ENABLED ? 0 : couponsTotal;
   const rawPayable = itemsSubtotal - effectiveCouponsTotal + shippingFee;
-  const payableBeforePoints = Number.isFinite(rawPayable) ? Math.max(rawPayable, 0) : 0;
+  const payableBeforePoints = Number.isFinite(rawPayable)
+    ? Math.max(rawPayable, 0)
+    : 0;
 
   const loyaltyAccount: PointAccount | undefined = customer?.loyalty;
   const loyaltyBalance = loyaltyAccount?.balance ?? 0;
@@ -974,234 +976,234 @@ export function CheckoutClient({
         </section>
 
         {!INTERNAL_TESTING_ENABLED && (
-        <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
-          <header className="flex items-center gap-2 text-neutral-900">
-            <Ticket className="h-5 w-5" aria-hidden />
-            <h2 className="text-lg font-semibold">优惠券</h2>
-          </header>
-          <p className="mt-1 text-sm text-neutral-500">
-            选择可用优惠券，金额与规则均可在后端配置。
-          </p>
-          <CouponRedeemForm
-            className="mt-4"
-            onRedeem={handleRedeemCoupon}
-            submitLabel="立即兑换"
-            pendingLabel="兑换中..."
-          />
-          <div className={cn("mt-4", isMobile ? "space-y-2" : "space-y-3")}>
-            {availableCouponList.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-6 text-sm text-neutral-500">
-                当前无可用优惠券。
-              </p>
-            ) : (
-              availableCouponList.map((coupon) => {
-                const isApplied = appliedCouponCodes.has(
-                  coupon.code.toLowerCase(),
-                );
-                const isProcessing = couponProcessingCode === coupon.code;
-                return (
-                  <CouponCard
-                    key={coupon.id}
-                    coupon={coupon}
-                    state="available"
-                    layout={isMobile ? "compact" : "default"}
-                    actionDescription={null}
-                    actionSlot={
-                      <CheckoutActionButton
-                        variant={isApplied ? "accent" : "accentOutline"}
-                        size="sm"
-                        className={cn(
-                          "gap-1.5",
-                          isMobile && "w-full justify-center",
-                        )}
-                        onClick={() =>
-                          isApplied
-                            ? handleRemoveCoupon(coupon.code)
-                            : handleApplyCoupon(coupon.code)
-                        }
-                        disabled={isProcessing || paymentLocked}
-                      >
-                        {isProcessing ? (
-                          <Loader2
-                            className="h-3.5 w-3.5 animate-spin"
-                            aria-hidden
-                          />
-                        ) : null}
-                        {isApplied ? "已使用" : "使用优惠"}
-                      </CheckoutActionButton>
-                    }
-                    className={cn(
-                      isApplied && "border-emerald-500/60 bg-emerald-50",
-                    )}
-                  />
-                );
-              })
-            )}
-          </div>
-          {couponError ? (
-            <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-500">
-              {couponError}
+          <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
+            <header className="flex items-center gap-2 text-neutral-900">
+              <Ticket className="h-5 w-5" aria-hidden />
+              <h2 className="text-lg font-semibold">优惠券</h2>
+            </header>
+            <p className="mt-1 text-sm text-neutral-500">
+              选择可用优惠券，金额与规则均可在后端配置。
             </p>
-          ) : null}
-          {couponSuccess ? (
-            <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-600">
-              {couponSuccess}
-            </p>
-          ) : null}
-        </section>
-        )}
-
-        {!INTERNAL_TESTING_ENABLED && (
-        <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
-          <header className="flex items-center gap-2 text-neutral-900">
-            <Wallet className="h-5 w-5" aria-hidden />
-            <h2 className="text-lg font-semibold">积分抵扣</h2>
-          </header>
-          <p className="mt-2 text-sm text-neutral-500">
-            可用积分
-            <span className="mx-1 font-semibold text-neutral-900">
-              {loyaltyBalance}
-            </span>
-            分。
-          </p>
-          <div className="mt-4 space-y-3">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <div className="flex flex-1 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 transition focus-within:border-neutral-400 focus-within:ring-1 focus-within:ring-neutral-300">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  className="w-full bg-transparent text-sm text-neutral-900 outline-none placeholder:text-neutral-400"
-                  placeholder={
-                    maxPointRedeemable
-                      ? "请输入想要使用的积分数量"
-                      : "当前无可用积分"
-                  }
-                  value={pointsInput}
-                  onChange={(event) =>
-                    handlePointsInputChange(event.target.value)
-                  }
-                  disabled={paymentLocked || !maxPointRedeemable}
-                />
-                <CheckoutActionButton
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleApplyMaxPoints}
-                  disabled={paymentLocked || !maxPointRedeemable}
-                  className="shrink-0"
-                >
-                  全部使用
-                </CheckoutActionButton>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckoutActionButton
-                  variant="primary"
-                  onClick={handleApplyPoints}
-                  disabled={paymentLocked || !loyaltyBalance}
-                >
-                  确认抵扣
-                </CheckoutActionButton>
-                <CheckoutActionButton
-                  variant="secondary"
-                  onClick={handleResetPoints}
-                  disabled={paymentLocked || pointsApplied === 0}
-                >
-                  清除
-                </CheckoutActionButton>
-              </div>
-            </div>
-            {pointsApplied > 0 ? (
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500">
-                <span>使用积分</span>
-                <span className="font-semibold text-neutral-900">
-                  {pointsApplied}
-                </span>
-                <span>抵扣金额</span>
-                <span className="font-semibold text-neutral-900">
-                  {formatCurrency(pointsApplied, cartCurrency)}
-                </span>
-                <span>剩余积分</span>
-                <span className="font-semibold text-neutral-900">
-                  {pointsRemaining}
-                </span>
-                <span>。</span>
-              </div>
-            ) : (
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500">
-                <span>未使用积分抵扣，可根据需要输入积分数量。</span>
-              </div>
-            )}
-          </div>
-          {pointsError ? (
-            <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-500">
-              {pointsError}
-            </p>
-          ) : null}
-          {pointsSuccess ? (
-            <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-600">
-              {pointsSuccess}
-            </p>
-          ) : null}
-        </section>
-        )}
-
-        {!INTERNAL_TESTING_ENABLED && (
-        <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
-          <header className="flex items-center gap-2 text-neutral-900">
-            <h2 className="text-lg font-semibold">支付方式</h2>
-          </header>
-          <p className="mt-1 text-sm text-neutral-500">
-            目前仅提供自研扫码支付，支付完成由后端回调确认订单状态。
-          </p>
-          <div className="mt-4 space-y-3">
-            {paymentMethods.map((method) => {
-              const isSelected = method.id === selectedPaymentId;
-              return (
-                <label
-                  key={method.id}
-                  className={cn(
-                    "flex cursor-pointer items-start justify-between gap-4 rounded-2xl border p-4 transition",
-                    isSelected
-                      ? SELECTABLE_CARD_SELECTED_CLASSES
-                      : SELECTABLE_CARD_UNSELECTED_CLASSES,
-                    method.disabled && "opacity-50",
-                  )}
-                >
-                  <div className="flex items-start gap-3">
-                    <input
-                      type="radio"
-                      name="checkout-payment"
-                      className="h-4 w-4 border-neutral-300 text-neutral-900 focus:ring-neutral-900"
-                      checked={isSelected}
-                      onChange={() => setSelectedPaymentId(method.id)}
-                      disabled={paymentLocked || method.disabled}
+            <CouponRedeemForm
+              className="mt-4"
+              onRedeem={handleRedeemCoupon}
+              submitLabel="立即兑换"
+              pendingLabel="兑换中..."
+            />
+            <div className={cn("mt-4", isMobile ? "space-y-2" : "space-y-3")}>
+              {availableCouponList.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-6 text-sm text-neutral-500">
+                  当前无可用优惠券。
+                </p>
+              ) : (
+                availableCouponList.map((coupon) => {
+                  const isApplied = appliedCouponCodes.has(
+                    coupon.code.toLowerCase(),
+                  );
+                  const isProcessing = couponProcessingCode === coupon.code;
+                  return (
+                    <CouponCard
+                      key={coupon.id}
+                      coupon={coupon}
+                      state="available"
+                      layout={isMobile ? "compact" : "default"}
+                      actionDescription={null}
+                      actionSlot={
+                        <CheckoutActionButton
+                          variant={isApplied ? "accent" : "accentOutline"}
+                          size="sm"
+                          className={cn(
+                            "gap-1.5",
+                            isMobile && "w-full justify-center",
+                          )}
+                          onClick={() =>
+                            isApplied
+                              ? handleRemoveCoupon(coupon.code)
+                              : handleApplyCoupon(coupon.code)
+                          }
+                          disabled={isProcessing || paymentLocked}
+                        >
+                          {isProcessing ? (
+                            <Loader2
+                              className="h-3.5 w-3.5 animate-spin"
+                              aria-hidden
+                            />
+                          ) : null}
+                          {isApplied ? "已使用" : "使用优惠"}
+                        </CheckoutActionButton>
+                      }
+                      className={cn(
+                        isApplied && "border-emerald-500/60 bg-emerald-50",
+                      )}
                     />
-                    <div>
-                      <p className="text-sm font-semibold text-neutral-900">
-                        {method.name}
-                      </p>
-                      {method.description ? (
-                        <p className="text-xs text-neutral-500">
-                          {method.description}
+                  );
+                })
+              )}
+            </div>
+            {couponError ? (
+              <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-500">
+                {couponError}
+              </p>
+            ) : null}
+            {couponSuccess ? (
+              <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-600">
+                {couponSuccess}
+              </p>
+            ) : null}
+          </section>
+        )}
+
+        {!INTERNAL_TESTING_ENABLED && (
+          <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
+            <header className="flex items-center gap-2 text-neutral-900">
+              <Wallet className="h-5 w-5" aria-hidden />
+              <h2 className="text-lg font-semibold">积分抵扣</h2>
+            </header>
+            <p className="mt-2 text-sm text-neutral-500">
+              可用积分
+              <span className="mx-1 font-semibold text-neutral-900">
+                {loyaltyBalance}
+              </span>
+              分。
+            </p>
+            <div className="mt-4 space-y-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="flex flex-1 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 transition focus-within:border-neutral-400 focus-within:ring-1 focus-within:ring-neutral-300">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    className="w-full bg-transparent text-sm text-neutral-900 outline-none placeholder:text-neutral-400"
+                    placeholder={
+                      maxPointRedeemable
+                        ? "请输入想要使用的积分数量"
+                        : "当前无可用积分"
+                    }
+                    value={pointsInput}
+                    onChange={(event) =>
+                      handlePointsInputChange(event.target.value)
+                    }
+                    disabled={paymentLocked || !maxPointRedeemable}
+                  />
+                  <CheckoutActionButton
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleApplyMaxPoints}
+                    disabled={paymentLocked || !maxPointRedeemable}
+                    className="shrink-0"
+                  >
+                    全部使用
+                  </CheckoutActionButton>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckoutActionButton
+                    variant="primary"
+                    onClick={handleApplyPoints}
+                    disabled={paymentLocked || !loyaltyBalance}
+                  >
+                    确认抵扣
+                  </CheckoutActionButton>
+                  <CheckoutActionButton
+                    variant="secondary"
+                    onClick={handleResetPoints}
+                    disabled={paymentLocked || pointsApplied === 0}
+                  >
+                    清除
+                  </CheckoutActionButton>
+                </div>
+              </div>
+              {pointsApplied > 0 ? (
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500">
+                  <span>使用积分</span>
+                  <span className="font-semibold text-neutral-900">
+                    {pointsApplied}
+                  </span>
+                  <span>抵扣金额</span>
+                  <span className="font-semibold text-neutral-900">
+                    {formatCurrency(pointsApplied, cartCurrency)}
+                  </span>
+                  <span>剩余积分</span>
+                  <span className="font-semibold text-neutral-900">
+                    {pointsRemaining}
+                  </span>
+                  <span>。</span>
+                </div>
+              ) : (
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500">
+                  <span>未使用积分抵扣，可根据需要输入积分数量。</span>
+                </div>
+              )}
+            </div>
+            {pointsError ? (
+              <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-500">
+                {pointsError}
+              </p>
+            ) : null}
+            {pointsSuccess ? (
+              <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-600">
+                {pointsSuccess}
+              </p>
+            ) : null}
+          </section>
+        )}
+
+        {!INTERNAL_TESTING_ENABLED && (
+          <section className="rounded-2xl border border-neutral-200 bg-white/95 p-6 shadow-sm shadow-black/[0.02]">
+            <header className="flex items-center gap-2 text-neutral-900">
+              <h2 className="text-lg font-semibold">支付方式</h2>
+            </header>
+            <p className="mt-1 text-sm text-neutral-500">
+              目前仅提供自研扫码支付，支付完成由后端回调确认订单状态。
+            </p>
+            <div className="mt-4 space-y-3">
+              {paymentMethods.map((method) => {
+                const isSelected = method.id === selectedPaymentId;
+                return (
+                  <label
+                    key={method.id}
+                    className={cn(
+                      "flex cursor-pointer items-start justify-between gap-4 rounded-2xl border p-4 transition",
+                      isSelected
+                        ? SELECTABLE_CARD_SELECTED_CLASSES
+                        : SELECTABLE_CARD_UNSELECTED_CLASSES,
+                      method.disabled && "opacity-50",
+                    )}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="checkout-payment"
+                        className="h-4 w-4 border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+                        checked={isSelected}
+                        onChange={() => setSelectedPaymentId(method.id)}
+                        disabled={paymentLocked || method.disabled}
+                      />
+                      <div>
+                        <p className="text-sm font-semibold text-neutral-900">
+                          {method.name}
                         </p>
-                      ) : null}
-                      {method.instructions ? (
-                        <p className="mt-1 text-xs text-neutral-400">
-                          {method.instructions}
-                        </p>
-                      ) : null}
-                      {method.type === "qr_code" ? (
-                        <p className="mt-1 text-[11px] text-neutral-400">
-                          * 集成完成后支持微信 / 支付宝扫码支付
-                        </p>
-                      ) : null}
+                        {method.description ? (
+                          <p className="text-xs text-neutral-500">
+                            {method.description}
+                          </p>
+                        ) : null}
+                        {method.instructions ? (
+                          <p className="mt-1 text-xs text-neutral-400">
+                            {method.instructions}
+                          </p>
+                        ) : null}
+                        {method.type === "qr_code" ? (
+                          <p className="mt-1 text-[11px] text-neutral-400">
+                            * 集成完成后支持微信 / 支付宝扫码支付
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
-                </label>
-              );
-            })}
-          </div>
-        </section>
+                  </label>
+                );
+              })}
+            </div>
+          </section>
         )}
       </div>
 
@@ -1311,7 +1313,9 @@ export function CheckoutClient({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-neutral-900">自研扫码支付</h3>
+              <h3 className="text-lg font-semibold text-neutral-900">
+                自研扫码支付
+              </h3>
               <button
                 type="button"
                 className="text-sm font-medium text-neutral-500 transition hover:text-neutral-900"
@@ -1320,7 +1324,9 @@ export function CheckoutClient({
                 关闭
               </button>
             </div>
-            <p className="mt-2 text-sm text-neutral-500">请使用微信 / 支付宝扫码完成支付。</p>
+            <p className="mt-2 text-sm text-neutral-500">
+              请使用微信 / 支付宝扫码完成支付。
+            </p>
             <div className="mt-6 flex flex-col items-center gap-4">
               <div className="w-full">
                 <div className="mx-auto w-full max-w-xs overflow-hidden rounded-2xl border border-dashed border-neutral-300 bg-white">
@@ -1336,7 +1342,9 @@ export function CheckoutClient({
               </div>
               {paymentStep === "qr" ? (
                 <div className="flex w-full flex-col items-center gap-3">
-                  <p className="text-sm font-medium text-neutral-800">是否已完成支付？</p>
+                  <p className="text-sm font-medium text-neutral-800">
+                    是否已完成支付？
+                  </p>
                   <PrimaryButton
                     type="button"
                     onClick={handleConfirmPaid}
@@ -1356,7 +1364,9 @@ export function CheckoutClient({
                     尚未完成/遇到问题
                   </button>
                   {notifyError ? (
-                    <p className="w-full rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">{notifyError}</p>
+                    <p className="w-full rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">
+                      {notifyError}
+                    </p>
                   ) : null}
                 </div>
               ) : null}

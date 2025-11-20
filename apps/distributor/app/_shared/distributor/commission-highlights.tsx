@@ -134,15 +134,16 @@ export function CommissionHighlights({
               {metric.badge ? (
                 <Badge
                   variant="outline"
-                  className={cn("ml-2 h-5 px-1.5 text-[10px]", BADGE_VARIANTS[metric.badge.tone])}
+                  className={cn(
+                    "ml-2 h-5 px-1.5 text-[10px]",
+                    BADGE_VARIANTS[metric.badge.tone],
+                  )}
                 >
                   {metric.badge.label}
                 </Badge>
               ) : null}
             </div>
-            <p className="mt-1 text-xs text-neutral-500">
-              {metric.secondary}
-            </p>
+            <p className="mt-1 text-xs text-neutral-500">{metric.secondary}</p>
           </CardContent>
         </Card>
       ))}

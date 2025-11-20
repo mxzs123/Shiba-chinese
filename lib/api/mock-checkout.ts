@@ -118,7 +118,11 @@ const customerCoupons: CustomerCoupon[] = [
   },
 ];
 
-export const coupons: Coupon[] = [welcomeCoupon, springCoupon, freeShippingCoupon];
+export const coupons: Coupon[] = [
+  welcomeCoupon,
+  springCoupon,
+  freeShippingCoupon,
+];
 export const shippingMethods = desktopShippingMethods;
 export const paymentMethods = desktopPaymentMethods;
 export const checkoutUrl = CHECKOUT_FALLBACK;

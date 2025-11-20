@@ -151,7 +151,9 @@ const faqSections: FaqSection[] = [
           <div className="space-y-3">
             <p>
               为了保证商品品质和用药安全，
-              <strong>付款后暂不支持无理由取消订单、更改订单内容或退换货。</strong>
+              <strong>
+                付款后暂不支持无理由取消订单、更改订单内容或退换货。
+              </strong>
             </p>
             <p>
               但在以下情况，我们将为您全额退款：
@@ -373,9 +375,7 @@ function FaqEmptyState({ query }: { query: string }) {
         <Search className="h-8 w-8 text-neutral-400" />
       </div>
       <div className="space-y-1">
-        <p className="text-lg font-medium text-neutral-900">
-          暂未找到相关结果
-        </p>
+        <p className="text-lg font-medium text-neutral-900">暂未找到相关结果</p>
         <p className="text-sm text-neutral-500">
           没有找到与“{query}”匹配的问题
         </p>

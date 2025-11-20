@@ -17,8 +17,7 @@ const DEFAULT_TITLE = "热门药品推荐";
 const DEFAULT_SUBTITLE = "基于近期热销与药师咨询趋势，为你精选高关注度药品";
 const DEFAULT_COLLECTION_HANDLE = "pharmacy";
 const DEFAULT_LIMIT = 6;
-const DEFAULT_SOURCE: NonNullable<HomeRecommendationsProps["source"]> =
-  "goods";
+const DEFAULT_SOURCE: NonNullable<HomeRecommendationsProps["source"]> = "goods";
 const DEFAULT_GOODS_CATEGORIES = [2085, 2086]; // 院内制剂 + 健康保健食品
 const DEFAULT_GOODS_ORDER: NonNullable<HomeRecommendationsProps["order"]> =
   "popular";

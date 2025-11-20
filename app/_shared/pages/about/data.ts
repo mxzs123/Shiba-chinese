@@ -23,7 +23,11 @@ export type FaqItem = {
 
 export const companyInfo: InfoRow[] = [
   { id: "entity-name", label: "公司名称", value: "株式会社芝園薬局（日本）" },
-  { id: "entity-address", label: "地址", value: "日本東京都港区芝公園2−3-3 寺田ビル1階" },
+  {
+    id: "entity-address",
+    label: "地址",
+    value: "日本東京都港区芝公園2−3-3 寺田ビル1階",
+  },
   { id: "entity-phone", label: "联系电话", value: "03-6452-9888" },
   { id: "entity-wechat", label: "微信公众号", value: "-" },
   { id: "entity-representative", label: "法定代表人", value: "大久保 弘一" },

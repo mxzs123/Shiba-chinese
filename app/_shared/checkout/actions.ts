@@ -213,9 +213,7 @@ export async function confirmPaymentAndNotifyAction(
 
     const now = new Date();
     const postedAt = now.toISOString();
-    const orderNumber = `DEMO-${now
-      .toISOString()
-      .replace(/[-:TZ.]/g, "")}`;
+    const orderNumber = `DEMO-${now.toISOString().replace(/[-:TZ.]/g, "")}`;
 
     // 如果没有配置 Slack webhook，跳过通知但仍然返回成功
     if (!webhookUrl) {
@@ -230,7 +228,8 @@ export async function confirmPaymentAndNotifyAction(
       ? payload.payable.amount
       : Number(cart.cost.totalAmount.amount) || 0;
 
-    const currency = (payload.payable.currencyCode || cart.cost.totalAmount.currencyCode) as CurrencyCode;
+    const currency = (payload.payable.currencyCode ||
+      cart.cost.totalAmount.currencyCode) as CurrencyCode;
 
     const addressLines = (
       payload.address.formatted && payload.address.formatted.length
@@ -253,7 +252,10 @@ export async function confirmPaymentAndNotifyAction(
     });
 
     const coupons = (cart.appliedCoupons || [])
-      .map((c) => `${c.coupon.code} (-${c.amount.amount} ${c.amount.currencyCode})`)
+      .map(
+        (c) =>
+          `${c.coupon.code} (-${c.amount.amount} ${c.amount.currencyCode})`,
+      )
       .join(", ");
 
     const customerInfo = payload.customer
@@ -261,7 +263,9 @@ export async function confirmPaymentAndNotifyAction(
           `姓名：${payload.customer.lastName}${payload.customer.firstName}`,
           payload.customer.email ? `邮箱：${payload.customer.email}` : null,
           payload.customer.phone ? `电话：${payload.customer.phone}` : null,
-          payload.customer.nickname ? `昵称：${payload.customer.nickname}` : null,
+          payload.customer.nickname
+            ? `昵称：${payload.customer.nickname}`
+            : null,
         ].filter(Boolean)
       : [];
 

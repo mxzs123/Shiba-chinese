@@ -55,7 +55,9 @@ export function MobileQuickCategoryShortcuts({
             const Icon =
               categoryIcons[category.label as keyof typeof categoryIcons];
             const slug = labelToSlug[category.label] || "";
-            const target = slug ? `/categories?category=${slug}` : "/categories";
+            const target = slug
+              ? `/categories?category=${slug}`
+              : "/categories";
             return (
               <li key={category.label}>
                 <Link

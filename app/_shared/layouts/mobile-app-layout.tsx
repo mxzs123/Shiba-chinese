@@ -40,14 +40,16 @@ export async function MobileAppLayout({ children }: { children: ReactNode }) {
         />
       </main>
       {/* 内测阶段隐藏个人中心入口（仅 UI 层） */}
-      <MobileBottomNav hideAccount={
-        process.env.HIDE_ACCOUNT === "1" ||
-        process.env.NEXT_PUBLIC_HIDE_ACCOUNT === "1" ||
-        process.env.MOCK_MODE === "1" ||
-        process.env.NEXT_PUBLIC_MOCK_MODE === "1" ||
-        process.env.INTERNAL_TESTING === "1" ||
-        process.env.NEXT_PUBLIC_INTERNAL_TESTING === "1"
-      } />
+      <MobileBottomNav
+        hideAccount={
+          process.env.HIDE_ACCOUNT === "1" ||
+          process.env.NEXT_PUBLIC_HIDE_ACCOUNT === "1" ||
+          process.env.MOCK_MODE === "1" ||
+          process.env.NEXT_PUBLIC_MOCK_MODE === "1" ||
+          process.env.INTERNAL_TESTING === "1" ||
+          process.env.NEXT_PUBLIC_INTERNAL_TESTING === "1"
+        }
+      />
     </CartProvider>
   );
 }

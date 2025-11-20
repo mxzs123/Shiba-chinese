@@ -21,7 +21,10 @@ interface PartnerSummaryProps {
   className?: string;
 }
 
-const STATUS_STYLES: Record<PartnerStatusSlice["tone"], { bg: string; border: string; icon: string; progress: string }> = {
+const STATUS_STYLES: Record<
+  PartnerStatusSlice["tone"],
+  { bg: string; border: string; icon: string; progress: string }
+> = {
   primary: {
     bg: "bg-blue-50/50",
     border: "border-blue-100",
@@ -57,100 +60,100 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
       <CardContent className="flex-1 flex flex-col pb-6">
         {/* Chart Section */}
         <div className="relative py-4">
-           <ChartContainer
-              config={data.statusSlices.reduce(
-                (config, slice, index) => ({
-                  ...config,
-                  [slice.id]: {
-                    label: slice.label,
-                    color: getStatusColor(slice.tone, index),
-                  },
-                }),
-                {},
-              )}
-              className="mx-auto aspect-square w-full max-w-[180px]"
-            >
-              <PieChart>
-                <ChartTooltip
-                  cursor={false}
-                  content={
-                    <ChartTooltipContent
-                      className="bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-lg rounded-lg px-3 py-2"
-                      labelClassName="text-sm font-semibold text-neutral-900"
-                      nameKey="id"
-                      formatter={(value, _name, item) => {
-                        const payload = item?.payload as
-                          | PartnerStatusSlice
-                          | undefined;
-                        if (!payload) {
-                          return null;
-                        }
-                        return (
-                          <div className="flex w-full items-center justify-between gap-4">
-                            <span className="text-sm text-neutral-600">
-                              {payload.label}
-                            </span>
-                            <span className="font-mono text-sm font-semibold text-neutral-900">
-                              {formatPercent(payload.ratio, 1)} ·{" "}
-                              {Math.round(Number(value))} 家
-                            </span>
-                          </div>
-                        );
-                      }}
-                    />
-                  }
-                />
-                <Pie
-                  data={data.statusSlices.map((slice) => ({
-                    ...slice,
-                    value: slice.value,
-                  }))}
-                  dataKey="value"
-                  nameKey="label"
-                  innerRadius={60}
-                  outerRadius={72}
-                  strokeWidth={0}
-                  paddingAngle={4}
-                >
-                  {data.statusSlices.map((slice, index) => (
-                    <Cell
-                      key={slice.id}
-                      fill={getStatusColor(slice.tone, index)}
-                    />
-                  ))}
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                        return (
-                          <text
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                          >
-                            <tspan
-                              x={viewBox.cx}
-                              y={viewBox.cy}
-                              className="fill-neutral-900 text-2xl font-bold"
-                            >
-                              {data.totalManaged}
-                            </tspan>
-                            <tspan
-                              x={viewBox.cx}
-                              y={(viewBox.cy || 0) + 20}
-                              className="fill-neutral-500 text-xs font-medium"
-                            >
-                              总数
-                            </tspan>
-                          </text>
-                        );
+          <ChartContainer
+            config={data.statusSlices.reduce(
+              (config, slice, index) => ({
+                ...config,
+                [slice.id]: {
+                  label: slice.label,
+                  color: getStatusColor(slice.tone, index),
+                },
+              }),
+              {},
+            )}
+            className="mx-auto aspect-square w-full max-w-[180px]"
+          >
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={
+                  <ChartTooltipContent
+                    className="bg-white/95 backdrop-blur-sm border border-neutral-200 shadow-lg rounded-lg px-3 py-2"
+                    labelClassName="text-sm font-semibold text-neutral-900"
+                    nameKey="id"
+                    formatter={(value, _name, item) => {
+                      const payload = item?.payload as
+                        | PartnerStatusSlice
+                        | undefined;
+                      if (!payload) {
+                        return null;
                       }
-                      return null;
+                      return (
+                        <div className="flex w-full items-center justify-between gap-4">
+                          <span className="text-sm text-neutral-600">
+                            {payload.label}
+                          </span>
+                          <span className="font-mono text-sm font-semibold text-neutral-900">
+                            {formatPercent(payload.ratio, 1)} ·{" "}
+                            {Math.round(Number(value))} 家
+                          </span>
+                        </div>
+                      );
                     }}
                   />
-                </Pie>
-              </PieChart>
-            </ChartContainer>
+                }
+              />
+              <Pie
+                data={data.statusSlices.map((slice) => ({
+                  ...slice,
+                  value: slice.value,
+                }))}
+                dataKey="value"
+                nameKey="label"
+                innerRadius={60}
+                outerRadius={72}
+                strokeWidth={0}
+                paddingAngle={4}
+              >
+                {data.statusSlices.map((slice, index) => (
+                  <Cell
+                    key={slice.id}
+                    fill={getStatusColor(slice.tone, index)}
+                  />
+                ))}
+                <Label
+                  content={({ viewBox }) => {
+                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      return (
+                        <text
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                        >
+                          <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            className="fill-neutral-900 text-2xl font-bold"
+                          >
+                            {data.totalManaged}
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 20}
+                            className="fill-neutral-500 text-xs font-medium"
+                          >
+                            总数
+                          </tspan>
+                        </text>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+              </Pie>
+            </PieChart>
+          </ChartContainer>
         </div>
 
         {/* Status Cards */}
@@ -159,14 +162,21 @@ export function PartnerSummary({ data, className }: PartnerSummaryProps) {
             <StatusRow key={slice.id} slice={slice} />
           ))}
         </div>
-        
+
         {/* Footer Note */}
         <div className="mt-6 pt-4 border-t border-neutral-100">
           <div className="flex items-start gap-2 text-xs text-neutral-500">
             <Users className="h-3.5 w-3.5 mt-0.5 text-neutral-400" />
             <p className="leading-relaxed">
-               共有 <span className="font-semibold text-neutral-900">{data.totalManaged}</span> 家分销伙伴。
-               需关注 <span className="font-medium text-amber-600">{data.inactiveCount} 家长期未活跃</span> 伙伴的情况。
+              共有{" "}
+              <span className="font-semibold text-neutral-900">
+                {data.totalManaged}
+              </span>{" "}
+              家分销伙伴。 需关注{" "}
+              <span className="font-medium text-amber-600">
+                {data.inactiveCount} 家长期未活跃
+              </span>{" "}
+              伙伴的情况。
             </p>
           </div>
         </div>
@@ -185,19 +195,25 @@ function StatusRow({ slice }: StatusRowProps) {
 
   return (
     <div className="flex items-center gap-3">
-      <div className={cn("flex h-8 w-8 items-center justify-center rounded-full", style.bg)}>
+      <div
+        className={cn(
+          "flex h-8 w-8 items-center justify-center rounded-full",
+          style.bg,
+        )}
+      >
         <Icon className={cn("h-4 w-4", style.icon)} />
       </div>
       <div className="flex-1 space-y-1.5">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium text-neutral-700">{slice.label}</span>
           <span className="font-bold text-neutral-900">
-            {slice.value} <span className="text-xs font-normal text-neutral-500">家</span>
+            {slice.value}{" "}
+            <span className="text-xs font-normal text-neutral-500">家</span>
           </span>
         </div>
-        <Progress 
-          value={Math.round(slice.ratio * 100)} 
-          className={cn("h-1.5", style.progress)} 
+        <Progress
+          value={Math.round(slice.ratio * 100)}
+          className={cn("h-1.5", style.progress)}
         />
       </div>
     </div>

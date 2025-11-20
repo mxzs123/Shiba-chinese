@@ -85,38 +85,39 @@ export function RevenueOverview({
             </div>
           </div>
           <div className="text-right">
-             <p className="text-sm font-medium text-neutral-500">
-              {growthCopy}
-            </p>
-             <div className="mt-1 flex items-center justify-end gap-1.5">
-                {data.growthRatio !== null && (
-                  <span
-                    className={cn(
-                      "flex h-6 items-center rounded-full px-2 text-xs font-medium",
-                      data.growthRatio >= 0
-                        ? "bg-emerald-50 text-emerald-700"
-                        : "bg-rose-50 text-rose-700"
-                    )}
-                  >
-                    {growthLabel}
-                  </span>
-                )}
-             </div>
+            <p className="text-sm font-medium text-neutral-500">{growthCopy}</p>
+            <div className="mt-1 flex items-center justify-end gap-1.5">
+              {data.growthRatio !== null && (
+                <span
+                  className={cn(
+                    "flex h-6 items-center rounded-full px-2 text-xs font-medium",
+                    data.growthRatio >= 0
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "bg-rose-50 text-rose-700",
+                  )}
+                >
+                  {growthLabel}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Main Area Chart */}
         <div className="h-[300px] w-full">
           <ChartContainer
-             className="h-full w-full"
-             config={{
-               value: {
-                 label: seriesLabel,
-                 color: CHART_COLORS.primary.DEFAULT,
-               },
-             }}
-           >
-            <AreaChart data={data.monthlyTrend} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+            className="h-full w-full"
+            config={{
+              value: {
+                label: seriesLabel,
+                color: CHART_COLORS.primary.DEFAULT,
+              },
+            }}
+          >
+            <AreaChart
+              data={data.monthlyTrend}
+              margin={{ top: 10, right: 0, left: -20, bottom: 0 }}
+            >
               <defs>
                 <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
                   <stop
@@ -148,7 +149,9 @@ export function RevenueOverview({
                 tickLine={false}
                 width={42}
                 tick={{ fill: "#9ca3af", fontSize: 11 }}
-                tickFormatter={(value: number) => `${Math.round(value / 1000)}k`}
+                tickFormatter={(value: number) =>
+                  `${Math.round(value / 1000)}k`
+                }
               />
               <ChartTooltip
                 cursor={{
@@ -192,7 +195,10 @@ export function RevenueOverview({
               <span className="text-xs font-medium text-neutral-500">
                 {dailyRangeCopy}
               </span>
-              <Badge variant="secondary" className="text-[10px] text-neutral-500 font-normal">
+              <Badge
+                variant="secondary"
+                className="text-[10px] text-neutral-500 font-normal"
+              >
                 {dailyUnitCopy}
               </Badge>
             </div>
@@ -206,20 +212,23 @@ export function RevenueOverview({
                   },
                 }}
               >
-                <BarChart data={data.dailyTrend} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                   <ChartTooltip
-                      cursor={{ fill: "rgba(0,0,0,0.04)" }}
-                      content={
-                        <ChartTooltipContent
-                          hideLabel
-                          formatter={(value) => (
-                             <span className="font-medium text-neutral-900">
-                               {formatCurrency(Number(value))}
-                             </span>
-                          )}
-                        />
-                      }
-                    />
+                <BarChart
+                  data={data.dailyTrend}
+                  margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+                >
+                  <ChartTooltip
+                    cursor={{ fill: "rgba(0,0,0,0.04)" }}
+                    content={
+                      <ChartTooltipContent
+                        hideLabel
+                        formatter={(value) => (
+                          <span className="font-medium text-neutral-900">
+                            {formatCurrency(Number(value))}
+                          </span>
+                        )}
+                      />
+                    }
+                  />
                   <Bar
                     dataKey="value"
                     fill={CHART_COLORS.primary.light}
@@ -235,4 +244,3 @@ export function RevenueOverview({
     </Card>
   );
 }
-

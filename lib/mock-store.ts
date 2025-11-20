@@ -11,7 +11,11 @@ type MockRecord = {
   payload: unknown;
 };
 
-const DEFAULT_FILE = path.join(process.cwd(), "test-results", "one-time-orders.json");
+const DEFAULT_FILE = path.join(
+  process.cwd(),
+  "test-results",
+  "one-time-orders.json",
+);
 
 function getStoreFilePath() {
   const custom = process.env.MOCK_DB_PATH;

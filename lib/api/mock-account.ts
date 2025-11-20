@@ -1,5 +1,11 @@
 import { now, thisYear } from "./mock-shared";
-import type { Address, Membership, PointAccount, PointRule, User } from "./types";
+import type {
+  Address,
+  Membership,
+  PointAccount,
+  PointRule,
+  User,
+} from "./types";
 import { customerCoupons } from "./mock-checkout";
 
 export const demoAddress: Address = {

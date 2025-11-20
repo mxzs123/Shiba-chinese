@@ -123,7 +123,8 @@ export default async function CheckoutSuccessPage() {
   );
 
   const title = "支付成功，订单已确认";
-  const description = "我们已收到您的支付请求，仓库正在安排备货。发货后会通过短信与邮箱通知物流单号。";
+  const description =
+    "我们已收到您的支付请求，仓库正在安排备货。发货后会通过短信与邮箱通知物流单号。";
   const tips = INTERNAL_TESTING_ENABLED
     ? []
     : [

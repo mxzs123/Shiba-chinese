@@ -73,11 +73,7 @@ export default async function SharedMobileNewsArticlePage(props: {
               </div>
 
               {related.length ? (
-                <MobileNewsList
-                  articles={related}
-                  initialCount={6}
-                  step={3}
-                />
+                <MobileNewsList articles={related} initialCount={6} step={3} />
               ) : (
                 <div className="rounded-3xl border border-dashed border-neutral-200 bg-white/70 px-6 py-10 text-center text-sm text-neutral-500">
                   <p className="font-semibold text-neutral-700">

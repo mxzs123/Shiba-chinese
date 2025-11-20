@@ -596,7 +596,9 @@ function createProductFromRecord(record: RawGoodsRecord): Product {
       productId: record.productId,
       brand: record.brand,
       categoryId: record.categoryId,
-      categoryName: (goodsCategories.find((c) => c.id === record.categoryId)?.name) || "未知分类",
+      categoryName:
+        goodsCategories.find((c) => c.id === record.categoryId)?.name ||
+        "未知分类",
       subCategoryId: record.subCategoryId,
       subCategoryName: record.subCategoryName,
       searchName: record.title,

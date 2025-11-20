@@ -2,7 +2,11 @@ import { thisYear } from "./mock-shared";
 import type { Order } from "./types";
 import { products } from "./mock-products";
 import { demoAddress } from "./mock-account";
-import { shippingMethods, defaultCurrency, welcomeAppliedCoupon } from "./mock-checkout";
+import {
+  shippingMethods,
+  defaultCurrency,
+  welcomeAppliedCoupon,
+} from "./mock-checkout";
 
 const adhdProduct = products.find(
   (product) => product.id === "prod-adhd-medication",
