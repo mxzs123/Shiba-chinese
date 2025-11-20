@@ -146,6 +146,9 @@ export function CartSheet({
                   <Dialog.Title className="text-lg font-semibold text-neutral-900">
                     {title}
                   </Dialog.Title>
+                  <Dialog.Description className="sr-only">
+                    展示购物车商品列表与相关操作。
+                  </Dialog.Description>
                   <button
                     type="button"
                     ref={closeButtonRef}

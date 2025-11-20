@@ -481,6 +481,9 @@ export function MobileCartContent() {
                 <Dialog.Title className="text-lg font-semibold text-neutral-900">
                   订单概览
                 </Dialog.Title>
+                <Dialog.Description className="sr-only">
+                  显示已选商品数量与金额详情。
+                </Dialog.Description>
                 <button
                   type="button"
                   onClick={() => setIsDetailsOpen(false)}

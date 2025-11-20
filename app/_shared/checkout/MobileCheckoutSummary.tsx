@@ -106,6 +106,9 @@ export function MobileCheckoutSummary({
                 <Dialog.Title className="text-lg font-semibold text-neutral-900">
                   订单明细
                 </Dialog.Title>
+                <Dialog.Description className="sr-only">
+                  展示本次订单的商品、优惠、积分和运费信息。
+                </Dialog.Description>
                 <button
                   type="button"
                   onClick={() => setIsDetailsOpen(false)}

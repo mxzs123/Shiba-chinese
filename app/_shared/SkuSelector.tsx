@@ -149,6 +149,9 @@ function SkuSelectorSheet({
                 <Dialog.Title className="text-lg font-semibold text-neutral-900">
                   选择规格
                 </Dialog.Title>
+                <Dialog.Description className="sr-only">
+                  选择商品规格以更新购买选项。
+                </Dialog.Description>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
