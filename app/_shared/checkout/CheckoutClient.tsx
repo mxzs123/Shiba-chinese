@@ -317,6 +317,7 @@ export function CheckoutClient({
   const [paymentStep, setPaymentStep] = useState<
     "idle" | "qr" | "help" | "success"
   >("idle");
+  const [isPostPaymentFlow, setIsPostPaymentFlow] = useState(false);
   const [notifySubmitting, setNotifySubmitting] = useState(false);
   const [notifyError, setNotifyError] = useState<string | null>(null);
   const [pointsInput, setPointsInput] = useState("");
@@ -728,7 +729,8 @@ export function CheckoutClient({
     !cartIsEmpty && selectedAddress && selectedShipping && selectedPayment,
   );
   // 成功支付后会清空购物车；若仍在支付弹窗中则保持弹窗视图，避免空态闪屏。
-  const shouldShowCartEmptyState = cartIsEmpty && !paymentModalOpen;
+  const shouldShowCartEmptyState =
+    cartIsEmpty && !paymentModalOpen && !isPostPaymentFlow;
 
   const clearRedirectTimer = () => {
     if (redirectTimerRef.current) {
@@ -743,20 +745,20 @@ export function CheckoutClient({
     }
 
     clearRedirectTimer();
+    setIsPostPaymentFlow(false);
     setPaymentModalOpen(true);
     setPaymentStep("qr");
   };
 
   const handleClosePayment = () => {
     clearRedirectTimer();
+    setIsPostPaymentFlow(false);
     setPaymentModalOpen(false);
     setPaymentStep("idle");
   };
 
   const handleNavigateToSuccess = () => {
     clearRedirectTimer();
-    setPaymentModalOpen(false);
-    setPaymentStep("idle");
     router.push(
       requiresPrescriptionReview
         ? `${checkoutRouteBase}/prescription-review`
@@ -796,6 +798,7 @@ export function CheckoutClient({
         return;
       }
 
+      setIsPostPaymentFlow(true);
       setPaymentStep("success");
       clearRedirectTimer();
       redirectTimerRef.current = setTimeout(() => {
