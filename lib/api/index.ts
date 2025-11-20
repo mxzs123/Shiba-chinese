@@ -173,14 +173,6 @@ export async function getCartCookieOptions() {
   };
 }
 
-type CartStore = Map<string, Cart>;
-
-type GlobalCartStore = typeof globalThis & {
-  __COMMERCE_CART_STORE__?: CartStore;
-};
-
-const globalCartStore = globalThis as GlobalCartStore;
-
 type CartSnapshotLine = {
   merchandiseId: string;
   quantity: number;
@@ -602,18 +594,8 @@ function createEmptyCart(initialId?: string): Cart {
   };
 }
 
-function getCartStore(): CartStore {
-  if (!globalCartStore.__COMMERCE_CART_STORE__) {
-    globalCartStore.__COMMERCE_CART_STORE__ = new Map<string, Cart>();
-  }
-
-  return globalCartStore.__COMMERCE_CART_STORE__;
-}
-
 async function saveCart(cart: Cart) {
   cart.updatedAt = new Date().toISOString();
-  const store = getCartStore();
-  store.set(cart.id, cart);
 
   try {
     const cookieStore = await cookies();
@@ -645,13 +627,6 @@ async function loadCart(): Promise<Cart | undefined> {
     return undefined;
   }
 
-  const store = getCartStore();
-  const existing = store.get(cartId);
-
-  if (existing) {
-    return existing;
-  }
-
   const encodedSnapshot = cookieStore.get(CART_STATE_COOKIE)?.value;
 
   if (!encodedSnapshot) {
@@ -665,7 +640,6 @@ async function loadCart(): Promise<Cart | undefined> {
   }
 
   const cart = hydrateCartFromSnapshot(snapshot);
-  store.set(cart.id, cart);
 
   return cart;
 }
