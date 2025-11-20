@@ -1,37 +1,78 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
-import { OneTimeCheckout } from "@/app/_shared/checkout/OneTimeCheckout";
+import { CheckoutClient } from "@/app/_shared/checkout/CheckoutClient";
 import { CART_SELECTED_MERCHANDISE_COOKIE } from "@/components/cart/constants";
 import { MobileHeader } from "@/components/layout/mobile-header";
+import { parseSelectedMerchandiseIds } from "@/components/cart/cart-selection";
+import type { Cart } from "lib/types";
 import {
-  filterCartBySelectedMerchandise,
-  parseSelectedMerchandiseIds,
-} from "@/components/cart/cart-selection";
-import { getCart, getNotifications } from "lib/api";
+  getCart,
+  getNotifications,
+  getCurrentUser,
+  getUserById,
+  getShippingMethods,
+  getPaymentMethods,
+  getAvailableCoupons,
+} from "lib/api";
 
 export const metadata: Metadata = {
   title: "结算",
   description:
-    "填写一次性收货与联系信息，提交后我们将线下与您确认支付与发货。",
+    "确认收货地址、配送方式和支付方式，完成订单提交。",
 };
+
+/**
+ * 检测购物车中是否包含处方药品
+ */
+function containsPrescriptionProduct(cart?: Cart): boolean {
+  if (!cart) return false;
+
+  return cart.lines.some((line) => {
+    const tags = line.merchandise.product.tags || [];
+    return tags.some(
+      (tag) =>
+        tag.toLowerCase() === "prescription" ||
+        tag.toLowerCase().startsWith("rx:"),
+    );
+  });
+}
 
 export default async function CheckoutPage() {
   const cookieStore = await cookies();
-  const [cart, notifications] = await Promise.all([
+
+  // 并发获取所有必需数据
+  const [
+    cart,
+    notifications,
+    customer,
+    demoUser,
+    shippingMethods,
+    paymentMethods,
+    availableCoupons,
+  ] = await Promise.all([
     getCart(),
     getNotifications(),
+    getCurrentUser(),
+    getUserById("user-demo"), // demo 用户作为降级
+    getShippingMethods(),
+    getPaymentMethods(),
+    getAvailableCoupons(),
   ]);
 
+  // 未登录时使用 demo 用户
+  const effectiveCustomer = customer || demoUser;
+
+  // 获取选中的商品 ID
   const selectedMerchandiseCookie = cookieStore.get(
     CART_SELECTED_MERCHANDISE_COOKIE,
   )?.value;
   const selectedMerchandiseIds = parseSelectedMerchandiseIds(
     selectedMerchandiseCookie,
   );
-  const checkoutCart = cart
-    ? filterCartBySelectedMerchandise(cart, selectedMerchandiseIds)
-    : cart;
+
+  // 检测是否包含处方商品
+  const requiresPrescriptionReview = containsPrescriptionProduct(cart);
 
   return (
     <div className="w-full bg-neutral-50">
@@ -43,11 +84,20 @@ export default async function CheckoutPage() {
       <header className="mb-4 px-4 pt-4">
         <h1 className="text-xl font-semibold text-neutral-900">确认订单</h1>
         <p className="mt-1.5 text-sm text-neutral-500">
-          填写一次性收货与联系信息，提交后我们将线下与您确认支付与发货。
+          请确认收货地址、配送方式和支付方式
         </p>
       </header>
       <div className="px-4 pb-8">
-        <OneTimeCheckout cart={checkoutCart} variant="mobile" />
+        <CheckoutClient
+          cart={cart}
+          customer={effectiveCustomer}
+          shippingMethods={shippingMethods}
+          paymentMethods={paymentMethods}
+          availableCoupons={availableCoupons}
+          selectedMerchandiseIds={selectedMerchandiseIds}
+          requiresPrescriptionReview={requiresPrescriptionReview}
+          variant="mobile"
+        />
       </div>
     </div>
   );

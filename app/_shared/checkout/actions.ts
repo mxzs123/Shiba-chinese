@@ -206,13 +206,6 @@ export async function confirmPaymentAndNotifyAction(
   try {
     const webhookUrl = process.env.SLACK_WEBHOOK_URL;
 
-    if (!webhookUrl) {
-      return {
-        success: false,
-        error: "Slack Webhook 未配置（SLACK_WEBHOOK_URL），无法提交订单通知",
-      };
-    }
-
     const cart = await getCart();
     if (!cart || cart.lines.length === 0) {
       return { success: false, error: "购物车为空，无法提交订单" };
@@ -223,6 +216,15 @@ export async function confirmPaymentAndNotifyAction(
     const orderNumber = `DEMO-${now
       .toISOString()
       .replace(/[-:TZ.]/g, "")}`;
+
+    // 如果没有配置 Slack webhook，跳过通知但仍然返回成功
+    if (!webhookUrl) {
+      console.log("Slack Webhook 未配置，跳过通知");
+      return {
+        success: true,
+        data: { postedAt },
+      };
+    }
 
     const amount = Number.isFinite(payload.payable.amount)
       ? payload.payable.amount
@@ -285,19 +287,23 @@ export async function confirmPaymentAndNotifyAction(
       text: textSummary,
     };
 
-    const res = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-      // Slack webhook 不需要缓存
-    });
+    // 发送 Slack 通知，失败时不阻断订单提交
+    try {
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+        // Slack webhook 不需要缓存
+      });
 
-    if (!res.ok) {
-      const errText = await res.text().catch(() => "");
-      return {
-        success: false,
-        error: errText || `Slack 通知失败（HTTP ${res.status})` ,
-      };
+      if (!res.ok) {
+        const errText = await res.text().catch(() => "");
+        console.error(`Slack 通知失败: ${errText || `HTTP ${res.status}`}`);
+        // 不返回错误，继续处理订单
+      }
+    } catch (slackError) {
+      console.error("Slack 通知异常:", slackError);
+      // Slack 推送失败不阻断下单
     }
 
     return {
