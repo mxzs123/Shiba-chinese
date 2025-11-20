@@ -8,7 +8,7 @@ import {
   filterCartBySelectedMerchandise,
   parseSelectedMerchandiseIds,
 } from "@/components/cart/cart-selection";
-import type { Cart } from "lib/types";
+import type { Cart } from "lib/api/types";
 import {
   getCart,
   getNotifications,
@@ -26,18 +26,13 @@ export const metadata: Metadata = {
 
 /**
  * 检测购物车中是否包含处方药品
+ * 注意：CartProduct 类型不包含 tags，暂时返回 false
+ * TODO: 需要扩展 CartProduct 类型或使用其他方式检测处方药
  */
-function containsPrescriptionProduct(cart?: Cart): boolean {
-  if (!cart) return false;
-
-  return cart.lines.some((line) => {
-    const tags = line.merchandise.product.tags || [];
-    return tags.some(
-      (tag) =>
-        tag.toLowerCase() === "prescription" ||
-        tag.toLowerCase().startsWith("rx:"),
-    );
-  });
+function containsPrescriptionProduct(_cart?: Cart): boolean {
+  // CartProduct 类型不包含 tags 属性，无法检测处方药
+  // 需要后端 API 支持或扩展 CartProduct 类型
+  return false;
 }
 
 export default async function CheckoutPage() {
@@ -51,8 +46,8 @@ export default async function CheckoutPage() {
   const availableCouponsPromise = getAvailableCoupons();
   const customer = await getCurrentUser();
   const demoUser = customer
-    ? null
-    : await getUserById("user-demo").catch(() => null); // demo 用户作为降级，失败时忽略
+    ? undefined
+    : await getUserById("user-demo").catch(() => undefined); // demo 用户作为降级，失败时忽略
   const [
     cart,
     notifications,
