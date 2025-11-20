@@ -12,28 +12,40 @@ const CHECKOUT_FALLBACK = "/checkout" as const;
 
 const desktopShippingMethods: ShippingMethod[] = [
   {
-    id: "ship-sf-same-day",
-    name: "当日速配",
-    carrier: "顺丰速运",
-    description: "16:00 前支付最快当日送达，限核心城区",
-    price: { amount: "25.00", currencyCode: CURRENCY },
-    estimatedDelivery: "当日送达",
+    id: "ship-ems-asia",
+    name: "EMS日本国际直邮（亚洲地区）",
+    carrier: "EMS",
+    description:
+      "按重量计费，1450 日元/kg，不含预估进口税费；示例为 1kg 费用，具体以仓库称重为准。",
+    price: { amount: "1450.00", currencyCode: CURRENCY },
+    estimatedDelivery: "预计 5-10 个工作日送达",
   },
   {
-    id: "ship-sf-standard",
-    name: "次日达",
-    carrier: "顺丰速运",
-    description: "默认线路，支持查看实时物流进度",
-    price: { amount: "12.00", currencyCode: CURRENCY },
-    estimatedDelivery: "预计 1-2 个工作日送达",
+    id: "ship-sf-jd-asia",
+    name: "顺丰/京东日本国际直邮（亚洲地区）",
+    carrier: "顺丰 / 京东国际",
+    description:
+      "按重量计费，1800 日元/kg；示例为 1kg 费用，具体以仓库称重为准。",
+    price: { amount: "1800.00", currencyCode: CURRENCY },
+    estimatedDelivery: "预计 5-9 个工作日送达",
   },
   {
-    id: "ship-local-pickup",
-    name: "门店自提",
-    carrier: "芝园门店",
-    description: "下单后 2 小时可到店自提，凭提货码核销",
-    price: { amount: "0.00", currencyCode: CURRENCY },
-    estimatedDelivery: "2 小时后可提",
+    id: "ship-ems-global",
+    name: "EMS日本国际直邮（欧美澳非洲等地区）",
+    carrier: "EMS",
+    description:
+      "按重量计费，3900 日元/kg；示例为 1kg 费用，具体以仓库称重为准。",
+    price: { amount: "3900.00", currencyCode: CURRENCY },
+    estimatedDelivery: "预计 7-12 个工作日送达",
+  },
+  {
+    id: "ship-fedex-global",
+    name: "Fedex日本国际直邮（欧美澳非洲等地区）",
+    carrier: "FedEx",
+    description:
+      "按重量计费，6000 日元/kg；示例为 1kg 费用，具体以仓库称重为准。",
+    price: { amount: "6000.00", currencyCode: CURRENCY },
+    estimatedDelivery: "预计 5-8 个工作日送达",
   },
 ];
 

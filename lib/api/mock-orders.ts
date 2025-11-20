@@ -32,9 +32,9 @@ export const orders: Order[] = [
     createdAt: `${thisYear}-05-02T09:05:00.000Z`,
     updatedAt: `${thisYear}-05-02T09:05:00.000Z`,
     subtotalPrice: { amount: "198.00", currencyCode: defaultCurrency },
-    totalPrice: { amount: "198.00", currencyCode: defaultCurrency },
+    totalPrice: { amount: "1648.00", currencyCode: defaultCurrency },
     totalTax: { amount: "0.00", currencyCode: defaultCurrency },
-    totalShipping: { amount: "0.00", currencyCode: defaultCurrency },
+    totalShipping: { amount: "1450.00", currencyCode: defaultCurrency },
     currencyCode: defaultCurrency,
     lineItems: [
       {
@@ -51,7 +51,7 @@ export const orders: Order[] = [
     ],
     shippingAddress: demoAddress,
     billingAddress: demoAddress,
-    shippingMethod: shippingMethods[2],
+    shippingMethod: shippingMethods[0],
     customerId: "user-demo",
     appliedCoupons: [],
     loyaltyDelta: 60,
@@ -66,9 +66,9 @@ export const orders: Order[] = [
     updatedAt: `${thisYear}-04-27T14:20:00.000Z`,
     processedAt: `${thisYear}-04-27T14:15:00.000Z`,
     subtotalPrice: { amount: "399.00", currencyCode: defaultCurrency },
-    totalPrice: { amount: "419.00", currencyCode: defaultCurrency },
+    totalPrice: { amount: "2199.00", currencyCode: defaultCurrency },
     totalTax: { amount: "0.00", currencyCode: defaultCurrency },
-    totalShipping: { amount: "20.00", currencyCode: defaultCurrency },
+    totalShipping: { amount: "1800.00", currencyCode: defaultCurrency },
     currencyCode: defaultCurrency,
     lineItems: [
       {
@@ -101,9 +101,9 @@ export const orders: Order[] = [
     processedAt: `${thisYear}-04-16T08:15:00.000Z`,
     fulfilledAt: `${thisYear}-04-18T11:40:00.000Z`,
     subtotalPrice: { amount: "408.00", currencyCode: defaultCurrency },
-    totalPrice: { amount: "387.20", currencyCode: defaultCurrency },
+    totalPrice: { amount: "1817.20", currencyCode: defaultCurrency },
     totalTax: { amount: "0.00", currencyCode: defaultCurrency },
-    totalShipping: { amount: "20.00", currencyCode: defaultCurrency },
+    totalShipping: { amount: "1450.00", currencyCode: defaultCurrency },
     currencyCode: defaultCurrency,
     lineItems: [
       {
@@ -142,7 +142,7 @@ export const orders: Order[] = [
     ],
     shippingAddress: demoAddress,
     billingAddress: demoAddress,
-    shippingMethod: shippingMethods[1],
+    shippingMethod: shippingMethods[0],
     customerId: "user-demo",
     appliedCoupons: [welcomeAppliedCoupon],
     loyaltyDelta: 300,
@@ -162,9 +162,9 @@ export const orders: Order[] = [
     processedAt: `${thisYear}-03-22T10:08:00.000Z`,
     fulfilledAt: `${thisYear}-03-24T16:40:00.000Z`,
     subtotalPrice: { amount: "399.00", currencyCode: defaultCurrency },
-    totalPrice: { amount: "419.00", currencyCode: defaultCurrency },
+    totalPrice: { amount: "2199.00", currencyCode: defaultCurrency },
     totalTax: { amount: "0.00", currencyCode: defaultCurrency },
-    totalShipping: { amount: "20.00", currencyCode: defaultCurrency },
+    totalShipping: { amount: "1800.00", currencyCode: defaultCurrency },
     currencyCode: defaultCurrency,
     lineItems: [
       {

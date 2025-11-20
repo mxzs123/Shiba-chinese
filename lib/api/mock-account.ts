@@ -114,8 +114,8 @@ export const users: User[] = [
     nickname: "芝园会员",
     createdAt: `${thisYear}-01-05T08:00:00.000Z`,
     updatedAt: now.toISOString(),
-    defaultAddress: demoAddress,
-    addresses: [demoAddress, officeAddress],
+    // 初始不预置收货地址，留给用户自行新增。
+    addresses: [],
     loyalty: loyaltyAccount,
     membership,
     coupons: customerCoupons,
