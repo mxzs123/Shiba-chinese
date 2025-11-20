@@ -194,9 +194,11 @@ export function MobileCartContent() {
   );
   const hasInitializedSelection = useRef(false);
   const knownMerchandiseIdsRef = useRef<Set<string>>(new Set());
+  const lastItemsKeyRef = useRef<string>("");
 
   useEffect(() => {
     const currentIds = new Set(items.map((item) => item.merchandise.id));
+    const idKey = Array.from(currentIds).join("|");
 
     if (!hasInitializedSelection.current) {
       const cookieValue = readSelectedMerchandiseCookie();
@@ -213,6 +215,11 @@ export function MobileCartContent() {
       setSelectedMerchandise(nextSelection);
       hasInitializedSelection.current = true;
       knownMerchandiseIdsRef.current = currentIds;
+      lastItemsKeyRef.current = idKey;
+      return;
+    }
+
+    if (lastItemsKeyRef.current === idKey) {
       return;
     }
 
@@ -231,9 +238,10 @@ export function MobileCartContent() {
         }
       });
 
-      knownMerchandiseIdsRef.current = currentIds;
       return next;
     });
+    knownMerchandiseIdsRef.current = currentIds;
+    lastItemsKeyRef.current = idKey;
   }, [items]);
 
   useEffect(() => {

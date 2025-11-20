@@ -12,7 +12,7 @@ export function DeleteItemButton({
   item: CartItem;
   optimisticUpdate: any;
 }) {
-  const [message, formAction] = useActionState(removeItem, null);
+  const [message, formAction, pending] = useActionState(removeItem, null);
   const [, startTransition] = useTransition();
   const merchandiseId = item.merchandise.id;
   const lineId = item.id || merchandiseId;
@@ -20,18 +20,19 @@ export function DeleteItemButton({
 
   return (
     <form
-      action={async () => {
-        // Ensure optimistic removal runs inside a transition to satisfy Next 15.
+      action={removeItemAction}
+      onSubmit={() => {
+        // Keep optimistic removal inside a transition for React 19/Next 15.
         startTransition(() => {
           optimisticUpdate(lineId, merchandiseId, "delete");
-          removeItemAction();
         });
       }}
     >
       <button
         type="submit"
         aria-label="Remove cart item"
-        className="flex h-[24px] w-[24px] items-center justify-center rounded-full bg-neutral-500"
+        disabled={pending}
+        className="flex h-[24px] w-[24px] items-center justify-center rounded-full bg-neutral-500 disabled:opacity-60"
       >
         <XMarkIcon className="mx-[1px] h-4 w-4 text-white" />
       </button>
