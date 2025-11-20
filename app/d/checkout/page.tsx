@@ -54,6 +54,12 @@ export default async function CheckoutPage() {
     ]);
   const effectiveCustomer = customer || demoUser;
 
+  const internalTestingEnabled =
+    process.env.INTERNAL_TESTING === "1" ||
+    process.env.NEXT_PUBLIC_INTERNAL_TESTING === "1" ||
+    process.env.MOCK_MODE === "1" ||
+    process.env.NEXT_PUBLIC_MOCK_MODE === "1";
+
   // 获取选中的商品 ID
   const selectedMerchandiseCookie = cookieStore.get(
     CART_SELECTED_MERCHANDISE_COOKIE,
@@ -86,6 +92,7 @@ export default async function CheckoutPage() {
         selectedMerchandiseIds={selectedMerchandiseIds}
         requiresPrescriptionReview={requiresPrescriptionReview}
         variant="desktop"
+        internalTestingEnabled={internalTestingEnabled}
       />
     </div>
   );
