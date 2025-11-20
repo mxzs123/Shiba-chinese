@@ -727,6 +727,8 @@ export function CheckoutClient({
   const canProceedToPay = Boolean(
     !cartIsEmpty && selectedAddress && selectedShipping && selectedPayment,
   );
+  // 成功支付后会清空购物车；若仍在支付弹窗中则保持弹窗视图，避免空态闪屏。
+  const shouldShowCartEmptyState = cartIsEmpty && !paymentModalOpen;
 
   const clearRedirectTimer = () => {
     if (redirectTimerRef.current) {
@@ -810,7 +812,7 @@ export function CheckoutClient({
     };
   }, []);
 
-  if (cartIsEmpty) {
+  if (shouldShowCartEmptyState) {
     return (
       <div className="rounded-2xl border border-dashed border-neutral-200 bg-white/80 px-6 py-16 text-center shadow-sm shadow-black/[0.02]">
         <h2 className="text-2xl font-semibold text-neutral-900">购物车为空</h2>
