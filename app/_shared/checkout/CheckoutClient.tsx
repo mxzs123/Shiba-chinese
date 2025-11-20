@@ -55,6 +55,28 @@ type CheckoutClientProps = {
 
 type AddressFormState = AddressInput;
 
+const ADDRESS_CACHE_PREFIX = "checkout_addresses";
+
+const buildAddressCacheKey = (userId?: string | null) =>
+  userId ? `${ADDRESS_CACHE_PREFIX}_${userId}` : null;
+
+function mergeAddressSources(primary: Address[], fallback: Address[]) {
+  if (!fallback.length) {
+    return primary;
+  }
+
+  const map = new Map(primary.map((entry) => [entry.id, entry]));
+
+  fallback.forEach((entry) => {
+    if (!entry || !entry.id || map.has(entry.id)) {
+      return;
+    }
+    map.set(entry.id, entry);
+  });
+
+  return Array.from(map.values());
+}
+
 const DEFAULT_ADDRESS_FORM: AddressFormState = {
   id: undefined,
   firstName: "",
@@ -201,6 +223,27 @@ export function CheckoutClient({
   const router = useRouter();
   const initialAddresses = customer?.addresses ?? [];
   const [addresses, setAddresses] = useState<Address[]>(initialAddresses);
+  const addressCacheKey = useMemo(
+    () => buildAddressCacheKey(customer?.id),
+    [customer?.id],
+  );
+  const persistAddresses = useCallback(
+    (next: Address[]) => {
+      setAddresses(next);
+      if (!addressCacheKey) {
+        return;
+      }
+
+      try {
+        window.localStorage.setItem(addressCacheKey, JSON.stringify(next));
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn("Failed to cache checkout addresses", error);
+        }
+      }
+    },
+    [addressCacheKey],
+  );
   const [selectedAddressId, setSelectedAddressId] = useState<
     string | undefined
   >(
@@ -230,6 +273,30 @@ export function CheckoutClient({
   useEffect(() => {
     setCurrentCart(applySelectionToCart(cart));
   }, [applySelectionToCart, cart]);
+  useEffect(() => {
+    if (!addressCacheKey) {
+      return;
+    }
+
+    // 内测环境缺少持久化：把新增地址缓存到 localStorage，避免多实例导致的地址丢失。
+    try {
+      const raw = window.localStorage.getItem(addressCacheKey);
+      if (!raw) {
+        return;
+      }
+
+      const cached = JSON.parse(raw);
+      if (!Array.isArray(cached) || cached.length === 0) {
+        return;
+      }
+
+      setAddresses((prev) => mergeAddressSources(prev, cached));
+    } catch (error) {
+      if (process.env.NODE_ENV === "development") {
+        console.warn("Failed to read cached checkout addresses", error);
+      }
+    }
+  }, [addressCacheKey]);
   const [availableCouponList, setAvailableCouponList] = useState<Coupon[]>(() =>
     availableCoupons.filter(isCouponCurrentlyActive),
   );
@@ -517,7 +584,7 @@ export function CheckoutClient({
         return;
       }
 
-      setAddresses(result.data.addresses);
+      persistAddresses(result.data.addresses);
       setSelectedAddressId(result.data.added.id);
       resetAddressForm();
       setIsAddingAddress(false);
@@ -566,7 +633,7 @@ export function CheckoutClient({
         return;
       }
 
-      setAddresses(result.data.addresses);
+      persistAddresses(result.data.addresses);
       setSelectedAddressId(addressId);
     } finally {
       setDefaultUpdatingId(null);

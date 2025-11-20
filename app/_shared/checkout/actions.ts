@@ -6,9 +6,11 @@ import {
   applyCouponToCart,
   getCart,
   getCustomerAddresses,
+  removeFromCart,
   removeCouponFromCart,
   setDefaultCustomerAddress,
   redeemCouponForUser,
+  shouldUseSecureCookies,
 } from "lib/api";
 import type {
   Address,
@@ -22,6 +24,9 @@ import type {
   CurrencyCode,
 } from "lib/api/types";
 import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
+import { CART_SELECTED_MERCHANDISE_COOKIE } from "components/cart/constants";
+import { parseSelectedMerchandiseIds } from "components/cart/cart-selection";
 
 type ActionSuccess<T> = {
   success: true;
@@ -310,6 +315,8 @@ export async function confirmPaymentAndNotifyAction(
       // Slack 推送失败不阻断下单
     }
 
+    await clearPurchasedCartLines(cart);
+
     return {
       success: true,
       data: { postedAt },
@@ -319,5 +326,41 @@ export async function confirmPaymentAndNotifyAction(
       success: false,
       error: getErrorMessage(error),
     };
+  }
+}
+
+async function clearPurchasedCartLines(cart: Cart) {
+  try {
+    const cookieStore = await cookies();
+    const rawSelection = cookieStore.get(CART_SELECTED_MERCHANDISE_COOKIE)?.value;
+    const selectedIds = parseSelectedMerchandiseIds(rawSelection);
+    const selectionSet = new Set(selectedIds);
+
+    const targetLines = selectionSet.size
+      ? cart.lines.filter((line) => selectionSet.has(line.merchandise.id))
+      : cart.lines;
+
+    if (targetLines.length === 0) {
+      return;
+    }
+
+    await removeFromCart(
+      targetLines.map((line) => line.id || line.merchandise.id),
+    );
+    revalidateTag(TAGS.cart);
+
+    const secureCookies = await shouldUseSecureCookies();
+    cookieStore.set({
+      name: CART_SELECTED_MERCHANDISE_COOKIE,
+      value: "",
+      sameSite: "lax",
+      path: "/",
+      secure: secureCookies,
+      maxAge: 0,
+    });
+  } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[Checkout] Failed to clear purchased cart lines", error);
+    }
   }
 }
