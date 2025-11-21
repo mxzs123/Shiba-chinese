@@ -11,16 +11,18 @@ import {
 const adhdProduct = products.find(
   (product) => product.id === "prod-adhd-medication",
 )!;
-const matchaProduct = products.find(
-  (product) => product.id === "prod-matcha-kit",
+const omega3Product = products.find(
+  (product) => product.id === "prod-omega3",
 )!;
-const herbalProduct = products.find((product) => product.id === "prod-herbal")!;
-const bottleProduct = products.find((product) => product.id === "prod-bottle")!;
+const probioticsProduct = products.find(
+  (product) => product.id === "prod-probiotics",
+)!;
+const coq10Product = products.find((product) => product.id === "prod-coq10")!;
 
-const matchaVariant = matchaProduct.variants[1]!;
-const herbalVariant = herbalProduct.variants[1]!;
-const bottleVariant = bottleProduct.variants[1]!;
 const adhdVariant = adhdProduct.variants[0]!;
+const omega3Variant = omega3Product.variants[0]!;
+const probioticsVariant = probioticsProduct.variants[0]!;
+const coq10Variant = coq10Product.variants[0]!;
 
 export const orders: Order[] = [
   {
@@ -31,22 +33,22 @@ export const orders: Order[] = [
     fulfillmentStatus: "unfulfilled",
     createdAt: `${thisYear}-05-02T09:05:00.000Z`,
     updatedAt: `${thisYear}-05-02T09:05:00.000Z`,
-    subtotalPrice: { amount: "198.00", currencyCode: defaultCurrency },
-    totalPrice: { amount: "1648.00", currencyCode: defaultCurrency },
+    subtotalPrice: { amount: "158.00", currencyCode: defaultCurrency },
+    totalPrice: { amount: "1608.00", currencyCode: defaultCurrency },
     totalTax: { amount: "0.00", currencyCode: defaultCurrency },
     totalShipping: { amount: "1450.00", currencyCode: defaultCurrency },
     currencyCode: defaultCurrency,
     lineItems: [
       {
         id: "ord-demo-003-line-1",
-        productId: matchaProduct.id,
-        productTitle: matchaProduct.title,
-        variantId: matchaVariant.id,
-        variantTitle: matchaVariant.title,
+        productId: omega3Product.id,
+        productTitle: omega3Product.title,
+        variantId: omega3Variant.id,
+        variantTitle: omega3Variant.title,
         quantity: 1,
-        unitPrice: matchaVariant.price,
-        totalPrice: { amount: "198.00", currencyCode: defaultCurrency },
-        image: matchaProduct.featuredImage,
+        unitPrice: omega3Variant.price,
+        totalPrice: { amount: "158.00", currencyCode: defaultCurrency },
+        image: omega3Product.featuredImage,
       },
     ],
     shippingAddress: demoAddress,
@@ -100,44 +102,44 @@ export const orders: Order[] = [
     updatedAt: `${thisYear}-04-18T12:30:00.000Z`,
     processedAt: `${thisYear}-04-16T08:15:00.000Z`,
     fulfilledAt: `${thisYear}-04-18T11:40:00.000Z`,
-    subtotalPrice: { amount: "408.00", currencyCode: defaultCurrency },
-    totalPrice: { amount: "1817.20", currencyCode: defaultCurrency },
+    subtotalPrice: { amount: "454.00", currencyCode: defaultCurrency },
+    totalPrice: { amount: "1858.60", currencyCode: defaultCurrency },
     totalTax: { amount: "0.00", currencyCode: defaultCurrency },
     totalShipping: { amount: "1450.00", currencyCode: defaultCurrency },
     currencyCode: defaultCurrency,
     lineItems: [
       {
         id: "ord-demo-001-line-1",
-        productId: matchaProduct.id,
-        productTitle: matchaProduct.title,
-        variantId: matchaVariant.id,
-        variantTitle: matchaVariant.title,
-        quantity: 2,
-        unitPrice: matchaVariant.price,
-        totalPrice: { amount: "192.00", currencyCode: defaultCurrency },
-        image: matchaProduct.featuredImage,
+        productId: omega3Product.id,
+        productTitle: omega3Product.title,
+        variantId: omega3Variant.id,
+        variantTitle: omega3Variant.title,
+        quantity: 1,
+        unitPrice: omega3Variant.price,
+        totalPrice: { amount: "158.00", currencyCode: defaultCurrency },
+        image: omega3Product.featuredImage,
       },
       {
         id: "ord-demo-001-line-2",
-        productId: herbalProduct.id,
-        productTitle: herbalProduct.title,
-        variantId: herbalVariant.id,
-        variantTitle: herbalVariant.title,
+        productId: probioticsProduct.id,
+        productTitle: probioticsProduct.title,
+        variantId: probioticsVariant.id,
+        variantTitle: probioticsVariant.title,
         quantity: 1,
-        unitPrice: herbalVariant.price,
-        totalPrice: { amount: "78.00", currencyCode: defaultCurrency },
-        image: herbalProduct.featuredImage,
+        unitPrice: probioticsVariant.price,
+        totalPrice: { amount: "128.00", currencyCode: defaultCurrency },
+        image: probioticsProduct.featuredImage,
       },
       {
         id: "ord-demo-001-line-3",
-        productId: bottleProduct.id,
-        productTitle: bottleProduct.title,
-        variantId: bottleVariant.id,
-        variantTitle: bottleVariant.title,
+        productId: coq10Product.id,
+        productTitle: coq10Product.title,
+        variantId: coq10Variant.id,
+        variantTitle: coq10Variant.title,
         quantity: 1,
-        unitPrice: bottleVariant.price,
-        totalPrice: { amount: "138.00", currencyCode: defaultCurrency },
-        image: bottleProduct.featuredImage,
+        unitPrice: coq10Variant.price,
+        totalPrice: { amount: "168.00", currencyCode: defaultCurrency },
+        image: coq10Product.featuredImage,
       },
     ],
     shippingAddress: demoAddress,

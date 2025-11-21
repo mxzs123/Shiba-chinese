@@ -37,14 +37,18 @@ type TagMeta = {
 };
 
 const DEFAULT_TAG_LABELS: Record<string, string> = {
-  featured: "精选推荐",
-  "drink-kit": "冲泡套组",
-  wellness: "身心调理",
-  herbal: "草本花茶",
-  nutrition: "营养补给",
+  prescription: "处方药",
+  "rx:adhd": "专注力问诊",
+  nutrition: "营养补充",
   bestseller: "热卖优选",
-  accessories: "生活器具",
-  seasonal: "季节限定",
+  "heart-health": "心血管守护",
+  "gut-health": "肠道调理",
+  digestion: "消化呵护",
+  beauty: "美肌内调",
+  "skin-support": "肌肤修护",
+  "bone-health": "骨骼关节",
+  "eye-health": "眼部守护",
+  antioxidant: "抗氧化",
 };
 
 function normaliseText(content: string) {

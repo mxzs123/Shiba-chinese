@@ -74,13 +74,13 @@ const welcomeCoupon: Coupon = {
 const springCoupon: Coupon = {
   id: "coupon-spring-15",
   code: "SPRING15",
-  title: "春日茶饮 85 折",
-  description: "精选茶饮系列 85 折，部分新品不参加",
+  title: "春季营养补给 85 折",
+  description: "指定营养补充系列 85 折，部分新品不参加",
   type: "percentage",
   value: 15,
   startsAt: `${thisYear}-03-01T00:00:00.000Z`,
   expiresAt: `${thisYear}-06-30T23:59:59.000Z`,
-  appliesToCollectionHandles: ["matcha"],
+  appliesToCollectionHandles: ["supplements"],
 };
 
 const freeShippingCoupon: Coupon = {
@@ -96,7 +96,7 @@ const freeShippingCoupon: Coupon = {
 
 const welcomeAppliedCoupon: AppliedCoupon = {
   coupon: welcomeCoupon,
-  amount: { amount: "40.80", currencyCode: CURRENCY },
+  amount: { amount: "45.40", currencyCode: CURRENCY },
 };
 
 const customerCoupons: CustomerCoupon[] = [

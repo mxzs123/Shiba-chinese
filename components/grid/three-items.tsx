@@ -48,9 +48,9 @@ function ThreeItemGridItem({
 }
 
 export async function ThreeItemGrid() {
-  // Collections that start with `hidden-*` are hidden from the search page.
+  // Use the dedicated hidden collection for homepage spotlight cards.
   const homepageItems = await getCollectionProducts({
-    collection: "hidden-homepage-featured-items",
+    collection: "home-featured",
   });
 
   if (!homepageItems[0] || !homepageItems[1] || !homepageItems[2]) return null;
