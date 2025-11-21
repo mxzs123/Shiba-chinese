@@ -53,7 +53,6 @@ const product: ProductRecord = {
   tags: ["nutrition", "heart-health", "bestseller"],
   updatedAt: `${thisYear}-05-01T10:00:00.000Z`,
   collections: [
-    COLLECTION_HANDLES.PHARMACY,
     COLLECTION_HANDLES.SUPPLEMENTS,
     COLLECTION_HANDLES.HEART_SUPPORT,
     COLLECTION_HANDLES.HOME_CAROUSEL,

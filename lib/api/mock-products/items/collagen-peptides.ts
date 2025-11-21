@@ -53,7 +53,6 @@ const product: ProductRecord = {
   tags: ["beauty", "skin-support"],
   updatedAt: `${thisYear}-05-08T09:00:00.000Z`,
   collections: [
-    COLLECTION_HANDLES.PHARMACY,
     COLLECTION_HANDLES.SUPPLEMENTS,
     COLLECTION_HANDLES.BEAUTY_NUTRITION,
   ],

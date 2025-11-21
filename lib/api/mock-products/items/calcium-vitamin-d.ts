@@ -53,7 +53,6 @@ const product: ProductRecord = {
   tags: ["nutrition", "bone-health"],
   updatedAt: `${thisYear}-05-10T10:30:00.000Z`,
   collections: [
-    COLLECTION_HANDLES.PHARMACY,
     COLLECTION_HANDLES.SUPPLEMENTS,
     COLLECTION_HANDLES.BONE_JOINT,
   ],

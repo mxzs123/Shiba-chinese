@@ -53,7 +53,6 @@ const product: ProductRecord = {
   tags: ["gut-health", "digestion"],
   updatedAt: `${thisYear}-05-05T11:00:00.000Z`,
   collections: [
-    COLLECTION_HANDLES.PHARMACY,
     COLLECTION_HANDLES.SUPPLEMENTS,
     COLLECTION_HANDLES.GUT_HEALTH,
     COLLECTION_HANDLES.HOME_FEATURED,

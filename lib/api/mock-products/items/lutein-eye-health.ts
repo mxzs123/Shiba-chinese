@@ -53,7 +53,6 @@ const product: ProductRecord = {
   tags: ["eye-health"],
   updatedAt: `${thisYear}-05-15T16:00:00.000Z`,
   collections: [
-    COLLECTION_HANDLES.PHARMACY,
     COLLECTION_HANDLES.SUPPLEMENTS,
     COLLECTION_HANDLES.EYE_CARE,
     COLLECTION_HANDLES.HOME_FEATURED,

@@ -52,7 +52,6 @@ const product: ProductRecord = {
   tags: ["heart-health", "antioxidant"],
   updatedAt: `${thisYear}-05-12T14:00:00.000Z`,
   collections: [
-    COLLECTION_HANDLES.PHARMACY,
     COLLECTION_HANDLES.SUPPLEMENTS,
     COLLECTION_HANDLES.HEART_SUPPORT,
   ],
