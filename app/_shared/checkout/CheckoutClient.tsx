@@ -980,11 +980,11 @@ export function CheckoutClient({
                               event.stopPropagation();
                               handleEditAddress(address);
                             }}
-                          className="inline-flex items-center gap-1 rounded-full border border-emerald-200 px-3 py-1 text-[11px] font-medium text-emerald-700 transition hover:border-emerald-600 hover:text-emerald-800"
-                          disabled={paymentLocked}
-                        >
-                          编辑
-                        </button>
+                            className="inline-flex items-center gap-1 rounded-full border border-emerald-200 px-3 py-1 text-[11px] font-medium text-emerald-700 transition hover:border-emerald-600 hover:text-emerald-800"
+                            disabled={paymentLocked}
+                          >
+                            编辑
+                          </button>
                         </div>
                       </label>
                     </li>

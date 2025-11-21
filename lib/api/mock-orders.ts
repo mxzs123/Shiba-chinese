@@ -11,9 +11,7 @@ import {
 const adhdProduct = products.find(
   (product) => product.id === "prod-adhd-medication",
 )!;
-const omega3Product = products.find(
-  (product) => product.id === "prod-omega3",
-)!;
+const omega3Product = products.find((product) => product.id === "prod-omega3")!;
 const probioticsProduct = products.find(
   (product) => product.id === "prod-probiotics",
 )!;

@@ -11,8 +11,7 @@ const product: ProductRecord = {
   availableForSale: true,
   title: "辅酶Q10 软胶囊",
   description: "支持心脏健康与细胞能量代谢，抗氧化配方。",
-  descriptionHtml:
-    "<p>每粒含100mg辅酶Q10，采用油溶性配方提高生物利用度。</p>",
+  descriptionHtml: "<p>每粒含100mg辅酶Q10，采用油溶性配方提高生物利用度。</p>",
   options: [
     {
       id: "opt-coq10-count",

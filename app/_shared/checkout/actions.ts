@@ -332,7 +332,9 @@ export async function confirmPaymentAndNotifyAction(
 async function clearPurchasedCartLines(cart: Cart) {
   try {
     const cookieStore = await cookies();
-    const rawSelection = cookieStore.get(CART_SELECTED_MERCHANDISE_COOKIE)?.value;
+    const rawSelection = cookieStore.get(
+      CART_SELECTED_MERCHANDISE_COOKIE,
+    )?.value;
     const selectedIds = parseSelectedMerchandiseIds(rawSelection);
     const selectionSet = new Set(selectedIds);
 
