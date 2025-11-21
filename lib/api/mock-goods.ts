@@ -7,6 +7,7 @@ import type {
 } from "./types";
 import type { RawGoodsRecord } from "./mock-goods-types";
 import mockGoodsItems from "./mock-goods-items";
+import prescriptionSubcategories from "./mock-goods-prescription-subcategories.json";
 
 const HOSPITAL_CATEGORY_ID = 2085;
 
@@ -66,63 +67,7 @@ export const goodsCategories: GoodsCategory[] = [
     sort: 200,
     imageUrl: "/static/images/common/empty.png",
     slug: "prescription",
-    child: [
-      {
-        id: 2092,
-        name: "高血压",
-        jpName: "高血圧",
-        enName: "Hypertension",
-        sort: 20,
-        imageUrl: "/static/images/common/empty.png",
-        slug: "hypertension",
-        parentId: 2088,
-        child: null,
-      },
-      {
-        id: 2095,
-        name: "抗生素",
-        jpName: "抗生物質",
-        enName: "Antibiotics",
-        sort: 19,
-        imageUrl: "/static/images/common/empty.png",
-        slug: "antibiotics",
-        parentId: 2088,
-        child: null,
-      },
-      {
-        id: 2091,
-        name: "外皮用药",
-        jpName: "外皮用薬",
-        enName: "Topical medication",
-        sort: 18,
-        imageUrl: "/static/images/common/empty.png",
-        slug: "topical",
-        parentId: 2088,
-        child: null,
-      },
-      {
-        id: 2101,
-        name: "高胆固醇",
-        jpName: "高コレステロール",
-        enName: "High Cholesterol",
-        sort: 17,
-        imageUrl: "/static/images/common/empty.png",
-        slug: "cholesterol",
-        parentId: 2088,
-        child: null,
-      },
-      {
-        id: 2103,
-        name: "其他",
-        jpName: "その他",
-        enName: "Other",
-        sort: 16,
-        imageUrl: "/static/images/common/empty.png",
-        slug: "other-rx",
-        parentId: 2088,
-        child: null,
-      },
-    ],
+    child: prescriptionSubcategories as GoodsCategory[],
   },
   {
     id: 2087,
@@ -273,7 +218,7 @@ function createProductFromRecord(record: RawGoodsRecord): Product {
   }
 
   return {
-    id: `goods-${record.productId}`,
+    id: `goods-${record.slug}`,
     handle: record.slug,
     availableForSale: true,
     title: record.title,
