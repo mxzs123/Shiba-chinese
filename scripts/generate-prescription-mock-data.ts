@@ -63,6 +63,15 @@ const PLACEHOLDER_IMAGE = "/images/placeholders/product-1.svg";
 const IMAGE_CONCURRENCY = 5;
 const PRICE_CNY_RATE = 0.05;
 
+const CATEGORY_SYNONYMS: Record<string, string> = {
+  // 根类写法差异
+  处方药品: "处方药品",
+  処方薬品: "处方药品",
+  // 常见中日/简繁差异
+  高血压: "高血压",
+  高血圧: "高血压",
+};
+
 const DEFAULT_SUBCATEGORIES: PrescriptionSubcategory[] = [
   {
     id: 2092,
@@ -208,6 +217,25 @@ function buildCategorySlug(name: string): string {
   }
 
   return `cat-${hashString(name)}`;
+}
+
+function toHalfWidth(input: string): string {
+  return input
+    .replace(/[\uff01-\uff5e]/g, (ch) =>
+      String.fromCharCode(ch.charCodeAt(0) - 0xfee0),
+    )
+    .replace(/\u3000/g, " ");
+}
+
+function normalizeCategoryName(name: string): string {
+  const half = toHalfWidth(name || "");
+  const trimmed = half.trim();
+  if (!trimmed) return "其他";
+  const mapped = CATEGORY_SYNONYMS[trimmed];
+  if (mapped) return mapped;
+  const lower = trimmed.toLowerCase();
+  const mappedLower = CATEGORY_SYNONYMS[lower];
+  return mappedLower || trimmed;
 }
 
 function normalizeSlug(raw: string): string {
@@ -505,9 +533,20 @@ async function main() {
   const limitedRows = args.limit ? rows.slice(0, args.limit) : rows;
 
   const existingSubcategories = await loadExistingSubcategories();
-  const subcategoryMap = new Map(
-    existingSubcategories.map((item) => [item.name.trim(), item]),
-  );
+  const subcategoryMap = new Map<string, PrescriptionSubcategory>();
+
+  existingSubcategories.forEach((item) => {
+    const normalizedName = normalizeCategoryName(item.name);
+    const canonicalKey = buildCategorySlug(normalizedName);
+    const slug = item.slug || canonicalKey;
+    subcategoryMap.set(canonicalKey, {
+      ...item,
+      name: normalizedName,
+      jpName: item.jpName || normalizedName,
+      enName: item.enName || normalizedName,
+      slug,
+    });
+  });
 
   const maxRank = await findMaxExistingRank();
   let rankCursor = maxRank + 1;
@@ -529,26 +568,42 @@ async function main() {
     }
     slugSet.add(slug);
 
-    const subCategoryName = row.小分類.trim() || "其他";
-    let subCategory = subcategoryMap.get(subCategoryName);
-    if (!subCategory) {
-      const nextId =
-        Math.max(
-          START_SUBCATEGORY_ID - 1,
-          ...Array.from(subcategoryMap.values()).map((item) => item.id),
-        ) + 1;
+    const normalizedSubCategoryName = normalizeCategoryName(row.小分類);
+    const subCategorySlug = buildCategorySlug(normalizedSubCategoryName);
+
+    const maxExistingId = Math.max(
+      START_SUBCATEGORY_ID - 1,
+      ...Array.from(subcategoryMap.values()).map((item) => item.id),
+    );
+
+    let subCategory = subcategoryMap.get(subCategorySlug);
+
+    if (subCategory) {
+      // 覆盖名称以保证展示一致
+      if (subCategory.name !== normalizedSubCategoryName) {
+        subCategory = {
+          ...subCategory,
+          name: normalizedSubCategoryName,
+          jpName: subCategory.jpName || normalizedSubCategoryName,
+          enName: subCategory.enName || normalizedSubCategoryName,
+          slug: subCategorySlug,
+        };
+        subcategoryMap.set(subCategorySlug, subCategory);
+      }
+    } else {
+      const nextId = maxExistingId + 1;
       subCategory = {
         id: nextId,
         parentId: PRESCRIPTION_CATEGORY_ID,
-        name: subCategoryName,
-        jpName: subCategoryName,
-        enName: subCategoryName,
+        name: normalizedSubCategoryName,
+        jpName: normalizedSubCategoryName,
+        enName: normalizedSubCategoryName,
         sort: 10,
         imageUrl: "/static/images/common/empty.png",
-        slug: buildCategorySlug(subCategoryName),
+        slug: subCategorySlug,
         child: null,
       };
-      subcategoryMap.set(subCategoryName, subCategory);
+      subcategoryMap.set(subCategorySlug, subCategory);
       newSubcategories.push(subCategory);
     }
 

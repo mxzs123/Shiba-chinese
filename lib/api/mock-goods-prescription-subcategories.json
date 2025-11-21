@@ -1,16 +1,5 @@
 [
   {
-    "id": 2092,
-    "parentId": 2088,
-    "name": "高血压",
-    "jpName": "高血圧",
-    "enName": "Hypertension",
-    "sort": 20,
-    "imageUrl": "/static/images/common/empty.png",
-    "slug": "hypertension",
-    "child": null
-  },
-  {
     "id": 2095,
     "parentId": 2088,
     "name": "抗生素",
@@ -178,7 +167,7 @@
   {
     "id": 2115,
     "parentId": 2088,
-    "name": "高血圧",
+    "name": "高血压",
     "jpName": "高血圧",
     "enName": "高血圧",
     "sort": 10,

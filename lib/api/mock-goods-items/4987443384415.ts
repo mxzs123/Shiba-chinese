@@ -11,10 +11,10 @@ const item4987443384415: RawGoodsRecord = {
   priceJpy: 21380,
   priceCny: 1069,
   effects: "",
-  keywords: ["高血圧", "tag:originator"],
+  keywords: ["高血压", "tag:originator"],
   categoryId: 2088,
   subCategoryId: 2115,
-  subCategoryName: "高血圧",
+  subCategoryName: "高血压",
   image: {
     src: "/product-images/4987443384415.jpg",
     alt: "【强心药】沙库巴曲缬沙坦钠片  Entresto 100mg：显著降低心力衰竭患者的死亡风险",

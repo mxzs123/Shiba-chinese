@@ -11,10 +11,10 @@ const item4987413610513: RawGoodsRecord = {
   priceJpy: 14520,
   priceCny: 726,
   effects: "",
-  keywords: ["高血圧", "tag:originator"],
+  keywords: ["高血压", "tag:originator"],
   categoryId: 2088,
   subCategoryId: 2115,
-  subCategoryName: "高血圧",
+  subCategoryName: "高血压",
   image: {
     src: "/product-images/4987413610513.jpg",
     alt: "【三合一降压神药】替米沙坦  氨氯地平  氢氯噻嗪  Micatrio 100片：缓解高血压",
