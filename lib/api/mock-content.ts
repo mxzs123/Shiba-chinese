@@ -262,32 +262,6 @@ const newsArticles: NewsArticle[] = [
     `,
   },
   {
-    id: "news-health-supplement",
-    slug: "member-day-supplement-offer",
-    title: "会员日限定：精选保健食品第 2 件享 8 折",
-    summary:
-      "高人气的维生素与肝脏呵护组合参与活动，加入购物车自动应用优惠，库存有限速抢。",
-    href: "/news/member-day-supplement-offer",
-    tags: ["促销", "会员"],
-    publishedAt: `${thisYear}-05-26T10:00:00.000Z`,
-    updatedAt: `${thisYear}-05-27T09:20:00.000Z`,
-    seo: {
-      title: "会员日保健食品 8 折活动 | 芝园资讯",
-      description: "热门维生素、肝脏呵护组合参与活动，会员第 2 件享 8 折。",
-    },
-    bodyHtml: `
-      <p>5 月会员日即将开启，芝园准备了丰富的健康补给组合，覆盖免疫调理、肝脏呵护、女性健康等主题。</p>
-      <p>活动期间，会员登录后自动享受“第 2 件 8 折”优惠，无需额外输入优惠码，可与积分抵扣叠加。</p>
-      <p>热门组合包括：</p>
-      <ol>
-        <li>全天然维生素 C + 锌含片，日常免疫守护。</li>
-        <li>护肝营养包：水飞蓟素胶囊搭配高纯度卵磷脂。</li>
-        <li>女性专属：复合维生素 B 群与铁元素补给组合。</li>
-      </ol>
-      <p>活动库存有限，售完即止。如有特殊用药需求，请提前咨询营养师或执业药师。</p>
-    `,
-  },
-  {
     id: "news-pharmacy-safety",
     slug: "insulin-storage-summer-tips",
     title: "用药提醒：近期高温天气，请按药箱指引存放胰岛素类药物",
