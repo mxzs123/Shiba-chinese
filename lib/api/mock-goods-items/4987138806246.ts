@@ -11,10 +11,10 @@ const item4987138806246: RawGoodsRecord = {
   priceJpy: 3985,
   priceCny: 199.25,
   effects: "",
-  keywords: ["肥胖症", "tag:generic"],
+  keywords: ["糖尿病与医学减重", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2123,
-  subCategoryName: "肥胖症",
+  subCategoryId: 2115,
+  subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987138806246.jpg",
     alt: "【燃脂排毒】Tsumura 津村汉方 防风散：42包 燃脂排油 大肚腩克星 日本最火减肥汉方",

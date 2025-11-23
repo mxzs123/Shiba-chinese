@@ -11,10 +11,10 @@ const item4987084152268: RawGoodsRecord = {
   priceJpy: 8896,
   priceCny: 444.8,
   effects: "",
-  keywords: ["干眼症"],
+  keywords: ["眼科护理"],
   categoryId: 2088,
-  subCategoryId: 2138,
-  subCategoryName: "干眼症",
+  subCategoryId: 2116,
+  subCategoryName: "眼科护理",
   image: {
     src: "/product-images/4987084152268.jpg",
     alt: "【处方人工泪液】玻璃酸钠滴眼液 Hyalein 0.25%：缓解干眼症  保湿 专用于严重干眼症或角膜上皮受损修复",

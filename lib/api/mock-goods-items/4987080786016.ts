@@ -11,10 +11,10 @@ const item4987080786016: RawGoodsRecord = {
   priceJpy: 2860,
   priceCny: 143,
   effects: "",
-  keywords: ["降血糖", "tag:generic"],
+  keywords: ["血压血糖治疗", "tag:generic"],
   categoryId: 2088,
   subCategoryId: 2105,
-  subCategoryName: "降血糖",
+  subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987080786016.jpg",
     alt: "【抗糖丸】阿卡波糖类控糖片Voglibose 0.3mg：100片 餐后血糖控制 断碳水神器、餐后阻断剂",

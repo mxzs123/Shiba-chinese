@@ -11,10 +11,10 @@ const item4987188412565: RawGoodsRecord = {
   priceJpy: 42504,
   priceCny: 2125.2,
   effects: "",
-  keywords: ["缓和疼痛", "tag:originator"],
+  keywords: ["止疼/外用贴剂", "tag:originator"],
   categoryId: 2088,
   subCategoryId: 2113,
-  subCategoryName: "缓和疼痛",
+  subCategoryName: "止疼/外用贴剂",
   image: {
     src: "/product-images/4987188412565.jpg",
     alt: "【久光贴】酮洛芬贴片  Mohrus Tape 560张：日本神膏药 风湿腰痛 必备神器",

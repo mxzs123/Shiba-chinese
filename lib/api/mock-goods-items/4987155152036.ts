@@ -11,10 +11,10 @@ const item4987155152036: RawGoodsRecord = {
   priceJpy: 11000,
   priceCny: 550,
   effects: "",
-  keywords: ["前立腺肥大", "tag:generic"],
+  keywords: ["泌尿与男性健康", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2131,
-  subCategoryName: "前立腺肥大",
+  subCategoryId: 2108,
+  subCategoryName: "泌尿与男性健康",
   image: {
     src: "/product-images/4987155152036.jpg",
     alt: "【最强生发】度他雄胺胶囊 Dutasteride 0.5mg : 适尿通 比非那雄胺更强 发际线救星 度他雄胺",

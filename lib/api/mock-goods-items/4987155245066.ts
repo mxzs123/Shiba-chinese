@@ -11,10 +11,10 @@ const item4987155245066: RawGoodsRecord = {
   priceJpy: 3011,
   priceCny: 150.55,
   effects: "",
-  keywords: ["糖尿病/肥胖症", "tag:generic"],
+  keywords: ["糖尿病与医学减重", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2117,
-  subCategoryName: "糖尿病/肥胖症",
+  subCategoryId: 2115,
+  subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987155245066.jpg",
     alt: "【控糖减重】 二甲双胍片Metformin 500mg ： 经典降糖药的高剂量版 常被用于抗衰老和辅助减肥 改善胰岛素抵抗",

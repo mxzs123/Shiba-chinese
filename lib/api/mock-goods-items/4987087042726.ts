@@ -11,10 +11,10 @@ const item4987087042726: RawGoodsRecord = {
   priceJpy: 48776,
   priceCny: 2438.8,
   effects: "",
-  keywords: ["抗菌", "tag:originator"],
+  keywords: ["抗过敏类治疗", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2114,
-  subCategoryName: "抗菌",
+  subCategoryId: 2110,
+  subCategoryName: "抗过敏类治疗",
   image: {
     src: "/product-images/4987087042726.png",
     alt: "【流感神药】速福达 玛巴洛沙韦片20mg：10片 甲流应急 抗病毒发烧快退 抗流感特效药",

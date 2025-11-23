@@ -11,10 +11,10 @@ const item4987306014503: RawGoodsRecord = {
   priceJpy: 6410,
   priceCny: 320.5,
   effects: "",
-  keywords: ["缓和疼痛", "tag:originator"],
+  keywords: ["止疼/外用贴剂", "tag:originator"],
   categoryId: 2088,
   subCategoryId: 2113,
-  subCategoryName: "缓和疼痛",
+  subCategoryName: "止疼/外用贴剂",
   image: {
     src: "/product-images/4987306014503.jpg",
     alt: "【止疼膏药】艾司氟比洛芬贴片 Loqoa Tape 70片： 止痛天花板 强力抗炎 每日全身上下严禁超过2贴",

@@ -10,10 +10,10 @@ const item4987294394120: RawGoodsRecord = {
   priceJpy: 3905,
   priceCny: 195.25,
   effects: "",
-  keywords: ["高尿酸血症", "tag:originator"],
+  keywords: ["痛风治疗", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2122,
-  subCategoryName: "高尿酸血症",
+  subCategoryId: 2118,
+  subCategoryName: "痛风治疗",
   image: {
     src: "/product-images/4987294394120.jpg",
     alt: "【痛风原研药】非布司他片  Febuxostat 10mg：帝人痛风 降酸快不伤肾",

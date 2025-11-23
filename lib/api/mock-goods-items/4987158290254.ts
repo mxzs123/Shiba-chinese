@@ -11,10 +11,10 @@ const item4987158290254: RawGoodsRecord = {
   priceJpy: 5440,
   priceCny: 272,
   effects: "",
-  keywords: ["免疫疗法", "tag:originator"],
+  keywords: ["流感治疗", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2133,
-  subCategoryName: "免疫疗法",
+  subCategoryId: 2117,
+  subCategoryName: "流感治疗",
   image: {
     src: "/product-images/4987158290254.jpg",
     alt: "【过敏根治】 尘螨变应原舌下片 Miticure  10000 JAU 针对尘螨过敏的减敏治疗 长期改变体质 根治过敏性鼻炎/哮喘",

@@ -11,10 +11,10 @@ const item4987081109210: RawGoodsRecord = {
   priceJpy: 19976,
   priceCny: 998.8,
   effects: "",
-  keywords: ["失眠", "tag:originator"],
+  keywords: ["睡眠辅助", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2116,
-  subCategoryName: "失眠",
+  subCategoryId: 2114,
+  subCategoryName: "睡眠辅助",
   image: {
     src: "/product-images/4987081109210.jpg",
     alt: "【新一代安眠药】倍索姆拉片Belsomra 15mg：100片 改善睡眠困难 无依赖性 自然入 非苯二氮䓬类",

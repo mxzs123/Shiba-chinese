@@ -11,10 +11,10 @@ const item4987158290407: RawGoodsRecord = {
   priceJpy: 1128,
   priceCny: 56.4,
   effects: "",
-  keywords: ["免疫疗法", "tag:originator"],
+  keywords: ["流感治疗", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2133,
-  subCategoryName: "免疫疗法",
+  subCategoryId: 2117,
+  subCategoryName: "流感治疗",
   image: {
     src: "/product-images/4987158290407.jpg",
     alt: "【花粉症根治】 杉树花粉变应原舌下片   Cedarcure  2000 JAU 针对日本杉树花粉症的减敏治疗 根治花粉症",

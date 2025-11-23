@@ -11,10 +11,10 @@ const item4987155629019: RawGoodsRecord = {
   priceJpy: 3011,
   priceCny: 150.55,
   effects: "",
-  keywords: ["抗敏", "tag:generic"],
+  keywords: ["抗过敏类治疗", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2127,
-  subCategoryName: "抗敏",
+  subCategoryId: 2110,
+  subCategoryName: "抗过敏类治疗",
   image: {
     src: "/product-images/4987155629019.jpg",
     alt: "【抗过敏】 奥洛他定片  Olopatadine 5mg： 顺妥敏平替 止痒抗敏 奥洛他定",

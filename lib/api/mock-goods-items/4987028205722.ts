@@ -11,10 +11,10 @@ const item4987028205722: RawGoodsRecord = {
   priceJpy: 29260,
   priceCny: 1463,
   effects: "",
-  keywords: ["失眠", "tag:originator"],
+  keywords: ["睡眠辅助", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2116,
-  subCategoryName: "失眠",
+  subCategoryId: 2114,
+  subCategoryName: "睡眠辅助",
   image: {
     src: "/product-images/4987028205722.jpg",
     alt: "Dayvigo（lemborexant）莱博雷生片10mg：100片：快速入睡 作用于食欲素受体 调节睡眠",

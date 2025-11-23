@@ -11,10 +11,10 @@ const item4987081103003: RawGoodsRecord = {
   priceJpy: 10257,
   priceCny: 512.85,
   effects: "",
-  keywords: ["抗菌", "tag:originator"],
+  keywords: ["抗过敏类治疗", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2114,
-  subCategoryName: "抗菌",
+  subCategoryId: 2110,
+  subCategoryName: "抗过敏类治疗",
   image: {
     src: "/product-images/4987081103003.jpg",
     alt: "【流感神药】Inavir粉末吸入剂 20mg： 2套 流感季必用 一次性吸入式抗病毒药",

@@ -11,10 +11,10 @@ const item4987047106017: RawGoodsRecord = {
   priceJpy: 10564,
   priceCny: 528.2,
   effects: "",
-  keywords: ["更年期障害", "tag:originator"],
+  keywords: ["妇科", "tag:originator"],
   categoryId: 2088,
   subCategoryId: 2107,
-  subCategoryName: "更年期障害",
+  subCategoryName: "妇科",
   image: {
     src: "/product-images/4987047106017.jpg",
     alt: "【雌激素凝胶】涂抹式雌激素、卵巢保养 雌二醇凝胶 Estradiol 1mg 外用补充型护理凝胶 140袋/盒",

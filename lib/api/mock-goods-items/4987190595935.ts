@@ -11,10 +11,10 @@ const item4987190595935: RawGoodsRecord = {
   priceJpy: 14520,
   priceCny: 726,
   effects: "",
-  keywords: ["防脱发/生发", "tag:generic"],
+  keywords: ["生发防脱", "tag:generic"],
   categoryId: 2088,
   subCategoryId: 2111,
-  subCategoryName: "防脱发/生发",
+  subCategoryName: "生发防脱",
   image: {
     src: "/product-images/4987190595935.jpg",
     alt: "【生发小绿瓶】卡普氯铵外用液 Frozin 5% (30ml/支)：局部血管扩张，专门治疗斑秃",

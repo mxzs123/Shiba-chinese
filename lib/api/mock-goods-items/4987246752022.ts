@@ -11,10 +11,10 @@ const item4987246752022: RawGoodsRecord = {
   priceJpy: 2516,
   priceCny: 125.8,
   effects: "",
-  keywords: ["鼻炎", "tag:originator"],
+  keywords: ["抗过敏类治疗", "tag:originator"],
   categoryId: 2088,
   subCategoryId: 2110,
-  subCategoryName: "鼻炎",
+  subCategoryName: "抗过敏类治疗",
   image: {
     src: "/product-images/4987246752022.jpg",
     alt: "【鼻炎喷雾】糠酸氟替卡松鼻喷雾剂 Avamys 56喷: 雾状柔和 不过敏 鼻塞救星 流感季必备神器",

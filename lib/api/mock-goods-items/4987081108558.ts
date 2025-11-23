@@ -10,10 +10,10 @@ const item4987081108558: RawGoodsRecord = {
   priceJpy: 33587,
   priceCny: 1679.35,
   effects: "",
-  keywords: ["高血压", "tag:originator"],
+  keywords: ["血压血糖治疗", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2115,
-  subCategoryName: "高血压",
+  subCategoryId: 2105,
+  subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987081108558.jpg",
     alt: "【降压药】米奈布洛片Minnebro 5mg：100片 高血压长期管理",

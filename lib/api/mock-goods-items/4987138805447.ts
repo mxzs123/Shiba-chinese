@@ -11,10 +11,10 @@ const item4987138805447: RawGoodsRecord = {
   priceJpy: 3718,
   priceCny: 185.9,
   effects: "",
-  keywords: ["失眠/焦虑症", "tag:generic"],
+  keywords: ["焦虑改善", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2124,
-  subCategoryName: "失眠/焦虑症",
+  subCategoryId: 2106,
+  subCategoryName: "焦虑改善",
   image: {
     src: "/product-images/4987138805447.jpg",
     alt: "【安神助眠】Tsumura津村汉方 抑肝散：42包 镇静神经 缓解失眠 缓解 暴躁易怒",

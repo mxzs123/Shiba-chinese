@@ -10,10 +10,10 @@ const item4987039454621: RawGoodsRecord = {
   priceJpy: 53851,
   priceCny: 2692.55,
   effects: "",
-  keywords: ["降血糖", "tag:originator"],
+  keywords: ["血压血糖治疗", "tag:originator"],
   categoryId: 2088,
   subCategoryId: 2105,
-  subCategoryName: "降血糖",
+  subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987039454621.jpg",
     alt: "【排糖药】达格列净片 Forxiga 10mg：100片 减肥黑科技 瘦身神器",

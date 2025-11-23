@@ -11,10 +11,10 @@ const item4987138802040: RawGoodsRecord = {
   priceJpy: 2464,
   priceCny: 123.2,
   effects: "",
-  keywords: ["肥胖症", "tag:generic"],
+  keywords: ["糖尿病与医学减重", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2123,
-  subCategoryName: "肥胖症",
+  subCategoryId: 2115,
+  subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987138802040.jpg",
     alt: "【水肿肥胖】Tsumura津村汉方 防己黄芪汤：42包 体重管理 去水肿 虚胖救星 去湿气 梨形身材 多汗症 肾炎治疗 风湿性关节痛",

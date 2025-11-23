@@ -11,10 +11,10 @@ const item4987155191059: RawGoodsRecord = {
   priceJpy: 3011,
   priceCny: 150.55,
   effects: "",
-  keywords: ["护胃", "tag:generic"],
+  keywords: ["肠胃护理", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2132,
-  subCategoryName: "护胃",
+  subCategoryId: 2112,
+  subCategoryName: "肠胃护理",
   image: {
     src: "/product-images/4987155191059.jpg",
     alt: "【胃膜卫士】瑞巴派特片 Rebamipide 100mg：膜固思达平替 修复胃粘膜 缓解老胃病",

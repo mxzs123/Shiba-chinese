@@ -10,10 +10,10 @@ const item4987413300513: RawGoodsRecord = {
   priceJpy: 77935,
   priceCny: 3896.75,
   effects: "",
-  keywords: ["降血糖", "tag:originator"],
+  keywords: ["血压血糖治疗", "tag:originator"],
   categoryId: 2088,
   subCategoryId: 2105,
-  subCategoryName: "降血糖",
+  subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987413300513.jpg",
     alt: "【排糖瘦身】恩格列净片Jardiance 25 mg：护心护肾、尿液排糖、SGLT2",

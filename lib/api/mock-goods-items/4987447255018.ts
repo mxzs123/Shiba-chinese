@@ -11,10 +11,10 @@ const item4987447255018: RawGoodsRecord = {
   priceJpy: 3509,
   priceCny: 175.45,
   effects: "",
-  keywords: ["防脱发/生发", "tag:generic"],
+  keywords: ["生发防脱", "tag:generic"],
   categoryId: 2088,
   subCategoryId: 2111,
-  subCategoryName: "防脱发/生发",
+  subCategoryName: "生发防脱",
   image: {
     src: "/product-images/4987447255018.jpg",
     alt: "【最强生发】度他雄胺片 Dutasteride 0.5mg：适尿通仿制 发际线最后防线 度他雄胺",

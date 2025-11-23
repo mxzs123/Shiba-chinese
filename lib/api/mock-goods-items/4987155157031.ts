@@ -11,10 +11,10 @@ const item4987155157031: RawGoodsRecord = {
   priceJpy: 1678,
   priceCny: 83.9,
   effects: "",
-  keywords: ["高尿酸血症", "tag:generic"],
+  keywords: ["痛风治疗", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2122,
-  subCategoryName: "高尿酸血症",
+  subCategoryId: 2118,
+  subCategoryName: "痛风治疗",
   image: {
     src: "/product-images/4987155157031.jpg",
     alt: "【痛风神药】非布司他片 Febuxostat 10mg: 抑制尿酸生成 治疗高尿酸血症和痛风",

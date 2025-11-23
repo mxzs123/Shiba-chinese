@@ -11,10 +11,10 @@ const item4987123871907: RawGoodsRecord = {
   priceJpy: 1678,
   priceCny: 83.9,
   effects: "",
-  keywords: ["高尿酸血症", "tag:generic"],
+  keywords: ["痛风治疗", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2122,
-  subCategoryName: "高尿酸血症",
+  subCategoryId: 2118,
+  subCategoryName: "痛风治疗",
   image: {
     src: "/product-images/4987123871907.jpg",
     alt: "【降酸药】苯溴马隆 Benzbromarone 25mg：100片 痛风长期管理 降尿酸痛风去根 排尿酸",

@@ -11,10 +11,10 @@ const item2499418g8022: RawGoodsRecord = {
   priceJpy: 94895,
   priceCny: 4744.75,
   effects: "",
-  keywords: ["肥胖症", "tag:originator"],
+  keywords: ["糖尿病与医学减重", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2123,
-  subCategoryName: "肥胖症",
+  subCategoryId: 2115,
+  subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/2499418g8022.jpg",
     alt: "【正版减肥针】 司美格鲁肽注射液Wegovy 1.7mg：瘦身神器 抑制食欲 健康减肥",

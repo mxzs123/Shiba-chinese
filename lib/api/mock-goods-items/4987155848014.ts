@@ -11,10 +11,10 @@ const item4987155848014: RawGoodsRecord = {
   priceJpy: 2860,
   priceCny: 143,
   effects: "",
-  keywords: ["高血压", "tag:generic"],
+  keywords: ["血压血糖治疗", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2115,
-  subCategoryName: "高血压",
+  subCategoryId: 2105,
+  subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987155848014.jpg",
     alt: "【降压】 氨氯地平片 Amlodipine  2.5mg ： 钙通道阻滞剂 平稳长效降血压 适合轻度高血压或初始治疗",

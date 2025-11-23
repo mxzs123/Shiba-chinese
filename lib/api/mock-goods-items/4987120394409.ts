@@ -11,10 +11,10 @@ const item4987120394409: RawGoodsRecord = {
   priceJpy: 2640,
   priceCny: 132,
   effects: "",
-  keywords: ["预防痛风发作", "tag:generic"],
+  keywords: ["痛风治疗", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2120,
-  subCategoryName: "预防痛风发作",
+  subCategoryId: 2118,
+  subCategoryName: "痛风治疗",
   image: {
     src: "/product-images/4987120394409.jpg",
     alt: "【痛风急救】秋水仙碱片 Colchicine 0.5mg：100片 急性痛风止痛 降炎抑痛风发作 止痛神器 痛风发作专用",

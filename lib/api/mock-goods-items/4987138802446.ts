@@ -11,10 +11,10 @@ const item4987138802446: RawGoodsRecord = {
   priceJpy: 5249,
   priceCny: 262.45,
   effects: "",
-  keywords: ["失眠/焦虑症", "tag:generic"],
+  keywords: ["焦虑改善", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2124,
-  subCategoryName: "失眠/焦虑症",
+  subCategoryId: 2106,
+  subCategoryName: "焦虑改善",
   image: {
     src: "/product-images/4987138802446.jpg",
     alt: "【调经/更年期调理】 Tsumura津村汉方 加味逍遥散：42包 疏肝解郁 专治女性更年期焦躁 月经不调 情绪不稳定。",

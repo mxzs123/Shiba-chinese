@@ -52,10 +52,7 @@ const product: ProductRecord = {
   },
   tags: ["nutrition", "bone-health"],
   updatedAt: `${thisYear}-05-10T10:30:00.000Z`,
-  collections: [
-    COLLECTION_HANDLES.SUPPLEMENTS,
-    COLLECTION_HANDLES.BONE_JOINT,
-  ],
+  collections: [COLLECTION_HANDLES.SUPPLEMENTS, COLLECTION_HANDLES.BONE_JOINT],
   bestsellerRank: 5,
 };
 

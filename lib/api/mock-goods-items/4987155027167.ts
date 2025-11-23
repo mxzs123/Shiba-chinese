@@ -10,10 +10,10 @@ const item4987155027167: RawGoodsRecord = {
   priceJpy: 6353,
   priceCny: 317.65,
   effects: "",
-  keywords: ["抗敏", "tag:generic"],
+  keywords: ["抗过敏类治疗", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2127,
-  subCategoryName: "抗敏",
+  subCategoryId: 2110,
+  subCategoryName: "抗过敏类治疗",
   image: {
     src: "/product-images/4987155027167.jpg",
     alt: "【过敏药】非索非那定片  Fexofenadine 60mg: 强效抗过敏（鼻炎/荨麻疹）",

@@ -11,10 +11,10 @@ const item4987155491012: RawGoodsRecord = {
   priceJpy: 3011,
   priceCny: 150.55,
   effects: "",
-  keywords: ["降血糖", "tag:generic"],
+  keywords: ["血压血糖治疗", "tag:generic"],
   categoryId: 2088,
   subCategoryId: 2105,
-  subCategoryName: "降血糖",
+  subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987155491012.jpg",
     alt: "【降糖】 格列美脲片 Glimepiride  1mg ： “亚莫利”平替 第三代磺脲类降糖药 刺激胰岛素分泌 降低血糖",

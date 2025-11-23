@@ -11,10 +11,10 @@ const item4987440442019: RawGoodsRecord = {
   priceJpy: 1678,
   priceCny: 83.9,
   effects: "",
-  keywords: ["酸性尿改善", "tag:generic"],
+  keywords: ["糖尿病与医学减重", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2139,
-  subCategoryName: "酸性尿改善",
+  subCategoryId: 2115,
+  subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987440442019.jpg",
     alt: "【抗糖神器】维格列汀 二甲双胍 配合片 ：强效控糖 复方制剂维格列汀 二甲双胍",

@@ -11,10 +11,10 @@ const item4987616003969: RawGoodsRecord = {
   priceJpy: 51181,
   priceCny: 2559.05,
   effects: "",
-  keywords: ["糖尿病/肥胖症", "tag:originator"],
+  keywords: ["糖尿病与医学减重", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2117,
-  subCategoryName: "糖尿病/肥胖症",
+  subCategoryId: 2115,
+  subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987616003969.png",
     alt: "【口服瘦身片】司美格鲁肽片  Rybelsus 7mg：不用打针的司美 懒人减肥 抑制食欲",

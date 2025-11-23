@@ -10,10 +10,10 @@ const item4987123158336: RawGoodsRecord = {
   priceJpy: 8943,
   priceCny: 447.15,
   effects: "",
-  keywords: ["除菌", "tag:originator"],
+  keywords: ["肠胃护理", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2121,
-  subCategoryName: "除菌",
+  subCategoryId: 2112,
+  subCategoryName: "肠胃护理",
   image: {
     src: "/product-images/4987123158336.jpg",
     alt: "【幽门螺旋菌1次根除】武田 新款蓝三普400 杀菌套组 7天根除 防胃癌",

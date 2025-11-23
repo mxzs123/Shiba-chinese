@@ -11,10 +11,10 @@ const item4987081100316: RawGoodsRecord = {
   priceJpy: 2710,
   priceCny: 135.5,
   effects: "",
-  keywords: ["缓和疼痛", "tag:originator"],
+  keywords: ["止疼/外用贴剂", "tag:originator"],
   categoryId: 2088,
   subCategoryId: 2113,
-  subCategoryName: "缓和疼痛",
+  subCategoryName: "止疼/外用贴剂",
   image: {
     src: "/product-images/4987081100316.jpg",
     alt: "【止痛贴剂】乐松贴Loxonin Tape 100mg：70枚 肌肉酸痛 肩颈痛 缓解炎症疼痛 无限回购",

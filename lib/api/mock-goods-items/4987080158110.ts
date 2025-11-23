@@ -11,10 +11,10 @@ const item4987080158110: RawGoodsRecord = {
   priceJpy: 4576,
   priceCny: 228.8,
   effects: "",
-  keywords: ["鼻炎", "tag:generic"],
+  keywords: ["抗过敏类治疗", "tag:generic"],
   categoryId: 2088,
   subCategoryId: 2110,
-  subCategoryName: "鼻炎",
+  subCategoryName: "抗过敏类治疗",
   image: {
     src: "/product-images/4987080158110.jpg",
     alt: "【鼻炎特效药】普苏伐斯配合片：100片 鼻子通气 抗过敏 不瞌睡 过敏性鼻炎 缓解鼻塞流涕",

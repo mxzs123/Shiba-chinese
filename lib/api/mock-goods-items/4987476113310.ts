@@ -10,10 +10,10 @@ const item4987476113310: RawGoodsRecord = {
   priceJpy: 2860,
   priceCny: 143,
   effects: "",
-  keywords: ["防长斑", "tag:generic"],
+  keywords: ["美白", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2140,
-  subCategoryName: "防长斑",
+  subCategoryId: 2104,
+  subCategoryName: "美白",
   image: {
     src: "/product-images/4987476113310.jpg",
     alt: "【美白王者】传明酸片 Tranexamic Acid  250mg：肝斑神药 全身美白",

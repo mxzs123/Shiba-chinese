@@ -11,10 +11,10 @@ const item4987080371113: RawGoodsRecord = {
   priceJpy: 11000,
   priceCny: 550,
   effects: "",
-  keywords: ["防脱发/生发", "tag:generic"],
+  keywords: ["生发防脱", "tag:generic"],
   categoryId: 2088,
   subCategoryId: 2111,
-  subCategoryName: "防脱发/生发",
+  subCategoryName: "生发防脱",
   image: {
     src: "/product-images/4987080371113.jpg",
     alt: "【掉发克星】非那雄胺片1mg：28片 男性型脱发预防 防脱发 发际线拯救 男士生发",

@@ -10,10 +10,10 @@ const item4987155014105: RawGoodsRecord = {
   priceJpy: 3011,
   priceCny: 150.55,
   effects: "",
-  keywords: ["消化不良", "tag:generic"],
+  keywords: ["肠胃护理", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2126,
-  subCategoryName: "消化不良",
+  subCategoryId: 2112,
+  subCategoryName: "肠胃护理",
   image: {
     src: "/product-images/4987155014105.jpg",
     alt: "【胃药】莫沙必利片 Mosapride 5mg :促消化 防胀气莫沙必利",

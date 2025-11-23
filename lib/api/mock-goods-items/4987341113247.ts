@@ -11,10 +11,10 @@ const item4987341113247: RawGoodsRecord = {
   priceJpy: 14916,
   priceCny: 745.8,
   effects: "",
-  keywords: ["脂质异常", "tag:originator"],
+  keywords: ["血压血糖治疗", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2130,
-  subCategoryName: "脂质异常",
+  subCategoryId: 2105,
+  subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987341113247.jpg",
     alt: "【强效降脂】瑞舒伐他汀依折麦布 配合片 Rosuzet LD 高剂量版：复方降脂药 二合一 针对难治性高血脂。",

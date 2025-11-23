@@ -10,10 +10,10 @@ const item4987084152558: RawGoodsRecord = {
   priceJpy: 6149,
   priceCny: 307.45,
   effects: "",
-  keywords: ["干眼症", "tag:originator"],
+  keywords: ["眼科护理", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2138,
-  subCategoryName: "干眼症",
+  subCategoryId: 2116,
+  subCategoryName: "眼科护理",
   image: {
     src: "/product-images/4987084152558.jpg",
     alt: "【人工泪液】玻璃酸钠滴眼液 Hyalein0.1%：适合日常轻中度干眼 眼疲劳",

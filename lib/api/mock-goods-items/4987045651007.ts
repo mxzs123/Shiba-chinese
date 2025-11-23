@@ -11,10 +11,10 @@ const item4987045651007: RawGoodsRecord = {
   priceJpy: 3381,
   priceCny: 169.05,
   effects: "",
-  keywords: ["更年期障害", "tag:generic"],
+  keywords: ["妇科", "tag:generic"],
   categoryId: 2088,
   subCategoryId: 2107,
-  subCategoryName: "更年期障害",
+  subCategoryName: "妇科",
   image: {
     src: "/product-images/4987045651007.jpg",
     alt: "【更年期神药】 Kracie汉方 加味逍遙散料精华颗粒：28袋盒 补血调经痛经更年期",

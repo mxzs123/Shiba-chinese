@@ -11,10 +11,10 @@ const item4987224016207: RawGoodsRecord = {
   priceJpy: 4318,
   priceCny: 215.9,
   effects: "",
-  keywords: ["更年期障害", "tag:generic"],
+  keywords: ["妇科", "tag:generic"],
   categoryId: 2088,
   subCategoryId: 2107,
-  subCategoryName: "更年期障害",
+  subCategoryName: "妇科",
   image: {
     src: "/product-images/4987224016207.jpg",
     alt: "【女性私处护理】雌三醇阴道片 Estriel 0.5mg：改善阴道干涩 更年期养护 雌三醇",

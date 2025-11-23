@@ -11,10 +11,10 @@ const item4987080200017: RawGoodsRecord = {
   priceJpy: 1119,
   priceCny: 55.95,
   effects: "",
-  keywords: ["防痴呆", "tag:generic"],
+  keywords: ["神经治理", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2142,
-  subCategoryName: "防痴呆",
+  subCategoryId: 2119,
+  subCategoryName: "神经治理",
   image: {
     src: "/product-images/4987080200017.jpg",
     alt: "【老年痴呆药】多奈哌齐片 Donepezil 3mg：治疗阿尔茨海默病 延缓记忆力衰退。",

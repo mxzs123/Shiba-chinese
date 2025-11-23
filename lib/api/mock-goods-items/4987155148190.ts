@@ -11,10 +11,10 @@ const item4987155148190: RawGoodsRecord = {
   priceJpy: 8443,
   priceCny: 422.15,
   effects: "",
-  keywords: ["脂质异常", "tag:generic"],
+  keywords: ["血压血糖治疗", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2130,
-  subCategoryName: "脂质异常",
+  subCategoryId: 2105,
+  subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987155148190.jpg",
     alt: "【降脂伴侣】依折麦布口腔崩解片 Ezetimibe 10mg :胆固醇吸收阻断 不伤肝 依折麦布",

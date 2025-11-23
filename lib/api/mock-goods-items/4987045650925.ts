@@ -11,10 +11,10 @@ const item4987045650925: RawGoodsRecord = {
   priceJpy: 5892,
   priceCny: 294.6,
   effects: "",
-  keywords: ["焦虑症", "tag:generic"],
+  keywords: ["焦虑改善", "tag:generic"],
   categoryId: 2088,
   subCategoryId: 2106,
-  subCategoryName: "焦虑症",
+  subCategoryName: "焦虑改善",
   image: {
     src: "/product-images/4987045650925.jpg",
     alt: "【失眠焦虑】Kracie汉方 加味归脾汤精华颗粒：28袋盒 失眠救星 补气血 焦虑调理",

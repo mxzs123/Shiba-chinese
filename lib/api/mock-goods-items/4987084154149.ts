@@ -11,10 +11,10 @@ const item4987084154149: RawGoodsRecord = {
   priceJpy: 3697,
   priceCny: 184.85,
   effects: "",
-  keywords: ["眼疲劳", "tag:originator"],
+  keywords: ["眼科护理", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2118,
-  subCategoryName: "眼疲劳",
+  subCategoryId: 2116,
+  subCategoryName: "眼科护理",
   image: {
     src: "/product-images/4987084154149.jpg",
     alt: "【消炎眼药水】氟米龙 Flumetholone眼药水0.02%：50ml 温和激素眼药 缓解结膜炎 轻度炎症",

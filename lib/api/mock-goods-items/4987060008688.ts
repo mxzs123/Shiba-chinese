@@ -10,10 +10,10 @@ const item4987060008688: RawGoodsRecord = {
   priceJpy: 26785,
   priceCny: 1339.25,
   effects: "",
-  keywords: ["泌尿", "tag:originator"],
+  keywords: ["泌尿与男性健康", "tag:originator"],
   categoryId: 2088,
   subCategoryId: 2108,
-  subCategoryName: "泌尿",
+  subCategoryName: "泌尿与男性健康",
   image: {
     src: "/product-images/4987060008688.jpg",
     alt: "【膀胱急救】维贝格隆片Vibegron 50mg：100片 尿频尿急 憋不住尿专用药",

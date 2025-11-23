@@ -11,10 +11,10 @@ const item4987116530101: RawGoodsRecord = {
   priceJpy: 2542,
   priceCny: 127.1,
   effects: "",
-  keywords: ["糖尿病/肥胖症", "tag:originator"],
+  keywords: ["糖尿病与医学减重", "tag:originator"],
   categoryId: 2088,
-  subCategoryId: 2117,
-  subCategoryName: "糖尿病/肥胖症",
+  subCategoryId: 2115,
+  subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987116530101.jpg",
     alt: "【控糖常备】Metgluco盐酸二甲双胍片Metformin 500mg（2型）：100片 减肥控糖 稳定血糖 控制体重",

@@ -11,10 +11,10 @@ const item4987155131109: RawGoodsRecord = {
   priceJpy: 5060,
   priceCny: 253,
   effects: "",
-  keywords: ["脂质异常", "tag:generic"],
+  keywords: ["血压血糖治疗", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2130,
-  subCategoryName: "脂质异常",
+  subCategoryId: 2105,
+  subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987155131109.jpg",
     alt: "【降脂药】瑞舒伐他汀片 Rosuvastatin 5mg: 强效降脂 清血管 可定平替 瑞舒伐他汀",

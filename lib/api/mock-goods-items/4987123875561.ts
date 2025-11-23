@@ -10,10 +10,10 @@ const item4987123875561: RawGoodsRecord = {
   priceJpy: 1623,
   priceCny: 81.15,
   effects: "",
-  keywords: ["补铁剂", "tag:generic"],
+  keywords: ["维生素/补充剂", "tag:generic"],
   categoryId: 2088,
   subCategoryId: 2109,
-  subCategoryName: "补铁剂",
+  subCategoryName: "维生素/补充剂",
   image: {
     src: "/product-images/4987123875561.jpg",
     alt: "【贫血药】柠檬酸亚铁钠片50mg：100片 温和补铁剂孕期补铁剂",

@@ -11,10 +11,10 @@ const item4987155157130: RawGoodsRecord = {
   priceJpy: 2924,
   priceCny: 146.2,
   effects: "",
-  keywords: ["预防痛风发作", "tag:generic"],
+  keywords: ["痛风治疗", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2120,
-  subCategoryName: "预防痛风发作",
+  subCategoryId: 2118,
+  subCategoryName: "痛风治疗",
   image: {
     src: "/product-images/4987155157130.jpg",
     alt: "【止痛片】洛索洛芬钠片 Loxoprofen 60mg: 痛经神药 日本国民级消炎止痛药 治头痛 牙痛 姨妈痛 伤胃较轻",

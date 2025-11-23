@@ -11,10 +11,10 @@ const item4987155125146: RawGoodsRecord = {
   priceJpy: 4799,
   priceCny: 239.95,
   effects: "",
-  keywords: ["眼睛痒", "tag:generic"],
+  keywords: ["眼科护理", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2129,
-  subCategoryName: "眼睛痒",
+  subCategoryId: 2116,
+  subCategoryName: "眼科护理",
   image: {
     src: "/product-images/4987155125146.jpg",
     alt: "【抗过敏眼药】奥洛他定滴眼液 Olopatadine  0.1%: 眼科常用的抗过敏药 止痒效果极好 治结膜炎。",

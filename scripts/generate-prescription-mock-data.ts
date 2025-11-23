@@ -13,6 +13,7 @@ type Args = {
   dryRun: boolean;
   limit?: number;
   skipImages: boolean;
+  csvPath?: string;
 };
 
 type CsvRow = {
@@ -46,7 +47,7 @@ type PrescriptionSubcategory = {
 };
 
 const PROJECT_ROOT = process.cwd();
-const CSV_PATH = path.join(PROJECT_ROOT, "public", "productss.csv");
+const CSV_DEFAULT_PATH = path.join(PROJECT_ROOT, "public", "productss.csv");
 const ITEMS_DIR = path.join(PROJECT_ROOT, "lib", "api", "mock-goods-items");
 const INDEX_PATH = path.join(ITEMS_DIR, "index.ts");
 const IMAGE_DIR = path.join(PROJECT_ROOT, "public", "product-images");
@@ -62,6 +63,67 @@ const START_SUBCATEGORY_ID = 2104;
 const PLACEHOLDER_IMAGE = "/images/placeholders/product-1.svg";
 const IMAGE_CONCURRENCY = 5;
 const PRICE_CNY_RATE = 0.05;
+const ENABLE_FALLBACK_SUBCATEGORY = true;
+
+// 处方子分类白名单（按需求顺序排序，sort 递减确保写入 JSON 时与列表一致）
+const ALLOWED_SUBCATEGORY_NAMES = [
+  "美白",
+  "血压血糖治疗",
+  "焦虑改善",
+  "妇科",
+  "泌尿与男性健康",
+  "维生素/补充剂",
+  "抗过敏类治疗",
+  "生发防脱",
+  "肠胃护理",
+  "止疼/外用贴剂",
+  "睡眠辅助",
+  "糖尿病与医学减重",
+  "眼科护理",
+  "流感治疗",
+  "痛风治疗",
+  "神经治理",
+];
+
+// 兼容旧/同义标签到白名单名称
+const SUBCATEGORY_ALIASES: Record<string, string> = {
+  高血压: "血压血糖治疗",
+  降血糖: "血压血糖治疗",
+  脂质异常: "血压血糖治疗",
+  高胆固醇: "血压血糖治疗",
+  糖尿病: "糖尿病与医学减重",
+  "糖尿病/肥胖症": "糖尿病与医学减重",
+  肥胖症: "糖尿病与医学减重",
+  失眠: "睡眠辅助",
+  "失眠/焦虑症": "焦虑改善",
+  焦虑症: "焦虑改善",
+  泌尿: "泌尿与男性健康",
+  漏尿: "泌尿与男性健康",
+  排结石: "泌尿与男性健康",
+  前立腺肥大: "泌尿与男性健康",
+  勃起不全: "泌尿与男性健康",
+  青光眼: "眼科护理",
+  干眼症: "眼科护理",
+  眼疲劳: "眼科护理",
+  眼睛痒: "眼科护理",
+  抗敏: "抗过敏类治疗",
+  鼻炎: "抗过敏类治疗",
+  护胃: "肠胃护理",
+  消化不良: "肠胃护理",
+  胀气: "肠胃护理",
+  胃溃疡: "肠胃护理",
+  生发剂: "生发防脱",
+  "防脱发/生发": "生发防脱",
+  防长斑: "美白",
+  维他命H: "维生素/补充剂",
+  维生素C: "维生素/补充剂",
+  补铁剂: "维生素/补充剂",
+  缓和疼痛: "止疼/外用贴剂",
+  外皮用药: "止疼/外用贴剂",
+  预防痛风发作: "痛风治疗",
+  高尿酸血症: "痛风治疗",
+  防痴呆: "神经治理",
+};
 
 const CATEGORY_SYNONYMS: Record<string, string> = {
   // 根类写法差异
@@ -72,63 +134,17 @@ const CATEGORY_SYNONYMS: Record<string, string> = {
   高血圧: "高血压",
 };
 
-const DEFAULT_SUBCATEGORIES: PrescriptionSubcategory[] = [
-  {
-    id: 2092,
-    parentId: PRESCRIPTION_CATEGORY_ID,
-    name: "高血压",
-    jpName: "高血圧",
-    enName: "Hypertension",
-    sort: 20,
-    imageUrl: "/static/images/common/empty.png",
-    slug: "hypertension",
-    child: null,
-  },
-  {
-    id: 2095,
-    parentId: PRESCRIPTION_CATEGORY_ID,
-    name: "抗生素",
-    jpName: "抗生物質",
-    enName: "Antibiotics",
-    sort: 19,
-    imageUrl: "/static/images/common/empty.png",
-    slug: "antibiotics",
-    child: null,
-  },
-  {
-    id: 2091,
-    parentId: PRESCRIPTION_CATEGORY_ID,
-    name: "外皮用药",
-    jpName: "外皮用薬",
-    enName: "Topical medication",
-    sort: 18,
-    imageUrl: "/static/images/common/empty.png",
-    slug: "topical",
-    child: null,
-  },
-  {
-    id: 2101,
-    parentId: PRESCRIPTION_CATEGORY_ID,
-    name: "高胆固醇",
-    jpName: "高コレステロール",
-    enName: "High Cholesterol",
-    sort: 17,
-    imageUrl: "/static/images/common/empty.png",
-    slug: "cholesterol",
-    child: null,
-  },
-  {
-    id: 2103,
-    parentId: PRESCRIPTION_CATEGORY_ID,
-    name: "其他",
-    jpName: "その他",
-    enName: "Other",
-    sort: 16,
-    imageUrl: "/static/images/common/empty.png",
-    slug: "other-rx",
-    child: null,
-  },
-];
+const FALLBACK_SUBCATEGORY: PrescriptionSubcategory = {
+  id: 2103,
+  parentId: PRESCRIPTION_CATEGORY_ID,
+  name: "其他",
+  jpName: "その他",
+  enName: "Other",
+  sort: 0,
+  imageUrl: "/static/images/common/empty.png",
+  slug: "other-rx",
+  child: null,
+};
 
 const csvRowSchema = z.object({
   JAN: z.string(),
@@ -153,6 +169,7 @@ function parseArgs(): Args {
   let dryRun = false;
   let limit: number | undefined;
   let skipImages = false;
+  let csvPath: string | undefined;
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -170,14 +187,21 @@ function parseArgs(): Args {
       i += 1;
     } else if (arg === "--skip-images") {
       skipImages = true;
+    } else if (arg === "--csv" || arg === "-c") {
+      const next = argv[i + 1];
+      if (!next) {
+        throw new Error("缺少 --csv 的路径参数");
+      }
+      csvPath = path.isAbsolute(next) ? next : path.join(PROJECT_ROOT, next);
+      i += 1;
     }
   }
 
-  return { dryRun, limit, skipImages };
+  return { dryRun, limit, skipImages, csvPath };
 }
 
-async function readCsv(): Promise<CsvRow[]> {
-  const content = await fs.readFile(CSV_PATH, "utf8");
+async function readCsv(csvPath: string): Promise<CsvRow[]> {
+  const content = await fs.readFile(csvPath, "utf8");
   const rows = parse(content, {
     columns: true,
     skip_empty_lines: true,
@@ -245,6 +269,72 @@ function normalizeSlug(raw: string): string {
   }
   const slug = slugify(trimmed, { lower: true, strict: true });
   return slug || trimmed.replace(/\s+/g, "-").toLowerCase();
+}
+
+function buildWhitelistedSubcategories(): PrescriptionSubcategory[] {
+  return ALLOWED_SUBCATEGORY_NAMES.map((name, index) => {
+    const normalizedName = normalizeCategoryName(name);
+    return {
+      id: START_SUBCATEGORY_ID + index,
+      parentId: PRESCRIPTION_CATEGORY_ID,
+      name: normalizedName,
+      jpName: normalizedName,
+      enName: normalizedName,
+      sort: ALLOWED_SUBCATEGORY_NAMES.length - index,
+      imageUrl: "/static/images/common/empty.png",
+      slug: buildCategorySlug(normalizedName),
+      child: null,
+    } satisfies PrescriptionSubcategory;
+  });
+}
+
+function buildSubcategoryLookup() {
+  const allowedList = buildWhitelistedSubcategories();
+  const fallback = ENABLE_FALLBACK_SUBCATEGORY
+    ? {
+        ...FALLBACK_SUBCATEGORY,
+        name: normalizeCategoryName(FALLBACK_SUBCATEGORY.name),
+        jpName: FALLBACK_SUBCATEGORY.jpName || FALLBACK_SUBCATEGORY.name,
+        enName: FALLBACK_SUBCATEGORY.enName || FALLBACK_SUBCATEGORY.name,
+        slug: buildCategorySlug(
+          FALLBACK_SUBCATEGORY.slug || FALLBACK_SUBCATEGORY.name,
+        ),
+      }
+    : undefined;
+
+  const lookup = new Map<string, PrescriptionSubcategory>();
+
+  const addToLookup = (item: PrescriptionSubcategory) => {
+    lookup.set(normalizeCategoryName(item.name), item);
+    lookup.set(buildCategorySlug(item.name), item);
+    lookup.set(item.slug, item);
+    lookup.set(buildCategorySlug(item.slug), item);
+  };
+
+  allowedList.forEach(addToLookup);
+  if (fallback) addToLookup(fallback);
+
+  const resolve = (rawName: string): PrescriptionSubcategory => {
+    const normalized = normalizeCategoryName(rawName);
+    const aliasByName = SUBCATEGORY_ALIASES[normalized];
+    const aliasBySlug = SUBCATEGORY_ALIASES[buildCategorySlug(normalized)];
+    const canonicalName = aliasByName || aliasBySlug || normalized;
+    const byName = lookup.get(normalizeCategoryName(canonicalName));
+    const bySlug = lookup.get(buildCategorySlug(canonicalName));
+    const hit = byName || bySlug;
+
+    if (hit) return hit;
+    if (fallback) return fallback;
+
+    throw new Error(`处方小分类 ${rawName} 不在白名单内，且未启用兜底`);
+  };
+
+  return {
+    allowedList,
+    fallback,
+    resolve,
+    map: lookup,
+  } as const;
 }
 
 function deriveNumericId(slug: string): number {
@@ -425,19 +515,6 @@ async function downloadImage(
   return url || PLACEHOLDER_IMAGE;
 }
 
-async function loadExistingSubcategories(): Promise<PrescriptionSubcategory[]> {
-  if (await fileExists(SUBCATEGORY_JSON)) {
-    const content = await fs.readFile(SUBCATEGORY_JSON, "utf8");
-    try {
-      const parsed = JSON.parse(content) as PrescriptionSubcategory[];
-      return parsed;
-    } catch (error) {
-      console.warn("[WARN] 解析现有处方子分类 JSON 失败，使用默认值", error);
-    }
-  }
-  return DEFAULT_SUBCATEGORIES;
-}
-
 async function writeSubcategoryJson(list: PrescriptionSubcategory[]) {
   const sorted = [...list].sort((a, b) => b.sort - a.sort || a.id - b.id);
   const json = JSON.stringify(sorted, null, 2);
@@ -529,30 +606,19 @@ async function main() {
   await ensureDir(ITEMS_DIR);
   await ensureDir(IMAGE_DIR);
 
-  const rows = await readCsv();
+  const csvPath = args.csvPath || CSV_DEFAULT_PATH;
+  const rows = await readCsv(csvPath);
   const limitedRows = args.limit ? rows.slice(0, args.limit) : rows;
-
-  const existingSubcategories = await loadExistingSubcategories();
-  const subcategoryMap = new Map<string, PrescriptionSubcategory>();
-
-  existingSubcategories.forEach((item) => {
-    const normalizedName = normalizeCategoryName(item.name);
-    const canonicalKey = buildCategorySlug(normalizedName);
-    const slug = item.slug || canonicalKey;
-    subcategoryMap.set(canonicalKey, {
-      ...item,
-      name: normalizedName,
-      jpName: item.jpName || normalizedName,
-      enName: item.enName || normalizedName,
-      slug,
-    });
-  });
+  const {
+    allowedList,
+    fallback,
+    resolve: resolveSubcategory,
+  } = buildSubcategoryLookup();
 
   const maxRank = await findMaxExistingRank();
   let rankCursor = maxRank + 1;
 
   const slugSet = new Set<string>();
-  const newSubcategories: PrescriptionSubcategory[] = [];
   const limit = pLimit(IMAGE_CONCURRENCY);
 
   const generated: {
@@ -569,43 +635,7 @@ async function main() {
     slugSet.add(slug);
 
     const normalizedSubCategoryName = normalizeCategoryName(row.小分類);
-    const subCategorySlug = buildCategorySlug(normalizedSubCategoryName);
-
-    const maxExistingId = Math.max(
-      START_SUBCATEGORY_ID - 1,
-      ...Array.from(subcategoryMap.values()).map((item) => item.id),
-    );
-
-    let subCategory = subcategoryMap.get(subCategorySlug);
-
-    if (subCategory) {
-      // 覆盖名称以保证展示一致
-      if (subCategory.name !== normalizedSubCategoryName) {
-        subCategory = {
-          ...subCategory,
-          name: normalizedSubCategoryName,
-          jpName: subCategory.jpName || normalizedSubCategoryName,
-          enName: subCategory.enName || normalizedSubCategoryName,
-          slug: subCategorySlug,
-        };
-        subcategoryMap.set(subCategorySlug, subCategory);
-      }
-    } else {
-      const nextId = maxExistingId + 1;
-      subCategory = {
-        id: nextId,
-        parentId: PRESCRIPTION_CATEGORY_ID,
-        name: normalizedSubCategoryName,
-        jpName: normalizedSubCategoryName,
-        enName: normalizedSubCategoryName,
-        sort: 10,
-        imageUrl: "/static/images/common/empty.png",
-        slug: subCategorySlug,
-        child: null,
-      };
-      subcategoryMap.set(subCategorySlug, subCategory);
-      newSubcategories.push(subCategory);
-    }
+    const subCategory = resolveSubcategory(normalizedSubCategoryName);
 
     const priceJpy = parsePrice(row["売値（税込）"], slug);
     const priceCny = Number((priceJpy * PRICE_CNY_RATE).toFixed(2));
@@ -652,7 +682,7 @@ async function main() {
 
   if (args.dryRun) {
     console.log(
-      `[dry-run] 即将生成 ${generated.length} 个商品文件，新增子分类 ${newSubcategories.length} 个`,
+      `[dry-run] 即将生成 ${generated.length} 个商品文件，处方子分类严格限制在 ${allowedList.length + (fallback ? 1 : 0)} 个`,
     );
     return;
   }
@@ -663,13 +693,14 @@ async function main() {
     ),
   );
 
-  await writeSubcategoryJson(Array.from(subcategoryMap.values()));
+  const subcategoryList = [...allowedList, ...(fallback ? [fallback] : [])];
+  await writeSubcategoryJson(subcategoryList);
 
   const sortedSlugs = await collectSlugsSortedByRank();
   await buildIndexFile(sortedSlugs);
 
   console.log(
-    `完成：生成 ${generated.length} 个商品文件，处方子分类共 ${subcategoryMap.size} 个`,
+    `完成：生成 ${generated.length} 个商品文件，处方子分类共 ${subcategoryList.length} 个`,
   );
 }
 

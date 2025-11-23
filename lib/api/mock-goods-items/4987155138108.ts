@@ -11,10 +11,10 @@ const item4987155138108: RawGoodsRecord = {
   priceJpy: 2860,
   priceCny: 143,
   effects: "",
-  keywords: ["糖尿病/肥胖症", "tag:generic"],
+  keywords: ["糖尿病与医学减重", "tag:generic"],
   categoryId: 2088,
-  subCategoryId: 2117,
-  subCategoryName: "糖尿病/肥胖症",
+  subCategoryId: 2115,
+  subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987155138108.jpg",
     alt: "【控糖减重】 二甲双胍片 Metformin 250mg: 经典降糖药 因哈佛教授推荐 抑制食欲 改善代谢",
