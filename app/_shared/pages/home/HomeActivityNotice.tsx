@@ -26,6 +26,11 @@ export async function HomeActivityNotice() {
             <p className="text-sm font-medium text-neutral-900 line-clamp-2">
               {article.title}
             </p>
+            {article.summary ? (
+              <p className="text-xs text-neutral-600 line-clamp-2">
+                {article.summary}
+              </p>
+            ) : null}
           </div>
         </div>
         <Link
