@@ -23,9 +23,12 @@ const hospitalChildCategories: GoodsCategory[] = [
     imageUrl: "/static/images/common/empty.png",
     child: null,
   },
+];
+
+const wellnessChildCategories: GoodsCategory[] = [
   {
     id: 3085002,
-    parentId: HOSPITAL_CATEGORY_ID,
+    parentId: 2086,
     name: "サプリ",
     jpName: "サプリメント",
     enName: "Supplements",
@@ -34,20 +37,12 @@ const hospitalChildCategories: GoodsCategory[] = [
     imageUrl: "/static/images/common/empty.png",
     child: null,
   },
-  {
-    id: 3085003,
-    parentId: HOSPITAL_CATEGORY_ID,
-    name: "贩卖预定",
-    jpName: "販売予定",
-    enName: "Pre-sale",
-    sort: 26,
-    slug: "pre-sale",
-    imageUrl: "/static/images/common/empty.png",
-    child: null,
-  },
+];
+
+const beautyChildCategories: GoodsCategory[] = [
   {
     id: 3085004,
-    parentId: HOSPITAL_CATEGORY_ID,
+    parentId: 2047,
     name: "化粧品",
     jpName: "化粧品",
     enName: "Cosmetics",
@@ -87,7 +82,7 @@ export const goodsCategories: GoodsCategory[] = [
     sort: 196,
     imageUrl: "/static/images/common/empty.png",
     slug: "wellness",
-    child: null,
+    child: wellnessChildCategories,
   },
   {
     id: HOSPITAL_CATEGORY_ID,
@@ -107,7 +102,7 @@ export const goodsCategories: GoodsCategory[] = [
     sort: 192,
     imageUrl: "/static/images/common/empty.png",
     slug: "beauty",
-    child: null,
+    child: beautyChildCategories,
   },
   {
     id: 2084,
