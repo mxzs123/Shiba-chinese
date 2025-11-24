@@ -3,7 +3,6 @@ import Script from "next/script";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 
-import { fallbackLocale } from "@shiba/i18n";
 import { initMonitoring } from "@shiba/monitoring";
 
 import "./globals.css";
@@ -32,7 +31,7 @@ const inter = Inter({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang={fallbackLocale} className={inter.variable}>
+    <html lang="zh-CN" className={inter.variable}>
       <body className="bg-neutral-50 text-neutral-900">
         <Script id="distributor-cleanup-overlays" strategy="beforeInteractive">
           {`
