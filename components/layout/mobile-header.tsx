@@ -44,12 +44,26 @@ export function MobileHeader({
   }, [leadingVariant, pathname]);
 
   const handleBack = () => {
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      router.back();
+    if (typeof window === "undefined") {
+      router.push("/");
       return;
     }
 
-    router.push("/");
+    // 超时降级：若 back() 无效（如微信直接打开链接），则跳转首页
+    let didNavigate = false;
+    const onPopState = () => {
+      didNavigate = true;
+    };
+
+    window.addEventListener("popstate", onPopState);
+    router.back();
+
+    setTimeout(() => {
+      window.removeEventListener("popstate", onPopState);
+      if (!didNavigate) {
+        router.push("/");
+      }
+    }, 150);
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
