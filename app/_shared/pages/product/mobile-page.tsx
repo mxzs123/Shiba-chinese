@@ -1,50 +1,230 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
+"use client";
 
-import { ProductCard, ProductCardQuickAdd, Price } from "@/app/_shared";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronLeft, Search, Home, Grid3x3, ShoppingCart, User } from "lucide-react";
+
+import { ProductCard, ProductCardQuickAdd, Price, CartBadge } from "@/app/_shared";
 import { AddToCartForm } from "@/app/_shared/pages/product/AddToCartForm";
 import { ReassuranceNotice } from "@/app/_shared/pages/product/ReassuranceNotice";
-import {
-  loadProductPageData,
-  selectPrimaryVariant,
-  type GalleryImage,
-  type GuidelineSection,
-  type ProductDetailRow,
+import type {
+  GalleryImage,
+  GuidelineSection,
+  ProductDetailRow,
 } from "@/app/_shared/pages/product/shared";
-import { CartProvider } from "@/components/cart/cart-context";
-import { MobileHeader } from "@/components/layout/mobile-header";
-import { ProductProvider } from "@/components/product/product-context";
+import { useCart } from "@/components/cart/cart-context";
 import { Gallery } from "@/components/product/gallery";
 import Prose from "@/components/prose";
-import { getNotifications } from "@/lib/api";
-import type { Product } from "@/lib/api/types";
+import type { Product, ProductVariant } from "@/lib/api/types";
 import { isDiscountedPrice } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
-type PageParams = {
-  handle: string;
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// Utility Functions (client-safe)
+// ─────────────────────────────────────────────────────────────────────────────
 
-type MobilePageProps = {
-  params: Promise<PageParams>;
-};
+function selectPrimaryVariant(product: Product): ProductVariant | undefined {
+  if (!product.variants.length) {
+    return undefined;
+  }
 
-type MobileSummaryProps = {
+  return product.variants[0];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type MobileProductPageClientProps = {
   product: Product;
-};
-
-type MobileGalleryProps = {
+  productJsonLd: Record<string, unknown>;
   images: GalleryImage[];
-};
-
-type MobileDetailListProps = {
+  recommended: Product[];
   detailRows: ProductDetailRow[];
+  guidelineSections: GuidelineSection[];
 };
 
-type MobileGuidelinesProps = {
-  sections: GuidelineSection[];
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// Header Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ProductPageHeader() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleBack = () => {
+    if (typeof window === "undefined") {
+      router.push("/");
+      return;
+    }
+
+    // 超时降级：若 back() 无效（如微信直接打开链接），则跳转首页
+    let didNavigate = false;
+    const onPopState = () => {
+      didNavigate = true;
+    };
+
+    window.addEventListener("popstate", onPopState);
+    router.back();
+
+    setTimeout(() => {
+      window.removeEventListener("popstate", onPopState);
+      if (!didNavigate) {
+        router.push("/");
+      }
+    }, 150);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedQuery = searchQuery.trim();
+    const target = trimmedQuery
+      ? `/categories?q=${encodeURIComponent(trimmedQuery)}`
+      : "/categories";
+    router.push(target);
+  };
+
+  useEffect(() => {
+    if (isSearching && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isSearching]);
+
+  const openSearch = () => {
+    setIsSearching(true);
+  };
+
+  return (
+    <header
+      className="flex-none border-b border-neutral-200 bg-white px-4 py-3"
+      style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)" }}
+    >
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={handleBack}
+          aria-label="返回上一页"
+          className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition hover:border-neutral-300 hover:bg-neutral-50"
+        >
+          <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />
+        </button>
+        {isSearching ? (
+          <form onSubmit={handleSearchSubmit} className="flex-1">
+            <div className="relative">
+              <input
+                ref={inputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="搜索商品..."
+                autoComplete="off"
+                className="h-10 w-full rounded-lg border border-neutral-200 bg-white pl-10 pr-4 text-sm text-black placeholder:text-neutral-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+            </div>
+          </form>
+        ) : (
+          <button
+            type="button"
+            onClick={openSearch}
+            className="flex-1"
+            aria-label="搜索商品"
+          >
+            <div className="flex h-10 items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 text-sm text-neutral-500 text-left">
+              <Search className="h-4 w-4" />
+              <span>搜索商品...</span>
+            </div>
+          </button>
+        )}
+      </div>
+    </header>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Purchase Bar Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ProductPurchaseBar({ product }: { product: Product }) {
+  return (
+    <div className="flex-none border-t border-neutral-200 bg-white px-4 pt-3 pb-3 shadow-[0_-4px_16px_rgba(15,23,42,0.12)]">
+      <AddToCartForm product={product} variant="inline" />
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Bottom Navigation Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ProductBottomNav() {
+  const pathname = usePathname();
+  const normalizedPathname =
+    pathname?.replace(/^\/(m|d)(?=\/)/, "") ?? pathname ?? "";
+  const { cart } = useCart();
+  const cartQuantity = cart?.totalQuantity ?? 0;
+
+  const navItems = useMemo(
+    () => [
+      { href: "/", label: "首页", icon: Home },
+      { href: "/categories", label: "分类", icon: Grid3x3 },
+      { href: "/cart", label: "购物车", icon: ShoppingCart },
+      { href: "/account", label: "我的", icon: User },
+    ],
+    [],
+  );
+
+  return (
+    <nav
+      className="flex-none border-t border-neutral-200 bg-white"
+      style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+    >
+      <div className="grid h-16 grid-cols-4">
+        {navItems.map((item) => {
+          const isActive =
+            normalizedPathname === item.href ||
+            (item.href !== "/" &&
+              normalizedPathname.startsWith(`${item.href}/`));
+          const Icon = item.icon;
+          const isCart = item.href === "/cart";
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex flex-col items-center justify-center gap-1 transition-colors",
+                isActive
+                  ? "text-primary"
+                  : "text-neutral-500 hover:text-neutral-900",
+              )}
+            >
+              <div className="relative">
+                <Icon className="h-6 w-6" strokeWidth={isActive ? 2.5 : 2} />
+                {isCart && cartQuantity > 0 ? (
+                  <CartBadge
+                    quantity={cartQuantity}
+                    className="absolute -right-2 -top-2 border-2 border-white"
+                  />
+                ) : null}
+              </div>
+              <span className={cn("text-xs", isActive && "font-semibold")}>
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Content Components
+// ─────────────────────────────────────────────────────────────────────────────
 
 function GalleryFallback() {
   return (
@@ -70,7 +250,7 @@ function AvailabilityBadge({ available }: { available: boolean }) {
   );
 }
 
-function MobileProductGallery({ images }: MobileGalleryProps) {
+function MobileProductGallery({ images }: { images: GalleryImage[] }) {
   return (
     <div className="bg-white px-4 pb-6 pt-4">
       <Suspense fallback={<GalleryFallback />}>
@@ -80,7 +260,7 @@ function MobileProductGallery({ images }: MobileGalleryProps) {
   );
 }
 
-function MobileProductSummary({ product }: MobileSummaryProps) {
+function MobileProductSummary({ product }: { product: Product }) {
   const variant = selectPrimaryVariant(product);
   const price = variant?.price || product.priceRange.minVariantPrice;
   const originalPrice =
@@ -126,7 +306,7 @@ function MobileProductSummary({ product }: MobileSummaryProps) {
   );
 }
 
-function MobileDetailList({ detailRows }: MobileDetailListProps) {
+function MobileDetailList({ detailRows }: { detailRows: ProductDetailRow[] }) {
   if (!detailRows.length) {
     return null;
   }
@@ -169,7 +349,11 @@ function MobileDescription({ product }: { product: Product }) {
   );
 }
 
-function MobileGuidelines({ sections }: MobileGuidelinesProps) {
+function MobileGuidelines({
+  sections,
+}: {
+  sections: GuidelineSection[];
+}) {
   if (!sections.length) {
     return null;
   }
@@ -227,35 +411,32 @@ function MobileRecommendations({ products }: { products: Product[] }) {
   );
 }
 
-export default async function MobileProductPage({ params }: MobilePageProps) {
-  const resolvedParams = await params;
-  const data = await loadProductPageData(resolvedParams.handle);
+// ─────────────────────────────────────────────────────────────────────────────
+// Main Client Component
+// ─────────────────────────────────────────────────────────────────────────────
 
-  if (!data) {
-    return notFound();
-  }
-
-  const {
-    product,
-    cartPromise,
-    productJsonLd,
-    images,
-    recommended,
-    detailRows,
-    guidelineSections,
-  } = data;
-
-  const notifications = await getNotifications();
-
+export function MobileProductPageClient({
+  product,
+  productJsonLd,
+  images,
+  recommended,
+  detailRows,
+  guidelineSections,
+}: MobileProductPageClientProps) {
   return (
-    <CartProvider cartPromise={cartPromise}>
-      <ProductProvider>
-        <MobileHeader notifications={notifications} leadingVariant="back" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
-        />
-        <div className="flex min-h-screen flex-col gap-4 bg-neutral-50 pb-32">
+    <div className="flex h-dvh flex-col bg-neutral-50">
+      {/* Fixed Header */}
+      <ProductPageHeader />
+
+      {/* JSON-LD for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+
+      {/* Scrollable Content */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="flex flex-col gap-4 pb-4">
           <MobileProductGallery images={images} />
           <MobileProductSummary product={product} />
           <ReassuranceNotice className="mx-4" />
@@ -264,21 +445,13 @@ export default async function MobileProductPage({ params }: MobilePageProps) {
           <MobileDescription product={product} />
           <MobileRecommendations products={recommended} />
         </div>
-        <MobileProductPurchaseBar product={product} />
-      </ProductProvider>
-    </CartProvider>
-  );
-}
+      </main>
 
-function MobileProductPurchaseBar({ product }: { product: Product }) {
-  return (
-    <div
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white px-4 pt-3 pb-3 shadow-[0_-4px_16px_rgba(15,23,42,0.12)]"
-      style={{
-        paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)",
-      }}
-    >
-      <AddToCartForm product={product} variant="inline" />
+      {/* Fixed Purchase Bar */}
+      <ProductPurchaseBar product={product} />
+
+      {/* Fixed Bottom Navigation */}
+      <ProductBottomNav />
     </div>
   );
 }
