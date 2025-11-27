@@ -29,6 +29,7 @@ type MobileCategoriesContentProps = {
   initialCategory: string;
   initialParent: string;
   initialProducts: Product[];
+  initialSearchValue?: string | null;
 };
 
 function getPrimaryVariant(product: Product): ProductVariant | undefined {
@@ -49,6 +50,7 @@ export function MobileCategoriesContent({
   initialCategory,
   initialParent,
   initialProducts,
+  initialSearchValue,
 }: MobileCategoriesContentProps) {
   const router = useRouter();
   const { addCartItem } = useCart();
@@ -72,6 +74,10 @@ export function MobileCategoriesContent({
   const [selectedParent, setSelectedParent] = useState(
     resolvedInitialParent || firstParentSlug,
   );
+  const normalizedSearchValue =
+    initialSearchValue && initialSearchValue.trim().length > 0
+      ? initialSearchValue.trim()
+      : null;
   const categoryMap = useMemo(() => {
     const map = new Map<string, SearchCategory>();
     flatCategories.forEach((category) => {
@@ -91,10 +97,13 @@ export function MobileCategoriesContent({
       if (categorySlug) {
         params.set("category", categorySlug);
       }
+      if (normalizedSearchValue) {
+        params.set("q", normalizedSearchValue);
+      }
       const queryString = params.toString();
       router.push(queryString ? `/categories?${queryString}` : "/categories");
     },
-    [router],
+    [normalizedSearchValue, router],
   );
 
   const handleParentSelect = (parentSlug: string) => {

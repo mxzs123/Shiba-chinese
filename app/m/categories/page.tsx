@@ -14,6 +14,11 @@ export const metadata = {
   description: "浏览所有商品分类",
 };
 
+function getParam(value?: string | string[]) {
+  if (!value) return null;
+  return Array.isArray(value) ? value[0] : value;
+}
+
 function flattenCategories(categories: SearchCategory[]): SearchCategory[] {
   const result: SearchCategory[] = [];
 
@@ -30,14 +35,15 @@ function flattenCategories(categories: SearchCategory[]): SearchCategory[] {
 export default async function MobileCategoriesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; tag?: string }>;
+  searchParams: Promise<{ category?: string; tag?: string; q?: string }>;
 }) {
   const notifications = await getNotifications();
   const params = (await searchParams) || {};
+  const searchValue = getParam(params.q);
+  const requestedCategorySlug = getParam(params.category);
   const categoryTree = getSearchCategories();
   const flatCategories = flattenCategories(categoryTree);
   const firstCategorySlug = flatCategories[0]?.slug;
-  const requestedCategorySlug = params.category;
   const categorySlug =
     requestedCategorySlug &&
     flatCategories.some((category) => category.slug === requestedCategorySlug)
@@ -50,7 +56,7 @@ export default async function MobileCategoriesPage({
 
   const result = await loadSearchResult({
     category,
-    searchValue: null,
+    searchValue,
     sortSlug: null,
     page: null,
   });
@@ -59,7 +65,11 @@ export default async function MobileCategoriesPage({
 
   return (
     <div className="flex h-screen flex-col">
-      <MobileHeader notifications={notifications} />
+      <MobileHeader
+        notifications={notifications}
+        showSearchInput={Boolean(searchValue)}
+        initialSearchValue={searchValue || undefined}
+      />
       <div className="flex flex-1 overflow-hidden">
         <MobileCategoriesContent
           categoryTree={categoryTree}
@@ -67,6 +77,7 @@ export default async function MobileCategoriesPage({
           initialCategory={categorySlug || ""}
           initialParent={parentSlug}
           initialProducts={products}
+          initialSearchValue={searchValue}
         />
       </div>
     </div>

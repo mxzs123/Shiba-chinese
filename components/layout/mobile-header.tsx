@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronLeft, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { Notification } from "lib/api/types";
 import { NotificationLink } from "components/notifications/notification-link";
@@ -13,12 +13,14 @@ type MobileHeaderProps = {
   notifications?: Notification[];
   showSearchInput?: boolean;
   leadingVariant?: "auto" | "logo" | "back";
+  initialSearchValue?: string;
 };
 
 export function MobileHeader({
   notifications,
   showSearchInput = false,
   leadingVariant = "auto",
+  initialSearchValue,
 }: MobileHeaderProps) {
   // 内测阶段隐藏消息通知入口（仅 UI；客户端仅识别 NEXT_PUBLIC_*）。
   const hideNotifications =
@@ -26,7 +28,11 @@ export function MobileHeader({
     process.env.NEXT_PUBLIC_MOCK_MODE === "1";
   const pathname = usePathname();
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearchValue ?? "");
+  const [isSearching, setIsSearching] = useState(
+    showSearchInput || Boolean(initialSearchValue),
+  );
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const safeNotifications = useMemo(() => notifications ?? [], [notifications]);
 
   const resolvedLeadingVariant = useMemo(() => {
@@ -48,9 +54,29 @@ export function MobileHeader({
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    const trimmedQuery = searchQuery.trim();
+    const target = trimmedQuery
+      ? `/categories?q=${encodeURIComponent(trimmedQuery)}`
+      : "/categories";
+    router.push(target);
+  };
+
+  useEffect(() => {
+    setSearchQuery(initialSearchValue ?? "");
+  }, [initialSearchValue]);
+
+  useEffect(() => {
+    setIsSearching(showSearchInput || Boolean(initialSearchValue));
+  }, [initialSearchValue, showSearchInput]);
+
+  useEffect(() => {
+    if (isSearching && inputRef.current) {
+      inputRef.current.focus();
     }
+  }, [isSearching]);
+
+  const openSearch = () => {
+    setIsSearching(true);
   };
 
   return (
@@ -70,10 +96,11 @@ export function MobileHeader({
             <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />
           </button>
         )}
-        {showSearchInput ? (
+        {isSearching ? (
           <form onSubmit={handleSearchSubmit} className="flex-1">
             <div className="relative">
               <input
+                ref={inputRef}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -85,12 +112,17 @@ export function MobileHeader({
             </div>
           </form>
         ) : (
-          <Link href="/search" className="flex-1">
-            <div className="flex h-10 items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 text-sm text-neutral-500">
+          <button
+            type="button"
+            onClick={openSearch}
+            className="flex-1"
+            aria-label="搜索商品"
+          >
+            <div className="flex h-10 items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 px-3 text-sm text-neutral-500 text-left">
               <Search className="h-4 w-4" />
               <span>搜索商品...</span>
             </div>
-          </Link>
+          </button>
         )}
         {/* 内测阶段隐藏消息通知入口 */}
         {hideNotifications ? null : (
