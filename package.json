@@ -6,7 +6,10 @@
   ],
   "packageManager": "pnpm@9.12.2",
   "scripts": {
+    "clean:next": "rimraf .next",
+    "predev": "pnpm clean:next",
     "dev": "next dev --turbopack",
+    "prebuild": "pnpm clean:next",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -57,6 +60,7 @@
     "postcss": "^8.5.3",
     "prettier": "3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "rimraf": "^6.1.2",
     "shadcn": "^3.4.0",
     "slugify": "^1.6.6",
     "tailwindcss": "^4.0.14",
