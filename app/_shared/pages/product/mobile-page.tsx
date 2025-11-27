@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, Search, Home, Grid3x3, ShoppingCart, User } from "lucide-react";
+import { ChevronLeft, Search, Home, Grid3x3, ShoppingCart, Info } from "lucide-react";
 
 import { ProductCard, ProductCardQuickAdd, Price, CartBadge } from "@/app/_shared";
 import { AddToCartForm } from "@/app/_shared/pages/product/AddToCartForm";
@@ -172,7 +172,7 @@ function ProductBottomNav() {
       { href: "/", label: "首页", icon: Home },
       { href: "/categories", label: "分类", icon: Grid3x3 },
       { href: "/cart", label: "购物车", icon: ShoppingCart },
-      { href: "/about", label: "关于", icon: User },
+      { href: "/about", label: "关于", icon: Info },
     ],
     [],
   );
@@ -391,7 +391,9 @@ function MobileRecommendations({ products }: { products: Product[] }) {
         <h2 className="text-lg font-semibold text-neutral-900">搭配推荐</h2>
         <Link
           href="/search"
-          className="text-xs font-medium text-teal-600 transition hover:text-teal-500"
+          aria-hidden
+          tabIndex={-1}
+          className="hidden text-xs font-medium text-teal-600 transition"
         >
           浏览更多
         </Link>

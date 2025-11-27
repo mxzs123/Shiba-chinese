@@ -98,7 +98,7 @@ function EmptyCartState() {
         先去逛逛，挑选喜欢的商品再回来吧。
       </p>
       <Link
-        href="/search"
+        href="/categories"
         prefetch
         className={cn(
           "mt-6 inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/60",
