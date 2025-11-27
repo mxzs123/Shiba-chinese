@@ -172,7 +172,7 @@ function ProductBottomNav() {
       { href: "/", label: "首页", icon: Home },
       { href: "/categories", label: "分类", icon: Grid3x3 },
       { href: "/cart", label: "购物车", icon: ShoppingCart },
-      { href: "/account", label: "我的", icon: User },
+      { href: "/about", label: "关于", icon: User },
     ],
     [],
   );
@@ -386,7 +386,7 @@ function MobileRecommendations({ products }: { products: Product[] }) {
   }
 
   return (
-    <section className="space-y-4 bg-white px-4 py-6">
+    <section className="space-y-4 overflow-hidden bg-white px-4 py-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-neutral-900">搭配推荐</h2>
         <Link
@@ -396,7 +396,10 @@ function MobileRecommendations({ products }: { products: Product[] }) {
           浏览更多
         </Link>
       </div>
-      <div className="flex gap-4 overflow-x-auto pb-1">
+      <div
+        className="flex gap-4 overflow-x-auto pb-1"
+        style={{ contain: "layout paint" }}
+      >
         {products.map((product) => (
           <div key={product.id} className="w-64 shrink-0">
             <ProductCard
@@ -424,7 +427,7 @@ export function MobileProductPageClient({
   guidelineSections,
 }: MobileProductPageClientProps) {
   return (
-    <div className="flex h-dvh flex-col bg-neutral-50">
+    <div className="flex h-dvh flex-col overflow-hidden bg-neutral-50">
       {/* Fixed Header */}
       <ProductPageHeader />
 
@@ -435,7 +438,7 @@ export function MobileProductPageClient({
       />
 
       {/* Scrollable Content */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
         <div className="flex flex-col gap-4 pb-4">
           <MobileProductGallery images={images} />
           <MobileProductSummary product={product} />

@@ -58,9 +58,11 @@ export function ProductCard({
             <Image
               src={featuredImage.url}
               alt={featuredImage.altText}
-              fill
+              width={featuredImage.width || 600}
+              height={featuredImage.height || 600}
               sizes="(min-width: 1024px) 280px, 50vw"
               className={cn(
+                "h-full w-full",
                 imageFit === "cover"
                   ? "object-cover"
                   : "object-contain object-center",
