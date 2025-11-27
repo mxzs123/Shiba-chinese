@@ -137,6 +137,10 @@ export function useCheckoutAddresses({
       return "请填写国家或地区";
     }
 
+    if (!addressForm.province?.trim()) {
+      return "请填写省份";
+    }
+
     if (!addressForm.city.trim()) {
       return "请填写城市";
     }

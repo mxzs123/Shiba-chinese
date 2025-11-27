@@ -90,24 +90,7 @@ export function AddressFormFields({
 
   return (
     <div className="space-y-5">
-      {/* Country Selection */}
-      <div className="space-y-2">
-        <label
-          className="text-sm font-medium text-neutral-700"
-          htmlFor={buildFieldId(idPrefix, "country")}
-        >
-          国家/地区
-        </label>
-        <CountrySelect
-          value={value}
-          onChange={(countryName, countryCode) => {
-            applyChange({ country: countryName, countryCode });
-          }}
-          disabled={disabled}
-        />
-      </div>
-
-      {/* Name Group */}
+      {/* 1. Name Group - 收件人姓名 */}
       <div className="grid gap-5 md:grid-cols-2">
         <TextField
           id={buildFieldId(idPrefix, "lastName")}
@@ -129,7 +112,7 @@ export function AddressFormFields({
         />
       </div>
 
-      {/* Phone & WeChat */}
+      {/* 2. Phone - 联系电话 */}
       <div className="space-y-2">
         <label
           className="text-sm font-medium text-neutral-700"
@@ -145,6 +128,8 @@ export function AddressFormFields({
           disabled={disabled}
         />
       </div>
+
+      {/* 3. WeChat - 微信（选填） */}
       <TextField
         id={buildFieldId(idPrefix, "wechat")}
         label="微信（选填）"
@@ -154,32 +139,50 @@ export function AddressFormFields({
         disabled={disabled}
       />
 
-      {/* City & Postal Code */}
+      {/* 4. Country Selection - 国家/地区 */}
+      <div className="space-y-2">
+        <label
+          className="text-sm font-medium text-neutral-700"
+          htmlFor={buildFieldId(idPrefix, "country")}
+        >
+          国家/地区
+        </label>
+        <CountrySelect
+          value={value}
+          onChange={(countryName, countryCode) => {
+            applyChange({ country: countryName, countryCode });
+          }}
+          disabled={disabled}
+        />
+      </div>
+
+      {/* 5. Province & City - 省份和城市 */}
       <div className="grid gap-5 md:grid-cols-2">
+        <TextField
+          id={buildFieldId(idPrefix, "province")}
+          label="省份"
+          placeholder="例如：上海市"
+          value={value.province ?? ""}
+          onChange={(next) => handleChange("province", next)}
+          disabled={disabled}
+          required
+        />
         <TextField
           id={buildFieldId(idPrefix, "city")}
           label="城市"
-          placeholder="例如：上海市"
+          placeholder="例如：浦东新区"
           value={value.city ?? ""}
           onChange={(next) => handleChange("city", next)}
           disabled={disabled}
           required
         />
-        <TextField
-          id={buildFieldId(idPrefix, "postalCode")}
-          label="邮政编码"
-          placeholder="例如：200000"
-          value={value.postalCode ?? ""}
-          onChange={(next) => handleChange("postalCode", next)}
-          disabled={disabled}
-        />
       </div>
 
-      {/* Address Details */}
+      {/* 6. Address Details - 详细地址 */}
       <TextAreaField
         id={buildFieldId(idPrefix, "address1")}
         label="详细地址"
-        placeholder="例如：浦东新区张江路 888 号 3 号楼"
+        placeholder="例如：张江路 888 号 3 号楼"
         value={detailedAddressValue}
         onChange={(next) =>
           applyChange({
@@ -191,7 +194,17 @@ export function AddressFormFields({
         required
       />
 
-      {/* Default Toggle */}
+      {/* 7. Postal Code - 邮政编码（选填） */}
+      <TextField
+        id={buildFieldId(idPrefix, "postalCode")}
+        label="邮政编码（选填）"
+        placeholder="例如：200000"
+        value={value.postalCode ?? ""}
+        onChange={(next) => handleChange("postalCode", next)}
+        disabled={disabled}
+      />
+
+      {/* 8. Default Toggle - 设为默认地址 */}
       {showDefaultToggle && (
         <ToggleField
           id={buildFieldId(idPrefix, "default")}
