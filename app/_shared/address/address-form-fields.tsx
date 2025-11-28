@@ -129,7 +129,18 @@ export function AddressFormFields({
         />
       </div>
 
-      {/* 3. WeChat - 微信（选填） */}
+      {/* 3. Email - 邮箱（选填） */}
+      <TextField
+        id={buildFieldId(idPrefix, "email")}
+        label="邮箱（选填）"
+        placeholder="例如：name@example.com"
+        value={value.email ?? ""}
+        onChange={(next) => handleChange("email", next)}
+        disabled={disabled}
+        type="email"
+      />
+
+      {/* 4. WeChat - 微信（选填） */}
       <TextField
         id={buildFieldId(idPrefix, "wechat")}
         label="微信（选填）"
@@ -139,7 +150,7 @@ export function AddressFormFields({
         disabled={disabled}
       />
 
-      {/* 4. Country Selection - 国家/地区 */}
+      {/* 5. Country Selection - 国家/地区 */}
       <div className="space-y-2">
         <label
           className="text-sm font-medium text-neutral-700"
@@ -156,7 +167,7 @@ export function AddressFormFields({
         />
       </div>
 
-      {/* 5. Province & City - 省份和城市 */}
+      {/* 6. Province & City - 省份和城市 */}
       <div className="grid gap-5 md:grid-cols-2">
         <TextField
           id={buildFieldId(idPrefix, "province")}
@@ -178,7 +189,7 @@ export function AddressFormFields({
         />
       </div>
 
-      {/* 6. Address Details - 详细地址 */}
+      {/* 7. Address Details - 详细地址 */}
       <TextAreaField
         id={buildFieldId(idPrefix, "address1")}
         label="详细地址"
@@ -194,7 +205,7 @@ export function AddressFormFields({
         required
       />
 
-      {/* 7. Postal Code - 邮政编码（选填） */}
+      {/* 8. Postal Code - 邮政编码（选填） */}
       <TextField
         id={buildFieldId(idPrefix, "postalCode")}
         label="邮政编码（选填）"
@@ -204,7 +215,7 @@ export function AddressFormFields({
         disabled={disabled}
       />
 
-      {/* 8. Default Toggle - 设为默认地址 */}
+      {/* 9. Default Toggle - 设为默认地址 */}
       {showDefaultToggle && (
         <ToggleField
           id={buildFieldId(idPrefix, "default")}
@@ -326,6 +337,7 @@ type TextFieldProps = {
   required?: boolean;
   className?: string;
   inputClassName?: string;
+  type?: string;
 };
 
 function TextField({
@@ -338,6 +350,7 @@ function TextField({
   required,
   className,
   inputClassName,
+  type = "text",
 }: TextFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
@@ -350,6 +363,7 @@ function TextField({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
+        type={type}
         className={cn(
           "h-11 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm text-neutral-700 transition focus:border-[#049e6b] focus:outline-none focus:ring-2 focus:ring-[#049e6b]/20 disabled:bg-neutral-50 disabled:text-neutral-400",
           inputClassName,

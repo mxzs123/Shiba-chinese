@@ -206,6 +206,7 @@ export function useCheckoutAddresses({
       phone: address.phone ?? "",
       phoneCountryCode: address.phoneCountryCode ?? "+86",
       wechat: address.wechat ?? "",
+      email: address.email ?? "",
       company: address.company ?? "",
       country: address.country ?? "中国",
       countryCode: address.countryCode ?? "CN",

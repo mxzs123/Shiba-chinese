@@ -210,6 +210,7 @@ export type Address = {
   phone?: string;
   phoneCountryCode?: string;
   wechat?: string;
+  email?: string;
   company?: string;
   country: string;
   countryCode: string;
@@ -230,6 +231,7 @@ export type AddressInput = {
   phone?: string;
   phoneCountryCode?: string;
   wechat?: string;
+  email?: string;
   company?: string;
   country: string;
   countryCode: string;

@@ -9,6 +9,7 @@ export const DEFAULT_ADDRESS_FORM: AddressFormState = {
   phone: "",
   phoneCountryCode: "+86",
   wechat: "",
+  email: "",
   company: "",
   country: "中国",
   countryCode: "CN",

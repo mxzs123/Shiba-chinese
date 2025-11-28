@@ -128,6 +128,11 @@ export function AddressSection({
                               微信：{address.wechat}
                             </p>
                           ) : null}
+                          {address.email ? (
+                            <p className="text-xs text-neutral-500">
+                              邮箱：{address.email}
+                            </p>
+                          ) : null}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">

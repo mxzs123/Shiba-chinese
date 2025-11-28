@@ -26,7 +26,10 @@ import type {
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { CART_SELECTED_MERCHANDISE_COOKIE } from "components/cart/constants";
-import { parseSelectedMerchandiseIds } from "components/cart/cart-selection";
+import {
+  filterCartBySelectedMerchandise,
+  parseSelectedMerchandiseIds,
+} from "components/cart/cart-selection";
 
 type ActionSuccess<T> = {
   success: true;
@@ -229,11 +232,21 @@ export async function confirmPaymentAndNotifyAction(
       };
     }
 
+    // 按勾选行过滤购物车，确保明细与前端一致
+    const cookieStore = await cookies();
+    const rawSelection = cookieStore.get(CART_SELECTED_MERCHANDISE_COOKIE)?.value;
+    const selectedIds = parseSelectedMerchandiseIds(rawSelection);
+    const checkoutCart = filterCartBySelectedMerchandise(
+      cart,
+      new Set(selectedIds),
+    );
+
     const amount = Number.isFinite(payload.payable.amount)
       ? payload.payable.amount
-      : Number(cart.cost.totalAmount.amount) || 0;
+      : Number(checkoutCart?.cost.totalAmount.amount) || 0;
 
     const currency = (payload.payable.currencyCode ||
+      checkoutCart?.cost.totalAmount.currencyCode ||
       cart.cost.totalAmount.currencyCode) as CurrencyCode;
 
     const addressLines = (
@@ -252,27 +265,32 @@ export async function confirmPaymentAndNotifyAction(
           ]
     ).filter(Boolean);
 
-    const cartLines = cart.lines.map((line) => {
+    const cartLines = (checkoutCart?.lines || cart.lines).map((line) => {
       return `• ${line.merchandise.product.title} / ${line.merchandise.title} × ${line.quantity} = ${line.cost.totalAmount.amount} ${line.cost.totalAmount.currencyCode}`;
     });
 
-    const coupons = (cart.appliedCoupons || [])
+    const coupons = (checkoutCart?.appliedCoupons || cart.appliedCoupons || [])
       .map(
         (c) =>
           `${c.coupon.code} (-${c.amount.amount} ${c.amount.currencyCode})`,
       )
       .join(", ");
 
-    const customerInfo = payload.customer
-      ? [
-          `姓名：${payload.customer.lastName}${payload.customer.firstName}`,
-          payload.customer.email ? `邮箱：${payload.customer.email}` : null,
-          payload.customer.phone ? `电话：${payload.customer.phone}` : null,
-          payload.customer.nickname
-            ? `昵称：${payload.customer.nickname}`
-            : null,
-        ].filter(Boolean)
-      : [];
+    const recipientName = `${payload.address.lastName || ""}${payload.address.firstName || ""}`.trim();
+    const phoneText = payload.address.phone
+      ? [payload.address.phoneCountryCode, payload.address.phone]
+          .filter(Boolean)
+          .join(" ")
+      : "";
+
+    const customerInfo = [
+      recipientName ? `姓名：${recipientName}` : null,
+      phoneText ? `电话：${phoneText}` : null,
+      payload.address.wechat ? `微信：${payload.address.wechat}` : null,
+      (payload.address.email || payload.customer?.email)
+        ? `邮箱：${payload.address.email || payload.customer?.email}`
+        : null,
+    ].filter(Boolean);
 
     const textSummary = [
       `新订单提交（内测） #${orderNumber}`,

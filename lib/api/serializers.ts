@@ -65,6 +65,7 @@ function normaliseDialCode(value: string | undefined) {
 export function cloneAddress(address: Address): Address {
   return {
     ...address,
+    email: address.email?.trim() || undefined,
     formatted: address.formatted
       ? [...address.formatted]
       : formatAddressLines(address),
@@ -195,6 +196,7 @@ export function createAddressRecord(input: AddressInput): Address {
     phone: input.phone?.trim() || undefined,
     phoneCountryCode: normaliseDialCode(input.phoneCountryCode),
     wechat: input.wechat?.trim() || undefined,
+    email: input.email?.trim() || undefined,
     company: input.company?.trim() || undefined,
     country: input.country?.trim() || "中国",
     countryCode: input.countryCode?.trim().toUpperCase() || "CN",
