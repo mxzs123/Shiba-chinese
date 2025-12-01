@@ -27,7 +27,7 @@ export function PaymentMethodSection({
         <h2 className="text-lg font-semibold">支付方式</h2>
       </header>
       <p className="mt-1 text-sm text-neutral-500">
-        目前仅提供自研扫码支付，支付完成由后端回调确认订单状态。
+        本次订单采用二维码扫码支付，完成后系统会根据支付渠道回调更新状态。
       </p>
 
       <div className="mt-4 space-y-3">
@@ -69,7 +69,7 @@ export function PaymentMethodSection({
                   ) : null}
                   {method.type === "qr_code" ? (
                     <p className="mt-1 text-[11px] text-neutral-400">
-                      * 集成完成后支持微信 / 支付宝扫码支付
+                      * 支持微信 / 支付宝扫码支付
                     </p>
                   ) : null}
                 </div>

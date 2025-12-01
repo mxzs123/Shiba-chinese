@@ -61,7 +61,7 @@ export function ProductDetailTabs({
           </div>
         </nav>
         <p className="text-sm text-neutral-500">
-          数据将与后端内容服务同步，当前展示示例信息。
+          商品信息由内容服务统一维护，我们会持续更新最权威的细节说明。
         </p>
       </header>
       <div>

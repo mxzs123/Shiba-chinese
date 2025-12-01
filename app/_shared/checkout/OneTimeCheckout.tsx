@@ -273,8 +273,7 @@ export function OneTimeCheckout({
             </div>
           </div>
           <p className="text-xs text-neutral-400">
-            内测模式：不在线支付，仅提交信息。订单会同步到
-            Slack（若配置）并本地保存。
+            当前流程将提交完整订单信息，支付由专属客服确认后推进，系统会同步记录便于后续跟进。
           </p>
         </div>
       </aside>

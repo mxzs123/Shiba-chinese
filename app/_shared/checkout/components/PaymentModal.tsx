@@ -33,9 +33,7 @@ export function PaymentModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-neutral-900">
-            自研扫码支付
-          </h3>
+          <h3 className="text-lg font-semibold text-neutral-900">扫码支付</h3>
           <button
             type="button"
             className="text-sm font-medium text-neutral-500 transition hover:text-neutral-900"
@@ -45,7 +43,7 @@ export function PaymentModal({
           </button>
         </div>
         <p className="mt-2 text-sm text-neutral-500">
-          请使用微信 / 支付宝扫码完成支付。
+          请使用微信 / 支付宝扫码完成支付，完成后请耐心等待系统确认订单状态。
         </p>
         <div className="mt-6 flex flex-col items-center gap-4">
           <div className="w-full">

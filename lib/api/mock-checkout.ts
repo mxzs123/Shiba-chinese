@@ -52,10 +52,10 @@ const desktopShippingMethods: ShippingMethod[] = [
 const desktopPaymentMethods: PaymentMethod[] = [
   {
     id: "pay-qr-shiba",
-    name: "自研扫码支付",
+    name: "扫码支付",
     description: "支持微信 / 支付宝扫码，下单后展示二维码",
     type: "qr_code",
-    instructions: "扫码完成支付后，由后端回调确认订单状态。",
+    instructions: "扫码完成支付后，系统会根据支付渠道回调更新订单状态。",
   },
 ];
 

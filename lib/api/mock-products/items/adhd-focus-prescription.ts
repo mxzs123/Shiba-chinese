@@ -13,7 +13,7 @@ const product: ProductRecord = {
   description:
     "用于缓解成人注意力缺陷与多动症状的处方药，仅限经医生诊断后使用。",
   descriptionHtml:
-    "<p>处方药信息仅供演示使用，请在执业医师指导下合理用药。</p>",
+    "<p>处方药信息仅供参考，请在执业医师指导下合理用药。</p>",
   options: [
     {
       id: "opt-adhd-dosage",

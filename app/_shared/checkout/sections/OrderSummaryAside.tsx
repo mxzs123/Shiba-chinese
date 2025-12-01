@@ -117,8 +117,7 @@ export function OrderSummaryAside({
         </PrimaryButton>
 
         <p className="text-xs text-neutral-400">
-          核对信息无误后点击去支付，支付过程采用二维码方式。
-          实际支付成功以后端回调为准，当前为占位实现。
+          请先核对订单信息，确认无误后点击“去支付”。支付将通过二维码完成，系统会在收到支付渠道回调后更新订单状态。
         </p>
       </div>
     </aside>
