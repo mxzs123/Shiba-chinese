@@ -1,7 +1,7 @@
 import { Ticket, Loader2 } from "lucide-react";
-import { cn } from "lib/utils";
-import type { Coupon } from "lib/api/types";
-import { CouponCard, CouponRedeemForm } from "app/_shared/coupons";
+import { CouponCard, CouponRedeemForm } from "@/app/_shared/coupons";
+import type { Coupon } from "@/lib/api/types";
+import { cn } from "@/lib/utils";
 import type { CheckoutVariant } from "../types";
 import { CheckoutActionButton } from "../components";
 
@@ -77,9 +77,7 @@ export function CouponSection({
                       isMobile && "w-full justify-center",
                     )}
                     onClick={() =>
-                      isApplied
-                        ? onRemove(coupon.code)
-                        : onApply(coupon.code)
+                      isApplied ? onRemove(coupon.code) : onApply(coupon.code)
                     }
                     disabled={isProcessing || disabled}
                   >

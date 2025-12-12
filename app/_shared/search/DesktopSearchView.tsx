@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import type { Product } from "lib/api/types";
-import { defaultSort, sorting } from "lib/constants";
-import { cn } from "lib/utils";
+import type { Product } from "@/lib/api/types";
+import { defaultSort, sorting } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
-import { ProductCard, ProductCardQuickAdd } from "app/_shared";
+import { ProductCard, ProductCardQuickAdd } from "@/app/_shared";
 
 const DEFAULT_PAGE_SIZE = 12;
 

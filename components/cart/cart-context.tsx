@@ -1,6 +1,6 @@
 "use client";
 
-import type { Cart, CartItem, Product, ProductVariant } from "lib/api/types";
+import type { Cart, CartItem, Product, ProductVariant } from "@/lib/api/types";
 import React, {
   createContext,
   use,

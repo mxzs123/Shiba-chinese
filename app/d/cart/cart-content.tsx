@@ -12,34 +12,38 @@ import {
 } from "react";
 import { useFormStatus } from "react-dom";
 
-import { PrimaryButton } from "app/_shared";
-import { PRIMARY_BUTTON_COLOR_CLASSES } from "app/_shared/PrimaryButton";
-import { CartSelectionCheckbox } from "components/cart/cart-selection-checkbox";
-import { DeleteItemButton } from "components/cart/delete-item-button";
-import { updateItemQuantity } from "components/cart/actions";
+import { PrimaryButton } from "@/app/_shared";
+import { PRIMARY_BUTTON_COLOR_CLASSES } from "@/app/_shared/PrimaryButton";
+import { CartSelectionCheckbox } from "@/components/cart/cart-selection-checkbox";
+import { DeleteItemButton } from "@/components/cart/delete-item-button";
+import {
+  createCartAndSetCookie,
+  redirectToCheckout,
+  updateItemQuantity,
+} from "@/app/_shared/cart/actions";
 import {
   CART_SELECTED_MERCHANDISE_COOKIE,
   CART_SELECTED_MERCHANDISE_MAX_AGE,
   CART_SELECTED_MERCHANDISE_FORM_FIELD,
-} from "components/cart/constants";
-import { QuantityInput } from "components/quantity-input";
-import Price from "components/price";
-import { DEFAULT_OPTION } from "lib/constants";
-import { cn, createUrl } from "lib/utils";
-import { handleError } from "lib/error-handler";
+} from "@/components/cart/constants";
+import { QuantityInput } from "@/components/quantity-input";
+import Price from "@/components/price";
+import { DEFAULT_OPTION } from "@/lib/constants";
+import { handleError } from "@/lib/error-handler";
+import { cn, createUrl } from "@/lib/utils";
 import { CreditCard } from "lucide-react";
 
-import {
-  createCartAndSetCookie,
-  redirectToCheckout,
-} from "components/cart/actions";
-import { useCart } from "components/cart/cart-context";
+import { useCart } from "@/components/cart/cart-context";
 import {
   calculateTotalsForLines,
   buildDefaultSelection,
   parseSelectedMerchandiseIds,
   serializeSelectedMerchandiseIds,
-} from "components/cart/cart-selection";
+} from "@/components/cart/cart-selection";
+
+const redirectToCheckoutFormAction = redirectToCheckout as unknown as (
+  formData: FormData,
+) => void | Promise<void>;
 
 function readSelectedMerchandiseCookie() {
   if (typeof document === "undefined") {
@@ -142,8 +146,8 @@ function CartItemQuantityControl({
           quantity: nextQuantity,
         })
           .then((result) => {
-            if (typeof result === "string") {
-              handleError(new Error(result || "删除失败"), {
+            if (!result.success) {
+              handleError(new Error(result.error || "删除失败"), {
                 action: "removeFromCart",
               });
             }
@@ -482,7 +486,7 @@ export function CartContent() {
             </dd>
           </div>
         </dl>
-        <form action={redirectToCheckout} className="mt-8">
+        <form action={redirectToCheckoutFormAction} className="mt-8">
           <input
             type="hidden"
             name={CART_SELECTED_MERCHANDISE_FORM_FIELD}

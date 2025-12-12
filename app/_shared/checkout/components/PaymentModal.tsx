@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { AlertTriangle, ArrowRight, Loader2 } from "lucide-react";
-import { PrimaryButton } from "app/_shared";
+import { PrimaryButton } from "@/app/_shared";
 import type { PaymentStep } from "../types";
 
 type PaymentModalProps = {

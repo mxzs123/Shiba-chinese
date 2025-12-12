@@ -1,10 +1,10 @@
 import type { FormEvent } from "react";
 import { Plus } from "lucide-react";
-import { PrimaryButton } from "app/_shared";
+import { PrimaryButton } from "@/app/_shared";
 import { AddressFormFields } from "@/app/_shared/address";
 import { DefaultBadge } from "@/app/_shared/account/DefaultBadge";
-import { cn } from "lib/utils";
-import type { Address } from "lib/api/types";
+import type { Address } from "@/lib/api/types";
+import { cn } from "@/lib/utils";
 import type { AddressFormState, CheckoutVariant } from "../types";
 import {
   SELECTABLE_CARD_SELECTED_CLASSES,

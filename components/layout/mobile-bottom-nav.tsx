@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Grid3x3, ShoppingCart, User, Info } from "lucide-react";
 
-import { useCart } from "components/cart/cart-context";
-import { CartBadge } from "app/_shared";
-import { cn } from "lib/utils";
+import { useCart } from "@/components/cart/cart-context";
+import { CartBadge } from "@/app/_shared";
+import { cn } from "@/lib/utils";
 
 type NavItem = { href: string; label: string; icon: typeof Home };
 const baseNavItems: NavItem[] = [

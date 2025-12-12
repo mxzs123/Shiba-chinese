@@ -4,8 +4,8 @@ import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronUp, CreditCard, X } from "lucide-react";
 
-import { PrimaryButton } from "app/_shared";
-import type { CartItem } from "lib/api/types";
+import { PrimaryButton } from "@/app/_shared";
+import type { CartItem } from "@/lib/api/types";
 
 type MobileCheckoutSummaryProps = {
   cartLines: CartItem[];

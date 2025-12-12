@@ -1,5 +1,5 @@
-import type { CartItem } from "lib/api/types";
-import { PrimaryButton } from "app/_shared";
+import { PrimaryButton } from "@/app/_shared";
+import type { CartItem } from "@/lib/api/types";
 import { formatCurrency, toNumber } from "../utils";
 
 type OrderSummaryAsideProps = {

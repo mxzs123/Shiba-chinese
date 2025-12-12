@@ -1,6 +1,6 @@
 "use server";
 
-import { TAGS } from "lib/constants";
+import { TAGS } from "@/lib/constants";
 import {
   addToCart,
   CART_ID_COOKIE,
@@ -11,7 +11,7 @@ import {
   removeFromCart,
   shouldUseSecureCookies,
   updateCart,
-} from "lib/api";
+} from "@/lib/api";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -19,19 +19,33 @@ import {
   CART_SELECTED_MERCHANDISE_COOKIE,
   CART_SELECTED_MERCHANDISE_FORM_FIELD,
   CART_SELECTED_MERCHANDISE_MAX_AGE,
-} from "./constants";
+} from "@/components/cart/constants";
 import {
   parseSelectedMerchandiseIds,
   serializeSelectedMerchandiseIds,
-} from "./cart-selection";
+} from "@/components/cart/cart-selection";
+
+export type ActionResult<T = unknown> = {
+  success: boolean;
+  data: T | null;
+  error: string | null;
+};
+
+function ok<T>(data: T): ActionResult<T> {
+  return { success: true, data, error: null };
+}
+
+function fail(error: string): ActionResult<null> {
+  return { success: false, data: null, error };
+}
 
 export async function addItem(
-  prevState: any,
+  _prevState: any,
   selectedVariantId: string | undefined,
   quantity = 1,
-) {
+): Promise<ActionResult<null>> {
   if (!selectedVariantId) {
-    return "Error adding item to cart";
+    return fail("Error adding item to cart");
   }
 
   try {
@@ -43,7 +57,7 @@ export async function addItem(
     const variantInfo = await getVariantById(selectedVariantId);
 
     if (!variantInfo) {
-      return "Error adding item to cart";
+      return fail("Error adding item to cart");
     }
 
     const backendMeta = variantInfo.variant.backend;
@@ -75,17 +89,21 @@ export async function addItem(
     }
 
     revalidateTag(TAGS.cart);
-  } catch (e) {
-    return "Error adding item to cart";
+    return ok(null);
+  } catch {
+    return fail("Error adding item to cart");
   }
 }
 
-export async function removeItem(prevState: any, lineIdentifier: string) {
+export async function removeItem(
+  _prevState: any,
+  lineIdentifier: string,
+): Promise<ActionResult<null>> {
   try {
     const cart = await getCart();
 
     if (!cart) {
-      return "Error fetching cart";
+      return fail("Error fetching cart");
     }
 
     const lineItem = cart.lines.find(
@@ -96,29 +114,30 @@ export async function removeItem(prevState: any, lineIdentifier: string) {
     if (lineItem && lineItem.id) {
       await removeFromCart([lineItem.id]);
       revalidateTag(TAGS.cart);
-    } else {
-      return "Item not found in cart";
+      return ok(null);
     }
-  } catch (e) {
-    return "Error removing item from cart";
+
+    return fail("Item not found in cart");
+  } catch {
+    return fail("Error removing item from cart");
   }
 }
 
 export async function updateItemQuantity(
-  prevState: any,
+  _prevState: any,
   payload: {
     lineId?: string;
     merchandiseId: string;
     quantity: number;
   },
-) {
+): Promise<ActionResult<null>> {
   const { lineId, merchandiseId, quantity } = payload;
 
   try {
     const cart = await getCart();
 
     if (!cart) {
-      return "Error fetching cart";
+      return fail("Error fetching cart");
     }
 
     const lineItem = cart.lines.find(
@@ -168,16 +187,18 @@ export async function updateItemQuantity(
     }
 
     revalidateTag(TAGS.cart);
-  } catch (e) {
-    // 错误已在调用方处理，这里只记录到开发控制台
+    return ok(null);
+  } catch (error) {
     if (process.env.NODE_ENV === "development") {
-      console.error("[Cart Action Error]", e);
+      console.error("[Cart Action Error]", error);
     }
-    return "Error updating item quantity";
+    return fail("Error updating item quantity");
   }
 }
 
-export async function redirectToCheckout(formData: FormData) {
+export async function redirectToCheckout(
+  formData: FormData,
+): Promise<ActionResult<null>> {
   const cookieStore = await cookies();
   const selectionField = formData.get(CART_SELECTED_MERCHANDISE_FORM_FIELD);
 
@@ -226,9 +247,10 @@ export async function redirectToCheckout(formData: FormData) {
   }
 
   redirect("/checkout");
+  return ok(null);
 }
 
-export async function createCartAndSetCookie() {
+export async function createCartAndSetCookie(): Promise<ActionResult<null>> {
   const cookieStore = await cookies();
   const cart = await createCart();
 
@@ -242,4 +264,6 @@ export async function createCartAndSetCookie() {
       ...cartCookieOptions,
     });
   }
+
+  return ok(null);
 }

@@ -2,12 +2,12 @@
 
 import { cookies } from "next/headers";
 import { appendRecord, createRecord } from "lib/mock-store";
-import { CART_SELECTED_MERCHANDISE_COOKIE } from "components/cart/constants";
+import { CART_SELECTED_MERCHANDISE_COOKIE } from "@/components/cart/constants";
 import { getCart, getCartCookieOptions, removeFromCart } from "lib/api";
 import {
   filterCartBySelectedMerchandise,
   parseSelectedMerchandiseIds,
-} from "components/cart/cart-selection";
+} from "@/components/cart/cart-selection";
 
 type OneTimeOrderInput = {
   name: string;

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PrimaryButton } from "app/_shared";
-import type { Cart } from "lib/api/types";
+import { PrimaryButton } from "@/app/_shared";
+import type { Cart } from "@/lib/api/types";
 import { submitOneTimeOrder } from "./one-time-actions";
 
 function formatCurrency(amount: string, currency: string) {

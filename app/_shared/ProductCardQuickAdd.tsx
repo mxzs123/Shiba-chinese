@@ -4,11 +4,11 @@ import { useCallback, useTransition } from "react";
 import { toast } from "sonner";
 
 import { AddToCartButton } from "./AddToCartButton";
-import { addItem } from "components/cart/actions";
-import { useCart } from "components/cart/cart-context";
-import type { Product, ProductVariant } from "lib/api/types";
-import { cn } from "lib/utils";
-import { handleError } from "lib/error-handler";
+import { addItem } from "@/app/_shared/cart/actions";
+import { useCart } from "@/components/cart/cart-context";
+import type { Product, ProductVariant } from "@/lib/api/types";
+import { handleError } from "@/lib/error-handler";
+import { cn } from "@/lib/utils";
 
 type ProductCardQuickAddProps = {
   product: Product;
@@ -61,7 +61,7 @@ export function ProductCardQuickAdd({
       });
       const result = await addItem(null, primaryVariant.id, 1);
 
-      if (typeof result === "string") {
+      if (!result.success) {
         toast.error("未能加入购物车", {
           description: "系统繁忙，请稍后再试。",
         });

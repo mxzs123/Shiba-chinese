@@ -1,7 +1,7 @@
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 
-import { CartBadge } from "app/_shared";
+import { CartBadge } from "@/app/_shared";
 
 export default function OpenCart({
   className,

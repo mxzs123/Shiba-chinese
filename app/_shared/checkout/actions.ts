@@ -25,11 +25,11 @@ import type {
 } from "lib/api/types";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-import { CART_SELECTED_MERCHANDISE_COOKIE } from "components/cart/constants";
+import { CART_SELECTED_MERCHANDISE_COOKIE } from "@/components/cart/constants";
 import {
   filterCartBySelectedMerchandise,
   parseSelectedMerchandiseIds,
-} from "components/cart/cart-selection";
+} from "@/components/cart/cart-selection";
 
 type ActionSuccess<T> = {
   success: true;
@@ -234,7 +234,9 @@ export async function confirmPaymentAndNotifyAction(
 
     // 按勾选行过滤购物车，确保明细与前端一致
     const cookieStore = await cookies();
-    const rawSelection = cookieStore.get(CART_SELECTED_MERCHANDISE_COOKIE)?.value;
+    const rawSelection = cookieStore.get(
+      CART_SELECTED_MERCHANDISE_COOKIE,
+    )?.value;
     const selectedIds = parseSelectedMerchandiseIds(rawSelection);
     const checkoutCart = filterCartBySelectedMerchandise(
       cart,
@@ -276,7 +278,8 @@ export async function confirmPaymentAndNotifyAction(
       )
       .join(", ");
 
-    const recipientName = `${payload.address.lastName || ""}${payload.address.firstName || ""}`.trim();
+    const recipientName =
+      `${payload.address.lastName || ""}${payload.address.firstName || ""}`.trim();
     const phoneText = payload.address.phone
       ? [payload.address.phoneCountryCode, payload.address.phone]
           .filter(Boolean)
@@ -287,7 +290,7 @@ export async function confirmPaymentAndNotifyAction(
       recipientName ? `姓名：${recipientName}` : null,
       phoneText ? `电话：${phoneText}` : null,
       payload.address.wechat ? `微信：${payload.address.wechat}` : null,
-      (payload.address.email || payload.customer?.email)
+      payload.address.email || payload.customer?.email
         ? `邮箱：${payload.address.email || payload.customer?.email}`
         : null,
     ].filter(Boolean);

@@ -1,13 +1,13 @@
-import { getNotifications } from "lib/api";
-import { MobileHeader } from "components/layout/mobile-header";
+import { MobileHeader } from "@/components/layout/mobile-header";
+import { getNotifications } from "@/lib/api";
 import { MobileCategoriesContent } from "./categories-content";
 import {
   findSearchCategory,
   getSearchCategories,
   type SearchCategory,
-} from "app/_shared/search/config";
-import { loadSearchResult } from "app/_shared/search/loaders";
-import type { Product } from "lib/api/types";
+} from "@/app/_shared/search/config";
+import { loadSearchResult } from "@/app/_shared/search/loaders";
+import type { Product } from "@/lib/api/types";
 
 export const metadata = {
   title: "商品分类",

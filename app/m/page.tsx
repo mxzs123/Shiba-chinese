@@ -1,12 +1,12 @@
-import { getNotifications } from "lib/api";
-import { MobileHeader } from "components/layout/mobile-header";
-import { HomeHeroSection } from "app/_shared/pages/home/HomeHeroSection";
-import { MobileQuickCategoryShortcuts } from "app/_shared/pages/home/MobileQuickCategoryShortcuts";
-import { HomeActivityNotice } from "app/_shared/pages/home/HomeActivityNotice";
-import { HomeRecommendations } from "app/_shared/pages/home/HomeRecommendations";
-import { HomeAdvantagesSection } from "app/_shared/pages/home/HomeAdvantagesSection";
-import { HomeSupportScheduleSection } from "app/_shared/pages/home/HomeSupportScheduleSection";
-import Footer from "components/layout/footer";
+import { HomeActivityNotice } from "@/app/_shared/pages/home/HomeActivityNotice";
+import { HomeAdvantagesSection } from "@/app/_shared/pages/home/HomeAdvantagesSection";
+import { HomeHeroSection } from "@/app/_shared/pages/home/HomeHeroSection";
+import { HomeRecommendations } from "@/app/_shared/pages/home/HomeRecommendations";
+import { HomeSupportScheduleSection } from "@/app/_shared/pages/home/HomeSupportScheduleSection";
+import { MobileQuickCategoryShortcuts } from "@/app/_shared/pages/home/MobileQuickCategoryShortcuts";
+import Footer from "@/components/layout/footer";
+import { MobileHeader } from "@/components/layout/mobile-header";
+import { getNotifications } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 

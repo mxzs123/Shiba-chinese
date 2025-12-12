@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 import OpenCart from "./open-cart";
-import { createCartAndSetCookie } from "./actions";
-import { useCart } from "./cart-context";
+import { createCartAndSetCookie } from "@/app/_shared/cart/actions";
+import { useCart } from "@/components/cart/cart-context";
 
 export function CartLink() {
   const { cart } = useCart();

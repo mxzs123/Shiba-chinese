@@ -1,5 +1,5 @@
 import AccountLink from "components/account/account-link";
-import CartLink from "components/cart/cart-link";
+import CartLink from "@/components/cart/cart-link";
 import NotificationLink from "components/notifications/notification-link";
 import LogoSquare from "components/logo-square";
 import { getMenu, getNotifications } from "lib/api";

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { FileUp, Info } from "lucide-react";
 
-import PrimaryButton from "app/_shared/PrimaryButton";
+import PrimaryButton from "@/app/_shared/PrimaryButton";
 import {
   companyInfo,
   complianceItems,
@@ -9,8 +9,8 @@ import {
   type ComplianceItem,
   type FaqItem,
   type InfoRow,
-} from "app/_shared/pages/about/data";
-import { cn } from "lib/utils";
+} from "@/app/_shared/pages/about/data";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "关于芝园药局 | 企业信息与合规资料",

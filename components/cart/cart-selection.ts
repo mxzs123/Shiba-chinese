@@ -6,7 +6,7 @@ import type {
   Coupon,
   Money,
   CurrencyCode,
-} from "lib/api/types";
+} from "@/lib/api/types";
 
 const DEFAULT_CURRENCY: CurrencyCode = "USD";
 

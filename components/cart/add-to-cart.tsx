@@ -2,13 +2,13 @@
 
 import { PlusIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
-import { addItem } from "components/cart/actions";
-import { useProduct } from "components/product/product-context";
-import type { Product, ProductVariant } from "lib/api/types";
-import { APP_TEXT } from "lib/i18n/constants";
-import { handleError } from "lib/error-handler";
+import { addItem } from "@/app/_shared/cart/actions";
+import { useCart } from "@/components/cart/cart-context";
+import { useProduct } from "@/components/product/product-context";
+import type { Product, ProductVariant } from "@/lib/api/types";
+import { handleError } from "@/lib/error-handler";
+import { APP_TEXT } from "@/lib/i18n/constants";
 import { useActionState } from "react";
-import { useCart } from "./cart-context";
 
 function SubmitButton({
   availableForSale,
@@ -63,7 +63,7 @@ export function AddToCart({ product }: { product: Product }) {
   const { variants, availableForSale } = product;
   const { addCartItem } = useCart();
   const { state } = useProduct();
-  const [message, formAction] = useActionState(addItem, null);
+  const [result, formAction] = useActionState(addItem, null);
 
   const variant = variants.find((variant: ProductVariant) =>
     variant.selectedOptions.every(
@@ -93,7 +93,7 @@ export function AddToCart({ product }: { product: Product }) {
         selectedVariantId={selectedVariantId}
       />
       <p aria-live="polite" className="sr-only" role="status">
-        {message}
+        {result && !result.success ? result.error : null}
       </p>
     </form>
   );

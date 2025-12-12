@@ -3,13 +3,13 @@
 import { useCallback, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { AddToCartButton } from "app/_shared";
-import { addItem } from "components/cart/actions";
-import { useCart } from "components/cart/cart-context";
-import { QuantityInput } from "components/quantity-input";
-import type { Product, ProductVariant } from "lib/api/types";
-import { cn } from "lib/utils";
-import { handleError } from "lib/error-handler";
+import { AddToCartButton } from "@/app/_shared";
+import { addItem } from "@/app/_shared/cart/actions";
+import { useCart } from "@/components/cart/cart-context";
+import { QuantityInput } from "@/components/quantity-input";
+import type { Product, ProductVariant } from "@/lib/api/types";
+import { handleError } from "@/lib/error-handler";
+import { cn } from "@/lib/utils";
 
 function getPrimaryVariant(product: Product): ProductVariant | undefined {
   if (!product.variants.length) {
@@ -55,7 +55,7 @@ export function AddToCartForm({
       });
       const result = await addItem(null, primaryVariant.id, quantity);
 
-      if (typeof result === "string") {
+      if (!result.success) {
         toast.error("未能加入购物车", {
           description: "系统繁忙，请稍后再试。",
         });

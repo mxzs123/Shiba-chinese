@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 
-import { CartProvider } from "components/cart/cart-context";
+import { CartProvider } from "@/components/cart/cart-context";
 import { Navbar } from "components/layout/navbar";
 import { PrescriptionComplianceReminder } from "components/prescription/PrescriptionComplianceReminder";
 import { getCart, getCurrentUser, getUserById } from "lib/api";
