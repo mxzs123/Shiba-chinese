@@ -160,12 +160,31 @@ export type GoodsSku = ProductVariant & {
   backend: BackendVariantInfo;
 };
 
+export type BilingualText = {
+  jp: string;
+  zh: string;
+};
+
+export type MedicalInfo = {
+  name: BilingualText;
+  genericName?: BilingualText;
+  efficacy?: BilingualText;
+  dosage?: BilingualText;
+  sideEffects?: BilingualText;
+  warnings?: BilingualText;
+  description?: BilingualText;
+  contentVolume?: BilingualText;
+  dosageForm?: BilingualText;
+  ingredients?: BilingualText;
+};
+
 export type GoodsDetail = GoodsListItem & {
   detailHtml?: string;
   longDescription?: string;
   usageNotes?: string;
   cautionNotes?: string;
   storageNotes?: string;
+  medicalInfo?: MedicalInfo;
 };
 
 export type GoodsListResult = {

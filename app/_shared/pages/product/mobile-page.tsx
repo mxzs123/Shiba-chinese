@@ -8,6 +8,7 @@ import { ChevronLeft, Search, Home, Grid3x3, ShoppingCart, Info } from "lucide-r
 import { ProductCard, ProductCardQuickAdd, Price, CartBadge } from "@/app/_shared";
 import { AddToCartForm } from "@/app/_shared/pages/product/AddToCartForm";
 import { ReassuranceNotice } from "@/app/_shared/pages/product/ReassuranceNotice";
+import { MedicalInfoSection } from "@/app/_shared/pages/product/MedicalInfoSection";
 import type {
   GalleryImage,
   GuidelineSection,
@@ -16,7 +17,7 @@ import type {
 import { useCart } from "@/components/cart/cart-context";
 import { Gallery } from "@/components/product/gallery";
 import Prose from "@/components/prose";
-import type { Product, ProductVariant } from "@/lib/api/types";
+import type { GoodsDetail, Product, ProductVariant } from "@/lib/api/types";
 import { isDiscountedPrice } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
@@ -428,6 +429,8 @@ export function MobileProductPageClient({
   detailRows,
   guidelineSections,
 }: MobileProductPageClientProps) {
+  const medicalInfo = (product as GoodsDetail).medicalInfo;
+
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-neutral-50">
       {/* Fixed Header */}
@@ -446,6 +449,10 @@ export function MobileProductPageClient({
           <MobileProductSummary product={product} />
           <ReassuranceNotice className="mx-4" />
           <MobileDetailList detailRows={detailRows} />
+          <MedicalInfoSection
+            medicalInfo={medicalInfo}
+            className="px-4 py-6 bg-white"
+          />
           <MobileGuidelines sections={guidelineSections} />
           <MobileDescription product={product} />
           <MobileRecommendations products={recommended} />

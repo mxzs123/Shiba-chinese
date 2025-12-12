@@ -6,6 +6,7 @@ import {
   goodsProducts,
   goodsVariantsByObjectId,
 } from "./mock-goods";
+import { goodsMedicalInfoById } from "./mock-goods-medical";
 import type {
   BackendApiResponse,
   GoodsCategory,
@@ -394,6 +395,7 @@ export function mockGetGoodsDetail(
     usageNotes: "遵循院内医生或药师给出的个性化疗程安排，以确保疗效稳定。",
     cautionNotes: "请在专业医生指导下完成全程用药评估，并如实告知既往病史。",
     storageNotes: "请根据包装提示储存，避免阳光直射，冷链产品全程低温运输。",
+    medicalInfo: goodsMedicalInfoById[id],
   };
 
   return createResponse(detail);

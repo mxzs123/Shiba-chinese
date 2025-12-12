@@ -9,12 +9,13 @@ import { ProductProvider } from "@/components/product/product-context";
 import { Gallery } from "@/components/product/gallery";
 import Prose from "@/components/prose";
 import { getProduct } from "@/lib/api";
-import type { Product } from "@/lib/api/types";
+import type { GoodsDetail, Product } from "@/lib/api/types";
 import { HIDDEN_PRODUCT_TAG } from "@/lib/constants";
 import { isDiscountedPrice } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
 import { AddToCartForm } from "./AddToCartForm";
+import { MedicalInfoSection } from "./MedicalInfoSection";
 import {
   loadProductPageData,
   selectPrimaryVariant,
@@ -218,6 +219,7 @@ export async function ProductPage(props: PageProps) {
   const showDetails = Boolean(product.descriptionHtml);
   const showRecommendations = recommended.length > 0;
   const showSecondarySections = showDetails || showRecommendations;
+  const medicalInfo = (product as GoodsDetail).medicalInfo;
 
   return (
     <CartProvider cartPromise={cartPromise}>
@@ -231,6 +233,10 @@ export async function ProductPage(props: PageProps) {
             <ProductGallery images={images} />
             <ProductHighlights product={product} />
           </div>
+          <MedicalInfoSection
+            medicalInfo={medicalInfo}
+            className="rounded-2xl border border-neutral-200 p-8 bg-white shadow-sm"
+          />
           {showSecondarySections ? (
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
               {showDetails ? <ProductDescription product={product} /> : null}
