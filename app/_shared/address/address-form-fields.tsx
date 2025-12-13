@@ -140,11 +140,11 @@ export function AddressFormFields({
         type="email"
       />
 
-      {/* 4. WeChat - 微信（选填） */}
+      {/* 4. WeChat - 微信号（选填） */}
       <TextField
         id={buildFieldId(idPrefix, "wechat")}
-        label="微信（选填）"
-        placeholder="用于客服主动联系"
+        label="微信号"
+        placeholder="选填，用于客服主动联系"
         value={value.wechat ?? ""}
         onChange={(next) => handleChange("wechat", next)}
         disabled={disabled}
