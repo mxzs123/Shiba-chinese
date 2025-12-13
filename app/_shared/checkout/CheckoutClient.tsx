@@ -259,6 +259,7 @@ export function CheckoutClient({
       {/* 支付弹窗 */}
       <PaymentModal
         open={paymentState.paymentModalOpen}
+        variant={variant}
         step={paymentState.paymentStep}
         notifySubmitting={paymentState.notifySubmitting}
         notifyError={paymentState.notifyError}
