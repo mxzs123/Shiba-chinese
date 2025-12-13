@@ -3,9 +3,21 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, Search, Home, Grid3x3, ShoppingCart, Info } from "lucide-react";
+import {
+  ChevronLeft,
+  Search,
+  Home,
+  Grid3x3,
+  ShoppingCart,
+  Info,
+} from "lucide-react";
 
-import { ProductCard, ProductCardQuickAdd, Price, CartBadge } from "@/app/_shared";
+import {
+  ProductCard,
+  ProductCardQuickAdd,
+  Price,
+  CartBadge,
+} from "@/app/_shared";
 import { AddToCartForm } from "@/app/_shared/pages/product/AddToCartForm";
 import { ReassuranceNotice } from "@/app/_shared/pages/product/ReassuranceNotice";
 import { MedicalInfoSection } from "@/app/_shared/pages/product/MedicalInfoSection";
@@ -350,11 +362,7 @@ function MobileDescription({ product }: { product: Product }) {
   );
 }
 
-function MobileGuidelines({
-  sections,
-}: {
-  sections: GuidelineSection[];
-}) {
+function MobileGuidelines({ sections }: { sections: GuidelineSection[] }) {
   if (!sections.length) {
     return null;
   }

@@ -2,7 +2,11 @@ import type { Cart, CurrencyCode } from "../types";
 import { defaultCurrency, findVariantById } from "../mock-data";
 import { findGoodsVariantByObjectId as lookupGoodsVariantByObjectId } from "../goods";
 import type { CartSnapshot } from "./types";
-import { createEmptyCart, setCartLine, normalizeCartTotals } from "./cart-utils";
+import {
+  createEmptyCart,
+  setCartLine,
+  normalizeCartTotals,
+} from "./cart-utils";
 import { coupons } from "../mock-data";
 
 export function createCartSnapshot(cart: Cart): CartSnapshot {

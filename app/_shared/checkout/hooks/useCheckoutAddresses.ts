@@ -107,12 +107,15 @@ export function useCheckoutAddresses({
     [addresses, selectedAddressId],
   );
 
-  const updateAddressForm = useCallback((partial: Partial<AddressFormState>) => {
-    setAddressForm((prev) => ({
-      ...prev,
-      ...partial,
-    }));
-  }, []);
+  const updateAddressForm = useCallback(
+    (partial: Partial<AddressFormState>) => {
+      setAddressForm((prev) => ({
+        ...prev,
+        ...partial,
+      }));
+    },
+    [],
+  );
 
   const resetAddressForm = useCallback(() => {
     setAddressForm(DEFAULT_ADDRESS_FORM);

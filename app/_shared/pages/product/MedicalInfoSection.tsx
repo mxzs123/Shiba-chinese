@@ -73,4 +73,3 @@ export function MedicalInfoSection({
     </section>
   );
 }
-

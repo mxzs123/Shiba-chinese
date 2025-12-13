@@ -1,6 +1,10 @@
 import type { SurveyAnswer, SurveyAssignment, SurveyTemplate } from "./types";
 import { surveyAssignments, surveyTemplates } from "./mock-data";
-import { cloneSurveyAnswer, cloneSurveyAssignment, cloneSurveyTemplate } from "./serializers";
+import {
+  cloneSurveyAnswer,
+  cloneSurveyAssignment,
+  cloneSurveyTemplate,
+} from "./serializers";
 
 function findSurveyAssignmentRecord(assignmentId: string) {
   return surveyAssignments.find((assignment) => assignment.id === assignmentId);

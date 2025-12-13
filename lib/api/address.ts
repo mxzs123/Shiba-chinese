@@ -1,6 +1,10 @@
 import type { Address, AddressInput } from "./types";
 import { users } from "./mock-data";
-import { cloneAddress, createAddressRecord, formatAddressLines } from "./serializers";
+import {
+  cloneAddress,
+  createAddressRecord,
+  formatAddressLines,
+} from "./serializers";
 
 function findUserRecord(userId: string) {
   return users.find((user) => user.id === userId);

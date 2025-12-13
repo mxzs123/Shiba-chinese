@@ -51,10 +51,7 @@ function normalizeName(value: string): string {
     .trim()
     .toLowerCase()
     .replace(/[\s\u3000]+/g, "")
-    .replace(
-      /[（）()\[\]［］【】・･·•:：,，．。.。\-–—~〜／/\\]/g,
-      "",
-    );
+    .replace(/[（）()\[\]［］【】・･·•:：,，．。.。\-–—~〜／/\\]/g, "");
 }
 
 function cleanText(value?: string): string | undefined {
@@ -257,9 +254,7 @@ function buildMedicalInfo(
 
 function sortById(record: Record<number, MedicalInfo>) {
   return Object.fromEntries(
-    Object.entries(record).sort(
-      ([a], [b]) => Number(a) - Number(b),
-    ),
+    Object.entries(record).sort(([a], [b]) => Number(a) - Number(b)),
   ) as Record<number, MedicalInfo>;
 }
 

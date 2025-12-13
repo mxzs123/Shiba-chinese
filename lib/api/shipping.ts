@@ -1,4 +1,9 @@
-import type { Notification, NotificationCategory, PaymentMethod, ShippingMethod } from "./types";
+import type {
+  Notification,
+  NotificationCategory,
+  PaymentMethod,
+  ShippingMethod,
+} from "./types";
 import { notifications, paymentMethods, shippingMethods } from "./mock-data";
 import { clonePaymentMethod, cloneShippingMethod } from "./utils";
 

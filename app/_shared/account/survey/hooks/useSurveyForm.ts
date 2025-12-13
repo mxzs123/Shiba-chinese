@@ -98,19 +98,16 @@ export function useSurveyForm({ assignment, template }: UseSurveyFormOptions) {
     setErrors((prev) => ({ ...prev, [questionId]: null }));
   }, []);
 
-  const handleRemoveFile = useCallback(
-    (questionId: string, fileId: string) => {
-      setAnswers((prev) => {
-        const current = (prev[questionId] as SurveyUploadedFile[]) || [];
-        return {
-          ...prev,
-          [questionId]: current.filter((file) => file.id !== fileId),
-        };
-      });
-      setErrors((prev) => ({ ...prev, [questionId]: null }));
-    },
-    [],
-  );
+  const handleRemoveFile = useCallback((questionId: string, fileId: string) => {
+    setAnswers((prev) => {
+      const current = (prev[questionId] as SurveyUploadedFile[]) || [];
+      return {
+        ...prev,
+        [questionId]: current.filter((file) => file.id !== fileId),
+      };
+    });
+    setErrors((prev) => ({ ...prev, [questionId]: null }));
+  }, []);
 
   const handleUpload = useCallback(
     async (

@@ -25,7 +25,9 @@ export function formatAddressLines(address: Address): string[] {
     ]
       .filter(Boolean)
       .join(" "),
-  ].filter((value): value is string => Boolean(value && value.trim().length > 0));
+  ].filter((value): value is string =>
+    Boolean(value && value.trim().length > 0),
+  );
 
   return lines;
 }

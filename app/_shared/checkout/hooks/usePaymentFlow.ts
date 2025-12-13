@@ -2,7 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Address, PaymentMethod, ShippingMethod, User } from "lib/api/types";
+import type {
+  Address,
+  PaymentMethod,
+  ShippingMethod,
+  User,
+} from "lib/api/types";
 import { confirmPaymentAndNotifyAction } from "../actions";
 import type { CheckoutVariant, PaymentStep } from "../types";
 
@@ -60,7 +65,12 @@ export function usePaymentFlow({
         ? `${checkoutRouteBase}/prescription-review`
         : `${checkoutRouteBase}/success`,
     );
-  }, [clearRedirectTimer, router, requiresPrescriptionReview, checkoutRouteBase]);
+  }, [
+    clearRedirectTimer,
+    router,
+    requiresPrescriptionReview,
+    checkoutRouteBase,
+  ]);
 
   const handleOpenPayment = useCallback(() => {
     if (!canProceedToPay) {

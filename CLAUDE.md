@@ -24,6 +24,7 @@ pnpm lint:distributor
 ### 设备分流架构
 
 项目采用单 URL、middleware 按设备自动分流的架构：
+
 - `app/d/`：桌面端页面壳
 - `app/m/`：移动端页面壳
 - `app/_shared/`：核心业务逻辑，供双端复用
@@ -53,15 +54,19 @@ packages/
 ## 代码规范
 
 ### 链接规范
+
 `next/link` 使用用户感知路径，**不带** `/d` 或 `/m` 前缀（middleware 自动分流）。
 
 ### Server Action
+
 必须返回 `{ success, data, error }` 结构，放在 `_shared/*/actions.ts`。
 
 ### 样式
+
 Tailwind 原子类按"布局 → 间距 → 视觉"顺序排列。
 
 ### 命名
+
 - 组件：PascalCase
 - Hook：camelCase
 - 常量：SCREAMING_SNAKE_CASE

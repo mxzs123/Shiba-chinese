@@ -10,4 +10,8 @@ export {
 
 export { cloneMoney, formatAmount, getCurrency } from "./money";
 
-export { cloneNewsArticle, cloneShippingMethod, clonePaymentMethod } from "./clone";
+export {
+  cloneNewsArticle,
+  cloneShippingMethod,
+  clonePaymentMethod,
+} from "./clone";

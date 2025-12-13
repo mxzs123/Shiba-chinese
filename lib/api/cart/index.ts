@@ -1,4 +1,10 @@
-export { createCart, addToCart, removeFromCart, updateCart, getCart } from "./cart-core";
+export {
+  createCart,
+  addToCart,
+  removeFromCart,
+  updateCart,
+  getCart,
+} from "./cart-core";
 export { applyCouponToCart, removeCouponFromCart } from "./cart-coupon";
 export {
   createCartSnapshot,

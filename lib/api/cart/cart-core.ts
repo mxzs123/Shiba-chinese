@@ -1,7 +1,11 @@
 import type { Cart, CartDeleteInput, CartLineInput } from "../types";
 import { findVariantById } from "../mock-data";
 import { findGoodsVariantByObjectId as lookupGoodsVariantByObjectId } from "../goods";
-import type { LegacyAddLine, LegacyUpdateLine, BackendUpdateLine } from "./types";
+import type {
+  LegacyAddLine,
+  LegacyUpdateLine,
+  BackendUpdateLine,
+} from "./types";
 import {
   createEmptyCart,
   loadCart,

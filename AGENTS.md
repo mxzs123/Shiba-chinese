@@ -75,10 +75,12 @@ pnpm prettier:check   # CI 用格式检查
 ## 内测环境配置
 
 配置 `.env.local`：
+
 - `INTERNAL_TESTING=1` 与 `NEXT_PUBLIC_INTERNAL_TESTING=1`：启用内测模式
 - `NEXT_PUBLIC_HIDE_ACCOUNT=1`：显式隐藏账号入口（INTERNAL_TESTING 已包含）
 
 内测模式下的 UI 变更：
+
 - 隐藏"个人中心"入口（桌面 Navbar、移动 BottomNav）
 - 结算页隐藏"优惠券 / 积分抵扣 / 支付方式"区块
 - 应付总计 = 商品金额 + 运费（忽略优惠与积分）

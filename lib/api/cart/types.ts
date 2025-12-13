@@ -21,5 +21,9 @@ export type CartLineOptions = {
 };
 
 export type LegacyAddLine = { merchandiseId: string; quantity: number };
-export type LegacyUpdateLine = { id: string; merchandiseId: string; quantity: number };
+export type LegacyUpdateLine = {
+  id: string;
+  merchandiseId: string;
+  quantity: number;
+};
 export type BackendUpdateLine = { id: string; nums: number; objectId?: number };

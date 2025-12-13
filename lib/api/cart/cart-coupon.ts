@@ -1,7 +1,13 @@
 import type { Cart } from "../types";
 import { coupons } from "../mock-data";
 import { formatAmount, getCurrency } from "../utils";
-import { createEmptyCart, loadCart, saveCart, normalizeCartTotals, evaluateCouponDiscount } from "./cart-utils";
+import {
+  createEmptyCart,
+  loadCart,
+  saveCart,
+  normalizeCartTotals,
+  evaluateCouponDiscount,
+} from "./cart-utils";
 
 async function ensureCartInstance(): Promise<Cart> {
   const existing = await loadCart();

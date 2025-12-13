@@ -73,7 +73,11 @@ export {
 } from "./product";
 
 // Collection
-export { getCollection, getCollectionProducts, getCollections } from "./collection";
+export {
+  getCollection,
+  getCollectionProducts,
+  getCollections,
+} from "./collection";
 
 // News
 export {
@@ -87,7 +91,11 @@ export {
 export { getMenu, getPage, getPages } from "./content";
 
 // Shipping & Payment
-export { getNotifications, getShippingMethods, getPaymentMethods } from "./shipping";
+export {
+  getNotifications,
+  getShippingMethods,
+  getPaymentMethods,
+} from "./shipping";
 
 // Revalidate
 export { revalidate } from "./revalidate";

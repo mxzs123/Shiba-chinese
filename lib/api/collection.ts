@@ -1,5 +1,9 @@
 import type { Collection, Product } from "./types";
-import { findCollectionByHandle, listVisibleCollections, products } from "./mock-data";
+import {
+  findCollectionByHandle,
+  listVisibleCollections,
+  products,
+} from "./mock-data";
 
 function serializeProducts(list: typeof products): Product[] {
   return list.map(

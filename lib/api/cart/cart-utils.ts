@@ -10,7 +10,12 @@ import { defaultCurrency, findVariantById } from "../mock-data";
 import { checkoutUrl as checkoutFallback } from "../mock-data";
 import { formatAmount, getCurrency, getCartCookieOptions } from "../utils";
 import { CART_ID_COOKIE, CART_STATE_COOKIE } from "../utils/cookie";
-import { createCartSnapshot, encodeCartSnapshot, decodeCartSnapshot, hydrateCartFromSnapshot } from "./cart-snapshot";
+import {
+  createCartSnapshot,
+  encodeCartSnapshot,
+  decodeCartSnapshot,
+  hydrateCartFromSnapshot,
+} from "./cart-snapshot";
 import type { CartLineOptions } from "./types";
 
 const CHECKOUT_URL = process.env.COMMERCE_CHECKOUT_URL || checkoutFallback;

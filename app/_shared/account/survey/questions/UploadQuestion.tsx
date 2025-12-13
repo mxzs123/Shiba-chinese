@@ -80,9 +80,7 @@ export function UploadQuestion({
         </ul>
       ) : (
         <p className="text-xs text-neutral-400">
-          {disabled
-            ? "暂无上传附件"
-            : "暂未上传附件，提交时请一并附上凭证。"}
+          {disabled ? "暂无上传附件" : "暂未上传附件，提交时请一并附上凭证。"}
         </p>
       )}
     </div>
