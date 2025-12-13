@@ -189,40 +189,190 @@ export function PaymentModal({
     isMobile && viewportHeight
       ? Math.max(
           0,
-          Math.round(
-            Math.min(viewportHeight - 32, viewportHeight * 0.78, 520),
-          ),
+          Math.round(Math.min(viewportHeight - 32, viewportHeight * 0.92, 680)),
         )
       : null;
 
   const modalStyle: CSSProperties | undefined =
     isMobile && mobileModalHeightPx
-      ? { height: `${mobileModalHeightPx}px` }
+      ? { maxHeight: `${mobileModalHeightPx}px` }
       : undefined;
+
+  if (isMobile) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-black/60 pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <div
+          style={modalStyle}
+          className="flex w-full max-w-md min-h-0 flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
+        >
+          <div className="flex items-start justify-between gap-4 border-b border-neutral-200 px-4 py-3">
+            <div className="min-w-0">
+              <h3 className="text-base font-semibold text-neutral-900">
+                扫码支付
+              </h3>
+              <p className="mt-1 text-xs text-neutral-500">
+                保存二维码到相册后，在微信 /
+                支付宝「扫一扫」中选择「相册」识别支付。
+              </p>
+            </div>
+            <button
+              type="button"
+              className="shrink-0 text-sm font-medium text-neutral-500 transition hover:text-neutral-900"
+              onClick={onClose}
+            >
+              关闭
+            </button>
+          </div>
+
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 overscroll-contain [-webkit-overflow-scrolling:touch]">
+            <div className="flex flex-col items-center gap-3">
+              {step === "qr" ? (
+                <>
+                  <div className="w-full">
+                    <div className="mx-auto w-[clamp(220px,60vw,260px)] overflow-hidden rounded-2xl border border-dashed border-neutral-300 bg-white">
+                      <Image
+                        src={qrImageSrc}
+                        alt="扫码支付二维码"
+                        width={1000}
+                        height={1000}
+                        className="h-auto w-full object-contain"
+                        priority
+                      />
+                    </div>
+                  </div>
+
+                  <div className="w-[clamp(220px,60vw,260px)] space-y-2">
+                    <button
+                      type="button"
+                      onClick={handleSaveQr}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-900 transition hover:border-neutral-900 disabled:cursor-not-allowed disabled:opacity-60"
+                      disabled={saveSubmitting}
+                    >
+                      <Download className="h-4 w-4" aria-hidden />
+                      {saveSubmitting ? "准备中..." : "保存二维码"}
+                    </button>
+                    {saveFeedback ? (
+                      <p
+                        className={
+                          saveFeedback.kind === "error"
+                            ? "text-xs text-red-600"
+                            : "text-xs text-neutral-500"
+                        }
+                      >
+                        {saveFeedback.message}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-neutral-500">
+                        若无法保存，请截图或长按二维码保存到相册。
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="w-full rounded-xl bg-neutral-50 px-4 py-3 text-neutral-700">
+                    <p className="text-sm font-semibold text-neutral-800">
+                      移动端操作指引
+                    </p>
+                    <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs">
+                      <li>保存二维码到相册（保存/截图/长按）。</li>
+                      <li>
+                        打开微信 / 支付宝 →「扫一扫」→「相册」选择收款码图片。
+                      </li>
+                      <li>支付成功后返回商城，点击「支付已完成」。</li>
+                    </ol>
+                  </div>
+                </>
+              ) : null}
+
+              {step === "help" ? (
+                <div className="w-full space-y-3 rounded-xl bg-neutral-50 px-4 py-4 text-sm text-neutral-700">
+                  <p>
+                    支付过程中遇到问题？或已支付但误点&ldquo;否&rdquo;？请主动联系我们的客服，我们会协助退款或完成订单处理。
+                  </p>
+                  <div className="flex gap-3">
+                    <Link
+                      href="/about"
+                      className="inline-flex w-full items-center justify-center rounded-lg bg-neutral-900 px-3 py-2 text-sm font-semibold text-white hover:brightness-105"
+                    >
+                      联系客服
+                    </Link>
+                    <button
+                      type="button"
+                      className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-600 hover:border-neutral-900 hover:text-neutral-900"
+                      onClick={() => onStepChange("qr")}
+                    >
+                      返回扫码
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
+              {step === "success" ? (
+                <div className="flex w-full flex-col items-center gap-3 rounded-xl bg-emerald-50 px-4 py-4 text-sm text-emerald-600">
+                  <p>订单已提交成功，我们会尽快联系并安排发货。</p>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 transition hover:text-emerald-600"
+                    onClick={onNavigateToSuccess}
+                  >
+                    立即查看结果页
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          {step === "qr" ? (
+            <div className="shrink-0 border-t border-neutral-200 bg-white px-4 py-3">
+              <div className="flex flex-col gap-2">
+                {notifyError ? (
+                  <p className="w-full rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">
+                    {notifyError}
+                  </p>
+                ) : null}
+                <p className="text-[11px] font-medium text-amber-600">
+                  请确认已在支付软件中看到“支付成功”后再点击「支付已完成」。
+                </p>
+                <PrimaryButton
+                  type="button"
+                  onClick={onConfirmPaid}
+                  className="w-full justify-center"
+                  disabled={notifySubmitting}
+                  loading={notifySubmitting}
+                  loadingText="提交中..."
+                >
+                  支付已完成
+                </PrimaryButton>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center gap-2 text-xs font-medium text-neutral-400 transition hover:text-neutral-600"
+                  onClick={() => onStepChange("help")}
+                >
+                  <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
+                  尚未完成/遇到问题
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
       className={cn(
         "fixed inset-0 z-[100] flex items-center justify-center px-4 bg-black/60",
-        isMobile &&
-          "pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))]",
       )}
     >
       <div
         style={modalStyle}
         className={cn(
           "flex w-full max-w-md flex-col overflow-hidden rounded-2xl bg-white shadow-xl",
-          isMobile ? "w-full" : "max-h-[calc(100vh-2rem)]",
+          "max-h-[calc(100vh-2rem)]",
         )}
       >
-        <div
-          className={cn(
-            "h-full overflow-y-auto",
-            isMobile
-              ? "p-4 overscroll-contain [-webkit-overflow-scrolling:touch]"
-              : "p-6",
-          )}
-        >
+        <div className={cn("h-full overflow-y-auto", "p-6")}>
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-neutral-900">扫码支付</h3>
             <button
@@ -309,7 +459,8 @@ export function PaymentModal({
                         先保存二维码到相册（点上方「保存二维码」；不支持时可截图或长按二维码保存）。
                       </li>
                       <li>
-                        打开微信 / 支付宝（或其他支付软件）→「扫一扫」→「相册」选择收款码图片。
+                        打开微信 /
+                        支付宝（或其他支付软件）→「扫一扫」→「相册」选择收款码图片。
                       </li>
                       <li>支付成功后返回商城，点击「支付已完成」。</li>
                     </ol>
