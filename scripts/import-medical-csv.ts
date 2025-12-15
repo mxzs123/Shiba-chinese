@@ -324,23 +324,19 @@ export const goodsMedicalInfoById: Record<number, MedicalInfo> = ${JSON.stringif
   const matched = Object.keys(medicalById).length;
   const unmatchedCount = unmatched.length;
 
-  // eslint-disable-next-line no-console
   console.log(
     `导入完成：总行数=${total}，命中=${matched}，未命中=${unmatchedCount}`,
   );
 
   if (unmatchedCount) {
-    // eslint-disable-next-line no-console
     console.log("未命中条目：");
     for (const name of unmatched) {
-      // eslint-disable-next-line no-console
       console.log(`- ${name}`);
     }
   }
 }
 
 main().catch((error) => {
-  // eslint-disable-next-line no-console
   console.error(error);
   process.exit(1);
 });
