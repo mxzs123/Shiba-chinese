@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987158290407: RawGoodsRecord = {
   productId: 4987158290407,
   slug: "4987158290407",
+  gs1: "4490035F1027",
   title:
-    "【花粉症根治】 杉树花粉变应原舌下片   Cedarcure  2000 JAU 针对日本杉树花粉症的减敏治疗 根治花粉症",
+    "【花粉症根治】 杉树花粉变应原舌下片 Cedarcure 2000 JAU 针对日本杉树花粉症的减敏治疗 根治花粉症",
   jpName: "シダキュアスギ花粉舌下錠２，０００",
   brand: "鳥居薬品",
   spec: "7/錠",
@@ -17,7 +18,7 @@ const item4987158290407: RawGoodsRecord = {
   subCategoryName: "流感治疗",
   image: {
     src: "/product-images/4987158290407.jpg",
-    alt: "【花粉症根治】 杉树花粉变应原舌下片   Cedarcure  2000 JAU 针对日本杉树花粉症的减敏治疗 根治花粉症",
+    alt: "【花粉症根治】 杉树花粉变应原舌下片 Cedarcure 2000 JAU 针对日本杉树花粉症的减敏治疗 根治花粉症",
   },
   collectionHandles: ["prescription"],
   rank: 79,

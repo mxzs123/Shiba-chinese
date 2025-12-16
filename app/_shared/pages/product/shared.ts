@@ -88,6 +88,10 @@ export function getProductDetailRows(product: Product): ProductDetailRow[] {
   const optionSummary = product.options
     .map((option) => `${option.name}：${option.values.join(" / ")}`)
     .join("；");
+  const keyLabelMap: Record<string, string> = {
+    jan: "JAN 码",
+    gs1: "GS1 码",
+  };
   const defaults: Array<{
     key: string;
     label: string;
@@ -125,7 +129,7 @@ export function getProductDetailRows(product: Product): ProductDetailRow[] {
   return [
     ...rows,
     ...extraRows.map(([key, value]) => ({
-      label: key,
+      label: keyLabelMap[key] || key,
       value,
     })),
   ];

@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987084120366: RawGoodsRecord = {
   productId: 4987084120366,
   slug: "4987084120366",
+  gs1: "1319710Q2078",
   title:
-    "【红色眼药水】Sancoba眼药水0.02%：50ml 去红血丝 抗疲劳 视力调节 氰钴胺 (维生素B12)",
+    "【红色眼药水】Sancoba眼药水0.02% 50ml 去红血丝 抗疲劳 视力调节 氰钴胺 (维生素B12)",
   jpName: "サンコバ点眼液０．０２％",
   brand: "参天製薬",
   spec: "50/ml",
@@ -17,7 +18,7 @@ const item4987084120366: RawGoodsRecord = {
   subCategoryName: "眼科护理",
   image: {
     src: "/product-images/4987084120366.png",
-    alt: "【红色眼药水】Sancoba眼药水0.02%：50ml 去红血丝 抗疲劳 视力调节 氰钴胺 (维生素B12)",
+    alt: "【红色眼药水】Sancoba眼药水0.02% 50ml 去红血丝 抗疲劳 视力调节 氰钴胺 (维生素B12)",
   },
   collectionHandles: ["prescription"],
   rank: 32,

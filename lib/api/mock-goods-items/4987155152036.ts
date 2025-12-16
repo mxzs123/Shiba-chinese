@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987155152036: RawGoodsRecord = {
   productId: 4987155152036,
   slug: "4987155152036",
+  gs1: "249900AM2038",
   title:
-    "【最强生发】度他雄胺胶囊 Dutasteride 0.5mg : 适尿通 比非那雄胺更强 发际线救星 度他雄胺",
+    "【最强生发】度他雄胺胶囊 Dutasteride 0.5mg 适尿通 比非那雄胺更强 发际线救星 度他雄胺",
   jpName: "デュタステリドカプセル０．５ｍｇＺＡ「トーワ」",
   brand: "東和薬品",
   spec: "30/錠",
@@ -17,7 +18,7 @@ const item4987155152036: RawGoodsRecord = {
   subCategoryName: "泌尿与男性健康",
   image: {
     src: "/product-images/4987155152036.jpg",
-    alt: "【最强生发】度他雄胺胶囊 Dutasteride 0.5mg : 适尿通 比非那雄胺更强 发际线救星 度他雄胺",
+    alt: "【最强生发】度他雄胺胶囊 Dutasteride 0.5mg 适尿通 比非那雄胺更强 发际线救星 度他雄胺",
   },
   collectionHandles: ["prescription"],
   rank: 66,

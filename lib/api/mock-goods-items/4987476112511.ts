@@ -3,7 +3,8 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987476112511: RawGoodsRecord = {
   productId: 4987476112511,
   slug: "4987476112511",
-  title: "【美白王者】传明酸片 Tranexamic Acid  500mg：肝斑神药 全身美白",
+  gs1: "3327002F2050",
+  title: "【美白王者】传明酸片 Tranexamic Acid 500mg 肝斑神药 全身美白",
   jpName: "トラネキサム酸錠５００ｍｇ「ＹＤ」",
   brand: "陽進堂",
   spec: "100/錠",
@@ -16,7 +17,7 @@ const item4987476112511: RawGoodsRecord = {
   subCategoryName: "美白",
   image: {
     src: "/product-images/4987476112511.jpg",
-    alt: "【美白王者】传明酸片 Tranexamic Acid  500mg：肝斑神药 全身美白",
+    alt: "【美白王者】传明酸片 Tranexamic Acid 500mg 肝斑神药 全身美白",
   },
   collectionHandles: ["prescription"],
   rank: 108,

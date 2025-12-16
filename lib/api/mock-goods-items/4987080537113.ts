@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987080537113: RawGoodsRecord = {
   productId: 4987080537113,
   slug: "4987080537113",
+  gs1: "2325003F3124",
   title:
-    "【胃部急救】法莫替丁D片Famotidine D 10mg：100片 胃药 加斯清平替 胃痛胃酸 口腔崩解片",
+    "【胃部急救】法莫替丁D片Famotidine D 10mg 100片　胃药 加斯清平替 胃痛胃酸 口腔崩解片",
   jpName: "ファモチジンＤ錠１０ｍｇ「サワイ」",
   brand: "沢井製薬",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987080537113: RawGoodsRecord = {
   subCategoryName: "肠胃护理",
   image: {
     src: "/product-images/4987080537113.jpg",
-    alt: "【胃部急救】法莫替丁D片Famotidine D 10mg：100片 胃药 加斯清平替 胃痛胃酸 口腔崩解片",
+    alt: "【胃部急救】法莫替丁D片Famotidine D 10mg 100片　胃药 加斯清平替 胃痛胃酸 口腔崩解片",
   },
   collectionHandles: ["prescription"],
   rank: 22,

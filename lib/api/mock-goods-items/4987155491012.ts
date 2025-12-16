@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987155491012: RawGoodsRecord = {
   productId: 4987155491012,
   slug: "4987155491012",
+  gs1: "3961008F1250",
   title:
-    "【降糖】 格列美脲片 Glimepiride  1mg ： “亚莫利”平替 第三代磺脲类降糖药 刺激胰岛素分泌 降低血糖",
+    "【糖尿病克星】格列美脲片 东和 GLIMEPIRIDE TABLETS TOWA 1mg 有效治疗糖尿病",
   jpName: "グリメピリド錠１ｍｇ「トーワ」",
   brand: "東和薬品",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987155491012: RawGoodsRecord = {
   subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987155491012.jpg",
-    alt: "【降糖】 格列美脲片 Glimepiride  1mg ： “亚莫利”平替 第三代磺脲类降糖药 刺激胰岛素分泌 降低血糖",
+    alt: "【糖尿病克星】格列美脲片 东和 GLIMEPIRIDE TABLETS TOWA 1mg 有效治疗糖尿病",
   },
   collectionHandles: ["prescription"],
   rank: 73,

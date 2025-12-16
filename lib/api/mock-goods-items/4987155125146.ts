@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987155125146: RawGoodsRecord = {
   productId: 4987155125146,
   slug: "4987155125146",
+  gs1: "1319752Q1105",
   title:
-    "【抗过敏眼药】奥洛他定滴眼液 Olopatadine  0.1%: 眼科常用的抗过敏药 止痒效果极好 治结膜炎。",
+    "【抗过敏眼药】奥洛他定滴眼液 Olopatadine 0.1% 眼科常用的抗过敏药 止痒效果极好 治结膜炎",
   jpName: "オロパタジン点眼液０．１％「トーワ」",
   brand: "東和薬品",
   spec: "5/ml",
@@ -17,7 +18,7 @@ const item4987155125146: RawGoodsRecord = {
   subCategoryName: "眼科护理",
   image: {
     src: "/product-images/4987155125146.jpg",
-    alt: "【抗过敏眼药】奥洛他定滴眼液 Olopatadine  0.1%: 眼科常用的抗过敏药 止痒效果极好 治结膜炎。",
+    alt: "【抗过敏眼药】奥洛他定滴眼液 Olopatadine 0.1% 眼科常用的抗过敏药 止痒效果极好 治结膜炎",
   },
   collectionHandles: ["prescription"],
   rank: 61,

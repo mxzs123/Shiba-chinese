@@ -3,7 +3,8 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987155014105: RawGoodsRecord = {
   productId: 4987155014105,
   slug: "4987155014105",
-  title: "【胃药】莫沙必利片 Mosapride 5mg :促消化 防胀气莫沙必利",
+  gs1: "2399010F2237",
+  title: "【胃药】莫沙必利片 Mosapride 5mg 促消化 防胀气莫沙必利",
   jpName: "モサプリドクエン酸塩錠５ｍｇ「トーワ」",
   brand: "東和薬品",
   spec: "100/錠",
@@ -16,7 +17,7 @@ const item4987155014105: RawGoodsRecord = {
   subCategoryName: "肠胃护理",
   image: {
     src: "/product-images/4987155014105.jpg",
-    alt: "【胃药】莫沙必利片 Mosapride 5mg :促消化 防胀气莫沙必利",
+    alt: "【胃药】莫沙必利片 Mosapride 5mg 促消化 防胀气莫沙必利",
   },
   collectionHandles: ["prescription"],
   rank: 58,

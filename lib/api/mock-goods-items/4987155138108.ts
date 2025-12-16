@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987155138108: RawGoodsRecord = {
   productId: 4987155138108,
   slug: "4987155138108",
+  gs1: "3962002F2086",
   title:
-    "【控糖减重】 二甲双胍片 Metformin 250mg: 经典降糖药 因哈佛教授推荐 抑制食欲 改善代谢",
+    "【控糖减重】 二甲双胍片 Metformin 250mg 经典降糖药 因哈佛教授推荐 抑制食欲 改善代谢",
   jpName: "メトホルミン塩酸塩錠２５０ｍｇＭＴ「トーワ」",
   brand: "東和薬品",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987155138108: RawGoodsRecord = {
   subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987155138108.jpg",
-    alt: "【控糖减重】 二甲双胍片 Metformin 250mg: 经典降糖药 因哈佛教授推荐 抑制食欲 改善代谢",
+    alt: "【控糖减重】 二甲双胍片 Metformin 250mg 经典降糖药 因哈佛教授推荐 抑制食欲 改善代谢",
   },
   collectionHandles: ["prescription"],
   rank: 64,

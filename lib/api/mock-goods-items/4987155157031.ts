@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987155157031: RawGoodsRecord = {
   productId: 4987155157031,
   slug: "4987155157031",
+  gs1: "3949003F1112",
   title:
-    "【痛风神药】非布司他片 Febuxostat 10mg: 抑制尿酸生成 治疗高尿酸血症和痛风",
+    "【痛风神药】非布司他片 Febuxostat 10mg 抑制尿酸生成 治疗高尿酸血症和痛风",
   jpName: "フェブキソスタット錠１０ｍｇ「トーワ」",
   brand: "東和薬品",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987155157031: RawGoodsRecord = {
   subCategoryName: "痛风治疗",
   image: {
     src: "/product-images/4987155157031.jpg",
-    alt: "【痛风神药】非布司他片 Febuxostat 10mg: 抑制尿酸生成 治疗高尿酸血症和痛风",
+    alt: "【痛风神药】非布司他片 Febuxostat 10mg 抑制尿酸生成 治疗高尿酸血症和痛风",
   },
   collectionHandles: ["prescription"],
   rank: 67,

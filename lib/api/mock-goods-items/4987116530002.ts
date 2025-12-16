@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987116530002: RawGoodsRecord = {
   productId: 4987116530002,
   slug: "4987116530002",
+  gs1: "3962002F2027",
   title:
-    "【控糖常备】Metgluco盐酸二甲双胍片Metformin 250mg（2型）：100片 减肥控糖 减脂辅助",
+    "【控糖常备】Metgluco盐酸二甲双胍片Metformin 250mg（2型）100片 减肥控糖 减脂辅助",
   jpName: "メトグルコ錠２５０ｍｇ",
   brand: "住友ファーマ",
   spec: "100/錠",
@@ -25,7 +26,7 @@ const item4987116530002: RawGoodsRecord = {
   subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987116530002.jpg",
-    alt: "【控糖常备】Metgluco盐酸二甲双胍片Metformin 250mg（2型）：100片 减肥控糖 减脂辅助",
+    alt: "【控糖常备】Metgluco盐酸二甲双胍片Metformin 250mg（2型）100片 减肥控糖 减脂辅助",
   },
   collectionHandles: ["prescription"],
   rank: 38,

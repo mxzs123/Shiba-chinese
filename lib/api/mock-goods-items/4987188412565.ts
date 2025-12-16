@@ -3,8 +3,8 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987188412565: RawGoodsRecord = {
   productId: 4987188412565,
   slug: "4987188412565",
-  title:
-    "【久光贴】酮洛芬贴片  Mohrus Tape 560张：日本神膏药 风湿腰痛 必备神器",
+  gs1: "2649729S3084",
+  title: "【久光贴】日本神膏药 Ketoprofen 560张 风湿腰痛 必备神器",
   jpName: "モーラステープＬ４０ｍｇ 7枚×80袋（560枚）",
   brand: "久光製薬",
   spec: "560/枚",
@@ -17,7 +17,7 @@ const item4987188412565: RawGoodsRecord = {
   subCategoryName: "止疼/外用贴剂",
   image: {
     src: "/product-images/4987188412565.jpg",
-    alt: "【久光贴】酮洛芬贴片  Mohrus Tape 560张：日本神膏药 风湿腰痛 必备神器",
+    alt: "【久光贴】日本神膏药 Ketoprofen 560张 风湿腰痛 必备神器",
   },
   collectionHandles: ["prescription"],
   rank: 129,

@@ -128,6 +128,8 @@ export type Product = {
   updatedAt: string;
   backend?: {
     productId: number;
+    jan?: string;
+    gs1?: string;
     brand?: string;
     categoryId?: number;
     categoryName?: string;

@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987447255018: RawGoodsRecord = {
   productId: 4987447255018,
   slug: "4987447255018",
+  gs1: "14987447255015",
   title:
-    "【最强生发】度他雄胺片 Dutasteride 0.5mg：适尿通仿制 发际线最后防线 度他雄胺",
+    "【最强生发】度他雄胺片 Dutasteride 0.5mg 适尿通仿制 发际线最后防线 度他雄胺",
   jpName: "デュタステリド錠０．５ｍｇＡＶ「ＮＳ」",
   brand: "日新製薬",
   spec: "30/錠",
@@ -17,7 +18,7 @@ const item4987447255018: RawGoodsRecord = {
   subCategoryName: "生发防脱",
   image: {
     src: "/product-images/4987447255018.jpg",
-    alt: "【最强生发】度他雄胺片 Dutasteride 0.5mg：适尿通仿制 发际线最后防线 度他雄胺",
+    alt: "【最强生发】度他雄胺片 Dutasteride 0.5mg 适尿通仿制 发际线最后防线 度他雄胺",
   },
   collectionHandles: ["prescription"],
   rank: 107,

@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987128143511: RawGoodsRecord = {
   productId: 4987128143511,
   slug: "4987128143511",
+  gs1: "2499422P3027",
   title:
-    "【减肥黑科技】替尔泊肽 Mounjaro皮下注15mg：2支 GLP-1 躺瘦神针 超越司美格鲁肽",
+    "【减肥黑科技】替尔泊肽 Mounjaro皮下注15mg 2支 GLP-1 躺瘦神针 超越司美格鲁肽",
   jpName: "マンジャロ皮下注15ｍｇアテオス",
   brand: "日本イーライリリー",
   spec: "2/キット",
@@ -17,7 +18,7 @@ const item4987128143511: RawGoodsRecord = {
   subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987128143511.jpg",
-    alt: "【减肥黑科技】替尔泊肽 Mounjaro皮下注15mg：2支 GLP-1 躺瘦神针 超越司美格鲁肽",
+    alt: "【减肥黑科技】替尔泊肽 Mounjaro皮下注15mg 2支 GLP-1 躺瘦神针 超越司美格鲁肽",
   },
   collectionHandles: ["prescription"],
   rank: 48,

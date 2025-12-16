@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987080786016: RawGoodsRecord = {
   productId: 4987080786016,
   slug: "4987080786016",
+  gs1: "3969004F2264",
   title:
-    "【抗糖丸】阿卡波糖类控糖片Voglibose 0.3mg：100片 餐后血糖控制 断碳水神器、餐后阻断剂",
+    "【抗糖丸】阿卡波糖类控糖片Voglibose 0.3mg 100片 餐后血糖控制 断碳水神器、餐后阻断剂",
   jpName: "ボグリボース錠０．３ｍｇ「サワイ」",
   brand: "沢井製薬",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987080786016: RawGoodsRecord = {
   subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987080786016.jpg",
-    alt: "【抗糖丸】阿卡波糖类控糖片Voglibose 0.3mg：100片 餐后血糖控制 断碳水神器、餐后阻断剂",
+    alt: "【抗糖丸】阿卡波糖类控糖片Voglibose 0.3mg 100片 餐后血糖控制 断碳水神器、餐后阻断剂",
   },
   collectionHandles: ["prescription"],
   rank: 24,

@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987155162424: RawGoodsRecord = {
   productId: 4987155162424,
   slug: "4987155162424",
+  gs1: "6250021F1028",
   title:
-    "【流感特效药】奥司他韦片 Oseltamivir  75mg：治疗甲流 乙流的特效药 需在发病48小时内服用。",
+    "【流感特效药】奥司他韦片 Oseltamivir 75mg 治疗甲流 乙流的特效药 需在发病48小时内服用",
   jpName: "オセルタミビル錠75mg「トーワ」",
   brand: "東和薬品",
   spec: "10/カプセル",
@@ -17,7 +18,7 @@ const item4987155162424: RawGoodsRecord = {
   subCategoryName: "流感治疗",
   image: {
     src: "/product-images/4987155162424.jpg",
-    alt: "【流感特效药】奥司他韦片 Oseltamivir  75mg：治疗甲流 乙流的特效药 需在发病48小时内服用。",
+    alt: "【流感特效药】奥司他韦片 Oseltamivir 75mg 治疗甲流 乙流的特效药 需在发病48小时内服用",
   },
   collectionHandles: ["prescription"],
   rank: 127,

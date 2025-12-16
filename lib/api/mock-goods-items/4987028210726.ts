@@ -3,7 +3,8 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987028210726: RawGoodsRecord = {
   productId: 4987028210726,
   slug: "4987028210726",
-  title: "【视黄醇】Chocola维生素A片1万单位：100片 维生素A 护眼神器 粘膜修复",
+  gs1: "3111002F1036",
+  title: "【视黄醇】Chocola维生素A片1万单位 100片 维生素A 护眼神器 粘膜修复",
   jpName: "チョコラＡ錠１万単位",
   brand: "アルフレッサファーマ",
   spec: "100/錠",
@@ -16,7 +17,7 @@ const item4987028210726: RawGoodsRecord = {
   subCategoryName: "美白",
   image: {
     src: "/product-images/4987028210726.jpg",
-    alt: "【视黄醇】Chocola维生素A片1万单位：100片 维生素A 护眼神器 粘膜修复",
+    alt: "【视黄醇】Chocola维生素A片1万单位 100片 维生素A 护眼神器 粘膜修复",
   },
   collectionHandles: ["prescription"],
   rank: 13,

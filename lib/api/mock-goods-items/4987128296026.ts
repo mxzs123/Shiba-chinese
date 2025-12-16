@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987128296026: RawGoodsRecord = {
   productId: 4987128296026,
   slug: "4987128296026",
+  gs1: "2499422P3027",
   title:
-    "【减肥针皇】替尔泊肽注射液 Zepbound 15mg：双受体激动剂（GIP/GLP-1）减重神器",
+    "【减肥针皇】替尔泊肽注射液 Zepbound 15mg 双受体激动剂（GIP/GLP-1）减重神器",
   jpName: "ゼップバウンド皮下注15mgアテオス",
   brand: "日本イーライリリー",
   spec: "2/キット",
@@ -17,7 +18,7 @@ const item4987128296026: RawGoodsRecord = {
   subCategoryName: "糖尿病与医学减重",
   image: {
     src: "/product-images/4987128296026.png",
-    alt: "【减肥针皇】替尔泊肽注射液 Zepbound 15mg：双受体激动剂（GIP/GLP-1）减重神器",
+    alt: "【减肥针皇】替尔泊肽注射液 Zepbound 15mg 双受体激动剂（GIP/GLP-1）减重神器",
   },
   collectionHandles: ["prescription"],
   rank: 138,

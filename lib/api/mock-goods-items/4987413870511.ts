@@ -3,7 +3,8 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987413870511: RawGoodsRecord = {
   productId: 4987413870511,
   slug: "4987413870511",
-  title: "【降糖药】利格列汀片 Trazenta 5mg：不伤肾降糖 利格列汀 欧唐宁",
+  gs1: "3969014F1024",
+  title: "【降糖药】利格列汀片 Trazenta 5mg 不伤肾降糖 利格列汀 欧唐宁",
   jpName: "トラゼンタ錠５ｍｇ",
   brand: "日本ベーリンガーインゲルハイム",
   spec: "100/錠",
@@ -16,7 +17,7 @@ const item4987413870511: RawGoodsRecord = {
   subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987413870511.jpg",
-    alt: "【降糖药】利格列汀片 Trazenta 5mg：不伤肾降糖 利格列汀 欧唐宁",
+    alt: "【降糖药】利格列汀片 Trazenta 5mg 不伤肾降糖 利格列汀 欧唐宁",
   },
   collectionHandles: ["prescription"],
   rank: 102,

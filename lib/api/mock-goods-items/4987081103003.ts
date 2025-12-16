@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987081103003: RawGoodsRecord = {
   productId: 4987081103003,
   slug: "4987081103003",
+  gs1: "6250703G1022",
   title:
-    "【流感神药】Inavir粉末吸入剂 20mg： 2套 流感季必用 一次性吸入式抗病毒药",
+    "【流感神药】粉末吸入剂Inavir 20mg 2套 流感季必用 一次性吸入式抗病毒药",
   jpName: "イナビル吸入粉末剤２０ｍｇ",
   brand: "第一三共",
   spec: "2/キット",
@@ -17,7 +18,7 @@ const item4987081103003: RawGoodsRecord = {
   subCategoryName: "抗过敏类治疗",
   image: {
     src: "/product-images/4987081103003.jpg",
-    alt: "【流感神药】Inavir粉末吸入剂 20mg： 2套 流感季必用 一次性吸入式抗病毒药",
+    alt: "【流感神药】粉末吸入剂Inavir 20mg 2套 流感季必用 一次性吸入式抗病毒药",
   },
   collectionHandles: ["prescription"],
   rank: 26,

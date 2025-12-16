@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987341113230: RawGoodsRecord = {
   productId: 4987341113230,
   slug: "4987341113230",
+  gs1: "2189102F2020",
   title:
-    "【强效降脂】瑞舒伐他汀依折麦布 配合片 Rosuzet LD 低剂量版：复方降脂药 二合一 针对难治性高血脂。",
+    "【强效降脂】瑞舒伐他汀依折麦布 配合片 Rosuzet LD 低剂量版 复方降脂药 二合一 针对难治性高血脂",
   jpName: "ロスーゼット配合錠LＤ",
   brand: "ＭＳＤ",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987341113230: RawGoodsRecord = {
   subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987341113230.jpg",
-    alt: "【强效降脂】瑞舒伐他汀依折麦布 配合片 Rosuzet LD 低剂量版：复方降脂药 二合一 针对难治性高血脂。",
+    alt: "【强效降脂】瑞舒伐他汀依折麦布 配合片 Rosuzet LD 低剂量版 复方降脂药 二合一 针对难治性高血脂",
   },
   collectionHandles: ["prescription"],
   rank: 98,

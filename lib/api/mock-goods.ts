@@ -165,6 +165,11 @@ function createProductFromRecord(record: RawGoodsRecord): Product {
     now.getTime() - record.rank * 86400000,
   ).toISOString();
   const variantId = buildVariantId(record.slug);
+  const jan = /^\d{13}$/.test(record.slug)
+    ? record.slug
+    : /^\d{13}$/.test(String(record.productId))
+      ? String(record.productId)
+      : undefined;
 
   const variant: ProductVariant = {
     id: variantId,
@@ -188,6 +193,14 @@ function createProductFromRecord(record: RawGoodsRecord): Product {
     "detail:seller=芝园诊所",
     `detail:content_volume=${record.spec}`,
   ];
+
+  if (jan) {
+    detailTags.push(`detail:jan=${jan}`);
+  }
+
+  if (record.gs1) {
+    detailTags.push(`detail:gs1=${record.gs1}`);
+  }
 
   if (record.notes) {
     detailTags.push(`detail:storage=${record.notes}`);
@@ -255,6 +268,8 @@ function createProductFromRecord(record: RawGoodsRecord): Product {
     updatedAt,
     backend: {
       productId: record.productId,
+      jan,
+      gs1: record.gs1,
       brand: record.brand,
       categoryId: record.categoryId,
       categoryName:

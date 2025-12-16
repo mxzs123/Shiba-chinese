@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987080158110: RawGoodsRecord = {
   productId: 4987080158110,
   slug: "4987080158110",
+  gs1: "4490100F1030",
   title:
-    "【鼻炎特效药】普苏伐斯配合片：100片 鼻子通气 抗过敏 不瞌睡 过敏性鼻炎 缓解鼻塞流涕",
+    "【抗敏鼻炎急救】伪麻黄碱 非索非那定 复合片PUSOFEKI Combination Tablets SAWAI 0.4mg 100片  治疗过敏性鼻炎",
   jpName: "プソフェキ配合錠「サワイ」",
   brand: "沢井製薬",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987080158110: RawGoodsRecord = {
   subCategoryName: "抗过敏类治疗",
   image: {
     src: "/product-images/4987080158110.jpg",
-    alt: "【鼻炎特效药】普苏伐斯配合片：100片 鼻子通气 抗过敏 不瞌睡 过敏性鼻炎 缓解鼻塞流涕",
+    alt: "【抗敏鼻炎急救】伪麻黄碱 非索非那定 复合片PUSOFEKI Combination Tablets SAWAI 0.4mg 100片  治疗过敏性鼻炎",
   },
   collectionHandles: ["prescription"],
   rank: 20,

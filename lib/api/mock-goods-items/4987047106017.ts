@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987047106017: RawGoodsRecord = {
   productId: 4987047106017,
   slug: "4987047106017",
+  gs1: "2473700M1020",
   title:
-    "【雌激素凝胶】涂抹式雌激素、卵巢保养 雌二醇凝胶 Estradiol 1mg 外用补充型护理凝胶 140袋/盒",
+    "【雌激素凝胶】涂抹式雌激素 卵巢保养 雌二醇凝胶 Estradiol 1mg 外用补充型护理凝胶 140袋/盒",
   jpName: "ディビゲル1mg",
   brand: "オリオンファーマ・ジャパン",
   spec: "140/包",
@@ -17,7 +18,7 @@ const item4987047106017: RawGoodsRecord = {
   subCategoryName: "妇科",
   image: {
     src: "/product-images/4987047106017.jpg",
-    alt: "【雌激素凝胶】涂抹式雌激素、卵巢保养 雌二醇凝胶 Estradiol 1mg 外用补充型护理凝胶 140袋/盒",
+    alt: "【雌激素凝胶】涂抹式雌激素 卵巢保养 雌二醇凝胶 Estradiol 1mg 外用补充型护理凝胶 140袋/盒",
   },
   collectionHandles: ["prescription"],
   rank: 17,

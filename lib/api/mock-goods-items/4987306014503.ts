@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987306014503: RawGoodsRecord = {
   productId: 4987306014503,
   slug: "4987306014503",
+  gs1: "2649896S1022",
   title:
-    "【止疼膏药】艾司氟比洛芬贴片 Loqoa Tape 70片： 止痛天花板 强力抗炎 每日全身上下严禁超过2贴",
+    "【止疼膏药】艾司氟比洛芬贴片 Loqoa Tape 70片 止痛天花板 强力抗炎 每日全身上下严禁超过2贴",
   jpName: "ロコアテープ 7枚×10袋（70枚）",
   brand: "大正製薬",
   spec: "70/枚",
@@ -17,7 +18,7 @@ const item4987306014503: RawGoodsRecord = {
   subCategoryName: "止疼/外用贴剂",
   image: {
     src: "/product-images/4987306014503.jpg",
-    alt: "【止疼膏药】艾司氟比洛芬贴片 Loqoa Tape 70片： 止痛天花板 强力抗炎 每日全身上下严禁超过2贴",
+    alt: "【止疼膏药】艾司氟比洛芬贴片 Loqoa Tape 70片 止痛天花板 强力抗炎 每日全身上下严禁超过2贴",
   },
   collectionHandles: ["prescription"],
   rank: 97,

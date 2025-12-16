@@ -3,7 +3,8 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987081108350: RawGoodsRecord = {
   productId: 4987081108350,
   slug: "4987081108350",
-  title: "【降压药】米奈布洛片Minnebro 2.5mg：100片 控制血压 稳定心血管",
+  gs1: "2149049F2023",
+  title: "【降压药】米奈布洛片Minnebro  2.5mg 100片 控制血压 稳定心血管",
   jpName: "ミネブロ錠２．５ｍｇ",
   brand: "第一三共",
   spec: "100/錠",
@@ -16,7 +17,7 @@ const item4987081108350: RawGoodsRecord = {
   subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987081108350.jpg",
-    alt: "【降压药】米奈布洛片Minnebro 2.5mg：100片 控制血压 稳定心血管",
+    alt: "【降压药】米奈布洛片Minnebro  2.5mg 100片 控制血压 稳定心血管",
   },
   collectionHandles: ["prescription"],
   rank: 27,

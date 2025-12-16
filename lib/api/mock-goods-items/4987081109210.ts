@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987081109210: RawGoodsRecord = {
   productId: 4987081109210,
   slug: "4987081109210",
+  gs1: "1190023F1024",
   title:
-    "【新一代安眠药】倍索姆拉片Belsomra 15mg：100片 改善睡眠困难 无依赖性 自然入 非苯二氮䓬类",
+    "【新一代安眠药】倍索姆拉片Belsomra 15mg 100片 改善睡眠困难 无依赖性 自然入 非苯二氮䓬类",
   jpName: "ベルソムラ錠１５ｍｇ",
   brand: "ＭＳＤ",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987081109210: RawGoodsRecord = {
   subCategoryName: "睡眠辅助",
   image: {
     src: "/product-images/4987081109210.jpg",
-    alt: "【新一代安眠药】倍索姆拉片Belsomra 15mg：100片 改善睡眠困难 无依赖性 自然入 非苯二氮䓬类",
+    alt: "【新一代安眠药】倍索姆拉片Belsomra 15mg 100片 改善睡眠困难 无依赖性 自然入 非苯二氮䓬类",
   },
   collectionHandles: ["prescription"],
   rank: 30,

@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987087034936: RawGoodsRecord = {
   productId: 4987087034936,
   slug: "4987087034936",
+  gs1: "3179115F2034",
   title:
-    "【美白神药】Cinal美白丸 VC复合片：100片 美白亮肤 提升免疫 祛痘印 去黄气维生素C + 泛酸钙(B5)",
+    "【美白神药】希纳尔VC复合片 美白丸 Cinal 100片 美白亮肤 提升免疫 祛痘印 去黄气维生素C + 泛酸钙(B5)",
   jpName: "シナール配合錠",
   brand: "シオノギファーマ",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987087034936: RawGoodsRecord = {
   subCategoryName: "美白",
   image: {
     src: "/product-images/4987087034936.jpg",
-    alt: "【美白神药】Cinal美白丸 VC复合片：100片 美白亮肤 提升免疫 祛痘印 去黄气维生素C + 泛酸钙(B5)",
+    alt: "【美白神药】希纳尔VC复合片 美白丸 Cinal 100片 美白亮肤 提升免疫 祛痘印 去黄气维生素C + 泛酸钙(B5)",
   },
   collectionHandles: ["prescription"],
   rank: 36,

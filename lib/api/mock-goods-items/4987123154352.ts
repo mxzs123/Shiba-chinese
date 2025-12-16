@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987123154352: RawGoodsRecord = {
   productId: 4987123154352,
   slug: "4987123154352",
+  gs1: "2329030F1020",
   title:
-    "【最强胃药】护胃神器 武田高级胃药 沃诺拉赞 Vonoprazan 10mg：100片 胃酸反流 胃溃疡 反酸烧心特效药 无副作用",
+    "【最强胃药】护胃神器 武田高级胃药 沃诺拉赞 Vonoprazan 10mg 100片 胃酸反流 胃溃疡 反酸烧心特效药 无副作用",
   jpName: "タケキャブ錠1０ｍｇ",
   brand: "武田薬品工業",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987123154352: RawGoodsRecord = {
   subCategoryName: "肠胃护理",
   image: {
     src: "/product-images/4987123154352.jpg",
-    alt: "【最强胃药】护胃神器 武田高级胃药 沃诺拉赞 Vonoprazan 10mg：100片 胃酸反流 胃溃疡 反酸烧心特效药 无副作用",
+    alt: "【最强胃药】护胃神器 武田高级胃药 沃诺拉赞 Vonoprazan 10mg 100片 胃酸反流 胃溃疡 反酸烧心特效药 无副作用",
   },
   collectionHandles: ["prescription"],
   rank: 41,

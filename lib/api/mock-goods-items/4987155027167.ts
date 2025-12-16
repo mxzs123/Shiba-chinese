@@ -3,7 +3,8 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987155027167: RawGoodsRecord = {
   productId: 4987155027167,
   slug: "4987155027167",
-  title: "【过敏药】非索非那定片  Fexofenadine 60mg: 强效抗过敏（鼻炎/荨麻疹）",
+  gs1: "4490023F1202",
+  title: "【过敏药】非索非那定片 Fexofenadine 60mg 强效抗过敏（鼻炎/荨麻疹）",
   jpName: "フェキソフェナジン塩酸塩錠６０ｍｇ「トーワ」",
   brand: "東和薬品",
   spec: "100/錠",
@@ -16,7 +17,7 @@ const item4987155027167: RawGoodsRecord = {
   subCategoryName: "抗过敏类治疗",
   image: {
     src: "/product-images/4987155027167.jpg",
-    alt: "【过敏药】非索非那定片  Fexofenadine 60mg: 强效抗过敏（鼻炎/荨麻疹）",
+    alt: "【过敏药】非索非那定片 Fexofenadine 60mg 强效抗过敏（鼻炎/荨麻疹）",
   },
   collectionHandles: ["prescription"],
   rank: 59,

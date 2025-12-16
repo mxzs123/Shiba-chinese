@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987045651007: RawGoodsRecord = {
   productId: 4987045651007,
   slug: "4987045651007",
+  gs1: "5200017C1061",
   title:
-    "【更年期神药】 Kracie汉方 加味逍遙散料精华颗粒：28袋盒 补血调经痛经更年期",
+    "【更年期神药】汉方 加味逍遙散料精华颗粒Kracie 3g 28袋盒 补血调经痛经更年期",
   jpName: "クラシエ加味逍遙散料エキス細粒 ３Ｇ",
   brand: "クラシエ",
   spec: "28/包",
@@ -17,7 +18,7 @@ const item4987045651007: RawGoodsRecord = {
   subCategoryName: "妇科",
   image: {
     src: "/product-images/4987045651007.jpg",
-    alt: "【更年期神药】 Kracie汉方 加味逍遙散料精华颗粒：28袋盒 补血调经痛经更年期",
+    alt: "【更年期神药】汉方 加味逍遙散料精华颗粒Kracie 3g 28袋盒 补血调经痛经更年期",
   },
   collectionHandles: ["prescription"],
   rank: 16,

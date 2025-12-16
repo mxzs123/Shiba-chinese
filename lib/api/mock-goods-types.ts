@@ -3,6 +3,7 @@ import type { GoodsCategory } from "./types";
 export type RawGoodsRecord = {
   productId: number;
   slug: string;
+  gs1?: string;
   title: string;
   jpName: string;
   brand: string;

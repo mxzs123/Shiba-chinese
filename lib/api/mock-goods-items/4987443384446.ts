@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987443384446: RawGoodsRecord = {
   productId: 4987443384446,
   slug: "4987443384446",
+  gs1: "2190041F3020",
   title:
-    "【强心药】沙库巴曲缬沙坦钠片  Entresto 200mg：显著降低心力衰竭患者的死亡风险",
+    "【强心药】沙库巴曲缬沙坦钠片 Entresto 200mg 显著降低心力衰竭患者的死亡风险",
   jpName: "エンレスト錠２００ｍｇ",
   brand: "ノバルティスファーマ",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987443384446: RawGoodsRecord = {
   subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987443384446.jpg",
-    alt: "【强心药】沙库巴曲缬沙坦钠片  Entresto 200mg：显著降低心力衰竭患者的死亡风险",
+    alt: "【强心药】沙库巴曲缬沙坦钠片 Entresto 200mg 显著降低心力衰竭患者的死亡风险",
   },
   collectionHandles: ["prescription"],
   rank: 106,

@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987155148190: RawGoodsRecord = {
   productId: 4987155148190,
   slug: "4987155148190",
+  gs1: "2189018F2023",
   title:
-    "【降脂伴侣】依折麦布口腔崩解片 Ezetimibe 10mg :胆固醇吸收阻断 不伤肝 依折麦布",
+    "【降脂伴侣】依折麦布口腔崩解片 Ezetimibe 10mg 胆固醇吸收阻断 不伤肝 依折麦布",
   jpName: "エゼチミブＯＤ錠１０ｍｇ「トーワ」",
   brand: "東和薬品",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987155148190: RawGoodsRecord = {
   subCategoryName: "血压血糖治疗",
   image: {
     src: "/product-images/4987155148190.jpg",
-    alt: "【降脂伴侣】依折麦布口腔崩解片 Ezetimibe 10mg :胆固醇吸收阻断 不伤肝 依折麦布",
+    alt: "【降脂伴侣】依折麦布口腔崩解片 Ezetimibe 10mg 胆固醇吸收阻断 不伤肝 依折麦布",
   },
   collectionHandles: ["prescription"],
   rank: 65,

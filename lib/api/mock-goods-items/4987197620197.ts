@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987197620197: RawGoodsRecord = {
   productId: 4987197620197,
   slug: "4987197620197",
+  gs1: "3190001B1041",
   title:
-    "【美容粉】生物素散 (维H) Biotin 0.5g/包 ：改善白发、脱发、指甲脆弱和皮肤粗糙",
+    "【美容粉】生物素散 (维H) Biotin 0.5g/包 改善白发&脱发&指甲脆弱和皮肤粗糙",
   jpName: "ビオチン散0.2％「フソー」0.5g",
   brand: "扶桑薬品工業株式会社",
   spec: "2100/包",
@@ -17,7 +18,7 @@ const item4987197620197: RawGoodsRecord = {
   subCategoryName: "维生素/补充剂",
   image: {
     src: "/product-images/4987197620197.jpg",
-    alt: "【美容粉】生物素散 (维H) Biotin 0.5g/包 ：改善白发、脱发、指甲脆弱和皮肤粗糙",
+    alt: "【美容粉】生物素散 (维H) Biotin 0.5g/包 改善白发&脱发&指甲脆弱和皮肤粗糙",
   },
   collectionHandles: ["prescription"],
   rank: 87,

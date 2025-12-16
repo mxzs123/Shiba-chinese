@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987158290209: RawGoodsRecord = {
   productId: 4987158290209,
   slug: "4987158290209",
+  gs1: "4490031F1029",
   title:
-    "【过敏根治】 尘螨变应原舌下片 Miticure  3300 JAU 针对尘螨过敏的减敏治疗 长期改变体质 根治过敏性鼻炎/哮喘",
+    "【过敏根治】 尘螨变应原舌下片 Miticure 3300 JAU 针对尘螨过敏的减敏治疗 长期改变体质 根治过敏性鼻炎/哮喘",
   jpName: "ミティキュアダニ舌下錠３３００",
   brand: "鳥居薬品",
   spec: "7/錠",
@@ -17,7 +18,7 @@ const item4987158290209: RawGoodsRecord = {
   subCategoryName: "流感治疗",
   image: {
     src: "/product-images/4987158290209.jpg",
-    alt: "【过敏根治】 尘螨变应原舌下片 Miticure  3300 JAU 针对尘螨过敏的减敏治疗 长期改变体质 根治过敏性鼻炎/哮喘",
+    alt: "【过敏根治】 尘螨变应原舌下片 Miticure 3300 JAU 针对尘螨过敏的减敏治疗 长期改变体质 根治过敏性鼻炎/哮喘",
   },
   collectionHandles: ["prescription"],
   rank: 77,

@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987224016207: RawGoodsRecord = {
   productId: 4987224016207,
   slug: "4987224016207",
+  gs1: "2529701H1058",
   title:
-    "【女性私处护理】雌三醇阴道片 Estriel 0.5mg：改善阴道干涩 更年期养护 雌三醇",
+    "【女性私处护理】雌三醇阴道片 Estriel 0.5mg 改善阴道干涩 更年期养护 雌三醇",
   jpName: "エストリール腟錠０．５ｍｇ",
   brand: "持田製薬",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987224016207: RawGoodsRecord = {
   subCategoryName: "妇科",
   image: {
     src: "/product-images/4987224016207.jpg",
-    alt: "【女性私处护理】雌三醇阴道片 Estriel 0.5mg：改善阴道干涩 更年期养护 雌三醇",
+    alt: "【女性私处护理】雌三醇阴道片 Estriel 0.5mg 改善阴道干涩 更年期养护 雌三醇",
   },
   collectionHandles: ["prescription"],
   rank: 88,

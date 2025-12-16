@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987280292249: RawGoodsRecord = {
   productId: 4987280292249,
   slug: "4987280292249",
+  gs1: "2900001F1029",
   title:
-    "【防脱黑科技】千金藤素片 Cepharanthine 1mg：提取自植物的生物碱 增强免疫功能 专治斑秃",
+    "【防脱黑科技】千金藤素片 Cepharanthine 1mg 提取自植物的生物碱 增强免疫功能 专治斑秃",
   jpName: "セファランチン錠１ｍｇ",
   brand: "メディサ新薬",
   spec: "100/錠",
@@ -17,7 +18,7 @@ const item4987280292249: RawGoodsRecord = {
   subCategoryName: "生发防脱",
   image: {
     src: "/product-images/4987280292249.jpg",
-    alt: "【防脱黑科技】千金藤素片 Cepharanthine 1mg：提取自植物的生物碱 增强免疫功能 专治斑秃",
+    alt: "【防脱黑科技】千金藤素片 Cepharanthine 1mg 提取自植物的生物碱 增强免疫功能 专治斑秃",
   },
   collectionHandles: ["prescription"],
   rank: 93,
