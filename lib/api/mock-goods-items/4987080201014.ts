@@ -3,8 +3,9 @@ import type { RawGoodsRecord } from "../mock-goods-types";
 const item4987080201014: RawGoodsRecord = {
   productId: 4987080201014,
   slug: "4987080201014",
+  gs1: "1190012F2189",
   title:
-    "【老年痴呆药】多奈哌齐片 Donepezil 5mg：治疗阿尔茨海默病 延缓记忆力衰退。",
+    "【老年痴呆药】多奈哌齐片 Donepezil 5mg 治疗阿尔茨海默病 延缓记忆力衰退",
   jpName: "ドネペジル塩酸塩錠５ｍｇ「サワイ」",
   brand: "沢井製薬",
   spec: "56/錠",
@@ -17,7 +18,7 @@ const item4987080201014: RawGoodsRecord = {
   subCategoryName: "神经治理",
   image: {
     src: "/product-images/4987080201014.jpg",
-    alt: "【老年痴呆药】多奈哌齐片 Donepezil 5mg：治疗阿尔茨海默病 延缓记忆力衰退。",
+    alt: "【老年痴呆药】多奈哌齐片 Donepezil 5mg 治疗阿尔茨海默病 延缓记忆力衰退",
   },
   collectionHandles: ["prescription"],
   rank: 125,

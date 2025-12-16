@@ -11,7 +11,11 @@ type CsvRow = Record<string, string | undefined>;
 
 const PROJECT_ROOT = process.cwd();
 const ITEMS_DIR = path.join(PROJECT_ROOT, "lib", "api", "mock-goods-items");
-const DEFAULT_CSV_PATH = "/Users/yume/Desktop/revised - 工作表1.csv";
+const DEFAULT_CSV_PATH = "/Users/yume/Desktop/gainimabi.csv";
+
+type PatentStatus = "originator" | "generic";
+
+const DEFAULT_JPY_TO_CNY_RATE = 0.05;
 
 function parseArgs(): Args {
   const argv = process.argv.slice(2);
@@ -55,11 +59,68 @@ function normalizeGs1(value?: string): string | undefined {
   return normalized.length ? normalized : undefined;
 }
 
-function cleanText(value?: string): string {
+function cleanText(value?: string): string | undefined {
   if (!value) {
-    return "";
+    return undefined;
   }
-  return value.replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
+  const cleaned = value.replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
+  return cleaned.length ? cleaned : undefined;
+}
+
+function normalizeSpecCount(value?: string): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const normalized = value.normalize("NFKC").replace(/\s+/g, "").trim();
+  return normalized.length ? normalized : undefined;
+}
+
+function normalizeUnit(value?: string): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const normalized = value.normalize("NFKC").replace(/\s+/g, "").trim();
+  return normalized.length ? normalized : undefined;
+}
+
+function normalizePatentStatus(value?: string): PatentStatus | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const normalized = value.normalize("NFKC").replace(/\s+/g, "").trim();
+  if (!normalized) {
+    return undefined;
+  }
+  if (normalized.includes("先発")) {
+    return "originator";
+  }
+  if (normalized.includes("後発")) {
+    return "generic";
+  }
+  return undefined;
+}
+
+function normalizeJpyAmount(value?: string): number | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const normalized = value.normalize("NFKC");
+  const digits = normalized.replace(/\D/g, "");
+  const parsed = Number.parseInt(digits, 10);
+  if (!Number.isFinite(parsed)) {
+    return undefined;
+  }
+  return parsed;
+}
+
+function formatNumberLiteral(value: number): string {
+  if (!Number.isFinite(value)) {
+    return "0";
+  }
+  if (Number.isInteger(value)) {
+    return String(value);
+  }
+  return value.toFixed(2).replace(/\.?0+$/, "");
 }
 
 function updateOrInsertStringProperty(
@@ -101,6 +162,88 @@ function replaceStringProperty(source: string, key: string, value: string) {
   return source.replace(pattern, `${key}: ${escapedValue},`);
 }
 
+function readNumberProperty(source: string, key: string): number | undefined {
+  const pattern = new RegExp(`\\b${key}\\s*:\\s*(-?\\d+(?:\\.\\d+)?)\\s*,`);
+  const match = source.match(pattern);
+  if (!match) {
+    return undefined;
+  }
+  const parsed = Number.parseFloat(match[1]);
+  if (!Number.isFinite(parsed)) {
+    return undefined;
+  }
+  return parsed;
+}
+
+function replaceNumberProperty(source: string, key: string, value: number) {
+  const literal = formatNumberLiteral(value);
+  const pattern = new RegExp(`\\b${key}\\s*:\\s*-?\\d+(?:\\.\\d+)?\\s*,`);
+
+  if (!pattern.test(source)) {
+    throw new Error(`未找到字段：${key}`);
+  }
+
+  return source.replace(pattern, `${key}: ${literal},`);
+}
+
+function parseStringArrayLiteral(value: string): string[] {
+  const jsonish = value.replace(/,\s*\]/g, "]");
+  try {
+    const parsed = JSON.parse(jsonish) as unknown;
+    if (
+      Array.isArray(parsed) &&
+      parsed.every((item) => typeof item === "string")
+    ) {
+      return parsed;
+    }
+  } catch {
+    // fall through
+  }
+
+  throw new Error("keywords 字段格式不支持");
+}
+
+function formatStringArrayLiteral(
+  values: string[],
+  indent: string,
+  multiline: boolean,
+): string {
+  if (!multiline) {
+    return `[${values.map((item) => JSON.stringify(item)).join(", ")}]`;
+  }
+
+  const elementIndent = `${indent}  `;
+  const lines = ["["];
+  for (const item of values) {
+    lines.push(`${elementIndent}${JSON.stringify(item)},`);
+  }
+  lines.push(`${indent}]`);
+  return lines.join("\n");
+}
+
+function updateKeywordTag(source: string, status: PatentStatus): string {
+  const tag = status === "originator" ? "tag:originator" : "tag:generic";
+  const pattern = /^(\s*)keywords\s*:\s*(\[[\s\S]*?\])\s*,/m;
+  const match = source.match(pattern);
+  if (!match) {
+    throw new Error("未找到字段：keywords");
+  }
+
+  const indent = match[1] || "";
+  const originalArrayText = match[2] || "[]";
+  const multiline = originalArrayText.includes("\n");
+  const keywords = parseStringArrayLiteral(originalArrayText);
+
+  const cleaned = keywords.filter(
+    (item) => item !== "tag:originator" && item !== "tag:generic",
+  );
+  const deduped = [...new Set(cleaned)];
+  deduped.push(tag);
+
+  const nextArrayText = formatStringArrayLiteral(deduped, indent, multiline);
+  return source.replace(pattern, `${indent}keywords: ${nextArrayText},`);
+}
+
 async function readCsv(csvPath: string): Promise<CsvRow[]> {
   const content = await fs.readFile(csvPath, "utf8");
   return parse(content, {
@@ -132,6 +275,12 @@ async function main() {
     const jan = normalizeJan(row.JAN);
     const gs1 = normalizeGs1(row.GS1);
     const title = cleanText(row["商品名"]);
+    const jpName = cleanText(row["薬名"]);
+    const brand = cleanText(row["製造販売元"]);
+    const specCount = normalizeSpecCount(row["入数"]);
+    const specUnit = normalizeUnit(row["単位"]);
+    const priceJpy = normalizeJpyAmount(row["売値（税込）"]);
+    const patentStatus = normalizePatentStatus(row["先発・後発"]);
 
     if (!jan || jan.length !== 13) {
       invalidCount += 1;
@@ -159,6 +308,13 @@ async function main() {
     try {
       let updated = original;
 
+      const originalPriceJpy = readNumberProperty(original, "priceJpy");
+      const originalPriceCny = readNumberProperty(original, "priceCny");
+      const derivedRate =
+        originalPriceJpy && originalPriceJpy > 0 && originalPriceCny
+          ? originalPriceCny / originalPriceJpy
+          : DEFAULT_JPY_TO_CNY_RATE;
+
       if (title) {
         updated = replaceStringProperty(updated, "title", title);
         updated = replaceStringProperty(updated, "alt", title);
@@ -166,6 +322,32 @@ async function main() {
 
       if (gs1) {
         updated = updateOrInsertStringProperty(updated, "gs1", gs1, "slug");
+      }
+
+      if (jpName) {
+        updated = replaceStringProperty(updated, "jpName", jpName);
+      }
+
+      if (brand) {
+        updated = replaceStringProperty(updated, "brand", brand);
+      }
+
+      if (specCount && specUnit) {
+        updated = replaceStringProperty(
+          updated,
+          "spec",
+          `${specCount}/${specUnit}`,
+        );
+      }
+
+      if (priceJpy !== undefined) {
+        updated = replaceNumberProperty(updated, "priceJpy", priceJpy);
+        const nextPriceCny = Number((priceJpy * derivedRate).toFixed(2));
+        updated = replaceNumberProperty(updated, "priceCny", nextPriceCny);
+      }
+
+      if (patentStatus) {
+        updated = updateKeywordTag(updated, patentStatus);
       }
 
       if (updated !== original) {

@@ -6,7 +6,7 @@ const item4987128255719: RawGoodsRecord = {
   gs1: "2499422G3027",
   title:
     "【减肥黑科技】替尔泊肽 Mounjaro皮下注7.5mg 2支 GLP-1 躺瘦神针 超越司美格鲁肽",
-  jpName: "マンジャロ皮下注7.5ｍｇアテオス",
+  jpName: "マンジャロ皮下注７．５ｍｇアテオス",
   brand: "日本イーライリリー",
   spec: "2/キット",
   priceJpy: 23088,
