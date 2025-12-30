@@ -226,7 +226,7 @@ export function MobileCategoriesContent({
   return (
     <>
       {/* 左侧分类导航 */}
-      <aside className="w-24 flex-none overflow-y-auto border-r border-neutral-200 bg-neutral-50">
+      <aside className="w-24 flex-none overflow-y-auto overscroll-contain border-r border-neutral-200 bg-neutral-50">
         <nav className="flex flex-col">
           <button
             onClick={handleAllSelect}
@@ -261,7 +261,7 @@ export function MobileCategoriesContent({
       </aside>
 
       {/* 右侧内容区 */}
-      <main ref={mainRef} className="flex-1 overflow-y-auto">
+      <main ref={mainRef} className="flex-1 overflow-y-auto overscroll-contain">
         <div className="flex flex-col gap-4 p-4">
           {/* 分类标题 */}
           <div>

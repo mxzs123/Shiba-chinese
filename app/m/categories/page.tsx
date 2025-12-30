@@ -70,13 +70,13 @@ export default async function MobileCategoriesPage({
   const products = result.items;
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-[calc(100dvh-4rem)] flex-col">
       <MobileHeader
         notifications={notifications}
         showSearchInput={Boolean(searchValue)}
         initialSearchValue={searchValue || undefined}
       />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
         <MobileCategoriesContent
           categoryTree={categoryTree}
           flatCategories={flatCategories}
