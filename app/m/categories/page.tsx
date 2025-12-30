@@ -35,12 +35,18 @@ function flattenCategories(categories: SearchCategory[]): SearchCategory[] {
 export default async function MobileCategoriesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; tag?: string; q?: string }>;
+  searchParams: Promise<{
+    category?: string;
+    page?: string;
+    tag?: string;
+    q?: string;
+  }>;
 }) {
   const notifications = await getNotifications();
   const params = (await searchParams) || {};
   const searchValue = getParam(params.q);
   const requestedCategorySlug = getParam(params.category);
+  const page = getParam(params.page);
   const categoryTree = getSearchCategories();
   const flatCategories = flattenCategories(categoryTree);
   const categorySlug =
@@ -58,7 +64,7 @@ export default async function MobileCategoriesPage({
     category,
     searchValue,
     sortSlug: null,
-    page: null,
+    page,
   });
 
   const products = result.items;
@@ -77,6 +83,7 @@ export default async function MobileCategoriesPage({
           initialCategory={categorySlug}
           initialParent={parentSlug}
           initialProducts={products}
+          initialPageInfo={result.pageInfo}
           initialSearchValue={searchValue}
         />
       </div>

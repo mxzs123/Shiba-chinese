@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -18,7 +19,7 @@ import type { SearchCategory } from "@/app/_shared/search/config";
 import { Price } from "@/app/_shared/Price";
 import { addItem } from "@/app/_shared/cart/actions";
 import { useCart } from "@/components/cart/cart-context";
-import type { Product, ProductVariant } from "@/lib/api/types";
+import type { GoodsPageInfo, Product, ProductVariant } from "@/lib/api/types";
 import { handleError } from "@/lib/error-handler";
 import { isDiscountedPrice } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ type MobileCategoriesContentProps = {
   initialCategory: string;
   initialParent: string;
   initialProducts: Product[];
+  initialPageInfo: GoodsPageInfo;
   initialSearchValue?: string | null;
 };
 
@@ -53,11 +55,13 @@ export function MobileCategoriesContent({
   initialCategory,
   initialParent,
   initialProducts,
+  initialPageInfo,
   initialSearchValue,
 }: MobileCategoriesContentProps) {
   const router = useRouter();
   const { addCartItem } = useCart();
   const [, startTransition] = useTransition();
+  const mainRef = useRef<HTMLElement | null>(null);
   const resolvedInitialCategory =
     initialCategory === ALL_CATEGORY_SLUG
       ? ALL_CATEGORY_SLUG
@@ -101,13 +105,16 @@ export function MobileCategoriesContent({
     setSelectedParent(resolvedInitialParent);
   }, [resolvedInitialParent]);
   const commitStateToUrl = useCallback(
-    (categorySlug: string) => {
+    (categorySlug: string, page?: number) => {
       const params = new URLSearchParams();
       if (categorySlug) {
         params.set("category", categorySlug);
       }
       if (normalizedSearchValue) {
         params.set("q", normalizedSearchValue);
+      }
+      if (page && page > 1) {
+        params.set("page", String(page));
       }
       const queryString = params.toString();
       router.push(queryString ? `/categories?${queryString}` : "/categories");
@@ -158,6 +165,10 @@ export function MobileCategoriesContent({
     : categoryMap.get(currentParentSlug) ||
       categoryTree.find((category) => category.slug === currentParentSlug);
   const childCategories = isAllSelected ? [] : (currentParent?.children ?? []);
+
+  const totalPages = initialPageInfo.totalPages;
+  const currentPage = initialPageInfo.page;
+  const hasPagination = totalPages > 1;
 
   const handleQuickAdd = useCallback(
     async (
@@ -250,7 +261,7 @@ export function MobileCategoriesContent({
       </aside>
 
       {/* 右侧内容区 */}
-      <main className="flex-1 overflow-y-auto">
+      <main ref={mainRef} className="flex-1 overflow-y-auto">
         <div className="flex flex-col gap-4 p-4">
           {/* 分类标题 */}
           <div>
@@ -400,6 +411,62 @@ export function MobileCategoriesContent({
               <p className="text-sm text-neutral-500">暂无商品</p>
             </div>
           )}
+
+          {hasPagination ? (
+            <nav
+              aria-label="分类商品分页"
+              className="flex items-center justify-between gap-3 rounded-full border border-neutral-200 bg-white px-3 py-2 text-xs shadow-sm"
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  commitStateToUrl(
+                    selectedCategory,
+                    Math.max(currentPage - 1, 1),
+                  );
+                  mainRef.current?.scrollTo({ top: 0 });
+                }}
+                disabled={!initialPageInfo.hasPreviousPage}
+                className={cn(
+                  "inline-flex items-center justify-center px-4 py-2 rounded-full",
+                  initialPageInfo.hasPreviousPage
+                    ? "bg-primary text-white"
+                    : "cursor-not-allowed bg-neutral-100 text-neutral-400",
+                )}
+              >
+                上一页
+              </button>
+
+              <div className="flex flex-col items-center gap-0.5 text-neutral-600">
+                <span>
+                  第 {currentPage} / {totalPages} 页
+                </span>
+                <span className="text-[10px] text-neutral-400">
+                  共 {initialPageInfo.total} 件
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  commitStateToUrl(
+                    selectedCategory,
+                    Math.min(currentPage + 1, totalPages),
+                  );
+                  mainRef.current?.scrollTo({ top: 0 });
+                }}
+                disabled={!initialPageInfo.hasNextPage}
+                className={cn(
+                  "inline-flex items-center justify-center px-4 py-2 rounded-full",
+                  initialPageInfo.hasNextPage
+                    ? "bg-primary text-white"
+                    : "cursor-not-allowed bg-neutral-100 text-neutral-400",
+                )}
+              >
+                下一页
+              </button>
+            </nav>
+          ) : null}
         </div>
       </main>
     </>
