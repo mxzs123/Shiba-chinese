@@ -32,6 +32,9 @@ type MobileCategoriesContentProps = {
   initialSearchValue?: string | null;
 };
 
+const ALL_CATEGORY_SLUG = "";
+const ALL_CATEGORY_LABEL = "全部商品";
+
 function getPrimaryVariant(product: Product): ProductVariant | undefined {
   if (!product.variants.length) {
     return undefined;
@@ -56,24 +59,30 @@ export function MobileCategoriesContent({
   const { addCartItem } = useCart();
   const [, startTransition] = useTransition();
   const resolvedInitialCategory =
-    (initialCategory &&
-      flatCategories.find((category) => category.slug === initialCategory)
-        ?.slug) ||
-    flatCategories[0]?.slug ||
-    "";
+    initialCategory === ALL_CATEGORY_SLUG
+      ? ALL_CATEGORY_SLUG
+      : (initialCategory &&
+          flatCategories.find((category) => category.slug === initialCategory)
+            ?.slug) ||
+        flatCategories[0]?.slug ||
+        ALL_CATEGORY_SLUG;
   const firstParentSlug = categoryTree[0]?.slug || "";
   const resolvedInitialParent =
-    (initialParent &&
-      categoryTree.find((category) => category.slug === initialParent)?.slug) ||
-    flatCategories.find((category) => category.slug === resolvedInitialCategory)
-      ?.parentSlug ||
-    firstParentSlug;
+    resolvedInitialCategory === ALL_CATEGORY_SLUG
+      ? ALL_CATEGORY_SLUG
+      : (initialParent &&
+          categoryTree.find((category) => category.slug === initialParent)
+            ?.slug) ||
+        flatCategories.find(
+          (category) => category.slug === resolvedInitialCategory,
+        )?.parentSlug ||
+        resolvedInitialCategory ||
+        firstParentSlug ||
+        ALL_CATEGORY_SLUG;
   const [selectedCategory, setSelectedCategory] = useState(
     resolvedInitialCategory,
   );
-  const [selectedParent, setSelectedParent] = useState(
-    resolvedInitialParent || firstParentSlug,
-  );
+  const [selectedParent, setSelectedParent] = useState(resolvedInitialParent);
   const normalizedSearchValue =
     initialSearchValue && initialSearchValue.trim().length > 0
       ? initialSearchValue.trim()
@@ -89,8 +98,8 @@ export function MobileCategoriesContent({
     setSelectedCategory(resolvedInitialCategory);
   }, [resolvedInitialCategory]);
   useEffect(() => {
-    setSelectedParent(resolvedInitialParent || firstParentSlug);
-  }, [resolvedInitialParent, firstParentSlug]);
+    setSelectedParent(resolvedInitialParent);
+  }, [resolvedInitialParent]);
   const commitStateToUrl = useCallback(
     (categorySlug: string) => {
       const params = new URLSearchParams();
@@ -106,15 +115,24 @@ export function MobileCategoriesContent({
     [normalizedSearchValue, router],
   );
 
+  const handleAllSelect = useCallback(() => {
+    setSelectedParent(ALL_CATEGORY_SLUG);
+    setSelectedCategory(ALL_CATEGORY_SLUG);
+    commitStateToUrl(ALL_CATEGORY_SLUG);
+  }, [commitStateToUrl]);
+
   const handleParentSelect = (parentSlug: string) => {
-    const parentCategory = categoryMap.get(parentSlug);
-    const fallbackSlug = parentCategory?.children?.[0]?.slug || parentSlug;
     setSelectedParent(parentSlug);
-    setSelectedCategory(fallbackSlug);
-    commitStateToUrl(fallbackSlug);
+    setSelectedCategory(parentSlug);
+    commitStateToUrl(parentSlug);
   };
 
   const handleCategorySelect = (categorySlug: string) => {
+    if (categorySlug === ALL_CATEGORY_SLUG) {
+      handleAllSelect();
+      return;
+    }
+
     const category = categoryMap.get(categorySlug);
     const parentSlugForCategory =
       category?.parentSlug || category?.slug || firstParentSlug;
@@ -123,18 +141,23 @@ export function MobileCategoriesContent({
     commitStateToUrl(categorySlug);
   };
 
-  const currentCategory = selectedCategory
-    ? categoryMap.get(selectedCategory)
-    : undefined;
-  const currentParentSlug =
-    selectedParent ||
-    currentCategory?.parentSlug ||
-    currentCategory?.slug ||
-    firstParentSlug;
-  const currentParent =
-    categoryMap.get(currentParentSlug) ||
-    categoryTree.find((category) => category.slug === currentParentSlug);
-  const childCategories = currentParent?.children ?? [];
+  const isAllSelected = selectedCategory === ALL_CATEGORY_SLUG;
+
+  const currentCategory =
+    !isAllSelected && selectedCategory
+      ? categoryMap.get(selectedCategory)
+      : undefined;
+  const currentParentSlug = isAllSelected
+    ? ALL_CATEGORY_SLUG
+    : selectedParent ||
+      currentCategory?.parentSlug ||
+      currentCategory?.slug ||
+      firstParentSlug;
+  const currentParent = isAllSelected
+    ? undefined
+    : categoryMap.get(currentParentSlug) ||
+      categoryTree.find((category) => category.slug === currentParentSlug);
+  const childCategories = isAllSelected ? [] : (currentParent?.children ?? []);
 
   const handleQuickAdd = useCallback(
     async (
@@ -194,6 +217,17 @@ export function MobileCategoriesContent({
       {/* 左侧分类导航 */}
       <aside className="w-24 flex-none overflow-y-auto border-r border-neutral-200 bg-neutral-50">
         <nav className="flex flex-col">
+          <button
+            onClick={handleAllSelect}
+            className={cn(
+              "flex min-h-[4rem] flex-col items-center justify-center gap-1 border-l-2 px-2 py-3 text-center text-xs transition-colors",
+              isAllSelected
+                ? "border-primary bg-white font-semibold text-primary"
+                : "border-transparent text-neutral-600 hover:bg-white hover:text-neutral-900",
+            )}
+          >
+            <span className="break-all">{ALL_CATEGORY_LABEL}</span>
+          </button>
           {categoryTree.map((category) => {
             const isActive = selectedParent === category.slug;
 
@@ -222,16 +256,20 @@ export function MobileCategoriesContent({
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-lg font-semibold">
-                {currentCategory?.label || "所有商品"}
+                {isAllSelected
+                  ? ALL_CATEGORY_LABEL
+                  : currentCategory?.label || ALL_CATEGORY_LABEL}
               </h1>
               <span className="flex items-center gap-1 text-xs text-neutral-400">
                 <ShoppingCart className="h-3 w-3" />
                 <span>可快速加购</span>
               </span>
             </div>
-            <p className="text-sm text-neutral-500">
-              {currentCategory?.description}
-            </p>
+            {!isAllSelected && currentCategory?.description ? (
+              <p className="text-sm text-neutral-500">
+                {currentCategory.description}
+              </p>
+            ) : null}
           </div>
 
           {/* 子分类筛选 */}

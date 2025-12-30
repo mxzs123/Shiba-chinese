@@ -43,16 +43,16 @@ export default async function MobileCategoriesPage({
   const requestedCategorySlug = getParam(params.category);
   const categoryTree = getSearchCategories();
   const flatCategories = flattenCategories(categoryTree);
-  const firstCategorySlug = flatCategories[0]?.slug;
   const categorySlug =
     requestedCategorySlug &&
     flatCategories.some((category) => category.slug === requestedCategorySlug)
       ? requestedCategorySlug
-      : firstCategorySlug;
+      : "";
 
   const category = categorySlug ? findSearchCategory(categorySlug) : undefined;
-  const parentSlug =
-    category?.parentSlug || category?.slug || categoryTree[0]?.slug || "";
+  const parentSlug = categorySlug
+    ? category?.parentSlug || category?.slug || categoryTree[0]?.slug || ""
+    : "";
 
   const result = await loadSearchResult({
     category,
@@ -74,7 +74,7 @@ export default async function MobileCategoriesPage({
         <MobileCategoriesContent
           categoryTree={categoryTree}
           flatCategories={flatCategories}
-          initialCategory={categorySlug || ""}
+          initialCategory={categorySlug}
           initialParent={parentSlug}
           initialProducts={products}
           initialSearchValue={searchValue}
