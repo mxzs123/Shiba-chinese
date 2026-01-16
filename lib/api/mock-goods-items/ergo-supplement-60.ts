@@ -15,7 +15,7 @@ const ergoSupplement60: RawGoodsRecord = {
   subCategoryId: 0,
   subCategoryName: "",
   image: {
-    src: "/product-images/ergo-supplement-60.png",
+    src: "/product-images/ergo-supplement-60.jpg",
     alt: "CyTIX 麦角硫因 健脑护心胶囊 (60粒)",
   },
   collectionHandles: ["hospital-preparation"],

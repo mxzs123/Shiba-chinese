@@ -15,7 +15,7 @@ const nmnSupplement120: RawGoodsRecord = {
   subCategoryId: 0,
   subCategoryName: "",
   image: {
-    src: "/product-images/nmn-supplement-120.png",
+    src: "/product-images/nmn-supplement-120.jpg",
     alt: "AL Clinic NMN 豪华口服胶囊 (120粒)",
   },
   collectionHandles: ["hospital-preparation"],
